@@ -119,7 +119,7 @@
         }, 0);
 
         if (this.isRunning) {
-            time + performance.now() - this._startTime;
+            time += performance.now() - this._startTime;
         }
 
         return time;

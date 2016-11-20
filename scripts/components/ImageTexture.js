@@ -4,9 +4,11 @@
         this.path = null;
         this.position = {};
         this.size = {};
-        this.offset = {
-            x: 0,
-            y: 0
+        this.padding = {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
         };
     }
 }

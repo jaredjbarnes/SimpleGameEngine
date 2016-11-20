@@ -1,6 +1,6 @@
 ﻿class ControllerSystem {
     constructor() {
-        this._dependencies = ["keyboard-input","keyboard-controller"];
+        this._dependencies = ["keyboard-input", "keyboard-controller", "position"];
         this._entities = [];
         this._game = null;
     }
@@ -73,6 +73,6 @@
 
             }
         });
-        
+
     }
 }

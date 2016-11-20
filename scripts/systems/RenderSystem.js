@@ -57,6 +57,13 @@ class RenderSystem {
         }
     }
 
+    supportsEntity(entity) {
+        return Object.keys(this._renderers).some(function (type) {
+            return entity.hasComponents([type]);
+        });
+    }
+
+    // System Strategy Starts
     activated(game) {
         var self = this;
         this._game = game;
@@ -87,12 +94,6 @@ class RenderSystem {
                     renderers[type].draw(entity, canvas);
                 }
             });
-        });
-    }
-
-    supportsEntity(entity) {
-        return Object.keys(this._renderers).some(function (type) {
-            return entity.hasComponents([type]);
         });
     }
 

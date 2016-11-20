@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
+    <Content Include="scripts\components\BroadPhaseCollidable.js" />
     <Content Include="scripts\components\KeyboardController.js" />
     <Content Include="scripts\components\KeyboardInput.js" />
     <Content Include="scripts\components\ImageTexture.js" />
@@ -114,7 +115,9 @@
     <Content Include="scripts\Entity.js" />
     <Content Include="scripts\Game.js" />
     <Content Include="scripts\main.js" />
+    <Content Include="scripts\systems\BroadPhaseCollisionSystem.js" />
     <Content Include="scripts\systems\ControllerSystem.js" />
+    <Content Include="scripts\systems\renderers\ImageRenderer.js" />
     <Content Include="scripts\systems\renderers\ShapeRenderer.js" />
     <Content Include="scripts\systems\KeyboardInputSystem.js" />
     <Content Include="scripts\systems\RenderSystem.js" />

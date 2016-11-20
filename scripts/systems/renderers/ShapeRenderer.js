@@ -18,6 +18,7 @@
     }
 
     createCachedVersion(entity) {
+        var document = this.document;
         var canvas = document.createElement("canvas");
 
         var size = entity.getComponent("size");

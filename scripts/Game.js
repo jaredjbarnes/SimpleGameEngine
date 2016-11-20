@@ -1,6 +1,11 @@
 ﻿class Game {
-    constructor() {
+    constructor(size) {
         var self = this;
+
+        size = size || {
+            width: 1000,
+            height: 1000
+        };
 
         this._entityDelegate = {
             componentAdded: function () {
@@ -20,6 +25,8 @@
         this._timespans = [];
         this._systems = [];
         this._entities = [];
+        this._entitiesById = {};
+        this.size = size;
 
     }
 
@@ -69,9 +76,11 @@
 
     addEntity(entity) {
         var entities = this._entities;
+        var entitiesById = this._entitiesById;
         var index = entities.indexOf(entity);
 
         if (index === -1) {
+            entitiesById[entity.id] = entity;
             entities.push(entity);
             entity.setDelegate(this._entityDelegate);
             this.notifySystems("entityAdded", [entity]);
@@ -81,9 +90,11 @@
 
     removeEntity(entity) {
         var entities = this._entities;
+        var entitiesById = this._entitiesById;
         var index = entities.indexOf(entity);
 
         if (index === -1) {
+            delete entitiesById[entity.id];
             entities.splice(index, 1);
             entity.setDelegate(null);
             this.notifySystems("entityRemoved", [entity]);
@@ -127,6 +138,14 @@
 
     getEntities() {
         return this._entities.slice(0);
+    }
+
+    getEntitiesByFilter(filter) {
+        return this._entities.filter(filter);
+    }
+
+    getEntityById(id) {
+        return this._entitiesById[id] || null;
     }
 
 }

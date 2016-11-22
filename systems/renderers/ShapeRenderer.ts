@@ -74,7 +74,7 @@
         return canvas;
     }
 
-    draw(entity, canvas) {
+    draw(entity, canvas, cameraPosition) {
         if (canvas == null) {
             return;
         }
@@ -84,14 +84,14 @@
         var context = canvas.getContext("2d");
         var right = canvas.width;
         var bottom = canvas.height;
-        var x = position.x;
-        var y = position.y;
+        var x = position.x - cameraPosition.x;
+        var y = position.y - cameraPosition.y;
         var sourceX = 0;
         var sourceY = 0;
         var width = entityCanvas.width;
         var height = entityCanvas.height;
-        var entityRight = position.x + entityCanvas.width;
-        var entityBottom = position.y + entityCanvas.height;
+        var entityRight = x + entityCanvas.width;
+        var entityBottom = y + entityCanvas.height;
         var difference;
 
         if (entityRight > right) {
@@ -129,7 +129,7 @@
             Math.floor(y),
             Math.floor(width),
             Math.floor(height)
-            );
+        );
 
     }
 }

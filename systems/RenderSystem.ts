@@ -2,10 +2,17 @@
 import Entity = require("./../Entity");
 
 class RenderSystem {
-    private _renderers: { [id: string]: { draw: (entity: Entity, canvas: HTMLCanvasElement) => void } };
+    private _renderers: { [id: string]: { draw: (entity: Entity, canvas: HTMLCanvasElement, cameraPosition: { x: number, y: number }) => void } };
     private _game: Game;
-    private _entities: Array<Entity>;
+    private _dynamicEntities: Array<Entity>;
+    private _staticEntities: Array<Entity>;
     private _dependencies: Array<string>;
+    private _camera: Entity;
+    private _cameraPosition: { x: number; y: number; };
+    private _cameraSize: { width: number; height: number; };
+    private _cameraDependencies: Array<string>;
+    private _staticCanvas: HTMLCanvasElement;
+    private _staticContext: CanvasRenderingContext2D;
 
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
@@ -13,8 +20,16 @@ class RenderSystem {
     constructor(canvas: HTMLCanvasElement) {
         this._renderers = {};
         this._game = null;
-        this._entities = [];
+        this._dynamicEntities = [];
+        this._staticEntities = [];
         this._dependencies = ["position", "size"];
+        this._cameraDependencies = ["camera", "position", "size"];
+        this._camera = null;
+        this._cameraPosition = null;
+        this._cameraSize = null;
+        this._staticCanvas = document.createElement("canvas");
+        this._staticContext = this._staticCanvas.getContext("2d");
+
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
     }
@@ -85,7 +100,7 @@ class RenderSystem {
 
     deactivated() {
         this._game = null;
-        this._entities = [];
+        this._dynamicEntities = [];
         this.canvas = null;
         this.context = null;
     }
@@ -94,30 +109,35 @@ class RenderSystem {
         var rendererTypes = Object.keys(this._renderers);
         var renderers = this._renderers;
         var canvas = this.canvas;
+        var cameraPosition = this._cameraPosition;
+
+        if (cameraPosition == null) {
+            return;
+        }
 
         this.context.clearRect(0, 0, canvas.width, canvas.height);
 
-        this._entities.forEach(function (entity) {
+        this._dynamicEntities.forEach(function (entity) {
             rendererTypes.forEach(function (type) {
                 var component = entity.getComponent(type);
                 if (component != null) {
-                    renderers[type].draw(entity, canvas);
+                    renderers[type].draw(entity, canvas, cameraPosition);
                 }
             });
         });
     }
 
     entityAdded(entity) {
-        var index = this._entities.indexOf(entity);
+        var index = this._dynamicEntities.indexOf(entity);
 
         if (index === -1 && entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
-            this._entities.push(entity);
+            this._dynamicEntities.push(entity);
             this._notifyRenderers("entityAdded", [entity]);
         }
     }
 
     entityRemoved(entity) {
-        var entities = this._entities;
+        var entities = this._dynamicEntities;
 
         var index = entities.indexOf(entity);
 
@@ -137,6 +157,43 @@ class RenderSystem {
         if (Object.keys(this._renderers).indexOf(component.type) > -1) {
             this.entityRemoved(entity);
         }
+    }
+
+    get camera() {
+        return this._camera;
+    }
+
+    set camera(entity: Entity) {
+        if (entity.hasComponents(this._cameraDependencies)) {
+            this._camera = entity;
+            this._cameraPosition = entity.getComponent("position");
+            this._cameraSize = entity.getComponent("size");
+        }
+    }
+
+    setCameraByName(name: string) {
+        var cameraDependencies = this._cameraDependencies;
+
+        var cameras = this._game.getEntitiesByFilter(function (entity) {
+            var isCamera = entity.hasComponents(cameraDependencies);
+            if (isCamera) {
+                var camera = entity.getComponent("camera");
+                if (camera.name === name) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        if (cameras.length > 1) {
+            throw new Error("There multiple cameras with that name.");
+        }
+
+        if (cameras.length === 0) {
+            throw new Error("Unable to find a camera with that name.");
+        }
+
+        this.camera = cameras[0];
     }
 }
 

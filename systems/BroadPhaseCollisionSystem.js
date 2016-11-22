@@ -24,7 +24,7 @@ define(["require", "exports"], function (require, exports) {
             this._cameraDependencies = ["position", "size", "camera"];
             this._entities = [];
             this._game = null;
-            this._cellSize = cellSize || 100;
+            this._cellSize = cellSize || 200;
             this._currentTimestamp = 0;
             this._grid = [[]];
             this._detectionAreaPosition = null;
@@ -63,6 +63,7 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         BroadPhaseCollisionSystem.prototype.update = function () {
+            this._currentTimestamp = this._game.getTime();
             this.sweepAndPrune();
             this.assignTimestamps(this.queryForCollisions());
             this.cleanCollisions();
@@ -79,7 +80,7 @@ define(["require", "exports"], function (require, exports) {
                     if (collision.timestamp !== currentTimestamp) {
                         collision.endTimestamp = currentTimestamp;
                         // Allow for some time to pass, before removing, because its likely they'll hit again.
-                        if (this.currentTimestamp - collision.timestamp > 3000) {
+                        if (currentTimestamp - collision.timestamp > 3000) {
                             delete collisions[key];
                         }
                     }

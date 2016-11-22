@@ -1,7 +1,8 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    var defaultZIndex = { value: 0 };
     var RenderSystem = (function () {
-        function RenderSystem(canvas) {
+        function RenderSystem(canvas, sort) {
             this._renderers = {};
             this._game = null;
             this._dynamicEntities = [];
@@ -11,8 +12,8 @@ define(["require", "exports"], function (require, exports) {
             this._camera = null;
             this._cameraPosition = null;
             this._cameraSize = null;
-            this._staticCanvas = document.createElement("canvas");
-            this._staticContext = this._staticCanvas.getContext("2d");
+            this._staticZIndexes = [];
+            this._sort = sort || null;
             this.canvas = canvas;
             this.context = canvas.getContext("2d");
         }
@@ -77,10 +78,30 @@ define(["require", "exports"], function (require, exports) {
             var renderers = this._renderers;
             var canvas = this.canvas;
             var cameraPosition = this._cameraPosition;
+            var sort = this._sort;
+            var dynamicEntities = this._dynamicEntities;
             if (cameraPosition == null) {
                 return;
             }
             this.context.clearRect(0, 0, canvas.width, canvas.height);
+            this._dynamicEntities.sort(function (entityA, entityB) {
+                var zIndexA = entityA.getComponent("z-index");
+                var zIndexB = entityB.getComponent("z-index");
+                zIndexA = zIndexA || defaultZIndex;
+                zIndexB = zIndexB || defaultZIndex;
+                if (zIndexA.value < zIndexB.value) {
+                    return -1;
+                }
+                else if (zIndexA.value > zIndexB.value) {
+                    return 1;
+                }
+                else {
+                    if (sort != null) {
+                        return sort(entityA, entityB);
+                    }
+                    return 0;
+                }
+            });
             this._dynamicEntities.forEach(function (entity) {
                 rendererTypes.forEach(function (type) {
                     var component = entity.getComponent(type);
@@ -124,6 +145,9 @@ define(["require", "exports"], function (require, exports) {
                     this._camera = entity;
                     this._cameraPosition = entity.getComponent("position");
                     this._cameraSize = entity.getComponent("size");
+                    // Adjust the cameras size to that of the canvas.
+                    this._cameraSize.width = this.canvas.width;
+                    this._cameraSize.height = this.canvas.height;
                 }
             },
             enumerable: true,

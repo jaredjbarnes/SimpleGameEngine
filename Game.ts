@@ -92,9 +92,9 @@ class Game {
     addEntity(entity) {
         var entities = this._entities;
         var entitiesById = this._entitiesById;
-        var index = entities.indexOf(entity);
+        var registeredEntity = entitiesById[entity.id];
 
-        if (index === -1) {
+        if (registeredEntity == null) {
             entitiesById[entity.id] = entity;
             entities.push(entity);
             entity.setDelegate(this._entityDelegate);
@@ -106,10 +106,12 @@ class Game {
     removeEntity(entity) {
         var entities = this._entities;
         var entitiesById = this._entitiesById;
-        var index = entities.indexOf(entity);
+        var registeredEntity = entitiesById[entity.id];
+        var index;
 
-        if (index === -1) {
+        if (registeredEntity != null) {
             delete entitiesById[entity.id];
+            index = entities.indexOf(entity);
             entities.splice(index, 1);
             entity.setDelegate(null);
             this.notifySystems("entityRemoved", [entity]);

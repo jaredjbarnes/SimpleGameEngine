@@ -3,17 +3,18 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/KeyboardInput", "./../components/KeyboardController", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, KeyboardInput, KeyboardController, Collidable) {
+define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, Collidable) {
     "use strict";
-    var Star = (function (_super) {
-        __extends(Star, _super);
-        function Star(config) {
+    var StaticStar = (function (_super) {
+        __extends(StaticStar, _super);
+        function StaticStar(config) {
             _super.call(this);
-            var spikes = config.spikes;
+            config = config || {};
+            var spikes = config.spikes || 5;
             var fillColor = config.fillColor || {
-                red: 0,
-                green: 0,
-                blue: 0,
+                red: 70,
+                green: 180,
+                blue: 70,
                 alpha: 1
             };
             var border = config.border || {
@@ -56,20 +57,16 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             shape.border = border;
             var position = new Position();
             var size = new Size();
-            var keyboardInput = new KeyboardInput();
-            var keyboardController = new KeyboardController();
             var collidable = new Collidable();
             size.width = 100;
             size.height = 100;
             this.addComponent(shape);
             this.addComponent(position);
             this.addComponent(size);
-            this.addComponent(keyboardInput);
-            this.addComponent(keyboardController);
             this.addComponent(collidable);
         }
-        return Star;
+        return StaticStar;
     }(Entity));
-    return Star;
+    return StaticStar;
 });
-//# sourceMappingURL=Star.js.map
+//# sourceMappingURL=StaticStar.js.map

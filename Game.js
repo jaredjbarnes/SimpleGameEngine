@@ -66,8 +66,8 @@ define(["require", "exports"], function (require, exports) {
         Game.prototype.addEntity = function (entity) {
             var entities = this._entities;
             var entitiesById = this._entitiesById;
-            var index = entities.indexOf(entity);
-            if (index === -1) {
+            var registeredEntity = entitiesById[entity.id];
+            if (registeredEntity == null) {
                 entitiesById[entity.id] = entity;
                 entities.push(entity);
                 entity.setDelegate(this._entityDelegate);
@@ -77,9 +77,11 @@ define(["require", "exports"], function (require, exports) {
         Game.prototype.removeEntity = function (entity) {
             var entities = this._entities;
             var entitiesById = this._entitiesById;
-            var index = entities.indexOf(entity);
-            if (index === -1) {
+            var registeredEntity = entitiesById[entity.id];
+            var index;
+            if (registeredEntity != null) {
                 delete entitiesById[entity.id];
+                index = entities.indexOf(entity);
                 entities.splice(index, 1);
                 entity.setDelegate(null);
                 this.notifySystems("entityRemoved", [entity]);

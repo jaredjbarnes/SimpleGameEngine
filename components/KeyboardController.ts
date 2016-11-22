@@ -5,3 +5,5 @@
         this.type = "keyboard-controller";
     }
 }
+
+export = KeyboardController;

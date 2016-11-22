@@ -34,13 +34,13 @@ define(["require", "exports"], function (require, exports) {
             var self = this;
             this._game = game;
             game.getEntities().forEach(function (entity) {
-                self.entitydded(entity);
+                self.entityAdded(entity);
             });
         };
         BroadPhaseCollisionSystem.prototype.deactivated = function () {
             this._game = null;
         };
-        BroadPhaseCollisionSystem.prototype.entitydded = function (entity) {
+        BroadPhaseCollisionSystem.prototype.entityAdded = function (entity) {
             if (entity.hasComponents(this._dependencies)) {
                 this._entities.push(this._createBroadPhaseEntity(entity));
             }
@@ -54,7 +54,7 @@ define(["require", "exports"], function (require, exports) {
         };
         BroadPhaseCollisionSystem.prototype.componentAdded = function (entity, component) {
             if (entity.hasComponents(this._dependencies)) {
-                this.entitydded(entity);
+                this.entityAdded(entity);
             }
         };
         BroadPhaseCollisionSystem.prototype.componentRemoved = function (entity, component) {
@@ -70,13 +70,14 @@ define(["require", "exports"], function (require, exports) {
         // Custom methods.
         BroadPhaseCollisionSystem.prototype.cleanCollisions = function () {
             var entities = this._entities;
+            var currentTimestamp = this._currentTimestamp;
             entities.forEach(function (entity) {
                 var collisions = entity.collidable.activeCollisions;
                 Object.keys(collisions).forEach(function (key) {
                     var collision = collisions[key];
                     // We know the collision ended if the timestamp didn't update to our current timestamp.
-                    if (collision.timestamp !== this.currentTimestamp) {
-                        collision.endTimestamp = this.currentTimestamp;
+                    if (collision.timestamp !== currentTimestamp) {
+                        collision.endTimestamp = currentTimestamp;
                         // Allow for some time to pass, before removing, because its likely they'll hit again.
                         if (this.currentTimestamp - collision.timestamp > 3000) {
                             delete collisions[key];
@@ -86,6 +87,7 @@ define(["require", "exports"], function (require, exports) {
             });
         };
         BroadPhaseCollisionSystem.prototype.assignTimestamps = function (pairs) {
+            var currentTimestamp = this._currentTimestamp;
             pairs.forEach(function (pair, index) {
                 var entityA = pair[0];
                 var entityB = pair[1];
@@ -95,26 +97,26 @@ define(["require", "exports"], function (require, exports) {
                 var collisionDataB = collidableB.activeCollisions[entityA.id];
                 if (collisionDataA == null) {
                     collisionDataA = new Collision();
-                    collisionDataA.startTimestamp = this.currentTimestamp;
-                    collisionDataA.timestamp = this.currentTimestamp;
+                    collisionDataA.startTimestamp = currentTimestamp;
+                    collisionDataA.timestamp = currentTimestamp;
                     collisionDataA.endTimestamp = null;
                     collisionDataA.entityId = entityB.id;
                     collidableA.activeCollisions[entityB.id] = collisionDataA;
                 }
                 else {
-                    collisionDataA.timestamp = this.currentTimestamp;
+                    collisionDataA.timestamp = currentTimestamp;
                     collisionDataA.endTimestamp = null;
                 }
                 if (collisionDataB == null) {
                     collisionDataB = new Collision();
-                    collisionDataB.startTimestamp = this.currentTimestamp;
-                    collisionDataB.timestamp = this.currentTimestamp;
+                    collisionDataB.startTimestamp = currentTimestamp;
+                    collisionDataB.timestamp = currentTimestamp;
                     collisionDataB.endTimestamp = null;
-                    collisionDataB.entity = this.broadPhaseToEntity.get(entityA);
+                    collisionDataB.entityId = entityA.id;
                     collidableB.activeCollisions[entityA.id] = collisionDataB;
                 }
                 else {
-                    collisionDataB.timestamp = this.currentTimestamp;
+                    collisionDataB.timestamp = currentTimestamp;
                     collisionDataB.endTimestamp = null;
                 }
             });
@@ -149,7 +151,7 @@ define(["require", "exports"], function (require, exports) {
                             collidableA = entityA.collidable;
                             collidableB = entityB.collidable;
                             // We don't need to check static or disabled objects to other static objects.
-                            if ((collidableA.isStatic && collidableB.isStatic) || !collidableA.enabled || !collidableB.enabled) {
+                            if ((collidableA.isStatic && collidableB.isStatic) || !collidableA.isEnabled || !collidableB.isEnabled) {
                                 continue;
                             }
                             positionA = entityA.position;
@@ -177,9 +179,10 @@ define(["require", "exports"], function (require, exports) {
             var boundsBottom = this._detectionAreaPosition.y + this._detectionAreaSize.height;
             var boundsLeft = this._detectionAreaPosition.x;
             var boundsRight = this._detectionAreaPosition.x + this._detectionAreaSize.width;
+            var cellSize = this._cellSize;
             // construct grid
             // NOTE: this is a purposeful use of the Array() constructor 
-            this._grid = Array(gridWidth);
+            var grid = this._grid = Array(gridWidth);
             // insert all entities into grid
             entities.forEach(function (entity) {
                 var x;
@@ -198,18 +201,18 @@ define(["require", "exports"], function (require, exports) {
                     return;
                 }
                 // Find the cells that the entity overlaps.
-                var left = Math.floor((position.x - this.x) / this._cellSize);
-                var right = Math.floor((position.x + size.width - this.x) / this._cellSize);
-                var top = Math.floor((position.y - this.y) / this._cellSize);
-                var bottom = Math.floor((position.y + size.height - this.y) / this._cellSize);
+                var left = Math.floor((position.x - boundsLeft) / cellSize);
+                var right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
+                var top = Math.floor((position.y - boundsTop) / cellSize);
+                var bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
                 // Insert entity into each cell it overlaps
                 for (x = left; x <= right; x++) {
                     // Make sure a column exists, initialize if not to grid height length
                     // NOTE: again, a purposeful use of the Array constructor 
-                    if (!this.grid[x]) {
-                        this.grid[x] = Array(gridHeight);
+                    if (!grid[x]) {
+                        grid[x] = Array(gridHeight);
                     }
-                    gridColumn = this.grid[x];
+                    gridColumn = grid[x];
                     // Loop through each cell in this column
                     for (y = top; y <= bottom; y++) {
                         // Ensure we have a bucket to put entities into for this cell

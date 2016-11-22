@@ -6,16 +6,18 @@ import KeyboardInput = require("./../components/KeyboardInput");
 import KeyboardController = require("./../components/KeyboardController");
 import Collidable = require("./../components/Collidable");
 
-class Star extends Entity {
-    constructor(config) {
+class StaticStar extends Entity {
+    constructor(config?) {
         super();
 
-        var spikes = config.spikes;
+        config = config || {};
+
+        var spikes = config.spikes || 5;
 
         var fillColor = config.fillColor || {
-            red: 0,
-            green: 0,
-            blue: 0,
+            red: 70,
+            green: 180,
+            blue: 70,
             alpha: 1
         };
 
@@ -70,8 +72,6 @@ class Star extends Entity {
 
         var position = new Position();
         var size = new Size();
-        var keyboardInput = new KeyboardInput();
-        var keyboardController = new KeyboardController();
         var collidable = new Collidable();
 
         size.width = 100;
@@ -80,10 +80,8 @@ class Star extends Entity {
         this.addComponent(shape);
         this.addComponent(position);
         this.addComponent(size);
-        this.addComponent(keyboardInput);
-        this.addComponent(keyboardController);
         this.addComponent(collidable);
     }
 }
 
-export = Star;
+export = StaticStar;

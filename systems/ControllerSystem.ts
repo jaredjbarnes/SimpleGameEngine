@@ -1,5 +1,7 @@
 ﻿import Game = require("./../Game");
 import Entity = require("./../Entity");
+import Position = require("./../components/Position");
+import KeyboardInput = require("./../components/KeyboardInput");
 
 class ControllerSystem {
     private _dependencies: Array<string>;
@@ -56,8 +58,8 @@ class ControllerSystem {
     update() {
 
         this._entities.forEach(function (entity) {
-            var position = entity.getComponent("position");
-            var keyboardInput = entity.getComponent("keyboard-input");
+            var position = entity.getComponent<Position>("position");
+            var keyboardInput = entity.getComponent<KeyboardInput>("keyboard-input");
 
             if (position != null && keyboardInput != null) {
 

@@ -18,7 +18,7 @@ var createGuid = function () {
 class Entity {
     private _delegate: any;
     private _components: any;
-    private id: string;
+    id: string;
 
     constructor() {
         this._delegate = null;
@@ -72,8 +72,8 @@ class Entity {
 
     }
 
-    getComponent(type) {
-        return this._components[type] || null;
+    getComponent<T>(type: string) {
+        return <T>this._components[type] || null;
     }
 
     hasComponents(componentTypes) {

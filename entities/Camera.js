@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define(["require", "exports", "./../Entity", "./../components/Camera", "./../components/Size", "./../components/Position"], function (require, exports, Entity, CameraComponent, Size, Position) {
+define(["require", "exports", "./../Entity", "./../components/Camera", "./../components/Size", "./../components/Position", "./../components/Collidable"], function (require, exports, Entity, CameraComponent, Size, Position, Collidable) {
     "use strict";
     var Camera = (function (_super) {
         __extends(Camera, _super);
@@ -13,9 +13,11 @@ define(["require", "exports", "./../Entity", "./../components/Camera", "./../com
             camera.name = name || null;
             var position = new Position();
             var size = new Size();
+            var collidable = new Collidable();
             this.addComponent(camera);
             this.addComponent(position);
             this.addComponent(size);
+            this.addComponent(collidable);
         }
         return Camera;
     }(Entity));

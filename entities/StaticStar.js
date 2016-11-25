@@ -56,8 +56,10 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             shape.fillColor = fillColor;
             shape.border = border;
             var position = new Position();
+            position.isStatic = true;
             var size = new Size();
             var collidable = new Collidable();
+            collidable.isStatic = true;
             size.width = 100;
             size.height = 100;
             this.addComponent(shape);

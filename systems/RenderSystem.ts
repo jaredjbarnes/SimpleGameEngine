@@ -240,6 +240,8 @@ class RenderSystem {
         var canvasRight = canvas.width;
         var canvasBottom = canvas.height;
         var difference;
+        var renderers = this._renderers;
+        var rendererTypes = Object.keys(renderers);
 
         if (entityRight > canvasRight) {
             difference = entityRight - canvasRight;
@@ -284,54 +286,68 @@ class RenderSystem {
         entities.sort(this._defaultSort);
 
         context.clearRect(x, y, width, height);
-        entities.forEach(function (entity) {
+        entities.forEach(function (otherEntity) {
 
+            var otherPosition = otherEntity.getComponent<Position>("position");
+            var otherSize = otherEntity.getComponent<Size>("size");
+
+            var top = Math.max(y, otherPosition.y);
+            var left = Math.max(x, otherPosition.x);
+            var right = Math.min(x + width, otherPosition.x + otherSize.width);
+            var bottom = Math.min(y + height, otherPosition.y + otherSize.height);
+
+            var drawPosition = {
+                x: left,
+                y: top
+            };
+
+            var drawSize = {
+                width: right - left,
+                height: bottom - top
+            };
+
+            var drawOffset = {
+                x: left - otherPosition.x,
+                y: top - otherPosition.y
+            };
+
+            rendererTypes.forEach(function (type) {
+                var component = entity.getComponent(type);
+                if (component != null) {
+                    renderers[type].draw(
+                        otherEntity,
+                        canvas,
+                        drawPosition,
+                        drawSize,
+                        drawOffset
+                    );
+                }
+            });
         });
     }
 
     redrawEntityOnCamera(entity: Entity, canvas: HTMLCanvasElement) {
         var self = this;
-        var size = entity.getComponent<Size>("size");
-        var position = entity.getComponent<Position>("position");
-        var collidable = entity.getComponent<Collidable>("collidable");
-        var zIndex = entity.getComponent<ZIndex>("z-index");
-        var layer = zIndex == null ? 0 : zIndex.value;
-        var cameraPosition = this._cameraPosition;
-        var cameraSize = this._cameraSize;
+
         var game = this._game;
-        var activeCollisions = collidable.activeCollisions;
         var context = canvas.getContext("2d");
-        var x = position.x - cameraPosition.x;
-        var y = position.y - cameraPosition.y;
-        var width = size.width;
-        var height = size.height;
-        var entityRight = x + width;
-        var entityBottom = y + height;
-        var canvasRight = canvas.width;
-        var canvasBottom = canvas.height;
-        var difference;
         var renderers = this._renderers;
         var rendererTypes = Object.keys(renderers);
 
-        if (entityRight > canvasRight) {
-            difference = entityRight - canvasRight;
-            width -= difference;
-        }
+        var size = entity.getComponent<Size>("size");
+        var position = entity.getComponent<Position>("position");
+        var collidable = entity.getComponent<Collidable>("collidable");
 
-        if (entityBottom > canvasBottom) {
-            difference = entityBottom - canvasBottom;
-            height -= difference;
-        }
+        var cameraPosition = this._cameraPosition;
+        var cameraSize = this._cameraSize;
+        var activeCollisions = collidable.activeCollisions;
 
-        if (position.x < 0) {
-            x = 0;
-            width += position.x;
-        }
-
-        if (position.y < 0) {
-            y = 0;
-            height += position.y;
-        }
+        var top = Math.max(position.y, cameraPosition.y);
+        var left = Math.max(position.x, cameraPosition.x);
+        var bottom = Math.min(position.y + size.height, cameraPosition.y + cameraSize.height);
+        var right = Math.min(position.x + size.width, cameraPosition.x + cameraSize.width);
+        var width = right - left;
+        var height = bottom - top;
 
         if (width <= 0 || height <= 0) {
             return;
@@ -349,9 +365,53 @@ class RenderSystem {
         entities.push(entity);
         entities.sort(this._zIndexSort);
 
-        context.clearRect(x, y, width, height);
-        entities.forEach(function (entity) {
+        context.clearRect(left - cameraPosition.x, top - cameraPosition.y, width, height);
+        entities.forEach(function (otherEntity) {
+            var otherPosition = otherEntity.getComponent<Position>("position");
+            var otherSize = otherEntity.getComponent<Size>("size");
 
+            var otherTop = Math.max(otherPosition.y, position.y, cameraPosition.y);
+            var otherLeft = Math.max(otherPosition.x, position.x, cameraPosition.x);
+            var otherBottom = Math.min(otherPosition.y + otherSize.height, position.y + size.height, cameraPosition.y + cameraSize.height);
+            var otherRight = Math.min(otherPosition.x + otherSize.width, position.x + size.width, cameraPosition.x + cameraSize.width);
+            var otherWidth = otherRight - otherLeft;
+            var otherHeight = otherBottom - otherTop;
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (otherWidth <= 0 || otherHeight <= 0) {
+                return;
+            }
+
+            if (otherPosition.x < position.x) {
+                offsetX = otherSize.width - otherWidth;
+            }
+
+            if (otherPosition.y < position.y) {
+                offsetY = otherSize.height - otherHeight;
+            }
+
+            rendererTypes.forEach(function (type) {
+                var component = entity.getComponent(type);
+                if (component != null) {
+                    renderers[type].draw(
+                        otherEntity,
+                        canvas,
+                        {
+                            x: Math.floor(otherLeft - cameraPosition.x),
+                            y: Math.floor(otherTop - cameraPosition.y)
+                        },
+                        {
+                            width: Math.floor(otherWidth),
+                            height: Math.floor(otherHeight)
+                        },
+                        {
+                            x: Math.floor(offsetX),
+                            y: Math.floor(offsetY)
+                        }
+                    );
+                }
+            });
         });
     }
 

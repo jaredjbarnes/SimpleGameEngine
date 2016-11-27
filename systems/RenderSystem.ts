@@ -31,6 +31,7 @@ class RenderSystem {
     private _sort: (entityA, entityB) => number;
     private _zIndexSort: (entityA: Entity, entityB: Entity) => number;
     private _defaultSort: (entityA: Entity, entityB: Entity) => number;
+    private _entitiesToBeRedrawn: Array<Entity>;
 
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
@@ -45,6 +46,7 @@ class RenderSystem {
         this._cameraSize = null;
         this._staticCacheByZIndex = {};
         this._entitiesByZIndex = {};
+        this._entitiesToBeRedrawn = [];
         this._sort = sort || null;
 
         var defaultSort = this._defaultSort = function (entityA, entityB) {
@@ -173,6 +175,7 @@ class RenderSystem {
             return;
         }
 
+        this.updateCaches();
         this.context.clearRect(0, 0, canvas.width, canvas.height);
 
         // This is how we optimize rendering. We use the collision system with the camera entity.
@@ -210,7 +213,8 @@ class RenderSystem {
 
     entityAdded(entity: Entity) {
         if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
-            this.cacheEntity(entity);
+            this.registerEntity(entity);
+            this._entitiesToBeRedrawn.push(entity);
         }
     }
 
@@ -228,9 +232,25 @@ class RenderSystem {
 
     }
 
-    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement, drawEntity: boolean = true) {
+    updateCaches() {
         var self = this;
 
+        this._entitiesToBeRedrawn.forEach(function (entity) {
+            var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+            var canvas = self.getCanvasByZIndex(zIndex.value);
+
+            self.redrawEntityOnCanvas(entity, canvas);
+        });
+
+        this._entitiesToBeRedrawn.length = 0;
+    }
+
+    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement, drawEntity: boolean = true) {
+        if (canvas == null) {
+            return;
+        }
+
+        var self = this;
         var game = this._game;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;
@@ -339,8 +359,11 @@ class RenderSystem {
     }
 
     drawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
-        var self = this;
+        if (canvas == null) {
+            return;
+        }
 
+        var self = this;
         var game = this._game;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;
@@ -397,8 +420,11 @@ class RenderSystem {
 
 
     drawEntityOnCamera(entity: Entity, canvas: HTMLCanvasElement) {
-        var self = this;
+        if (canvas == null) {
+            return;
+        }
 
+        var self = this;
         var game = this._game;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;

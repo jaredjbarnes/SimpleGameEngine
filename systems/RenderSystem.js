@@ -13,6 +13,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             this._cameraSize = null;
             this._staticCacheByZIndex = {};
             this._entitiesByZIndex = {};
+            this._entitiesToBeRedrawn = [];
             this._sort = sort || null;
             var defaultSort = this._defaultSort = function (entityA, entityB) {
                 var value = 0;
@@ -117,6 +118,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             if (cameraPosition == null || game == null) {
                 return;
             }
+            this.updateCaches();
             this.context.clearRect(0, 0, canvas.width, canvas.height);
             // This is how we optimize rendering. We use the collision system with the camera entity.
             var activeCollisions = this.camera.getComponent("collidable").activeCollisions;
@@ -137,7 +139,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
         };
         RenderSystem.prototype.entityAdded = function (entity) {
             if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
-                this.cacheEntity(entity);
+                this.registerEntity(entity);
+                this._entitiesToBeRedrawn.push(entity);
             }
         };
         RenderSystem.prototype.entityRemoved = function (entity) {
@@ -149,8 +152,20 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
         };
         RenderSystem.prototype.componentRemoved = function (entity, component) {
         };
+        RenderSystem.prototype.updateCaches = function () {
+            var self = this;
+            this._entitiesToBeRedrawn.forEach(function (entity) {
+                var zIndex = entity.getComponent("z-index") || defaultZIndex;
+                var canvas = self.getCanvasByZIndex(zIndex.value);
+                self.redrawEntityOnCanvas(entity, canvas);
+            });
+            this._entitiesToBeRedrawn.length = 0;
+        };
         RenderSystem.prototype.redrawEntityOnCanvas = function (entity, canvas, drawEntity) {
             if (drawEntity === void 0) { drawEntity = true; }
+            if (canvas == null) {
+                return;
+            }
             var self = this;
             var game = this._game;
             var context = canvas.getContext("2d");
@@ -236,6 +251,9 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             });
         };
         RenderSystem.prototype.drawEntityOnCanvas = function (entity, canvas) {
+            if (canvas == null) {
+                return;
+            }
             var self = this;
             var game = this._game;
             var context = canvas.getContext("2d");
@@ -279,6 +297,9 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             });
         };
         RenderSystem.prototype.drawEntityOnCamera = function (entity, canvas) {
+            if (canvas == null) {
+                return;
+            }
             var self = this;
             var game = this._game;
             var context = canvas.getContext("2d");

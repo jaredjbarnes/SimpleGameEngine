@@ -130,6 +130,8 @@ class Game {
             this.isRunning = true;
             this._startTime = performance.now();
             this._loop();
+
+            this.notifySystems("onPlay");
         }
     }
 
@@ -138,6 +140,8 @@ class Game {
             this.isRunning = false;
             this._timespans.push(performance.now() - this._startTime);
             cancelAnimationFrame(this._animationFrame);
+
+            this.notifySystems("onPause");
         }
     }
 

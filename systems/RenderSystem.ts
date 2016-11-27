@@ -46,6 +46,7 @@ class RenderSystem {
         this._staticCacheByZIndex = {};
         this._entitiesByZIndex = {};
         this._sort = sort || null;
+
         var defaultSort = this._defaultSort = function (entityA, entityB) {
             var value = 0;
 
@@ -145,7 +146,7 @@ class RenderSystem {
         this._game = game;
 
         game.getEntities().forEach(function (entity) {
-            self.cacheEntity(entity);
+            self.registerEntity(entity);
         });
 
         Object.keys(this._entitiesByZIndex).forEach(function (key) {
@@ -210,7 +211,7 @@ class RenderSystem {
     entityAdded(entity: Entity) {
         if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
             this.cacheEntity(entity);
-        }
+        } 
     }
 
     entityRemoved(entity: Entity) {
@@ -225,7 +226,7 @@ class RenderSystem {
 
     }
 
-    drawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
+    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
         var self = this;
 
         var game = this._game;
@@ -245,17 +246,17 @@ class RenderSystem {
         var right = Math.min(position.x + size.width, canvas.width);
         var width = right - left;
         var height = bottom - top;
+        var entities;
 
         if (width <= 0 || height <= 0) {
             return;
         }
-
-        var entities = Object.keys(activeCollisions).filter(function (key) {
+        entities = Object.keys(activeCollisions).filter(function (key) {
             var collision = activeCollisions[key];
             return collision.endTimestamp == null;
         }).map(function (id) {
             return game.getEntityById(id);
-        }).filter(function (entity) {
+        }).filter(function (entity: Entity) {
             if (entity == null) {
                 return false;
             }
@@ -274,7 +275,8 @@ class RenderSystem {
         entities.sort(this._zIndexSort);
 
         context.clearRect(left, top, width, height);
-        entities.forEach(function (otherEntity) {
+
+        entities.forEach(function (otherEntity: Entity) {
             var otherPosition = otherEntity.getComponent<Position>("position");
             var otherSize = otherEntity.getComponent<Size>("size");
 
@@ -330,6 +332,64 @@ class RenderSystem {
             });
         });
     }
+
+    drawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
+        var self = this;
+
+        var game = this._game;
+        var context = canvas.getContext("2d");
+        var renderers = this._renderers;
+        var rendererTypes = Object.keys(renderers);
+
+        var size = entity.getComponent<Size>("size");
+        var position = entity.getComponent<Position>("position");
+        var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+
+        var top = Math.max(position.y, 0);
+        var left = Math.max(position.x, 0);
+        var bottom = Math.min(position.y + size.height, canvas.height);
+        var right = Math.min(position.x + size.width, canvas.width);
+        var width = right - left;
+        var height = bottom - top;
+        var offsetX = 0;
+        var offsetY = 0;
+        var entities;
+
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        if (position.x < 0) {
+            offsetX = 0 - position.x;
+        }
+
+        if (position.y < 0) {
+            offsetY = 0 - position.x;
+        }
+
+        rendererTypes.forEach(function (type) {
+            var component = entity.getComponent(type);
+            if (component != null) {
+                renderers[type].draw(
+                    entity,
+                    canvas,
+                    {
+                        x: Math.floor(left),
+                        y: Math.floor(top)
+                    },
+                    {
+                        width: Math.floor(width),
+                        height: Math.floor(height)
+                    },
+                    {
+                        x: Math.floor(offsetX),
+                        y: Math.floor(offsetY)
+                    }
+                );
+            }
+        });
+    }
+
 
     drawEntityOnCamera(entity: Entity, canvas: HTMLCanvasElement) {
         var self = this;
@@ -472,11 +532,10 @@ class RenderSystem {
         });
     }
 
-    cacheEntity(entity: Entity) {
+    registerEntity(entity: Entity) {
+        var entities;
         var position = entity.getComponent<Position>("position");
         var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
-        var entities;
-        var canvas = this.getCanvasByZIndex(zIndex.value);
 
         if (position.isStatic) {
             entities = this._entitiesByZIndex[zIndex.value];
@@ -487,8 +546,15 @@ class RenderSystem {
 
             entities.push(entity);
 
-            this.drawEntityOnCanvas(entity, canvas);
         }
+    }
+
+    cacheEntity(entity: Entity) {
+        var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+        var canvas = this.getCanvasByZIndex(zIndex.value);
+
+        this.registerEntity(entity);
+        this.redrawEntityOnCanvas(entity, canvas);
     }
 
     get camera() {

@@ -97,6 +97,7 @@ define(["require", "exports"], function (require, exports) {
                 this.isRunning = true;
                 this._startTime = performance.now();
                 this._loop();
+                this.notifySystems("onPlay");
             }
         };
         Game.prototype.pause = function () {
@@ -104,6 +105,7 @@ define(["require", "exports"], function (require, exports) {
                 this.isRunning = false;
                 this._timespans.push(performance.now() - this._startTime);
                 cancelAnimationFrame(this._animationFrame);
+                this.notifySystems("onPause");
             }
         };
         Game.prototype.getTime = function () {

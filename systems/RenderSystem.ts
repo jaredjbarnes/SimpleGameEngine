@@ -211,11 +211,13 @@ class RenderSystem {
     entityAdded(entity: Entity) {
         if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
             this.cacheEntity(entity);
-        } 
+        }
     }
 
     entityRemoved(entity: Entity) {
-
+        if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
+            this.uncacheEntity(entity);
+        }
     }
 
     componentAdded(entity: Entity, component) {
@@ -226,7 +228,7 @@ class RenderSystem {
 
     }
 
-    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
+    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement, drawEntity: boolean = true) {
         var self = this;
 
         var game = this._game;
@@ -271,7 +273,10 @@ class RenderSystem {
             return zIndex.value === otherZIndex.value;
         });
 
-        entities.push(entity);
+        if (drawEntity) {
+            entities.push(entity);
+        }
+
         entities.sort(this._zIndexSort);
 
         context.clearRect(left, top, width, height);
@@ -549,12 +554,39 @@ class RenderSystem {
         }
     }
 
+    unregisterEntity(entity: Entity) {
+        var entities;
+        var position = entity.getComponent<Position>("position");
+        var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+        var index;
+
+        if (position.isStatic) {
+            entities = this._entitiesByZIndex[zIndex.value];
+
+            if (entities != null) {
+                index = entities.indexOf(entity);
+
+                if (index > -1) {
+                    entities.splice(index, 1);
+                }
+            }
+        }
+    }
+
     cacheEntity(entity: Entity) {
         var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
         var canvas = this.getCanvasByZIndex(zIndex.value);
 
         this.registerEntity(entity);
         this.redrawEntityOnCanvas(entity, canvas);
+    }
+
+    uncacheEntity(entity: Entity) {
+        var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+        var canvas = this.getCanvasByZIndex(zIndex.value);
+
+        this.unregisterEntity(entity);
+        this.redrawEntityOnCanvas(entity, canvas, false);
     }
 
     get camera() {

@@ -141,12 +141,16 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             }
         };
         RenderSystem.prototype.entityRemoved = function (entity) {
+            if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
+                this.uncacheEntity(entity);
+            }
         };
         RenderSystem.prototype.componentAdded = function (entity, component) {
         };
         RenderSystem.prototype.componentRemoved = function (entity, component) {
         };
-        RenderSystem.prototype.redrawEntityOnCanvas = function (entity, canvas) {
+        RenderSystem.prototype.redrawEntityOnCanvas = function (entity, canvas, drawEntity) {
+            if (drawEntity === void 0) { drawEntity = true; }
             var self = this;
             var game = this._game;
             var context = canvas.getContext("2d");
@@ -183,7 +187,9 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 }
                 return zIndex.value === otherZIndex.value;
             });
-            entities.push(entity);
+            if (drawEntity) {
+                entities.push(entity);
+            }
             entities.sort(this._zIndexSort);
             context.clearRect(left, top, width, height);
             entities.forEach(function (otherEntity) {
@@ -393,11 +399,32 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 entities.push(entity);
             }
         };
+        RenderSystem.prototype.unregisterEntity = function (entity) {
+            var entities;
+            var position = entity.getComponent("position");
+            var zIndex = entity.getComponent("z-index") || defaultZIndex;
+            var index;
+            if (position.isStatic) {
+                entities = this._entitiesByZIndex[zIndex.value];
+                if (entities != null) {
+                    index = entities.indexOf(entity);
+                    if (index > -1) {
+                        entities.splice(index, 1);
+                    }
+                }
+            }
+        };
         RenderSystem.prototype.cacheEntity = function (entity) {
             var zIndex = entity.getComponent("z-index") || defaultZIndex;
             var canvas = this.getCanvasByZIndex(zIndex.value);
             this.registerEntity(entity);
             this.redrawEntityOnCanvas(entity, canvas);
+        };
+        RenderSystem.prototype.uncacheEntity = function (entity) {
+            var zIndex = entity.getComponent("z-index") || defaultZIndex;
+            var canvas = this.getCanvasByZIndex(zIndex.value);
+            this.unregisterEntity(entity);
+            this.redrawEntityOnCanvas(entity, canvas, false);
         };
         Object.defineProperty(RenderSystem.prototype, "camera", {
             get: function () {

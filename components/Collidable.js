@@ -6,6 +6,7 @@ define(["require", "exports"], function (require, exports) {
             this.name = null;
             this.isEnabled = true;
             this.isStatic = false;
+            this.isInitialized = false;
             this.activeCollisions = {};
         }
         return Collidable;

@@ -15,6 +15,7 @@ define(["require", "exports"], function (require, exports) {
             this.startTimestamp = null;
             this.endTimestamp = null;
             this.entityId = null;
+            this.isStatic = false;
         }
         return Collision;
     }());
@@ -22,11 +23,12 @@ define(["require", "exports"], function (require, exports) {
         function BroadPhaseCollisionSystem(cellSize) {
             this._dependencies = ["collidable"];
             this._cameraDependencies = ["position", "size", "camera"];
-            this._entities = [];
+            this._dynamicEntities = [];
+            this._staticEntities = [];
             this._game = null;
             this._cellSize = cellSize || 200;
             this._currentTimestamp = 0;
-            this._grid = [[]];
+            this._dynamicGrid = [[]];
             this._detectionAreaPosition = null;
             this._detectionAreaSize = null;
         }
@@ -42,14 +44,25 @@ define(["require", "exports"], function (require, exports) {
         };
         BroadPhaseCollisionSystem.prototype.entityAdded = function (entity) {
             if (entity.hasComponents(this._dependencies)) {
-                this._entities.push(this._createBroadPhaseEntity(entity));
+                var collidable = entity.getComponent("collidable");
+                if (collidable.isStatic) {
+                    this._staticEntities.push(this._createBroadPhaseEntity(entity));
+                    this._staticGrid = this.sweepAndPrune(this._staticEntities);
+                }
+                else {
+                    this._dynamicEntities.push(this._createBroadPhaseEntity(entity));
+                }
             }
         };
         BroadPhaseCollisionSystem.prototype.entityRemoved = function (entity) {
-            var entities = this._entities;
-            var index = this._getIndexByEntityId(entity.id);
+            var index = this._getIndexByEntityId(this._dynamicEntities, entity.id);
             if (index > -1) {
-                entities.splice(index, 1);
+                this._dynamicEntities.splice(index, 1);
+            }
+            index = this._getIndexByEntityId(this._staticEntities, entity.id);
+            if (index > -1) {
+                this._staticEntities.splice(index, 1);
+                this._removeStaticCollisionById(entity.id);
             }
         };
         BroadPhaseCollisionSystem.prototype.componentAdded = function (entity, component) {
@@ -58,29 +71,38 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         BroadPhaseCollisionSystem.prototype.componentRemoved = function (entity, component) {
-            if (this._dependencies.indexOf(component.type) > -1) {
-                this.entityRemoved(entity);
-            }
+            this.entityRemoved(entity);
         };
         BroadPhaseCollisionSystem.prototype.update = function () {
             this._currentTimestamp = this._game.getTime();
-            this.sweepAndPrune();
+            // Update dynamic entities.
+            this._dynamicGrid = this.sweepAndPrune(this._dynamicEntities);
             this.assignTimestamps(this.queryForCollisions());
             this.cleanCollisions();
         };
+        BroadPhaseCollisionSystem.prototype._removeStaticCollisionById = function (id) {
+            this._staticEntities.forEach(function (entity) {
+                var activeCollisions = entity.collidable.activeCollisions;
+                if (activeCollisions[id]) {
+                    delete activeCollisions[id];
+                }
+            });
+            this._staticGrid = this.sweepAndPrune(this._staticEntities);
+        };
         // Custom methods.
         BroadPhaseCollisionSystem.prototype.cleanCollisions = function () {
-            var entities = this._entities;
+            var entities = this._dynamicEntities;
+            var game = this._game;
             var currentTimestamp = this._currentTimestamp;
             entities.forEach(function (entity) {
                 var collisions = entity.collidable.activeCollisions;
                 Object.keys(collisions).forEach(function (key) {
                     var collision = collisions[key];
-                    // We know the collision ended if the timestamp didn't update to our current timestamp.
                     if (collision.timestamp !== currentTimestamp) {
+                        // We know the collision ended if the timestamp didn't update to our current timestamp.
                         collision.endTimestamp = currentTimestamp;
                         // Allow for some time to pass, before removing, because its likely they'll hit again.
-                        if (currentTimestamp - collision.timestamp > 3000) {
+                        if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
                             delete collisions[key];
                         }
                     }
@@ -102,7 +124,11 @@ define(["require", "exports"], function (require, exports) {
                     collisionDataA.timestamp = currentTimestamp;
                     collisionDataA.endTimestamp = null;
                     collisionDataA.entityId = entityB.id;
+                    if (collidableA.isStatic && collidableB.isStatic) {
+                        collisionDataA.isStatic = true;
+                    }
                     collidableA.activeCollisions[entityB.id] = collisionDataA;
+                    collidableA.isInitialized = true;
                 }
                 else {
                     collisionDataA.timestamp = currentTimestamp;
@@ -114,6 +140,10 @@ define(["require", "exports"], function (require, exports) {
                     collisionDataB.timestamp = currentTimestamp;
                     collisionDataB.endTimestamp = null;
                     collisionDataB.entityId = entityA.id;
+                    if (collidableA.isStatic && collidableB.isStatic) {
+                        collisionDataB.isStatic = true;
+                    }
+                    collidableB.isInitialized = true;
                     collidableB.activeCollisions[entityA.id] = collisionDataB;
                 }
                 else {
@@ -124,14 +154,23 @@ define(["require", "exports"], function (require, exports) {
         };
         BroadPhaseCollisionSystem.prototype.queryForCollisions = function () {
             var pairs = [];
-            this._grid.forEach(function (gridColumn) {
-                // ignore columns that have no cells
-                if (!gridColumn) {
-                    return;
-                }
-                gridColumn.forEach(function (gridCell) {
-                    // ignore cells that have no objects
-                    if (!gridCell) {
+            var staticGrid = this._staticGrid;
+            this._dynamicGrid.forEach(function (gridColumn, columnIndex) {
+                var staticColumn = staticGrid[columnIndex];
+                gridColumn.forEach(function (dynamicCell, cellIndex) {
+                    var gridCell;
+                    var staticCell = staticGrid[columnIndex] && staticGrid[columnIndex][cellIndex];
+                    if (Array.isArray(staticCell) && Array.isArray(dynamicCell)) {
+                        gridCell = staticCell.concat(dynamicCell);
+                    }
+                    else if (Array.isArray(staticCell) && !Array.isArray(dynamicCell)) {
+                        gridCell = staticCell;
+                    }
+                    else if (!Array.isArray(staticCell) && Array.isArray(dynamicCell)) {
+                        gridCell = dynamicCell;
+                    }
+                    else if (!Array.isArray(staticCell) && !Array.isArray(dynamicCell)) {
+                        // ignore columns that have no cells
                         return;
                     }
                     gridCell.forEach(function (entityA, index) {
@@ -152,7 +191,9 @@ define(["require", "exports"], function (require, exports) {
                             collidableA = entityA.collidable;
                             collidableB = entityB.collidable;
                             // We don't need to check static or disabled objects to other static objects.
-                            if ((collidableA.isStatic && collidableB.isStatic) || !collidableA.isEnabled || !collidableB.isEnabled) {
+                            if (((collidableA.isStatic && collidableB.isStatic) ||
+                                (!collidableA.isEnabled || !collidableB.isEnabled)) &&
+                                (collidableA.isInitialized && collidableB.isInitialized)) {
                                 continue;
                             }
                             positionA = entityA.position;
@@ -172,18 +213,17 @@ define(["require", "exports"], function (require, exports) {
             });
             return pairs;
         };
-        BroadPhaseCollisionSystem.prototype.sweepAndPrune = function () {
-            var entities = this._entities;
-            var gridWidth = Math.floor((this._detectionAreaSize.width) / this._cellSize);
-            var gridHeight = Math.floor((this._detectionAreaSize.height) / this._cellSize);
-            var boundsTop = this._detectionAreaPosition.y;
-            var boundsBottom = this._detectionAreaPosition.y + this._detectionAreaSize.height;
-            var boundsLeft = this._detectionAreaPosition.x;
-            var boundsRight = this._detectionAreaPosition.x + this._detectionAreaSize.width;
+        BroadPhaseCollisionSystem.prototype.sweepAndPrune = function (entities) {
+            var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
+            var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
+            var boundsTop = 0;
+            var boundsBottom = this._game.size.height;
+            var boundsLeft = 0;
+            var boundsRight = this._game.size.width;
             var cellSize = this._cellSize;
             // construct grid
             // NOTE: this is a purposeful use of the Array() constructor 
-            var grid = this._grid = Array(gridWidth);
+            var grid = Array(gridWidth);
             // insert all entities into grid
             entities.forEach(function (entity) {
                 var x;
@@ -226,10 +266,11 @@ define(["require", "exports"], function (require, exports) {
                     }
                 }
             });
+            return grid;
         };
-        BroadPhaseCollisionSystem.prototype._getIndexByEntityId = function (id) {
+        BroadPhaseCollisionSystem.prototype._getIndexByEntityId = function (entities, id) {
             var index = -1;
-            this._entities.some(function (entity, currentIndex) {
+            entities.some(function (entity, currentIndex) {
                 if (entity.id === id) {
                     index = currentIndex;
                     return true;

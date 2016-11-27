@@ -95,7 +95,10 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             var self = this;
             this._game = game;
             game.getEntities().forEach(function (entity) {
-                self.entityAdded(entity);
+                self.cacheEntity(entity);
+            });
+            Object.keys(this._entitiesByZIndex).forEach(function (key) {
+                self.cacheCanvasByZIndex(parseInt(key, 10));
             });
         };
         RenderSystem.prototype.deactivated = function () {
@@ -129,7 +132,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 context.drawImage(caches[key], Math.floor(cameraPosition.x), Math.floor(cameraPosition.y), Math.floor(cameraSize.width), Math.floor(cameraSize.height), 0, 0, Math.floor(cameraSize.width), Math.floor(cameraSize.height));
             });
             entities.forEach(function (entity) {
-                self.redrawEntityOnCamera(entity, canvas);
+                self.drawEntityOnCamera(entity, canvas);
             });
         };
         RenderSystem.prototype.entityAdded = function (entity) {
@@ -143,43 +146,23 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
         };
         RenderSystem.prototype.componentRemoved = function (entity, component) {
         };
-        RenderSystem.prototype.redrawEntityOnCanvas = function (entity, canvas) {
+        RenderSystem.prototype.drawEntityOnCanvas = function (entity, canvas) {
             var self = this;
-            var size = entity.getComponent("size");
-            var position = entity.getComponent("position");
-            var collidable = entity.getComponent("collidable");
-            var zIndex = entity.getComponent("z-index");
-            var layer = zIndex == null ? 0 : zIndex.value;
             var game = this._game;
-            var activeCollisions = collidable.activeCollisions;
             var context = canvas.getContext("2d");
-            var x = position.x;
-            var y = position.y;
-            var width = size.width;
-            var height = size.height;
-            var entityRight = x + width;
-            var entityBottom = y + height;
-            var canvasRight = canvas.width;
-            var canvasBottom = canvas.height;
-            var difference;
             var renderers = this._renderers;
             var rendererTypes = Object.keys(renderers);
-            if (entityRight > canvasRight) {
-                difference = entityRight - canvasRight;
-                width -= difference;
-            }
-            if (entityBottom > canvasBottom) {
-                difference = entityBottom - canvasBottom;
-                height -= difference;
-            }
-            if (position.x < 0) {
-                x = 0;
-                width += position.x;
-            }
-            if (position.y < 0) {
-                y = 0;
-                height += position.y;
-            }
+            var size = entity.getComponent("size");
+            var position = entity.getComponent("position");
+            var zIndex = entity.getComponent("z-index") || defaultZIndex;
+            var collidable = entity.getComponent("collidable");
+            var activeCollisions = collidable.activeCollisions;
+            var top = Math.max(position.y, 0);
+            var left = Math.max(position.x, 0);
+            var bottom = Math.min(position.y + size.height, canvas.height);
+            var right = Math.min(position.x + size.width, canvas.width);
+            var width = right - left;
+            var height = bottom - top;
             if (width <= 0 || height <= 0) {
                 return;
             }
@@ -189,44 +172,63 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             }).map(function (id) {
                 return game.getEntityById(id);
             }).filter(function (entity) {
-                if (!self.supportsEntity(entity)) {
+                if (entity == null) {
                     return false;
                 }
-                var zIndex = entity.getComponent("z-index");
-                var otherLayer = zIndex == null ? 0 : zIndex.value;
-                return layer === otherLayer;
+                var otherZIndex = entity.getComponent("z-index") || defaultZIndex;
+                var position = entity.getComponent("position");
+                if (!position.isStatic) {
+                    return false;
+                }
+                return zIndex.value === otherZIndex.value;
             });
             entities.push(entity);
-            entities.sort(this._defaultSort);
-            context.clearRect(x, y, width, height);
+            entities.sort(this._zIndexSort);
+            context.clearRect(left, top, width, height);
             entities.forEach(function (otherEntity) {
                 var otherPosition = otherEntity.getComponent("position");
                 var otherSize = otherEntity.getComponent("size");
-                var top = Math.max(y, otherPosition.y);
-                var left = Math.max(x, otherPosition.x);
-                var right = Math.min(x + width, otherPosition.x + otherSize.width);
-                var bottom = Math.min(y + height, otherPosition.y + otherSize.height);
-                var drawPosition = {
-                    x: left,
-                    y: top
-                };
-                var drawSize = {
-                    width: right - left,
-                    height: bottom - top
-                };
-                var drawOffset = {
-                    x: left - otherPosition.x,
-                    y: top - otherPosition.y
-                };
+                var otherTop = Math.max(otherPosition.y, position.y, 0);
+                var otherLeft = Math.max(otherPosition.x, position.x, 0);
+                var otherBottom = Math.min(otherPosition.y + otherSize.height, position.y + size.height, canvas.height);
+                var otherRight = Math.min(otherPosition.x + otherSize.width, position.x + size.width, canvas.width);
+                var otherWidth = otherRight - otherLeft;
+                var otherHeight = otherBottom - otherTop;
+                var offsetX = 0;
+                var offsetY = 0;
+                if (otherWidth <= 0 || otherHeight <= 0) {
+                    return;
+                }
+                if (otherPosition.x < position.x) {
+                    offsetX = position.x - otherPosition.x;
+                }
+                if (otherPosition.x < 0) {
+                    offsetX = Math.abs(otherPosition.x);
+                }
+                if (otherPosition.y < position.y) {
+                    offsetY = position.y - otherPosition.y;
+                }
+                if (otherPosition.y < 0) {
+                    offsetY = Math.abs(otherPosition.y);
+                }
                 rendererTypes.forEach(function (type) {
-                    var component = entity.getComponent(type);
+                    var component = otherEntity.getComponent(type);
                     if (component != null) {
-                        renderers[type].draw(otherEntity, canvas, drawPosition, drawSize, drawOffset);
+                        renderers[type].draw(otherEntity, canvas, {
+                            x: Math.floor(otherLeft),
+                            y: Math.floor(otherTop)
+                        }, {
+                            width: Math.floor(otherWidth),
+                            height: Math.floor(otherHeight)
+                        }, {
+                            x: Math.floor(offsetX),
+                            y: Math.floor(offsetY)
+                        });
                     }
                 });
             });
         };
-        RenderSystem.prototype.redrawEntityOnCamera = function (entity, canvas) {
+        RenderSystem.prototype.drawEntityOnCamera = function (entity, canvas) {
             var self = this;
             var game = this._game;
             var context = canvas.getContext("2d");
@@ -253,7 +255,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             }).map(function (id) {
                 return game.getEntityById(id);
             }).filter(function (entity) {
-                return self.supportsEntity(entity);
+                return entity != null;
             });
             entities.push(entity);
             entities.sort(this._zIndexSort);
@@ -273,13 +275,19 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                     return;
                 }
                 if (otherPosition.x < position.x) {
-                    offsetX = otherSize.width - otherWidth;
+                    offsetX = position.x - otherPosition.x;
+                }
+                if (otherPosition.x < cameraPosition.x) {
+                    offsetX = cameraPosition.x - otherPosition.x;
                 }
                 if (otherPosition.y < position.y) {
-                    offsetY = otherSize.height - otherHeight;
+                    offsetY = position.y - otherPosition.y;
+                }
+                if (otherPosition.y < cameraPosition.y) {
+                    offsetY = cameraPosition.y - otherPosition.y;
                 }
                 rendererTypes.forEach(function (type) {
-                    var component = entity.getComponent(type);
+                    var component = otherEntity.getComponent(type);
                     if (component != null) {
                         renderers[type].draw(otherEntity, canvas, {
                             x: Math.floor(otherLeft - cameraPosition.x),
@@ -293,117 +301,6 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                         });
                     }
                 });
-            });
-        };
-        RenderSystem.prototype.drawEntityOnCanvas = function (entity, canvas) {
-            var context = canvas.getContext("2d");
-            var size = entity.getComponent("size");
-            var position = entity.getComponent("position");
-            var renderers = this._renderers;
-            var rendererTypes = Object.keys(renderers);
-            var canvasRight = canvas.width;
-            var canvasBottom = canvas.height;
-            var x = position.x;
-            var y = position.y;
-            var offsetX = 0;
-            var offsetY = 0;
-            var width = size.width;
-            var height = size.height;
-            var entityRight = x + width;
-            var entityBottom = y + height;
-            var difference;
-            if (entityRight > canvasRight) {
-                difference = entityRight - canvasRight;
-                width -= difference;
-            }
-            if (entityBottom > canvasBottom) {
-                difference = entityBottom - canvasBottom;
-                height -= difference;
-            }
-            if (x < 0) {
-                offsetX -= x;
-                width += x;
-                x = 0;
-            }
-            if (y < 0) {
-                offsetY -= y;
-                height += y;
-                y = 0;
-            }
-            if (width === 0 || height === 0) {
-                return;
-            }
-            rendererTypes.forEach(function (type) {
-                var component = entity.getComponent(type);
-                if (component != null) {
-                    renderers[type].draw(entity, canvas, {
-                        x: Math.floor(x),
-                        y: Math.floor(y)
-                    }, {
-                        width: Math.floor(width),
-                        height: Math.floor(height)
-                    }, {
-                        x: Math.floor(offsetX),
-                        y: Math.floor(offsetY)
-                    });
-                }
-            });
-        };
-        RenderSystem.prototype.drawEntityOnCamera = function (entity) {
-            var canvas = this.canvas;
-            var context = canvas.getContext("2d");
-            var size = entity.getComponent("size");
-            var position = entity.getComponent("position");
-            var cameraPosition = this._cameraPosition;
-            var cameraSize = this._cameraSize;
-            var renderers = this._renderers;
-            var rendererTypes = Object.keys(renderers);
-            var cameraRight = cameraSize.width;
-            var cameraBottom = cameraSize.height;
-            var x = position.x - cameraPosition.x;
-            var y = position.y - cameraPosition.y;
-            var offsetX = 0;
-            var offsetY = 0;
-            var width = size.width;
-            var height = size.height;
-            var entityRight = x + width;
-            var entityBottom = y + height;
-            var difference;
-            if (entityRight > cameraRight) {
-                difference = entityRight - cameraRight;
-                width -= difference;
-            }
-            if (entityBottom > cameraBottom) {
-                difference = entityBottom - cameraBottom;
-                height -= difference;
-            }
-            if (x < 0) {
-                offsetX -= x;
-                width += x;
-                x = 0;
-            }
-            if (y < 0) {
-                offsetY -= y;
-                height += y;
-                y = 0;
-            }
-            if (width === 0 || height === 0) {
-                return;
-            }
-            rendererTypes.forEach(function (type) {
-                var component = entity.getComponent(type);
-                if (component != null) {
-                    renderers[type].draw(entity, canvas, {
-                        x: Math.floor(x),
-                        y: Math.floor(y)
-                    }, {
-                        width: Math.floor(width),
-                        height: Math.floor(height)
-                    }, {
-                        x: Math.floor(offsetX),
-                        y: Math.floor(offsetY)
-                    });
-                }
             });
         };
         RenderSystem.prototype.isDynamicEntity = function (entity) {
@@ -431,13 +328,11 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             if (entities == null) {
                 return;
             }
-            if (this._sort) {
-                entities.sort(this._sort);
-            }
             var context = canvas.getContext("2d");
             canvas.width = this._game.size.width;
             canvas.height = this._game.size.height;
             context.clearRect(0, 0, canvas.width, canvas.height);
+            entities.sort(this._defaultSort);
             entities.forEach(function (entity) {
                 self.drawEntityOnCanvas(entity, canvas);
             });

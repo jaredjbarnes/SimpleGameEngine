@@ -224,14 +224,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 if (otherPosition.x < position.x) {
                     offsetX = position.x - otherPosition.x;
                 }
-                if (otherPosition.x < 0) {
-                    offsetX = Math.abs(otherPosition.x);
-                }
                 if (otherPosition.y < position.y) {
                     offsetY = position.y - otherPosition.y;
-                }
-                if (otherPosition.y < 0) {
-                    offsetY = Math.abs(otherPosition.y);
                 }
                 rendererTypes.forEach(function (type) {
                     var component = otherEntity.getComponent(type);
@@ -275,10 +269,10 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 return;
             }
             if (position.x < 0) {
-                offsetX = 0 - position.x;
+                offsetX = -position.x;
             }
             if (position.y < 0) {
-                offsetY = 0 - position.x;
+                offsetY = -position.y;
             }
             rendererTypes.forEach(function (type) {
                 var component = entity.getComponent(type);
@@ -345,17 +339,11 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 if (otherWidth <= 0 || otherHeight <= 0) {
                     return;
                 }
-                if (otherPosition.x < position.x) {
-                    offsetX = position.x - otherPosition.x;
+                if (otherPosition.x < otherLeft) {
+                    offsetX = otherLeft - otherPosition.x;
                 }
-                if (otherPosition.x < cameraPosition.x) {
-                    offsetX = cameraPosition.x - otherPosition.x;
-                }
-                if (otherPosition.y < position.y) {
-                    offsetY = position.y - otherPosition.y;
-                }
-                if (otherPosition.y < cameraPosition.y) {
-                    offsetY = cameraPosition.y - otherPosition.y;
+                if (otherPosition.y < otherTop) {
+                    offsetY = otherTop - otherPosition.y;
                 }
                 rendererTypes.forEach(function (type) {
                     var component = otherEntity.getComponent(type);

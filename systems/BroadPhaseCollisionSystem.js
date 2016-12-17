@@ -48,6 +48,7 @@ define(["require", "exports"], function (require, exports) {
                 if (collidable.isStatic) {
                     this._staticEntities.push(this._createBroadPhaseEntity(entity));
                     this._staticGrid = this.sweepAndPrune(this._staticEntities);
+                    this.assignTimestamps(this.queryForStaticCollisions());
                 }
                 else {
                     this._dynamicEntities.push(this._createBroadPhaseEntity(entity));
@@ -77,7 +78,7 @@ define(["require", "exports"], function (require, exports) {
             this._currentTimestamp = this._game.getTime();
             // Update dynamic entities.
             this._dynamicGrid = this.sweepAndPrune(this._dynamicEntities);
-            this.assignTimestamps(this.queryForCollisions());
+            this.assignTimestamps(this.queryForDynamicCollisions());
             this.cleanCollisions();
         };
         BroadPhaseCollisionSystem.prototype._removeStaticCollisionById = function (id) {
@@ -152,7 +153,55 @@ define(["require", "exports"], function (require, exports) {
                 }
             });
         };
-        BroadPhaseCollisionSystem.prototype.queryForCollisions = function () {
+        BroadPhaseCollisionSystem.prototype.queryForStaticCollisions = function () {
+            var pairs = [];
+            var staticGrid = this._staticGrid;
+            staticGrid.forEach(function (gridColumn, columnIndex) {
+                gridColumn.forEach(function (gridCell, cellIndex) {
+                    gridCell.forEach(function (entityA, index) {
+                        var entityB;
+                        var collidableA;
+                        var collidableB;
+                        var positionA;
+                        var sizeA;
+                        var positionB;
+                        var sizeB;
+                        var top;
+                        var right;
+                        var bottom;
+                        var left;
+                        // for the entities after this object in a cell, because we already checked the ones before.
+                        for (var x = index + 1; x < gridCell.length; x++) {
+                            entityB = gridCell[x];
+                            collidableA = entityA.collidable;
+                            collidableB = entityB.collidable;
+                            // We don't need to check initialized or disabled collisions.
+                            if ((collidableA.isStatic &&
+                                collidableB.isStatic &&
+                                collidableA.isInitialized &&
+                                collidableB.isInitialized) ||
+                                !collidableA.isEnabled ||
+                                !collidableB.isEnabled) {
+                                continue;
+                            }
+                            positionA = entityA.position;
+                            sizeA = entityA.size;
+                            positionB = entityB.position;
+                            sizeB = entityB.size;
+                            top = Math.max(positionA.y, positionB.y);
+                            bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
+                            left = Math.max(positionA.x, positionB.x);
+                            right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
+                            if (top <= bottom && left <= right) {
+                                pairs.push([entityA, entityB]);
+                            }
+                        }
+                    });
+                });
+            });
+            return pairs;
+        };
+        BroadPhaseCollisionSystem.prototype.queryForDynamicCollisions = function () {
             var pairs = [];
             var staticGrid = this._staticGrid;
             this._dynamicGrid.forEach(function (gridColumn, columnIndex) {

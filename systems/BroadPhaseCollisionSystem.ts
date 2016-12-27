@@ -390,6 +390,10 @@ class BroadPhaseCollisionSystem {
             // Insert entity into each cell it overlaps
             for (x = left; x <= right; x++) {
 
+                if (x < 0) {
+                    continue;
+                }
+
                 // Make sure a column exists, initialize if not to grid height length
                 // NOTE: again, a purposeful use of the Array constructor 
                 if (!grid[x]) {
@@ -400,6 +404,10 @@ class BroadPhaseCollisionSystem {
 
                 // Loop through each cell in this column
                 for (y = top; y <= bottom; y++) {
+
+                    if (y < 0) {
+                        continue;
+                    }
 
                     // Ensure we have a bucket to put entities into for this cell
                     if (!gridColumn[y]) {

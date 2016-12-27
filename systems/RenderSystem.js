@@ -2,8 +2,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
     "use strict";
     var defaultZIndex = new ZIndex();
     var defaultCachePosition = { x: 0, y: 0 };
-    var RenderSystem = (function () {
-        function RenderSystem(canvas, sort) {
+    class RenderSystem {
+        constructor(canvas, sort) {
             this._renderers = {};
             this._game = null;
             this._dependencies = ["position", "size"];
@@ -49,13 +49,13 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             this.canvas = canvas;
             this.context = canvas.getContext("2d");
         }
-        RenderSystem.prototype._invokeMethod = function (obj, methodName, args) {
+        _invokeMethod(obj, methodName, args) {
             args = Array.isArray(args) ? args : [];
             if (obj && typeof obj[methodName] === "function") {
                 return obj[methodName].apply(obj, args);
             }
-        };
-        RenderSystem.prototype._notifyRenderers = function (methodName, args) {
+        }
+        _notifyRenderers(methodName, args) {
             var self = this;
             var renderers = Object.keys(this._renderers).map(function (type) {
                 return self._renderers[type];
@@ -63,8 +63,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             renderers.forEach(function (renderer) {
                 self._invokeMethod(renderer, methodName, args);
             });
-        };
-        RenderSystem.prototype.addRenderer = function (renderer) {
+        }
+        addRenderer(renderer) {
             var type = renderer.type;
             if (this._game != null) {
                 throw new Error("Cannot add renderers when activated by a game.");
@@ -73,8 +73,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             if (typeof type === "string") {
                 renderers[type] = renderer;
             }
-        };
-        RenderSystem.prototype.removeRenderer = function (renderer) {
+        }
+        removeRenderer(renderer) {
             var type = renderer.type;
             if (this._game != null) {
                 throw new Error("Cannot remove renderers when activated by a game.");
@@ -85,14 +85,14 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             if (registeredRenderer) {
                 delete renderers[type];
             }
-        };
-        RenderSystem.prototype.supportsEntity = function (entity) {
+        }
+        supportsEntity(entity) {
             return Object.keys(this._renderers).some(function (type) {
                 return entity.hasComponents([type]);
             });
-        };
+        }
         // System Strategy Starts
-        RenderSystem.prototype.activated = function (game) {
+        activated(game) {
             var self = this;
             this._game = game;
             game.getEntities().forEach(function (entity) {
@@ -101,13 +101,13 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             Object.keys(this._entitiesByZIndex).forEach(function (key) {
                 self.cacheCanvasByZIndex(parseInt(key, 10));
             });
-        };
-        RenderSystem.prototype.deactivated = function () {
+        }
+        deactivated() {
             this._game = null;
             this.canvas = null;
             this.context = null;
-        };
-        RenderSystem.prototype.update = function () {
+        }
+        update() {
             var self = this;
             var game = this._game;
             var canvas = this.canvas;
@@ -136,23 +136,23 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             entities.forEach(function (entity) {
                 self.drawEntityOnCamera(entity, canvas);
             });
-        };
-        RenderSystem.prototype.entityAdded = function (entity) {
+        }
+        entityAdded(entity) {
             if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
                 this.registerEntity(entity);
                 this._entitiesToBeRedrawn.push(entity);
             }
-        };
-        RenderSystem.prototype.entityRemoved = function (entity) {
+        }
+        entityRemoved(entity) {
             if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
                 this.uncacheEntity(entity);
             }
-        };
-        RenderSystem.prototype.componentAdded = function (entity, component) {
-        };
-        RenderSystem.prototype.componentRemoved = function (entity, component) {
-        };
-        RenderSystem.prototype.updateCaches = function () {
+        }
+        componentAdded(entity, component) {
+        }
+        componentRemoved(entity, component) {
+        }
+        updateCaches() {
             var self = this;
             this._entitiesToBeRedrawn.forEach(function (entity) {
                 var zIndex = entity.getComponent("z-index") || defaultZIndex;
@@ -160,9 +160,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 self.redrawEntityOnCanvas(entity, canvas);
             });
             this._entitiesToBeRedrawn.length = 0;
-        };
-        RenderSystem.prototype.redrawEntityOnCanvas = function (entity, canvas, drawEntity) {
-            if (drawEntity === void 0) { drawEntity = true; }
+        }
+        redrawEntityOnCanvas(entity, canvas, drawEntity = true) {
             if (canvas == null) {
                 return;
             }
@@ -243,8 +242,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                     }
                 });
             });
-        };
-        RenderSystem.prototype.drawEntityOnCanvas = function (entity, canvas) {
+        }
+        drawEntityOnCanvas(entity, canvas) {
             if (canvas == null) {
                 return;
             }
@@ -289,8 +288,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                     });
                 }
             });
-        };
-        RenderSystem.prototype.drawEntityOnCamera = function (entity, canvas) {
+        }
+        drawEntityOnCamera(entity, canvas) {
             if (canvas == null) {
                 return;
             }
@@ -361,14 +360,14 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                     }
                 });
             });
-        };
-        RenderSystem.prototype.isDynamicEntity = function (entity) {
+        }
+        isDynamicEntity(entity) {
             return entity != null &&
                 entity.hasComponents(this._dependencies) &&
                 this.supportsEntity(entity) &&
                 !entity.getComponent("position").isStatic;
-        };
-        RenderSystem.prototype.getCanvasByZIndex = function (zIndex) {
+        }
+        getCanvasByZIndex(zIndex) {
             var canvas = this._staticCacheByZIndex[zIndex];
             if (canvas == null) {
                 canvas = this._staticCacheByZIndex[zIndex] = document.createElement("canvas");
@@ -377,8 +376,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
             }
             return canvas;
-        };
-        RenderSystem.prototype.cacheCanvasByZIndex = function (zIndex) {
+        }
+        cacheCanvasByZIndex(zIndex) {
             var self = this;
             var rendererTypes = Object.keys(this._renderers);
             var renderers = this._renderers;
@@ -395,8 +394,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             entities.forEach(function (entity) {
                 self.drawEntityOnCanvas(entity, canvas);
             });
-        };
-        RenderSystem.prototype.registerEntity = function (entity) {
+        }
+        registerEntity(entity) {
             var entities;
             var position = entity.getComponent("position");
             var zIndex = entity.getComponent("z-index") || defaultZIndex;
@@ -407,8 +406,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 }
                 entities.push(entity);
             }
-        };
-        RenderSystem.prototype.unregisterEntity = function (entity) {
+        }
+        unregisterEntity(entity) {
             var entities;
             var position = entity.getComponent("position");
             var zIndex = entity.getComponent("z-index") || defaultZIndex;
@@ -422,37 +421,33 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                     }
                 }
             }
-        };
-        RenderSystem.prototype.cacheEntity = function (entity) {
+        }
+        cacheEntity(entity) {
             var zIndex = entity.getComponent("z-index") || defaultZIndex;
             var canvas = this.getCanvasByZIndex(zIndex.value);
             this.registerEntity(entity);
             this.redrawEntityOnCanvas(entity, canvas);
-        };
-        RenderSystem.prototype.uncacheEntity = function (entity) {
+        }
+        uncacheEntity(entity) {
             var zIndex = entity.getComponent("z-index") || defaultZIndex;
             var canvas = this.getCanvasByZIndex(zIndex.value);
             this.unregisterEntity(entity);
             this.redrawEntityOnCanvas(entity, canvas, false);
-        };
-        Object.defineProperty(RenderSystem.prototype, "camera", {
-            get: function () {
-                return this._camera;
-            },
-            set: function (entity) {
-                if (entity.hasComponents(this._cameraDependencies)) {
-                    this._camera = entity;
-                    this._cameraPosition = entity.getComponent("position");
-                    this._cameraSize = entity.getComponent("size");
-                    // Adjust the cameras size to that of the canvas.
-                    this._cameraSize.width = this.canvas.width;
-                    this._cameraSize.height = this.canvas.height;
-                }
-            },
-            enumerable: true,
-            configurable: true
-        });
-        RenderSystem.prototype.setCameraByName = function (name) {
+        }
+        get camera() {
+            return this._camera;
+        }
+        set camera(entity) {
+            if (entity.hasComponents(this._cameraDependencies)) {
+                this._camera = entity;
+                this._cameraPosition = entity.getComponent("position");
+                this._cameraSize = entity.getComponent("size");
+                // Adjust the cameras size to that of the canvas.
+                this._cameraSize.width = this.canvas.width;
+                this._cameraSize.height = this.canvas.height;
+            }
+        }
+        setCameraByName(name) {
             var cameraDependencies = this._cameraDependencies;
             var cameras = this._game.getEntitiesByFilter(function (entity) {
                 var isCamera = entity.hasComponents(cameraDependencies);
@@ -471,9 +466,8 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 throw new Error("Unable to find a camera with that name.");
             }
             this.camera = cameras[0];
-        };
-        return RenderSystem;
-    }());
+        }
+    }
     return RenderSystem;
 });
 //# sourceMappingURL=RenderSystem.js.map

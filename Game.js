@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var Game = (function () {
-        function Game(size) {
+    class Game {
+        constructor(size) {
             var self = this;
             size = size || {
                 width: 1000,
@@ -26,44 +26,44 @@ define(["require", "exports"], function (require, exports) {
             this.isRunning = false;
             this.size = size;
         }
-        Game.prototype._invokeMethod = function (obj, methodName, args) {
+        _invokeMethod(obj, methodName, args) {
             args = Array.isArray(args) ? args : [];
             if (obj && typeof obj[methodName] === "function") {
                 return obj[methodName].apply(obj, args);
             }
-        };
-        Game.prototype._loop = function () {
+        }
+        _loop() {
             var self = this;
             this.update();
             this._animationFrame = requestAnimationFrame(function () {
                 self._loop();
             });
-        };
-        Game.prototype.notifySystems = function (methodName, args) {
+        }
+        notifySystems(methodName, args) {
             args = args || [];
             var self = this;
             var systems = this._systems;
             systems.forEach(function (system) {
                 self._invokeMethod(system, methodName, args);
             });
-        };
-        Game.prototype.addSystem = function (system) {
+        }
+        addSystem(system) {
             var systems = this._systems;
             var index = systems.indexOf(system);
             if (index === -1) {
                 systems.push(system);
                 this._invokeMethod(system, "activated", [this]);
             }
-        };
-        Game.prototype.removeSystem = function (system) {
+        }
+        removeSystem(system) {
             var systems = this._systems;
             var index = systems.indexOf(system);
             if (index > -1) {
                 systems.splice(index, 1);
                 this._invokeMethod(system, "deactivated", [this]);
             }
-        };
-        Game.prototype.addEntity = function (entity) {
+        }
+        addEntity(entity) {
             var entities = this._entities;
             var entitiesById = this._entitiesById;
             var registeredEntity = entitiesById[entity.id];
@@ -73,8 +73,8 @@ define(["require", "exports"], function (require, exports) {
                 entity.setDelegate(this._entityDelegate);
                 this.notifySystems("entityAdded", [entity]);
             }
-        };
-        Game.prototype.removeEntity = function (entity) {
+        }
+        removeEntity(entity) {
             var entities = this._entities;
             var entitiesById = this._entitiesById;
             var registeredEntity = entitiesById[entity.id];
@@ -86,29 +86,29 @@ define(["require", "exports"], function (require, exports) {
                 entity.setDelegate(null);
                 this.notifySystems("entityRemoved", [entity]);
             }
-        };
-        Game.prototype.update = function () {
+        }
+        update() {
             var self = this;
             var systems = this._systems;
             this.notifySystems("update");
-        };
-        Game.prototype.play = function () {
+        }
+        play() {
             if (!this.isRunning) {
                 this.isRunning = true;
                 this._startTime = performance.now();
                 this._loop();
                 this.notifySystems("onPlay");
             }
-        };
-        Game.prototype.pause = function () {
+        }
+        pause() {
             if (this.isRunning) {
                 this.isRunning = false;
                 this._timespans.push(performance.now() - this._startTime);
                 cancelAnimationFrame(this._animationFrame);
                 this.notifySystems("onPause");
             }
-        };
-        Game.prototype.getTime = function () {
+        }
+        getTime() {
             var time = this._timespans.reduce(function (accumulator, value) {
                 return accumulator + value;
             }, 0);
@@ -116,18 +116,17 @@ define(["require", "exports"], function (require, exports) {
                 time += performance.now() - this._startTime;
             }
             return time;
-        };
-        Game.prototype.getEntities = function () {
+        }
+        getEntities() {
             return this._entities.slice(0);
-        };
-        Game.prototype.getEntitiesByFilter = function (filter) {
+        }
+        getEntitiesByFilter(filter) {
             return this._entities.filter(filter);
-        };
-        Game.prototype.getEntityById = function (id) {
+        }
+        getEntityById(id) {
             return this._entitiesById[id] || null;
-        };
-        return Game;
-    }());
+        }
+    }
     return Game;
 });
 //# sourceMappingURL=Game.js.map

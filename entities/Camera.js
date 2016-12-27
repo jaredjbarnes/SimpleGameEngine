@@ -1,14 +1,8 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports", "./../Entity", "./../components/Camera", "./../components/Size", "./../components/Position", "./../components/Collidable"], function (require, exports, Entity, CameraComponent, Size, Position, Collidable) {
     "use strict";
-    var Camera = (function (_super) {
-        __extends(Camera, _super);
-        function Camera(name) {
-            _super.call(this);
+    class Camera extends Entity {
+        constructor(name) {
+            super();
             var camera = new CameraComponent();
             camera.name = name || null;
             var position = new Position();
@@ -19,8 +13,7 @@ define(["require", "exports", "./../Entity", "./../components/Camera", "./../com
             this.addComponent(size);
             this.addComponent(collidable);
         }
-        return Camera;
-    }(Entity));
+    }
     return Camera;
 });
 //# sourceMappingURL=Camera.js.map

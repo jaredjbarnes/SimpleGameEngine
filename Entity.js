@@ -10,58 +10,63 @@ define(["require", "exports"], function (require, exports) {
             S4() + "-" +
             S4() + S4() + S4());
     };
-    var Entity = (function () {
-        function Entity() {
+    class Entity {
+        constructor() {
             this._delegate = null;
-            this._components = {};
+            this._components = new Map();
             this.id = createGuid();
         }
-        Entity.prototype._invokeMethod = function (obj, methodName, args) {
+        _invokeMethod(obj, methodName, args) {
             args = Array.isArray(args) ? args : [];
             if (obj && typeof obj[methodName] === "function") {
                 return obj[methodName].apply(obj, args);
             }
-        };
-        Entity.prototype.setDelegate = function (delegate) {
+        }
+        setDelegate(delegate) {
             this._delegate = delegate;
-        };
-        Entity.prototype.addComponent = function (component) {
+        }
+        addComponent(component) {
             var type = component.type;
             var components = this._components;
             var delegate = this._delegate;
             if (typeof type !== "string") {
                 throw new Error("Components need to have a type property.");
             }
-            components[type] = component;
+            components.set(type, component);
             if (delegate != null) {
                 this._invokeMethod(delegate, "componentAdded", [this, component]);
             }
-        };
-        Entity.prototype.removeComponent = function (component) {
+        }
+        removeComponent(component) {
             var type = component.type;
             var components = this._components;
             var delegate = this._delegate;
             if (typeof type !== "string") {
                 throw new Error("Components need to have a type property.");
             }
-            if (components[type] === component) {
-                delete components[component.type];
+            if (components.get(type) === component) {
+                delete components.delete(component.type);
                 if (delegate != null) {
                     this._invokeMethod(delegate, "componentRemoved", [this, component]);
                 }
             }
-        };
-        Entity.prototype.getComponent = function (type) {
-            return this._components[type] || null;
-        };
-        Entity.prototype.hasComponents = function (componentTypes) {
+        }
+        getComponent(type) {
+            return this._components.get(type) || null;
+        }
+        getComponents() {
+            var keys = Array.from(this._components.keys());
+            return keys.map((key) => {
+                return this._components.get(key);
+            });
+        }
+        hasComponents(componentTypes) {
             var components = this._components;
             return componentTypes.every(function (type) {
-                return components[type] != null;
+                return components.has(type);
             });
-        };
-        return Entity;
-    }());
+        }
+    }
     return Entity;
 });
 //# sourceMappingURL=Entity.js.map

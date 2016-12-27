@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var ImageTexture = (function () {
-        function ImageTexture() {
+    class ImageTexture {
+        constructor() {
             this.type = "image-texture";
             this.path = null;
             this.position = {
@@ -19,8 +19,7 @@ define(["require", "exports"], function (require, exports) {
                 left: 0
             };
         }
-        return ImageTexture;
-    }());
+    }
     return ImageTexture;
 });
 //# sourceMappingURL=ImageTexture.js.map

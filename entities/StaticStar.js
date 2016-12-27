@@ -1,14 +1,8 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, Collidable) {
     "use strict";
-    var StaticStar = (function (_super) {
-        __extends(StaticStar, _super);
-        function StaticStar(config) {
-            _super.call(this);
+    class StaticStar extends Entity {
+        constructor(config) {
+            super();
             config = config || {};
             var spikes = config.spikes || 5;
             var fillColor = config.fillColor || {
@@ -67,8 +61,7 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             this.addComponent(size);
             this.addComponent(collidable);
         }
-        return StaticStar;
-    }(Entity));
+    }
     return StaticStar;
 });
 //# sourceMappingURL=StaticStar.js.map

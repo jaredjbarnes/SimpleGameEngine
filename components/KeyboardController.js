@@ -1,11 +1,10 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var KeyboardController = (function () {
-        function KeyboardController() {
+    class KeyboardController {
+        constructor() {
             this.type = "keyboard-controller";
         }
-        return KeyboardController;
-    }());
+    }
     return KeyboardController;
 });
 //# sourceMappingURL=KeyboardController.js.map

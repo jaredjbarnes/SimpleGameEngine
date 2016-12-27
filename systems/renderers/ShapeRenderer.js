@@ -1,21 +1,21 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var ShapeRenderer = (function () {
-        function ShapeRenderer(document) {
+    class ShapeRenderer {
+        constructor(document) {
             this.type = "shape";
             this.document = document;
             this.shapeCache = {};
         }
-        ShapeRenderer.prototype.convertToRgba = function (color) {
+        convertToRgba(color) {
             return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
-        };
-        ShapeRenderer.prototype.entityAdded = function (entity) {
+        }
+        entityAdded(entity) {
             this.createCachedVersion(entity);
-        };
-        ShapeRenderer.prototype.entityRemoved = function (entity) {
+        }
+        entityRemoved(entity) {
             delete this.shapeCache[entity.id];
-        };
-        ShapeRenderer.prototype.createCachedVersion = function (entity) {
+        }
+        createCachedVersion(entity) {
             var document = this.document;
             var canvas = document.createElement("canvas");
             var size = entity.getComponent("size");
@@ -46,24 +46,23 @@ define(["require", "exports"], function (require, exports) {
             }
             this.shapeCache[entity.id] = canvas;
             return canvas;
-        };
-        ShapeRenderer.prototype.getCanvas = function (entity) {
+        }
+        getCanvas(entity) {
             var canvas = this.shapeCache[entity.id];
             if (canvas == null) {
                 canvas = this.createCachedVersion(entity);
             }
             return canvas;
-        };
-        ShapeRenderer.prototype.draw = function (entity, canvas, position, size, offset) {
+        }
+        draw(entity, canvas, position, size, offset) {
             if (canvas == null) {
                 return;
             }
             var entityCanvas = this.getCanvas(entity);
             var context = canvas.getContext("2d");
             context.drawImage(entityCanvas, offset.x, offset.y, size.width, size.height, position.x, position.y, size.width, size.height);
-        };
-        return ShapeRenderer;
-    }());
+        }
+    }
     return ShapeRenderer;
 });
 //# sourceMappingURL=ShapeRenderer.js.map

@@ -1,14 +1,8 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/KeyboardInput", "./../components/KeyboardController", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, KeyboardInput, KeyboardController, Collidable) {
     "use strict";
-    var Star = (function (_super) {
-        __extends(Star, _super);
-        function Star(config) {
-            _super.call(this);
+    class Star extends Entity {
+        constructor(config) {
+            super();
             var spikes = config.spikes;
             var fillColor = config.fillColor || {
                 red: 0,
@@ -68,8 +62,7 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             this.addComponent(keyboardController);
             this.addComponent(collidable);
         }
-        return Star;
-    }(Entity));
+    }
     return Star;
 });
 //# sourceMappingURL=Star.js.map

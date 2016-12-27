@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var FollowEntityCameraSystem = (function () {
-        function FollowEntityCameraSystem() {
+    class FollowEntityCameraSystem {
+        constructor() {
             this._camera = null;
             this._cameraSize = null;
             this._cameraPosition = null;
@@ -11,28 +11,24 @@ define(["require", "exports"], function (require, exports) {
             this._game = null;
             this._worldSize = null;
         }
-        Object.defineProperty(FollowEntityCameraSystem.prototype, "camera", {
-            get: function () {
-                return this._camera;
-            },
-            set: function (value) {
-                if (value.hasComponents(["camera", "position", "size"])) {
-                    this._camera = value;
-                    this._cameraPosition = value.getComponent("position");
-                    this._cameraSize = value.getComponent("size");
-                }
-            },
-            enumerable: true,
-            configurable: true
-        });
-        FollowEntityCameraSystem.prototype.setEntityToFollow = function (entity) {
+        get camera() {
+            return this._camera;
+        }
+        set camera(value) {
+            if (value.hasComponents(["camera", "position", "size"])) {
+                this._camera = value;
+                this._cameraPosition = value.getComponent("position");
+                this._cameraSize = value.getComponent("size");
+            }
+        }
+        setEntityToFollow(entity) {
             if (entity.hasComponents(["position", "size"])) {
                 this._entityToFollow = entity;
                 this._entitySize = entity.getComponent("size");
                 this._entityPosition = entity.getComponent("position");
             }
-        };
-        FollowEntityCameraSystem.prototype.update = function () {
+        }
+        update() {
             if (this._entityToFollow != null && this._camera != null) {
                 var x = this._entityPosition.x - (this._cameraSize.width / 2) + (this._entitySize.width / 2);
                 var y = this._entityPosition.y - (this._cameraSize.height / 2) + (this._entitySize.height / 2);
@@ -51,14 +47,13 @@ define(["require", "exports"], function (require, exports) {
                 this._cameraPosition.x = x;
                 this._cameraPosition.y = y;
             }
-        };
-        FollowEntityCameraSystem.prototype.activated = function (game) {
+        }
+        activated(game) {
             this._game = game;
             this._worldSize = game.size;
-        };
-        FollowEntityCameraSystem.prototype.deactivate = function () { };
-        return FollowEntityCameraSystem;
-    }());
+        }
+        deactivate() { }
+    }
     return FollowEntityCameraSystem;
 });
 //# sourceMappingURL=FollowEntityCameraSystem.js.map

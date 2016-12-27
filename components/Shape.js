@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var Shape = (function () {
-        function Shape() {
+    class Shape {
+        constructor() {
             this.type = "shape";
             this.fillColor = {
                 red: 0,
@@ -20,8 +20,7 @@ define(["require", "exports"], function (require, exports) {
             };
             this.points = [];
         }
-        return Shape;
-    }());
+    }
     return Shape;
 });
 //# sourceMappingURL=Shape.js.map

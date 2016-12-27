@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var Collidable = (function () {
-        function Collidable() {
+    class Collidable {
+        constructor() {
             this.type = "collidable";
             this.name = null;
             this.isEnabled = true;
@@ -9,8 +9,7 @@ define(["require", "exports"], function (require, exports) {
             this.isInitialized = false;
             this.activeCollisions = {};
         }
-        return Collidable;
-    }());
+    }
     return Collidable;
 });
 //# sourceMappingURL=Collidable.js.map

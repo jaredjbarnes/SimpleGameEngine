@@ -1,26 +1,24 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var BroadPhaseEntity = (function () {
-        function BroadPhaseEntity() {
+    class BroadPhaseEntity {
+        constructor() {
             this.id = null;
             this.position = null;
             this.size = null;
             this.collidable = null;
         }
-        return BroadPhaseEntity;
-    }());
-    var Collision = (function () {
-        function Collision() {
+    }
+    class Collision {
+        constructor() {
             this.timestamp = null;
             this.startTimestamp = null;
             this.endTimestamp = null;
             this.entityId = null;
             this.isStatic = false;
         }
-        return Collision;
-    }());
-    var BroadPhaseCollisionSystem = (function () {
-        function BroadPhaseCollisionSystem(cellSize) {
+    }
+    class BroadPhaseCollisionSystem {
+        constructor(cellSize) {
             this._dependencies = ["collidable"];
             this._cameraDependencies = ["position", "size", "camera"];
             this._dynamicEntities = [];
@@ -32,17 +30,17 @@ define(["require", "exports"], function (require, exports) {
             this._detectionAreaPosition = null;
             this._detectionAreaSize = null;
         }
-        BroadPhaseCollisionSystem.prototype.activated = function (game) {
+        activated(game) {
             var self = this;
             this._game = game;
             game.getEntities().forEach(function (entity) {
                 self.entityAdded(entity);
             });
-        };
-        BroadPhaseCollisionSystem.prototype.deactivated = function () {
+        }
+        deactivated() {
             this._game = null;
-        };
-        BroadPhaseCollisionSystem.prototype.entityAdded = function (entity) {
+        }
+        entityAdded(entity) {
             if (entity.hasComponents(this._dependencies)) {
                 var collidable = entity.getComponent("collidable");
                 if (collidable.isStatic) {
@@ -54,8 +52,8 @@ define(["require", "exports"], function (require, exports) {
                     this._dynamicEntities.push(this._createBroadPhaseEntity(entity));
                 }
             }
-        };
-        BroadPhaseCollisionSystem.prototype.entityRemoved = function (entity) {
+        }
+        entityRemoved(entity) {
             var index = this._getIndexByEntityId(this._dynamicEntities, entity.id);
             if (index > -1) {
                 this._dynamicEntities.splice(index, 1);
@@ -65,23 +63,23 @@ define(["require", "exports"], function (require, exports) {
                 this._staticEntities.splice(index, 1);
                 this._removeStaticCollisionById(entity.id);
             }
-        };
-        BroadPhaseCollisionSystem.prototype.componentAdded = function (entity, component) {
+        }
+        componentAdded(entity, component) {
             if (entity.hasComponents(this._dependencies)) {
                 this.entityAdded(entity);
             }
-        };
-        BroadPhaseCollisionSystem.prototype.componentRemoved = function (entity, component) {
+        }
+        componentRemoved(entity, component) {
             this.entityRemoved(entity);
-        };
-        BroadPhaseCollisionSystem.prototype.update = function () {
+        }
+        update() {
             this._currentTimestamp = this._game.getTime();
             // Update dynamic entities.
             this._dynamicGrid = this.sweepAndPrune(this._dynamicEntities);
             this.assignTimestamps(this.queryForDynamicCollisions());
             this.cleanCollisions();
-        };
-        BroadPhaseCollisionSystem.prototype._removeStaticCollisionById = function (id) {
+        }
+        _removeStaticCollisionById(id) {
             this._staticEntities.forEach(function (entity) {
                 var activeCollisions = entity.collidable.activeCollisions;
                 if (activeCollisions[id]) {
@@ -89,9 +87,9 @@ define(["require", "exports"], function (require, exports) {
                 }
             });
             this._staticGrid = this.sweepAndPrune(this._staticEntities);
-        };
+        }
         // Custom methods.
-        BroadPhaseCollisionSystem.prototype.cleanCollisions = function () {
+        cleanCollisions() {
             var entities = this._dynamicEntities;
             var game = this._game;
             var currentTimestamp = this._currentTimestamp;
@@ -109,8 +107,8 @@ define(["require", "exports"], function (require, exports) {
                     }
                 });
             });
-        };
-        BroadPhaseCollisionSystem.prototype.assignTimestamps = function (pairs) {
+        }
+        assignTimestamps(pairs) {
             var currentTimestamp = this._currentTimestamp;
             pairs.forEach(function (pair, index) {
                 var entityA = pair[0];
@@ -152,8 +150,8 @@ define(["require", "exports"], function (require, exports) {
                     collisionDataB.endTimestamp = null;
                 }
             });
-        };
-        BroadPhaseCollisionSystem.prototype.queryForStaticCollisions = function () {
+        }
+        queryForStaticCollisions() {
             var pairs = [];
             var staticGrid = this._staticGrid;
             staticGrid.forEach(function (gridColumn, columnIndex) {
@@ -200,8 +198,8 @@ define(["require", "exports"], function (require, exports) {
                 });
             });
             return pairs;
-        };
-        BroadPhaseCollisionSystem.prototype.queryForDynamicCollisions = function () {
+        }
+        queryForDynamicCollisions() {
             var pairs = [];
             var staticGrid = this._staticGrid;
             this._dynamicGrid.forEach(function (gridColumn, columnIndex) {
@@ -261,8 +259,8 @@ define(["require", "exports"], function (require, exports) {
                 });
             });
             return pairs;
-        };
-        BroadPhaseCollisionSystem.prototype.sweepAndPrune = function (entities) {
+        }
+        sweepAndPrune(entities) {
             var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
             var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
             var boundsTop = 0;
@@ -297,6 +295,9 @@ define(["require", "exports"], function (require, exports) {
                 var bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
                 // Insert entity into each cell it overlaps
                 for (x = left; x <= right; x++) {
+                    if (x < 0) {
+                        continue;
+                    }
                     // Make sure a column exists, initialize if not to grid height length
                     // NOTE: again, a purposeful use of the Array constructor 
                     if (!grid[x]) {
@@ -305,6 +306,9 @@ define(["require", "exports"], function (require, exports) {
                     gridColumn = grid[x];
                     // Loop through each cell in this column
                     for (y = top; y <= bottom; y++) {
+                        if (y < 0) {
+                            continue;
+                        }
                         // Ensure we have a bucket to put entities into for this cell
                         if (!gridColumn[y]) {
                             gridColumn[y] = [];
@@ -316,8 +320,8 @@ define(["require", "exports"], function (require, exports) {
                 }
             });
             return grid;
-        };
-        BroadPhaseCollisionSystem.prototype._getIndexByEntityId = function (entities, id) {
+        }
+        _getIndexByEntityId(entities, id) {
             var index = -1;
             entities.some(function (entity, currentIndex) {
                 if (entity.id === id) {
@@ -327,21 +331,20 @@ define(["require", "exports"], function (require, exports) {
                 return false;
             });
             return index;
-        };
-        BroadPhaseCollisionSystem.prototype._createBroadPhaseEntity = function (entity) {
+        }
+        _createBroadPhaseEntity(entity) {
             var broadPhaseEntity = new BroadPhaseEntity();
             broadPhaseEntity.id = entity.id;
             broadPhaseEntity.size = entity.getComponent("size");
             broadPhaseEntity.position = entity.getComponent("position");
             broadPhaseEntity.collidable = entity.getComponent("collidable");
             return broadPhaseEntity;
-        };
-        BroadPhaseCollisionSystem.prototype.setDetectionArea = function (position, size) {
+        }
+        setDetectionArea(position, size) {
             this._detectionAreaPosition = position;
             this._detectionAreaSize = size;
-        };
-        return BroadPhaseCollisionSystem;
-    }());
+        }
+    }
     return BroadPhaseCollisionSystem;
 });
 //# sourceMappingURL=BroadPhaseCollisionSystem.js.map

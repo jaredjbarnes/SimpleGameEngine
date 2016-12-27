@@ -1,13 +1,13 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var ImageRenderer = (function () {
-        function ImageRenderer(document) {
+    class ImageRenderer {
+        constructor(document) {
             this.type = "image-texture";
             this.document = document;
             this.cachedCanvases = {};
             this.sourceCanvases = {};
         }
-        ImageRenderer.prototype.cacheCanvasBySize = function (path, referenceCanvas, size) {
+        cacheCanvasBySize(path, referenceCanvas, size) {
             var document = this.document;
             var sizes = this.cachedCanvases[path];
             var canvas = document.createElement("canvas");
@@ -19,8 +19,8 @@ define(["require", "exports"], function (require, exports) {
             canvas.height = size.height;
             context.drawImage(referenceCanvas, 0, 0, referenceCanvas.width, referenceCanvas.height, 0, 0, size.width, size.height);
             sizes[size.width + "|" + size.height] = canvas;
-        };
-        ImageRenderer.prototype.createCanvasByImage = function (image, imageTexture) {
+        }
+        createCanvasByImage(image, imageTexture) {
             var document = this.document;
             var canvas = document.createElement("canvas");
             var context = canvas.getContext("2d");
@@ -33,8 +33,8 @@ define(["require", "exports"], function (require, exports) {
             canvas.height = height;
             context.drawImage(image, position.x, position.y, size.width, size.height, padding.left, padding.top, size.width, size.height);
             return canvas;
-        };
-        ImageRenderer.prototype.getCanvas = function (imageTexture, size) {
+        }
+        getCanvas(imageTexture, size) {
             var cachedCanvases = this.cachedCanvases;
             var path = imageTexture.path;
             var sizeKey = size.width + "|" + size.height;
@@ -42,8 +42,8 @@ define(["require", "exports"], function (require, exports) {
                 return cachedCanvases[path][sizeKey];
             }
             return null;
-        };
-        ImageRenderer.prototype.loadImageBySize = function (imageTexture, size) {
+        }
+        loadImageBySize(imageTexture, size) {
             var path = imageTexture.path;
             var sourceCanvas = this.sourceCanvases[path];
             if (sourceCanvas != null) {
@@ -57,8 +57,8 @@ define(["require", "exports"], function (require, exports) {
                 this.cacheCanvasBySize(path, canvas, size);
             };
             image.src = path;
-        };
-        ImageRenderer.prototype.draw = function (entity, canvas, position, size, offset) {
+        }
+        draw(entity, canvas, position, size, offset) {
             if (canvas == null) {
                 return;
             }
@@ -71,8 +71,7 @@ define(["require", "exports"], function (require, exports) {
             }
             var context = canvas.getContext("2d");
             context.drawImage(entityCanvas, offset.x, offset.y, size.width, size.heigth, position.x, position.y, size.width, size.height);
-        };
-        return ImageRenderer;
-    }());
+        }
+    }
 });
 //# sourceMappingURL=ImageRenderer.js.map

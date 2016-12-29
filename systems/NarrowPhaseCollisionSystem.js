@@ -309,6 +309,14 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                 }
             }
         }
+        componentRemoved(component, entity) {
+            if (DEPENDENCIES.indexOf(component.type) > -1) {
+                this.entityRemoved(entity);
+            }
+        }
+        componentAdded(component, entity) {
+            this.entityAdded(entity);
+        }
     }
     return NarrowPhaseCollisionSystem;
 });

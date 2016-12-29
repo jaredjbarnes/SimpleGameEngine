@@ -2,7 +2,6 @@
 import Game = require("./../Game");
 import Entity = require("./../Entity");
 
-
 class BroadPhaseEntity {
     id: string;
     position: { x: number; y: number; };

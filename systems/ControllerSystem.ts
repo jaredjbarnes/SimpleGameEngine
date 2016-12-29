@@ -6,11 +6,11 @@ import KeyboardInput = require("./../components/KeyboardInput");
 const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position","movable"];
 
 class ControllerSystem {
-    private _entities: Array<Entity>;
+    private entities: Map<string, Entity>;
     private _game: Game;
 
     constructor() {
-        this._entities = [];
+        this.entities = new Map();
         this._game = null;
     }
 
@@ -29,18 +29,12 @@ class ControllerSystem {
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this._entities.push(entity);
+            this.entities.set(entity.id, entity);
         }
     }
 
     entityRemoved(entity) {
-        var entities = this._entities;
-
-        var index = entities.indexOf(entity);
-
-        if (index > -1) {
-            entities.splice(index, 1);
-        }
+        this.entities.delete(entity.id);
     }
 
     componentAdded(entity, component) {
@@ -57,7 +51,7 @@ class ControllerSystem {
 
     update() {
 
-        this._entities.forEach(function (entity) {
+        this.entities.forEach(function (entity) {
             var movable = entity.getComponent<Position>("movable");
             var keyboardInput = entity.getComponent<KeyboardInput>("keyboard-input");
 
@@ -68,14 +62,17 @@ class ControllerSystem {
                     movable.x -= 2;
                 }
 
+                // Up
                 if (keyboardInput.pressedKeys[38]) {
                     movable.y -= 2;
                 }
 
+                // Right
                 if (keyboardInput.pressedKeys[39]) {
                     movable.x += 2;
                 }
 
+                // Bottom
                 if (keyboardInput.pressedKeys[40]) {
                     movable.y += 2;
                 }

@@ -47,12 +47,15 @@ define(["require", "exports"], function (require, exports) {
                     if (keyboardInput.pressedKeys[37]) {
                         movable.x -= 2;
                     }
+                    // Up
                     if (keyboardInput.pressedKeys[38]) {
                         movable.y -= 2;
                     }
+                    // Right
                     if (keyboardInput.pressedKeys[39]) {
                         movable.x += 2;
                     }
+                    // Bottom
                     if (keyboardInput.pressedKeys[40]) {
                         movable.y += 2;
                     }

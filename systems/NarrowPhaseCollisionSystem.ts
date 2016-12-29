@@ -371,7 +371,7 @@ class NarrowPhaseCollisionSystem {
 
     activated(game) {
         this.game = game;
-        this.game.getEntities().forEach( (entity) =>{
+        this.game.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
@@ -381,7 +381,7 @@ class NarrowPhaseCollisionSystem {
         var entities = this.entities;
         this.timestamp = this.game.getTime();
 
-        entities.forEach((entity)=>{
+        entities.forEach((entity) => {
             this.handleCollisions(entity);
         });
     }
@@ -405,6 +405,16 @@ class NarrowPhaseCollisionSystem {
                 this.entities.splice(index, 1);
             }
         }
+    }
+
+    componentRemoved(entity:Entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this.entityRemoved(entity);
+        }
+    }
+
+    componentAdded(entity:Entity, component) {
+        this.entityAdded(entity);
     }
 
 }

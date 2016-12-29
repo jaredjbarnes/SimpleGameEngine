@@ -51,14 +51,14 @@ class MovementSystem {
         }
     }
 
-    componentAdded(component, entity: Entity){
+    componentAdded(entity:Entity, component){
         if (entity.hasComponents(DEPENDENCIES)){
             this.entities.set(entity.id, entity);
         }
     }
 
-    componentRemoved(component, entity: Entity){
-        if (!entity.hasComponents(DEPENDENCIES)){
+    componentRemoved(entity:Entity, component){
+        if (DEPENDENCIES.indexOf(component.type) > -1){
             this.entities.delete(entity.id);
         }
     }

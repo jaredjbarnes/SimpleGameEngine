@@ -1,5 +1,6 @@
 define(["require", "exports", "./../Vector"], function (require, exports, Vector) {
     "use strict";
+    const DEPENDENCIES = ["collidable", "rigid-body", "position"];
     class NarrowPhaseCollisionSystem {
         constructor() {
             this.entities = [];
@@ -278,33 +279,30 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             this.cleanCollisions(entity);
         }
         activated(game) {
-            var self = this;
             this.game = game;
-            this.game.getEntities().forEach(function (entity) {
-                self.entityAdded(entity);
+            this.game.getEntities().forEach((entity) => {
+                this.entityAdded(entity);
             });
         }
         update() {
             var entity;
             var entities = this.entities;
-            var length = entities.length;
             this.timestamp = this.game.getTime();
-            for (var x = 0; x < length; x++) {
-                entity = this.entities[x];
+            entities.forEach((entity) => {
                 this.handleCollisions(entity);
-            }
+            });
         }
         deactivated() {
         }
         entityAdded(entity) {
-            if (entity.hasComponents(["collidable", "rigid-body", "position"])) {
+            if (entity.hasComponents(DEPENDENCIES)) {
                 this.prepareRigidBody(entity.getComponent("rigid-body"));
                 this.entities.push(entity);
             }
         }
         ;
         entityRemoved(entity) {
-            if (entity.hasComponents(["collidable", "rigid-body", "position"])) {
+            if (entity.hasComponents(DEPENDENCIES)) {
                 var index = this.entities.indexOf(entity);
                 if (index > -1) {
                     this.entities.splice(index, 1);

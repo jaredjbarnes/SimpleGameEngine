@@ -181,8 +181,8 @@ class RenderSystem {
         // This is how we optimize rendering. We use the collision system with the camera entity.
         var activeCollisions = this.camera.getComponent<Collidable>("collidable").activeCollisions;
 
-        var entities = Object.keys(activeCollisions).map(function (key) {
-            return game.getEntityById(activeCollisions[key].entityId);
+        var entities = Array.from(activeCollisions.values()).map(function (collision) {
+            return game.getEntityById(collision.entityId);
         }).filter(function (entity) {
             return self.isDynamicEntity(entity);
         });
@@ -273,11 +273,11 @@ class RenderSystem {
         if (width <= 0 || height <= 0) {
             return;
         }
-        entities = Object.keys(activeCollisions).filter(function (key) {
-            var collision = activeCollisions[key];
+        
+        entities = Array.from(activeCollisions.values()).filter(function (collision) {
             return collision.endTimestamp == null;
-        }).map(function (id) {
-            return game.getEntityById(id);
+        }).map(function (collision) {
+            return game.getEntityById(collision.entityId);
         }).filter(function (entity: Entity) {
             if (entity == null) {
                 return false;
@@ -441,11 +441,10 @@ class RenderSystem {
             return;
         }
 
-        var entities = Object.keys(activeCollisions).filter(function (key) {
-            var collision = activeCollisions[key];
+        var entities = Array.from(activeCollisions.values()).filter(function (collision) {
             return collision.endTimestamp == null;
-        }).map(function (id) {
-            return game.getEntityById(id);
+        }).map(function (collision) {
+            return game.getEntityById(collision.entityId);
         }).filter(function (entity) {
             return entity != null;
         });

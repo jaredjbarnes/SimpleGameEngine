@@ -82,9 +82,7 @@ define(["require", "exports"], function (require, exports) {
         _removeStaticCollisionById(id) {
             this._staticEntities.forEach(function (entity) {
                 var activeCollisions = entity.collidable.activeCollisions;
-                if (activeCollisions[id]) {
-                    delete activeCollisions[id];
-                }
+                activeCollisions.delete(id);
             });
             this._staticGrid = this.sweepAndPrune(this._staticEntities);
         }
@@ -95,8 +93,9 @@ define(["require", "exports"], function (require, exports) {
             var currentTimestamp = this._currentTimestamp;
             entities.forEach(function (entity) {
                 var collisions = entity.collidable.activeCollisions;
-                Object.keys(collisions).forEach(function (key) {
-                    var collision = collisions[key];
+                Array.from(collisions.entries()).forEach(function (entry) {
+                    var key = entry[0];
+                    var collision = entry[1];
                     if (collision.timestamp !== currentTimestamp) {
                         // We know the collision ended if the timestamp didn't update to our current timestamp.
                         collision.endTimestamp = currentTimestamp;
@@ -115,8 +114,8 @@ define(["require", "exports"], function (require, exports) {
                 var entityB = pair[1];
                 var collidableA = entityA.collidable;
                 var collidableB = entityB.collidable;
-                var collisionDataA = collidableA.activeCollisions[entityB.id];
-                var collisionDataB = collidableB.activeCollisions[entityA.id];
+                var collisionDataA = collidableA.activeCollisions.get(entityB.id);
+                var collisionDataB = collidableB.activeCollisions.get(entityA.id);
                 if (collisionDataA == null) {
                     collisionDataA = new Collision();
                     collisionDataA.startTimestamp = currentTimestamp;
@@ -126,7 +125,7 @@ define(["require", "exports"], function (require, exports) {
                     if (collidableA.isStatic && collidableB.isStatic) {
                         collisionDataA.isStatic = true;
                     }
-                    collidableA.activeCollisions[entityB.id] = collisionDataA;
+                    collidableA.activeCollisions.set(entityB.id, collisionDataA);
                     collidableA.isInitialized = true;
                 }
                 else {
@@ -143,7 +142,7 @@ define(["require", "exports"], function (require, exports) {
                         collisionDataB.isStatic = true;
                     }
                     collidableB.isInitialized = true;
-                    collidableB.activeCollisions[entityA.id] = collisionDataB;
+                    collidableB.activeCollisions.set(entityA.id, collisionDataB);
                 }
                 else {
                     collisionDataB.timestamp = currentTimestamp;

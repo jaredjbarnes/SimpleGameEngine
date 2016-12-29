@@ -4,7 +4,7 @@
     isEnabled: boolean;
     isStatic: boolean;
     isInitialized: boolean;
-    activeCollisions: any;
+    activeCollisions: Map<string, any>;
 
     constructor() {
         this.type = "collidable";
@@ -12,7 +12,7 @@
         this.isEnabled = true;
         this.isStatic = false;
         this.isInitialized = false;
-        this.activeCollisions = {};
+        this.activeCollisions = new Map();
     }
 }
 

@@ -92,7 +92,7 @@ class ImageRenderer {
 
         var image = new Image();
 
-        image.onload = function () {
+        image.onload =  ()=> {
             var canvas = this.createCanvasByImage(image, imageTexture);
             this.sourceCanvases[path] = canvas;
             this.cacheCanvasBySize(path, canvas, size);

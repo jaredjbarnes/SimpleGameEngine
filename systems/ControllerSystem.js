@@ -1,8 +1,8 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position", "movable"];
     class ControllerSystem {
         constructor() {
-            this._dependencies = ["keyboard-input", "keyboard-controller", "position"];
             this._entities = [];
             this._game = null;
         }
@@ -17,7 +17,7 @@ define(["require", "exports"], function (require, exports) {
             this._game = null;
         }
         entityAdded(entity) {
-            if (entity.hasComponents(this._dependencies)) {
+            if (entity.hasComponents(DEPENDENCIES)) {
                 this._entities.push(entity);
             }
         }
@@ -29,32 +29,32 @@ define(["require", "exports"], function (require, exports) {
             }
         }
         componentAdded(entity, component) {
-            if (entity.hasComponents(this._dependencies)) {
+            if (entity.hasComponents(DEPENDENCIES)) {
                 this.entityAdded(entity);
             }
         }
         componentRemoved(entity, component) {
-            if (this._dependencies.indexOf(component.type) > -1) {
+            if (DEPENDENCIES.indexOf(component.type) > -1) {
                 this.entityRemoved(entity);
             }
         }
         update() {
             this._entities.forEach(function (entity) {
-                var position = entity.getComponent("position");
+                var movable = entity.getComponent("movable");
                 var keyboardInput = entity.getComponent("keyboard-input");
-                if (position != null && keyboardInput != null) {
+                if (movable != null && keyboardInput != null) {
                     // Left
                     if (keyboardInput.pressedKeys[37]) {
-                        position.x -= 2;
+                        movable.x -= 2;
                     }
                     if (keyboardInput.pressedKeys[38]) {
-                        position.y -= 2;
+                        movable.y -= 2;
                     }
                     if (keyboardInput.pressedKeys[39]) {
-                        position.x += 2;
+                        movable.x += 2;
                     }
                     if (keyboardInput.pressedKeys[40]) {
-                        position.y += 2;
+                        movable.y += 2;
                     }
                 }
             });

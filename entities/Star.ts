@@ -2,6 +2,7 @@
 import Shape = require("./../components/Shape");
 import Size = require("./../components/Size");
 import Position = require("./../components/Position");
+import Movable = require("./../components/Movable");
 import KeyboardInput = require("./../components/KeyboardInput");
 import KeyboardController = require("./../components/KeyboardController");
 import Collidable = require("./../components/Collidable");
@@ -73,6 +74,7 @@ class Star extends Entity {
         var keyboardInput = new KeyboardInput();
         var keyboardController = new KeyboardController();
         var collidable = new Collidable();
+        var movable = new Movable();
 
         size.width = 100;
         size.height = 100;
@@ -83,6 +85,7 @@ class Star extends Entity {
         this.addComponent(keyboardInput);
         this.addComponent(keyboardController);
         this.addComponent(collidable);
+        this.addComponent(movable);
     }
 }
 

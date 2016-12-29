@@ -1,4 +1,4 @@
-define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/KeyboardInput", "./../components/KeyboardController", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, KeyboardInput, KeyboardController, Collidable) {
+define(["require", "exports", "./../Entity", "./../components/Shape", "./../components/Size", "./../components/Position", "./../components/Movable", "./../components/KeyboardInput", "./../components/KeyboardController", "./../components/Collidable"], function (require, exports, Entity, Shape, Size, Position, Movable, KeyboardInput, KeyboardController, Collidable) {
     "use strict";
     class Star extends Entity {
         constructor(config) {
@@ -53,6 +53,7 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             var keyboardInput = new KeyboardInput();
             var keyboardController = new KeyboardController();
             var collidable = new Collidable();
+            var movable = new Movable();
             size.width = 100;
             size.height = 100;
             this.addComponent(shape);
@@ -61,6 +62,7 @@ define(["require", "exports", "./../Entity", "./../components/Shape", "./../comp
             this.addComponent(keyboardInput);
             this.addComponent(keyboardController);
             this.addComponent(collidable);
+            this.addComponent(movable);
         }
     }
     return Star;

@@ -1,1 +1,1 @@
-{"version":3,"file":"State.js","sourceRoot":"","sources":["State.ts"],"names":[],"mappings":";;IAEA;IAGA,CAAC;IAED,OAAS,KAAK,CAAC"}
+{"version":3,"file":"State.js","sourceRoot":"","sources":["State.ts"],"names":[],"mappings":";;IAAA;QAII;YACI,IAAI,CAAC,IAAI,GAAG,OAAO,CAAC;YACpB,IAAI,CAAC,gBAAgB,GAAE,IAAI,CAAC;YAC5B,IAAI,CAAC,iBAAiB,GAAG,IAAI,CAAC;QAClC,CAAC;KACJ;IAED,OAAS,KAAK,CAAC"}

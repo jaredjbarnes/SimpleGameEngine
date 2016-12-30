@@ -7,9 +7,6 @@ import Collidable = require("./../components/Collidable");
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
 
-// #TODO: An optimization we could do is only updateWorldPoints on static entities once, because they are static.
-// This would really free up the narrow phase to focus on the dynamic moving entities.
-
 class NarrowPhaseCollisionSystem {
     game: Game;
     entities: Array<Entity>;

@@ -359,7 +359,7 @@ class BroadPhaseCollisionSystem {
 
         // construct grid
         // NOTE: this is a purposeful use of the Array() constructor 
-        var grid = Array(gridWidth);
+        var grid = new Array(gridWidth);
 
         // insert all entities into grid
         entities.forEach(function (entity) {

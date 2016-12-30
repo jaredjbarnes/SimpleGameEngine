@@ -1,11 +1,12 @@
 ﻿class State {
     type: string;
-    currentStateName:string;
-    previousStateName: string;
+    name: string;
+    stateManagerName: string;
+
     constructor(){
         this.type = "state";
-        this.currentStateName= null;
-        this.previousStateName = null;
+        this.name = null;
+        this.stateManagerName = null;
     } 
 }
 

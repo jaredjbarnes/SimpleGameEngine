@@ -36,13 +36,13 @@ define(["require", "exports"], function (require, exports) {
                 this.entities.delete(entity.id);
             }
         }
-        componentAdded(component, entity) {
+        componentAdded(entity, component) {
             if (entity.hasComponents(DEPENDENCIES)) {
                 this.entities.set(entity.id, entity);
             }
         }
-        componentRemoved(component, entity) {
-            if (!entity.hasComponents(DEPENDENCIES)) {
+        componentRemoved(entity, component) {
+            if (DEPENDENCIES.indexOf(component.type) > -1) {
                 this.entities.delete(entity.id);
             }
         }

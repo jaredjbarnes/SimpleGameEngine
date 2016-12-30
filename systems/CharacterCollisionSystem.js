@@ -29,11 +29,11 @@ define(["require", "exports"], function (require, exports) {
         entityRemoved(entity) {
             this.entities.delete(entity.id);
         }
-        componentAdded(component, entity) {
+        componentAdded(entity, component) {
             this.entityAdded(entity);
         }
-        componentRemoved(component, entity) {
-            if (!entity.hasComponents(DEPENDENCIES)) {
+        componentRemoved(entity, component) {
+            if (DEPENDENCIES.indexOf(component.type) > -1) {
                 this.entities.delete(entity.id);
             }
         }
@@ -49,5 +49,6 @@ define(["require", "exports"], function (require, exports) {
             });
         }
     }
+    return CharacterCollisionSystem;
 });
 //# sourceMappingURL=CharacterCollisionSystem.js.map

@@ -69,4 +69,4 @@ class CharacterCollisionSystem {
 }
 
 
-
+export = CharacterCollisionSystem;

@@ -27,6 +27,7 @@ define(["require", "exports"], function (require, exports) {
             this._cellSize = cellSize || 200;
             this._currentTimestamp = 0;
             this._dynamicGrid = [[]];
+            this._staticGrid = [[]];
             this._detectionAreaPosition = null;
             this._detectionAreaSize = null;
         }

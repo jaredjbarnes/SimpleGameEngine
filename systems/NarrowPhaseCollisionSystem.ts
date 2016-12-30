@@ -336,11 +336,11 @@ class NarrowPhaseCollisionSystem {
         var timestamp = this.timestamp;
 
         Array.from(activeCollisions.entries()).forEach((entry) => {
+            var collision = entry[1];
             var key = entry[0];
-            var collision = activeCollisions[key];
 
             if (collision.endTimestamp != null && timestamp - collision.endTimestamp > 3000) {
-                delete activeCollisions[key];
+                activeCollisions.delete(key);
             }
 
             // Checking the status of the broadphase collision.
@@ -351,15 +351,13 @@ class NarrowPhaseCollisionSystem {
     }
 
     handleCollisions(entity: Entity) {
-        var collision;
-        var otherEntity;
         var activeCollisions = entity.getComponent<Collidable>("collidable").activeCollisions;
 
         Array.from(activeCollisions.entries()).forEach((entry) => {
-            collision = entry[1];
-            otherEntity = collision.entity;
+            var collision = entry[1];
+            var otherEntity = this.game.getEntityById(collision.entityId);
 
-            if (!otherEntity.hasProperties(["rigid-body"])) {
+            if (!otherEntity.hasComponents(["rigid-body"])) {
                 return;
             }
 

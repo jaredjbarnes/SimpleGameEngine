@@ -3,7 +3,7 @@ define(["require", "exports"], function (require, exports) {
     const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position", "movable"];
     class ControllerSystem {
         constructor() {
-            this._entities = [];
+            this.entities = new Map();
             this._game = null;
         }
         activated(game) {
@@ -18,19 +18,15 @@ define(["require", "exports"], function (require, exports) {
         }
         entityAdded(entity) {
             if (entity.hasComponents(DEPENDENCIES)) {
-                this._entities.push(entity);
+                this.entities.set(entity.id, entity);
             }
         }
         entityRemoved(entity) {
-            var entities = this._entities;
-            var index = entities.indexOf(entity);
-            if (index > -1) {
-                entities.splice(index, 1);
-            }
+            this.entities.delete(entity.id);
         }
         componentAdded(entity, component) {
             if (entity.hasComponents(DEPENDENCIES)) {
-                this.entityAdded(entity);
+                this.entities.set(entity);
             }
         }
         componentRemoved(entity, component) {
@@ -39,7 +35,7 @@ define(["require", "exports"], function (require, exports) {
             }
         }
         update() {
-            this._entities.forEach(function (entity) {
+            this.entities.forEach(function (entity) {
                 var movable = entity.getComponent("movable");
                 var keyboardInput = entity.getComponent("keyboard-input");
                 if (movable != null && keyboardInput != null) {

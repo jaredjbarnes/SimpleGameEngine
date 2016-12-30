@@ -12,6 +12,7 @@ define(["require", "exports"], function (require, exports) {
             this.activeCollisions = new Map();
             this.minWorldPoint = { x: 0, y: 0 };
             this.size = { width: 0, height: 0 };
+            this.origin = { x: 0, y: 0 };
         }
     }
     return RigidBody;

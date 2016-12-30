@@ -253,10 +253,10 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             var activeCollisions = rigidBody.activeCollisions;
             var timestamp = this.timestamp;
             Array.from(activeCollisions.entries()).forEach((entry) => {
+                var collision = entry[1];
                 var key = entry[0];
-                var collision = activeCollisions[key];
                 if (collision.endTimestamp != null && timestamp - collision.endTimestamp > 3000) {
-                    delete activeCollisions[key];
+                    activeCollisions.delete(key);
                 }
                 // Checking the status of the broadphase collision.
                 if (collision.endTimestamp == null && collidable.activeCollisions.has(key) && collidable.activeCollisions.get(key).endTimestamp != null) {
@@ -265,13 +265,11 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             });
         }
         handleCollisions(entity) {
-            var collision;
-            var otherEntity;
             var activeCollisions = entity.getComponent("collidable").activeCollisions;
             Array.from(activeCollisions.entries()).forEach((entry) => {
-                collision = entry[1];
-                otherEntity = collision.entity;
-                if (!otherEntity.hasProperties(["rigid-body"])) {
+                var collision = entry[1];
+                var otherEntity = this.game.getEntityById(collision.entityId);
+                if (!otherEntity.hasComponents(["rigid-body"])) {
                     return;
                 }
                 this.intersects(entity, otherEntity);
@@ -309,12 +307,12 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                 }
             }
         }
-        componentRemoved(component, entity) {
+        componentRemoved(entity, component) {
             if (DEPENDENCIES.indexOf(component.type) > -1) {
                 this.entityRemoved(entity);
             }
         }
-        componentAdded(component, entity) {
+        componentAdded(entity, component) {
             this.entityAdded(entity);
         }
     }

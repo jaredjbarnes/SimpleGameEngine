@@ -7,6 +7,9 @@ import Collidable = require("./../components/Collidable");
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
 
+// #TODO: An optimization we could do is only updateWorldPoints on static entities once, because they are static.
+// This would really free up the narrow phase to focus on the dynamic moving entities.
+
 class NarrowPhaseCollisionSystem {
     game: Game;
     entities: Array<Entity>;
@@ -53,13 +56,6 @@ class NarrowPhaseCollisionSystem {
                 y: point.y
             };
         });
-
-        rigidBody.minWorldPoint = rigidBody.worldPoints.reduce(function (minPoint, point) {
-            return {
-                x: Math.min(minPoint.x, point.x),
-                y: Math.min(minPoint.y, point.y)
-            };
-        }, { x: Infinity, y: Infinity });
 
         rigidBody.normals = rigidBody.vertices.map(function (vertex, index) {
             return Vector.normalize(Vector.getLeftNormal(vertex));
@@ -176,6 +172,7 @@ class NarrowPhaseCollisionSystem {
         var rigidBody = entity.getComponent<RigidBody>("rigid-body");
         var position = entity.getComponent<Position>("position");
         var worldPoints = rigidBody.worldPoints;
+        worldPoints.length = rigidBody.points.length;
 
         rigidBody.points.forEach(function (point, index) {
             var worldPoint = worldPoints[index];
@@ -184,13 +181,6 @@ class NarrowPhaseCollisionSystem {
             worldPoint.y = point.y + position.y;
         });
 
-        rigidBody.minWorldPoint = worldPoints.reduce(function (minPoint, point) {
-            return {
-                x: Math.min(minPoint.x, point.x),
-                y: Math.min(minPoint.y, point.y)
-            };
-        }, { x: Infinity, y: Infinity });
-
     }
 
     intersects(entityA: Entity, entityB: Entity) {
@@ -198,15 +188,21 @@ class NarrowPhaseCollisionSystem {
         var vx;
         var normal;
 
-        this.updateWorldPoints(entityA);
-        this.updateWorldPoints(entityB);
-
         var rigidBodyA = entityA.getComponent<RigidBody>("rigid-body");
         var rigidBodyB = entityB.getComponent<RigidBody>("rigid-body");
         var positionA = entityA.getComponent<Position>("position");
         var positionB = entityB.getComponent<Position>("position");
         var collidableA = entityA.getComponent<Collidable>("collidable");
         var collidableB = entityA.getComponent<Collidable>("collidable");
+
+        if (!collidableA.isStatic) {
+            this.updateWorldPoints(entityA);
+        }
+
+        if (!collidableB.isStatic) {
+            this.updateWorldPoints(entityB);
+        }
+
         var normalsA = rigidBodyA.normals;
         var normalsB = rigidBodyB.normals;
         var projectionA = this.projectionA;
@@ -405,13 +401,13 @@ class NarrowPhaseCollisionSystem {
         }
     }
 
-    componentRemoved(entity:Entity, component) {
+    componentRemoved(entity: Entity, component) {
         if (DEPENDENCIES.indexOf(component.type) > -1) {
             this.entityRemoved(entity);
         }
     }
 
-    componentAdded(entity:Entity, component) {
+    componentAdded(entity: Entity, component) {
         this.entityAdded(entity);
     }
 

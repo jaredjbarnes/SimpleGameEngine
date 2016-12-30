@@ -5,7 +5,6 @@ class RigidBody {
     vertices: Array<{x: number; y: number}>;
     normals: Array<{x: number; y: number}>;
     worldPoints: Array<{x: number; y: number}>;
-    minWorldPoint: {x: number; y: number};
     size: {width: number; height: number};
     origin: {x: number; y: number};
     activeCollisions: Map<string, any>;
@@ -20,7 +19,6 @@ class RigidBody {
         this.worldPoints = [];
         this.projectionVertices = [];
         this.activeCollisions = new Map();
-        this.minWorldPoint = {x: 0, y: 0};
         this.size = {width: 0, height:0};
         this.origin = {x:0,y:0 };
     }

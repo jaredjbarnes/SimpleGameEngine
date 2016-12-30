@@ -10,7 +10,6 @@ define(["require", "exports"], function (require, exports) {
             this.worldPoints = [];
             this.projectionVertices = [];
             this.activeCollisions = new Map();
-            this.minWorldPoint = { x: 0, y: 0 };
             this.size = { width: 0, height: 0 };
             this.origin = { x: 0, y: 0 };
         }

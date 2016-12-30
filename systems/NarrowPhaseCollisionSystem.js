@@ -1,6 +1,8 @@
 define(["require", "exports", "./../Vector"], function (require, exports, Vector) {
     "use strict";
     const DEPENDENCIES = ["collidable", "rigid-body", "position"];
+    // #TODO: An optimization we could do is only updateWorldPoints on static entities once, because they are static.
+    // This would really free up the narrow phase to focus on the dynamic moving entities.
     class NarrowPhaseCollisionSystem {
         constructor() {
             this.entities = [];
@@ -36,12 +38,6 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                     y: point.y
                 };
             });
-            rigidBody.minWorldPoint = rigidBody.worldPoints.reduce(function (minPoint, point) {
-                return {
-                    x: Math.min(minPoint.x, point.x),
-                    y: Math.min(minPoint.y, point.y)
-                };
-            }, { x: Infinity, y: Infinity });
             rigidBody.normals = rigidBody.vertices.map(function (vertex, index) {
                 return Vector.normalize(Vector.getLeftNormal(vertex));
             });
@@ -133,30 +129,29 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             var rigidBody = entity.getComponent("rigid-body");
             var position = entity.getComponent("position");
             var worldPoints = rigidBody.worldPoints;
+            worldPoints.length = rigidBody.points.length;
             rigidBody.points.forEach(function (point, index) {
                 var worldPoint = worldPoints[index];
                 worldPoint.x = point.x + position.x;
                 worldPoint.y = point.y + position.y;
             });
-            rigidBody.minWorldPoint = worldPoints.reduce(function (minPoint, point) {
-                return {
-                    x: Math.min(minPoint.x, point.x),
-                    y: Math.min(minPoint.y, point.y)
-                };
-            }, { x: Infinity, y: Infinity });
         }
         intersects(entityA, entityB) {
             var x;
             var vx;
             var normal;
-            this.updateWorldPoints(entityA);
-            this.updateWorldPoints(entityB);
             var rigidBodyA = entityA.getComponent("rigid-body");
             var rigidBodyB = entityB.getComponent("rigid-body");
             var positionA = entityA.getComponent("position");
             var positionB = entityB.getComponent("position");
             var collidableA = entityA.getComponent("collidable");
             var collidableB = entityA.getComponent("collidable");
+            if (!collidableA.isStatic) {
+                this.updateWorldPoints(entityA);
+            }
+            if (!collidableB.isStatic) {
+                this.updateWorldPoints(entityB);
+            }
             var normalsA = rigidBodyA.normals;
             var normalsB = rigidBodyB.normals;
             var projectionA = this.projectionA;

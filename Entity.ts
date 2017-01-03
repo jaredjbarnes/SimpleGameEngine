@@ -1,19 +1,6 @@
-﻿
-var S4 = function () {
-    return Math.floor(
-        Math.random() * 0x10000 /* 65536 */
-    ).toString(16);
-};
+﻿import util = require("util");
 
-var createGuid = function () {
-    return (
-        S4() + S4() + "-" +
-        S4() + "-" +
-        S4() + "-" +
-        S4() + "-" +
-        S4() + S4() + S4()
-    );
-}
+var createGuid = util.createGuid;
 
 class Entity {
     private _delegate: any;

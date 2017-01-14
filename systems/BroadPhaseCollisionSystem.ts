@@ -45,6 +45,8 @@ class BroadPhaseCollisionSystem {
     private _staticGrid: Array<Array<any>>;
     private _detectionAreaPosition: { x: number; y: number; };
     private _detectionAreaSize: { width: number; height: number; };
+    private _gridWidth: number;
+    private _gridHeight: number;
 
     constructor(cellSize) {
         this._dependencies = ["collidable"];
@@ -58,11 +60,26 @@ class BroadPhaseCollisionSystem {
         this._staticGrid = [[]];
         this._detectionAreaPosition = null;
         this._detectionAreaSize = null;
+        this._gridWidth = 0;
+        this._gridHeight = 0;
     }
 
     activated(game) {
         var self = this;
         this._game = game;
+
+        this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
+        this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
+
+        this._dynamicGrid = new Array(this._gridWidth);
+
+        for (var columnIndex = 0; columnIndex < this._gridWidth; columnIndex++) {
+            this._dynamicGrid[columnIndex] = new Array(this._gridHeight);
+
+            for (var cellIndex = 0; cellIndex < this._gridHeight; cellIndex++){
+                this._dynamicGrid[columnIndex][cellIndex] = [];
+            }
+        }
 
         game.getEntities().forEach(function (entity) {
             self.entityAdded(entity);
@@ -115,11 +132,23 @@ class BroadPhaseCollisionSystem {
 
     update() {
         this._currentTimestamp = this._game.getTime();
+
+        //Clean Cache.
+        this.cleanCachedGrid();
+
         // Update dynamic entities.
-        this._dynamicGrid = this.sweepAndPrune(this._dynamicEntities);
+        this.sweepAndPrune(this._dynamicEntities, this._dynamicGrid);
 
         this.assignTimestamps(this.queryForDynamicCollisions());
         this.cleanCollisions();
+    }
+
+    cleanCachedGrid() {
+        for (var columnIndex = 0; columnIndex < this._gridWidth; columnIndex++) {
+            for (var cellIndex = 0; cellIndex < this._gridHeight; cellIndex++){
+                this._dynamicGrid[columnIndex][cellIndex].length = 0;
+            }
+        }
     }
 
     _removeStaticCollisionById(id: string) {
@@ -348,7 +377,7 @@ class BroadPhaseCollisionSystem {
         return pairs;
     }
 
-    sweepAndPrune(entities: Array<BroadPhaseEntity>) {
+    sweepAndPrune(entities: Array<BroadPhaseEntity>, cachedGrid?: Array<Array<any>>) {
         var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
         var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
         var boundsTop = 0;
@@ -356,10 +385,15 @@ class BroadPhaseCollisionSystem {
         var boundsLeft = 0;
         var boundsRight = this._game.size.width;
         var cellSize = this._cellSize;
+        var grid;
 
-        // construct grid
+        if (cachedGrid == null) {
+            grid = new Array(gridWidth);
+        } else {
+            grid = cachedGrid;
+        }
+
         // NOTE: this is a purposeful use of the Array() constructor 
-        var grid = new Array(gridWidth);
 
         // insert all entities into grid
         entities.forEach(function (entity) {

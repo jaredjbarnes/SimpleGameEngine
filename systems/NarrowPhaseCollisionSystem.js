@@ -1,8 +1,6 @@
 define(["require", "exports", "./../Vector"], function (require, exports, Vector) {
     "use strict";
     const DEPENDENCIES = ["collidable", "rigid-body", "position"];
-    // #TODO: An optimization we could do is only updateWorldPoints on static entities once, because they are static.
-    // This would really free up the narrow phase to focus on the dynamic moving entities.
     class NarrowPhaseCollisionSystem {
         constructor() {
             this.entities = [];
@@ -165,6 +163,8 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             var normal;
             var originA = Vector.add(positionA, rigidBodyA.origin);
             var originB = Vector.add(positionB, rigidBodyB.origin);
+            rigidBodyA.isInitialized = true;
+            rigidBodyB.isInitialized = true;
             // If the collision was already handled from the other side then stop detection.
             if (collisionA != null && collisionA.timestamp === this.timestamp) {
                 return collisionA.endTimestamp != null;
@@ -250,6 +250,9 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             Array.from(activeCollisions.entries()).forEach((entry) => {
                 var collision = entry[1];
                 var key = entry[0];
+                if (collision == null || key == null) {
+                    return;
+                }
                 if (collision.endTimestamp != null && timestamp - collision.endTimestamp > 3000) {
                     activeCollisions.delete(key);
                 }
@@ -259,12 +262,24 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                 }
             });
         }
+        isStaticAndInitialized(entityA, entityB) {
+            var rigidBodyA = entityA.getComponent("rigid-body");
+            var rigidBodyB = entityB.getComponent("rigid-body");
+            var collidableA = entityA.getComponent("collidable");
+            var collidableB = entityB.getComponent("collidable");
+            if (!collidableA.isStatic || !collidableB.isStatic) {
+                return false;
+            }
+            if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
+                return false;
+            }
+            return true;
+        }
         handleCollisions(entity) {
             var activeCollisions = entity.getComponent("collidable").activeCollisions;
-            Array.from(activeCollisions.entries()).forEach((entry) => {
-                var collision = entry[1];
+            activeCollisions.forEach((collision) => {
                 var otherEntity = this.game.getEntityById(collision.entityId);
-                if (!otherEntity.hasComponents(["rigid-body"])) {
+                if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
                     return;
                 }
                 this.intersects(entity, otherEntity);

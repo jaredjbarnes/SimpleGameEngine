@@ -1,4 +1,5 @@
-﻿class Collidable {
+﻿
+class Collidable {
     type: string;
     name: string;
     isEnabled: boolean;

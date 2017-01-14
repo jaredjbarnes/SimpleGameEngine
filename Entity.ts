@@ -1,4 +1,4 @@
-﻿import util = require("util");
+﻿import util = require("./util");
 
 var createGuid = util.createGuid;
 
@@ -73,7 +73,7 @@ class Entity {
 
     hasComponents(componentTypes) {
         var components = this._components;
-        return componentTypes.every(function (type) {
+        return componentTypes.every( (type) =>{
             return components.has(type);
         })
     }

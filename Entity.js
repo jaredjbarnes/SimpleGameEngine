@@ -1,15 +1,6 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "./util"], function (require, exports, util) {
     "use strict";
-    var S4 = function () {
-        return Math.floor(Math.random() * 0x10000 /* 65536 */).toString(16);
-    };
-    var createGuid = function () {
-        return (S4() + S4() + "-" +
-            S4() + "-" +
-            S4() + "-" +
-            S4() + "-" +
-            S4() + S4() + S4());
-    };
+    var createGuid = util.createGuid;
     class Entity {
         constructor() {
             this._delegate = null;
@@ -62,7 +53,7 @@ define(["require", "exports"], function (require, exports) {
         }
         hasComponents(componentTypes) {
             var components = this._components;
-            return componentTypes.every(function (type) {
+            return componentTypes.every((type) => {
                 return components.has(type);
             });
         }

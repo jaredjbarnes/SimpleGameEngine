@@ -214,6 +214,9 @@ class NarrowPhaseCollisionSystem {
 
         var originA = Vector.add(positionA, rigidBodyA.origin);
         var originB = Vector.add(positionB, rigidBodyB.origin);
+        
+        rigidBodyA.isInitialized = true;
+        rigidBodyB.isInitialized = true;
 
         // If the collision was already handled from the other side then stop detection.
         if (collisionA != null && collisionA.timestamp === this.timestamp) {
@@ -332,6 +335,10 @@ class NarrowPhaseCollisionSystem {
             var collision = entry[1];
             var key = entry[0];
 
+            if (collision == null || key == null){
+                return;
+            }
+
             if (collision.endTimestamp != null && timestamp - collision.endTimestamp > 3000) {
                 activeCollisions.delete(key);
             }
@@ -343,14 +350,30 @@ class NarrowPhaseCollisionSystem {
         });
     }
 
+    isStaticAndInitialized(entityA: Entity, entityB: Entity) {
+        var rigidBodyA = entityA.getComponent<RigidBody>("rigid-body");
+        var rigidBodyB = entityB.getComponent<RigidBody>("rigid-body");
+        var collidableA = entityA.getComponent<Collidable>("collidable");
+        var collidableB = entityB.getComponent<Collidable>("collidable");
+ 
+        if (!collidableA.isStatic || !collidableB.isStatic){
+            return false;
+        }
+
+        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized){
+            return false;
+        }
+
+        return true;
+    }
+
     handleCollisions(entity: Entity) {
         var activeCollisions = entity.getComponent<Collidable>("collidable").activeCollisions;
 
-        Array.from(activeCollisions.entries()).forEach((entry) => {
-            var collision = entry[1];
+        activeCollisions.forEach((collision) => {
             var otherEntity = this.game.getEntityById(collision.entityId);
 
-            if (!otherEntity.hasComponents(["rigid-body"])) {
+            if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
                 return;
             }
 

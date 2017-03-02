@@ -113,6 +113,9 @@ define(["require", "exports"], function (require, exports) {
                 var pairs = this.queryForCollisions(entities);
                 this.assignTimestamps(pairs);
                 this.cleanCollisions(entities);
+                entities.forEach((entity) => {
+                    entity.position.isDirty = false;
+                });
             });
         }
         cleanCollisions(entities) {

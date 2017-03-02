@@ -9,7 +9,7 @@ class MovementEntity {
     position: Position;
     movable: Movable;
 
-    constructor(entity:Entity) {
+    constructor(entity: Entity) {
         this.movable = entity.getComponent<Movable>("movable");
         this.position = entity.getComponent<Position>("position");
     }
@@ -31,7 +31,10 @@ class MovementSystem {
 
             position.x += movable.x;
             position.y += movable.y;
-            position.isDirty = true;
+
+            if (movable.x != 0 || movable.y != 0) {
+                position.isDirty = true;
+            }
 
             movable.x = 0;
             movable.y = 0;

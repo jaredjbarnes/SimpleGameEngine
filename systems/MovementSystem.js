@@ -18,7 +18,9 @@ define(["require", "exports"], function (require, exports) {
                 var movable = entity.movable;
                 position.x += movable.x;
                 position.y += movable.y;
-                position.isDirty = true;
+                if (movable.x != 0 || movable.y != 0) {
+                    position.isDirty = true;
+                }
                 movable.x = 0;
                 movable.y = 0;
             });

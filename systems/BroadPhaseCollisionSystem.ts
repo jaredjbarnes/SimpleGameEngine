@@ -171,6 +171,10 @@ class BroadPhaseCollisionSystem {
 
             this.assignTimestamps(pairs);
             this.cleanCollisions(entities);
+
+            entities.forEach((entity)=>{
+                entity.position.isDirty = false;
+            });
         })
 
 

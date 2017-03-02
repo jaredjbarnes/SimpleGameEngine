@@ -219,11 +219,11 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
                 if (otherWidth <= 0 || otherHeight <= 0) {
                     return;
                 }
-                if (otherPosition.x < position.x) {
-                    offsetX = position.x - otherPosition.x;
+                if (otherPosition.x < otherLeft) {
+                    offsetX = otherLeft - otherPosition.x;
                 }
-                if (otherPosition.y < position.y) {
-                    offsetY = position.y - otherPosition.y;
+                if (otherPosition.y < otherTop) {
+                    offsetY = otherTop - otherPosition.y;
                 }
                 rendererTypes.forEach(function (type) {
                     var component = otherEntity.getComponent(type);

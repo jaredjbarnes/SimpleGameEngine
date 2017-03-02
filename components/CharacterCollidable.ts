@@ -1,4 +1,4 @@
-class CharacterCollidable {
+class CharacterCollidable  {
     type: string;
     constructor(){
         this.type = "character-collidable";

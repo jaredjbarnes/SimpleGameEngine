@@ -36,7 +36,7 @@ define(["require", "exports", "./util"], function (require, exports, util) {
                 throw new Error("Components need to have a type property.");
             }
             if (components.get(type) === component) {
-                delete components.delete(component.type);
+                components.delete(component.type);
                 if (delegate != null) {
                     this._invokeMethod(delegate, "componentRemoved", [this, component]);
                 }

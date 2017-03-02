@@ -214,7 +214,7 @@ class NarrowPhaseCollisionSystem {
 
         var originA = Vector.add(positionA, rigidBodyA.origin);
         var originB = Vector.add(positionB, rigidBodyB.origin);
-        
+
         rigidBodyA.isInitialized = true;
         rigidBodyB.isInitialized = true;
 
@@ -335,7 +335,7 @@ class NarrowPhaseCollisionSystem {
             var collision = entry[1];
             var key = entry[0];
 
-            if (collision == null || key == null){
+            if (collision == null || key == null) {
                 return;
             }
 
@@ -355,12 +355,12 @@ class NarrowPhaseCollisionSystem {
         var rigidBodyB = entityB.getComponent<RigidBody>("rigid-body");
         var collidableA = entityA.getComponent<Collidable>("collidable");
         var collidableB = entityB.getComponent<Collidable>("collidable");
- 
-        if (!collidableA.isStatic || !collidableB.isStatic){
+
+        if (!collidableA.isStatic || !collidableB.isStatic) {
             return false;
         }
 
-        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized){
+        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
             return false;
         }
 
@@ -368,19 +368,24 @@ class NarrowPhaseCollisionSystem {
     }
 
     handleCollisions(entity: Entity) {
-        var activeCollisions = entity.getComponent<Collidable>("collidable").activeCollisions;
+        var collidable = entity.getComponent<Collidable>("collidable");
 
-        activeCollisions.forEach((collision) => {
-            var otherEntity = this.game.getEntityById(collision.entityId);
+        if (collidable != null) {
+            var activeCollisions = collidable.activeCollisions;
 
-            if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
-                return;
-            }
+            activeCollisions.forEach((collision) => {
+                var otherEntity = this.game.getEntityById(collision.entityId);
 
-            this.intersects(entity, otherEntity);
-        })
+                if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
+                    return;
+                }
 
-        this.cleanCollisions(entity);
+                this.intersects(entity, otherEntity);
+            })
+
+            this.cleanCollisions(entity);
+        }
+
     }
 
     activated(game) {

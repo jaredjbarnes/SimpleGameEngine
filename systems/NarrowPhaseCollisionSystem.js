@@ -276,15 +276,18 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             return true;
         }
         handleCollisions(entity) {
-            var activeCollisions = entity.getComponent("collidable").activeCollisions;
-            activeCollisions.forEach((collision) => {
-                var otherEntity = this.game.getEntityById(collision.entityId);
-                if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
-                    return;
-                }
-                this.intersects(entity, otherEntity);
-            });
-            this.cleanCollisions(entity);
+            var collidable = entity.getComponent("collidable");
+            if (collidable != null) {
+                var activeCollisions = collidable.activeCollisions;
+                activeCollisions.forEach((collision) => {
+                    var otherEntity = this.game.getEntityById(collision.entityId);
+                    if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
+                        return;
+                    }
+                    this.intersects(entity, otherEntity);
+                });
+                this.cleanCollisions(entity);
+            }
         }
         activated(game) {
             this.game = game;

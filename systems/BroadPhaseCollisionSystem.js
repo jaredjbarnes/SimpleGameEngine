@@ -1,11 +1,13 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    const DEPENDENCIES = ["position", "size", "collidable"];
     class BroadPhaseEntity {
-        constructor() {
+        constructor(entity) {
             this.id = null;
-            this.position = null;
-            this.size = null;
-            this.collidable = null;
+            this.position = entity.getComponent("position");
+            this.size = entity.getComponent("size");
+            this.collidable = entity.getComponent("collidable");
+            this.id = entity.id;
         }
     }
     class Collision {
@@ -19,32 +21,44 @@ define(["require", "exports"], function (require, exports) {
     }
     class BroadPhaseCollisionSystem {
         constructor(cellSize) {
-            this._dependencies = ["collidable"];
-            this._cameraDependencies = ["position", "size", "camera"];
-            this._dynamicEntities = [];
-            this._staticEntities = [];
             this._game = null;
             this._cellSize = cellSize || 200;
             this._currentTimestamp = 0;
-            this._dynamicGrid = [[]];
-            this._staticGrid = [[]];
             this._detectionAreaPosition = null;
             this._detectionAreaSize = null;
             this._gridWidth = 0;
             this._gridHeight = 0;
+            this._grid = [[]];
+            this._lastRegions = new Map();
+            this._entities = new Map();
+        }
+        _createGrid() {
+            this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
+            this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
+            this._grid = new Array(this._gridWidth);
+            for (var x = 0; x < this._gridWidth; x++) {
+                this._grid[x] = new Array(this._gridHeight);
+                for (var y = 0; y < this._gridHeight; y++) {
+                    this._grid[x][y] = [];
+                }
+            }
+        }
+        _removeLastRegionsFromGrid(entity, regions) {
+            if (regions == null) {
+                return;
+            }
+            var grid = this._grid;
+            regions.forEach((region) => {
+                var bucket = grid[region[0]][region[1]];
+                grid[region[0]][region[1]] = bucket.filter((broadPhaseEntity) => {
+                    return broadPhaseEntity.id != entity.id;
+                });
+            });
         }
         activated(game) {
             var self = this;
             this._game = game;
-            this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
-            this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
-            this._dynamicGrid = new Array(this._gridWidth);
-            for (var columnIndex = 0; columnIndex < this._gridWidth; columnIndex++) {
-                this._dynamicGrid[columnIndex] = new Array(this._gridHeight);
-                for (var cellIndex = 0; cellIndex < this._gridHeight; cellIndex++) {
-                    this._dynamicGrid[columnIndex][cellIndex] = [];
-                }
-            }
+            this._createGrid();
             game.getEntities().forEach(function (entity) {
                 self.entityAdded(entity);
             });
@@ -53,31 +67,23 @@ define(["require", "exports"], function (require, exports) {
             this._game = null;
         }
         entityAdded(entity) {
-            if (entity.hasComponents(this._dependencies)) {
-                var collidable = entity.getComponent("collidable");
-                if (collidable.isStatic) {
-                    this._staticEntities.push(this._createBroadPhaseEntity(entity));
-                    this._staticGrid = this.sweepAndPrune(this._staticEntities);
-                    this.assignTimestamps(this.queryForStaticCollisions());
-                }
-                else {
-                    this._dynamicEntities.push(this._createBroadPhaseEntity(entity));
-                }
+            if (entity.hasComponents(DEPENDENCIES)) {
+                var broadPhaseEntity = new BroadPhaseEntity(entity);
+                broadPhaseEntity.position.isDirty = true;
+                this._entities.set(entity.id, broadPhaseEntity);
             }
         }
         entityRemoved(entity) {
-            var index = this._getIndexByEntityId(this._dynamicEntities, entity.id);
-            if (index > -1) {
-                this._dynamicEntities.splice(index, 1);
-            }
-            index = this._getIndexByEntityId(this._staticEntities, entity.id);
-            if (index > -1) {
-                this._staticEntities.splice(index, 1);
-                this._removeStaticCollisionById(entity.id);
+            var broadPhaseEntity = this._entities.get(entity.id);
+            var grid = this._grid;
+            if (broadPhaseEntity != null) {
+                this._removeLastRegionsFromGrid(broadPhaseEntity, this._lastRegions.get(entity.id));
+                this._lastRegions.delete(entity.id);
+                this._entities.delete(entity.id);
             }
         }
         componentAdded(entity, component) {
-            if (entity.hasComponents(this._dependencies)) {
+            if (entity.hasComponents(DEPENDENCIES)) {
                 this.entityAdded(entity);
             }
         }
@@ -86,35 +92,34 @@ define(["require", "exports"], function (require, exports) {
         }
         update() {
             this._currentTimestamp = this._game.getTime();
-            //Clean Cache.
-            this.cleanCachedGrid();
-            // Update dynamic entities.
-            this.sweepAndPrune(this._dynamicEntities, this._dynamicGrid);
-            this.assignTimestamps(this.queryForDynamicCollisions());
-            this.cleanCollisions();
-        }
-        cleanCachedGrid() {
-            for (var columnIndex = 0; columnIndex < this._gridWidth; columnIndex++) {
-                for (var cellIndex = 0; cellIndex < this._gridHeight; cellIndex++) {
-                    this._dynamicGrid[columnIndex][cellIndex].length = 0;
+            var dirtyRegions = {};
+            var entities = [];
+            var grid = this._grid;
+            this._entities.forEach((entity) => {
+                if (entity.position.isDirty) {
+                    var regions = this.getRegions(entity);
+                    var lastRegions = this._lastRegions.get(entity.id);
+                    this._removeLastRegionsFromGrid(entity, lastRegions);
+                    regions.forEach((region) => {
+                        dirtyRegions[region[0] + "|" + region[1]] = true;
+                        grid[region[0]][region[1]].push(entity);
+                    });
+                    this._lastRegions.set(entity.id, regions);
                 }
-            }
-        }
-        _removeStaticCollisionById(id) {
-            this._staticEntities.forEach(function (entity) {
-                var activeCollisions = entity.collidable.activeCollisions;
-                activeCollisions.delete(id);
             });
-            this._staticGrid = this.sweepAndPrune(this._staticEntities);
+            Object.keys(dirtyRegions).forEach((key) => {
+                var region = key.split("|");
+                var entities = grid[region[0]][region[1]];
+                var pairs = this.queryForCollisions(entities);
+                this.assignTimestamps(pairs);
+                this.cleanCollisions(entities);
+            });
         }
-        // Custom methods.
-        cleanCollisions() {
-            var entities = this._dynamicEntities;
-            var game = this._game;
+        cleanCollisions(entities) {
             var currentTimestamp = this._currentTimestamp;
-            entities.forEach(function (entity) {
+            entities.forEach((entity) => {
                 var collisions = entity.collidable.activeCollisions;
-                Array.from(collisions.entries()).forEach(function (entry) {
+                Array.from(collisions.entries).forEach(function (entry) {
                     var key = entry[0];
                     var collision = entry[1];
                     if (collision.timestamp !== currentTimestamp) {
@@ -171,116 +176,48 @@ define(["require", "exports"], function (require, exports) {
                 }
             });
         }
-        queryForStaticCollisions() {
+        queryForCollisions(entities) {
             var pairs = [];
-            var staticGrid = this._staticGrid;
-            staticGrid.forEach(function (gridColumn, columnIndex) {
-                gridColumn.forEach(function (gridCell, cellIndex) {
-                    gridCell.forEach(function (entityA, index) {
-                        var entityB;
-                        var collidableA;
-                        var collidableB;
-                        var positionA;
-                        var sizeA;
-                        var positionB;
-                        var sizeB;
-                        var top;
-                        var right;
-                        var bottom;
-                        var left;
-                        // for the entities after this object in a cell, because we already checked the ones before.
-                        for (var x = index + 1; x < gridCell.length; x++) {
-                            entityB = gridCell[x];
-                            collidableA = entityA.collidable;
-                            collidableB = entityB.collidable;
-                            // We don't need to check initialized or disabled collisions.
-                            if ((collidableA.isStatic &&
-                                collidableB.isStatic &&
-                                collidableA.isInitialized &&
-                                collidableB.isInitialized) ||
-                                !collidableA.isEnabled ||
-                                !collidableB.isEnabled) {
-                                continue;
-                            }
-                            positionA = entityA.position;
-                            sizeA = entityA.size;
-                            positionB = entityB.position;
-                            sizeB = entityB.size;
-                            top = Math.max(positionA.y, positionB.y);
-                            bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
-                            left = Math.max(positionA.x, positionB.x);
-                            right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
-                            if (top <= bottom && left <= right) {
-                                pairs.push([entityA, entityB]);
-                            }
-                        }
-                    });
-                });
-            });
+            var entityA = entities[0];
+            var entityB;
+            var collidableA;
+            var collidableB;
+            var positionA;
+            var sizeA;
+            var positionB;
+            var sizeB;
+            var top;
+            var right;
+            var bottom;
+            var left;
+            var length = entities.length;
+            for (var index = 0; index < length; index++) {
+                entityA = entities[index];
+                for (var x = index + 1; x < length; x++) {
+                    entityB = entities[x];
+                    collidableA = entityA.collidable;
+                    collidableB = entityB.collidable;
+                    // We don't need to check disabled objects.
+                    if (!collidableA.isEnabled || !collidableB.isEnabled) {
+                        continue;
+                    }
+                    positionA = entityA.position;
+                    sizeA = entityA.size;
+                    positionB = entityB.position;
+                    sizeB = entityB.size;
+                    top = Math.max(positionA.y, positionB.y);
+                    bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
+                    left = Math.max(positionA.x, positionB.x);
+                    right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
+                    if (top <= bottom && left <= right) {
+                        pairs.push([entityA, entityB]);
+                    }
+                }
+            }
             return pairs;
         }
-        queryForDynamicCollisions() {
-            var pairs = [];
-            var staticGrid = this._staticGrid;
-            this._dynamicGrid.forEach(function (gridColumn, columnIndex) {
-                var staticColumn = staticGrid[columnIndex];
-                gridColumn.forEach(function (dynamicCell, cellIndex) {
-                    var gridCell;
-                    var staticCell = staticGrid[columnIndex] && staticGrid[columnIndex][cellIndex];
-                    if (Array.isArray(staticCell) && Array.isArray(dynamicCell)) {
-                        gridCell = staticCell.concat(dynamicCell);
-                    }
-                    else if (Array.isArray(staticCell) && !Array.isArray(dynamicCell)) {
-                        gridCell = staticCell;
-                    }
-                    else if (!Array.isArray(staticCell) && Array.isArray(dynamicCell)) {
-                        gridCell = dynamicCell;
-                    }
-                    else if (!Array.isArray(staticCell) && !Array.isArray(dynamicCell)) {
-                        // ignore columns that have no cells
-                        return;
-                    }
-                    gridCell.forEach(function (entityA, index) {
-                        var entityB;
-                        var collidableA;
-                        var collidableB;
-                        var positionA;
-                        var sizeA;
-                        var positionB;
-                        var sizeB;
-                        var top;
-                        var right;
-                        var bottom;
-                        var left;
-                        // for the entities after this object in a cell, because we already checked the ones before.
-                        for (var x = index + 1; x < gridCell.length; x++) {
-                            entityB = gridCell[x];
-                            collidableA = entityA.collidable;
-                            collidableB = entityB.collidable;
-                            // We don't need to check static or disabled objects to other static objects.
-                            if (((collidableA.isStatic && collidableB.isStatic) ||
-                                (!collidableA.isEnabled || !collidableB.isEnabled)) &&
-                                (collidableA.isInitialized && collidableB.isInitialized)) {
-                                continue;
-                            }
-                            positionA = entityA.position;
-                            sizeA = entityA.size;
-                            positionB = entityB.position;
-                            sizeB = entityB.size;
-                            top = Math.max(positionA.y, positionB.y);
-                            bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
-                            left = Math.max(positionA.x, positionB.x);
-                            right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
-                            if (top <= bottom && left <= right) {
-                                pairs.push([entityA, entityB]);
-                            }
-                        }
-                    });
-                });
-            });
-            return pairs;
-        }
-        sweepAndPrune(entities, cachedGrid) {
+        getRegions(entity) {
+            var indexes = [];
             var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
             var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
             var boundsTop = 0;
@@ -288,82 +225,28 @@ define(["require", "exports"], function (require, exports) {
             var boundsLeft = 0;
             var boundsRight = this._game.size.width;
             var cellSize = this._cellSize;
-            var grid;
-            if (cachedGrid == null) {
-                grid = new Array(gridWidth);
+            var position = entity.position;
+            var size = entity.size;
+            // If entity is outside the detection region, then ignore it.
+            if (position.x + size.width < boundsLeft ||
+                position.x > boundsRight ||
+                position.y + size.height < boundsTop ||
+                position.y > boundsBottom) {
+                return [];
             }
-            else {
-                grid = cachedGrid;
+            // Find the cells that the entity overlaps.
+            var left = Math.floor((position.x - boundsLeft) / cellSize);
+            var right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
+            var top = Math.floor((position.y - boundsTop) / cellSize);
+            var bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
+            for (var x = left; x <= right; x++) {
+                for (var y = top; y <= bottom; y++) {
+                    if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
+                        indexes.push([x, y]);
+                    }
+                }
             }
-            // NOTE: this is a purposeful use of the Array() constructor 
-            // insert all entities into grid
-            entities.forEach(function (entity) {
-                var x;
-                var y;
-                var gridColumn;
-                var gridCell;
-                var size;
-                var position;
-                size = entity.size;
-                position = entity.position;
-                // If entity is outside the detection region, then ignore it.
-                if (position.x + size.width < boundsLeft ||
-                    position.x > boundsRight ||
-                    position.y + size.height < boundsTop ||
-                    position.y > boundsBottom) {
-                    return;
-                }
-                // Find the cells that the entity overlaps.
-                var left = Math.floor((position.x - boundsLeft) / cellSize);
-                var right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
-                var top = Math.floor((position.y - boundsTop) / cellSize);
-                var bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
-                // Insert entity into each cell it overlaps
-                for (x = left; x <= right; x++) {
-                    if (x < 0) {
-                        continue;
-                    }
-                    // Make sure a column exists, initialize if not to grid height length
-                    // NOTE: again, a purposeful use of the Array constructor 
-                    if (!grid[x]) {
-                        grid[x] = Array(gridHeight);
-                    }
-                    gridColumn = grid[x];
-                    // Loop through each cell in this column
-                    for (y = top; y <= bottom; y++) {
-                        if (y < 0) {
-                            continue;
-                        }
-                        // Ensure we have a bucket to put entities into for this cell
-                        if (!gridColumn[y]) {
-                            gridColumn[y] = [];
-                        }
-                        gridCell = gridColumn[y];
-                        // Add entity to cell
-                        gridCell.push(entity);
-                    }
-                }
-            });
-            return grid;
-        }
-        _getIndexByEntityId(entities, id) {
-            var index = -1;
-            entities.some(function (entity, currentIndex) {
-                if (entity.id === id) {
-                    index = currentIndex;
-                    return true;
-                }
-                return false;
-            });
-            return index;
-        }
-        _createBroadPhaseEntity(entity) {
-            var broadPhaseEntity = new BroadPhaseEntity();
-            broadPhaseEntity.id = entity.id;
-            broadPhaseEntity.size = entity.getComponent("size");
-            broadPhaseEntity.position = entity.getComponent("position");
-            broadPhaseEntity.collidable = entity.getComponent("collidable");
-            return broadPhaseEntity;
+            return indexes;
         }
         setDetectionArea(position, size) {
             this._detectionAreaPosition = position;

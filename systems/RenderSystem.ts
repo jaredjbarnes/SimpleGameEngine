@@ -206,7 +206,7 @@ class RenderSystem {
         });
 
         entities.forEach(function (entity) {
-            self.drawEntityOnCamera(entity, canvas);
+          self.drawEntityOnCamera(entity, canvas);
         });
 
     }
@@ -318,12 +318,12 @@ class RenderSystem {
                 return;
             }
 
-            if (otherPosition.x < position.x) {
-                offsetX = position.x - otherPosition.x;
+            if (otherPosition.x < otherLeft) {
+                offsetX = otherLeft - otherPosition.x;
             }
 
-            if (otherPosition.y < position.y) {
-                offsetY = position.y - otherPosition.y;
+            if (otherPosition.y < otherTop) {
+                offsetY = otherTop - otherPosition.y;
             }
 
             rendererTypes.forEach(function (type) {

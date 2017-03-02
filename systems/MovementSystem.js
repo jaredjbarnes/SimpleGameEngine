@@ -1,18 +1,24 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    const MOVABLE = "movable";
-    const DEPENDENCIES = [MOVABLE, "position"];
+    const DEPENDENCIES = ["movable", "position"];
+    class MovementEntity {
+        constructor(entity) {
+            this.movable = entity.getComponent("movable");
+            this.position = entity.getComponent("position");
+        }
+    }
     class MovementSystem {
         constructor() {
             this.game = null;
             this.entities = new Map();
         }
         update() {
-            Array.from(this.entities.values()).forEach((entity) => {
-                var movable = entity.getComponent("movable");
-                var position = entity.getComponent("position");
+            this.entities.forEach((entity) => {
+                var position = entity.position;
+                var movable = entity.movable;
                 position.x += movable.x;
                 position.y += movable.y;
+                position.isDirty = true;
                 movable.x = 0;
                 movable.y = 0;
             });
@@ -28,7 +34,7 @@ define(["require", "exports"], function (require, exports) {
         }
         entityAdded(entity) {
             if (entity.hasComponents(DEPENDENCIES)) {
-                this.entities.set(entity.id, entity);
+                this.entities.set(entity.id, new MovementEntity(entity));
             }
         }
         entityRemoved(entity) {
@@ -38,7 +44,7 @@ define(["require", "exports"], function (require, exports) {
         }
         componentAdded(entity, component) {
             if (entity.hasComponents(DEPENDENCIES)) {
-                this.entities.set(entity.id, entity);
+                this.entities.set(entity.id, new MovementEntity(entity));
             }
         }
         componentRemoved(entity, component) {

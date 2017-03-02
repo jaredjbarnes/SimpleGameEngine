@@ -50,8 +50,9 @@ class Entity {
         }
 
         if (components.get(type) === component) {
-            delete components.delete(component.type);
-
+            
+            components.delete(component.type);
+            
             if (delegate != null) {
                 this._invokeMethod(delegate, "componentRemoved", [this, component]);
             }
@@ -73,7 +74,7 @@ class Entity {
 
     hasComponents(componentTypes) {
         var components = this._components;
-        return componentTypes.every( (type) =>{
+        return componentTypes.every((type) => {
             return components.has(type);
         })
     }

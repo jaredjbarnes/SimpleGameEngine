@@ -5,8 +5,6 @@ define(["require", "exports"], function (require, exports) {
             this.type = "collidable";
             this.name = null;
             this.isEnabled = true;
-            this.isStatic = false;
-            this.isInitialized = false;
             this.activeCollisions = new Map();
         }
     }

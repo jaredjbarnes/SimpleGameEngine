@@ -3,66 +3,76 @@ import Entity = require("./../Entity");
 import Movable = require("./../components/Movable");
 import Position = require("./../components/Position");
 
-const MOVABLE = "movable";
-const DEPENDENCIES = [MOVABLE,"position"];
+const DEPENDENCIES = ["movable", "position"];
+
+class MovementEntity {
+    position: Position;
+    movable: Movable;
+
+    constructor(entity:Entity) {
+        this.movable = entity.getComponent<Movable>("movable");
+        this.position = entity.getComponent<Position>("position");
+    }
+}
 
 class MovementSystem {
     game: Game;
-    entities: Map<string, Entity>
+    entities: Map<string, MovementEntity>
 
-    constructor(){
+    constructor() {
         this.game = null;
         this.entities = new Map();
     }
 
-    update(){
-        Array.from(this.entities.values()).forEach((entity)=>{
-            var movable = entity.getComponent<Movable>("movable");
-            var position = entity.getComponent<Position>("position");
+    update() {
+        this.entities.forEach((entity) => {
+            var position = entity.position;
+            var movable = entity.movable;
 
             position.x += movable.x;
-            position.y += movable.y; 
+            position.y += movable.y;
+            position.isDirty = true;
 
             movable.x = 0;
             movable.y = 0;
         });
     }
 
-    activated(game: Game){
+    activated(game: Game) {
         this.game = game;
-        this.game.getEntities().forEach((entity)=>{
+        this.game.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
 
-    deactivated(){
+    deactivated() {
         this.game = null;
     }
 
-    entityAdded(entity: Entity){
-        if (entity.hasComponents(DEPENDENCIES)){
-            this.entities.set(entity.id, entity);
+    entityAdded(entity: Entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this.entities.set(entity.id, new MovementEntity(entity));
         }
     }
 
-    entityRemoved(entity: Entity){
-        if (entity.hasComponents(DEPENDENCIES)){
+    entityRemoved(entity: Entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
             this.entities.delete(entity.id);
         }
     }
 
-    componentAdded(entity:Entity, component){
-        if (entity.hasComponents(DEPENDENCIES)){
-            this.entities.set(entity.id, entity);
+    componentAdded(entity: Entity, component) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this.entities.set(entity.id, new MovementEntity(entity));
         }
     }
 
-    componentRemoved(entity:Entity, component){
-        if (DEPENDENCIES.indexOf(component.type) > -1){
+    componentRemoved(entity: Entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
             this.entities.delete(entity.id);
         }
     }
-    
+
 }
 
 export = MovementSystem;

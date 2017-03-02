@@ -5,6 +5,7 @@ define(["require", "exports"], function (require, exports) {
             this.type = "size";
             this.width = 0;
             this.height = 0;
+            this.isDirty = false;
         }
     }
     return Size;

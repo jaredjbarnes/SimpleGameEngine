@@ -1,5 +1,4 @@
-﻿
-class Collidable {
+﻿class Collidable {
     type: string;
     name: string;
     isEnabled: boolean;
@@ -11,8 +10,6 @@ class Collidable {
         this.type = "collidable";
         this.name = null;
         this.isEnabled = true;
-        this.isStatic = false;
-        this.isInitialized = false;
         this.activeCollisions = new Map();
     }
 }

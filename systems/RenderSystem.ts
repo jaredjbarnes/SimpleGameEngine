@@ -163,6 +163,7 @@ class RenderSystem {
     }
 
     update() {
+        var key;
         var self = this;
         var game = this._game;
         var canvas = this.canvas;
@@ -181,17 +182,12 @@ class RenderSystem {
         // This is how we optimize rendering. We use the collision system with the camera entity.
         var activeCollisions = this.camera.getComponent<Collidable>("collidable").activeCollisions;
 
-        var entities = Array.from(activeCollisions.values()).map(function (collision) {
-            return game.getEntityById(collision.entityId);
-        }).filter(function (entity) {
-            return self.isDynamicEntity(entity);
-        });
-
         var cacheKeys = Object.keys(this._staticCacheByZIndex).sort(function (a, b) {
             return parseInt(a, 10) - parseInt(b, 10);
-        })
+        });
 
-        cacheKeys.forEach(function (key) {
+        for (var x = 0; x < cacheKeys.length; x++) {
+            key = cacheKeys[x];
             context.drawImage(
                 caches[key],
                 Math.floor(cameraPosition.x),
@@ -203,13 +199,18 @@ class RenderSystem {
                 Math.floor(cameraSize.width),
                 Math.floor(cameraSize.height)
             )
-        });
+        }
 
-        entities.forEach(function (entity) {
-          self.drawEntityOnCamera(entity, canvas);
+        activeCollisions.forEach((collision) => {
+            var entity = game.getEntityById(collision.entityId);
+            if (this.isDynamicEntity(entity)) {
+                this.drawEntityOnCamera(entity, canvas);
+            }
         });
 
     }
+
+    drawOnCamera() { }
 
     entityAdded(entity: Entity) {
         if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
@@ -235,11 +236,8 @@ class RenderSystem {
     updateCaches() {
         var self = this;
 
-        this._entitiesToBeRedrawn.forEach(function (entity) {
-            var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
-            var canvas = self.getCanvasByZIndex(zIndex.value);
-
-            self.redrawEntityOnCanvas(entity, canvas);
+        this._entitiesToBeRedrawn.forEach((entity) => {
+            this.cacheEntity(entity);
         });
 
         this._entitiesToBeRedrawn.length = 0;
@@ -273,7 +271,7 @@ class RenderSystem {
         if (width <= 0 || height <= 0) {
             return;
         }
-        
+
         entities = Array.from(activeCollisions.values()).filter(function (collision) {
             return collision.endTimestamp == null;
         }).map(function (collision) {
@@ -541,7 +539,7 @@ class RenderSystem {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         entities.sort(this._defaultSort);
-        entities.forEach(function (entity) {
+        entities.forEach((entity) => {
             self.drawEntityOnCanvas(entity, canvas);
         });
     }
@@ -583,11 +581,13 @@ class RenderSystem {
     }
 
     cacheEntity(entity: Entity) {
-        var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
-        var canvas = this.getCanvasByZIndex(zIndex.value);
+        if (!this.isDynamicEntity(entity)) {
+            var zIndex = entity.getComponent<ZIndex>("z-index") || defaultZIndex;
+            var canvas = this.getCanvasByZIndex(zIndex.value);
 
-        this.registerEntity(entity);
-        this.redrawEntityOnCanvas(entity, canvas);
+            this.registerEntity(entity);
+            this.redrawEntityOnCanvas(entity, canvas);
+        }
     }
 
     uncacheEntity(entity: Entity) {

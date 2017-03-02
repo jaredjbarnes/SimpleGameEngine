@@ -6,11 +6,13 @@ class Entity {
     private _delegate: any;
     private _components: Map<string, any>;
     id: string;
+    type: string;
 
     constructor() {
         this._delegate = null;
         this._components = new Map();
         this.id = createGuid();
+        this.type = null;
     }
 
     _invokeMethod(obj, methodName, args) {
@@ -52,7 +54,7 @@ class Entity {
         if (components.get(type) === component) {
             
             components.delete(component.type);
-            
+
             if (delegate != null) {
                 this._invokeMethod(delegate, "componentRemoved", [this, component]);
             }

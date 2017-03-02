@@ -122,7 +122,7 @@ define(["require", "exports"], function (require, exports) {
             var currentTimestamp = this._currentTimestamp;
             entities.forEach((entity) => {
                 var collisions = entity.collidable.activeCollisions;
-                Array.from(collisions.entries).forEach(function (entry) {
+                Array.from(collisions.entries()).forEach(function (entry) {
                     var key = entry[0];
                     var collision = entry[1];
                     if (collision.timestamp !== currentTimestamp) {
@@ -155,7 +155,6 @@ define(["require", "exports"], function (require, exports) {
                         collisionDataA.isStatic = true;
                     }
                     collidableA.activeCollisions.set(entityB.id, collisionDataA);
-                    collidableA.isInitialized = true;
                 }
                 else {
                     collisionDataA.timestamp = currentTimestamp;
@@ -170,7 +169,6 @@ define(["require", "exports"], function (require, exports) {
                     if (collidableA.isStatic && collidableB.isStatic) {
                         collisionDataB.isStatic = true;
                     }
-                    collidableB.isInitialized = true;
                     collidableB.activeCollisions.set(entityA.id, collisionDataB);
                 }
                 else {

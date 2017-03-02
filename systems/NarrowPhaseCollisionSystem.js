@@ -265,9 +265,9 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
         isStaticAndInitialized(entityA, entityB) {
             var rigidBodyA = entityA.getComponent("rigid-body");
             var rigidBodyB = entityB.getComponent("rigid-body");
-            var collidableA = entityA.getComponent("collidable");
-            var collidableB = entityB.getComponent("collidable");
-            if (!collidableA.isStatic || !collidableB.isStatic) {
+            var positionA = entityA.getComponent("position");
+            var positionB = entityB.getComponent("position");
+            if (!positionA.isStatic || !positionB.isStatic) {
                 return false;
             }
             if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
@@ -277,11 +277,16 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
         }
         handleCollisions(entity) {
             var collidable = entity.getComponent("collidable");
+            var rigidBody = entity.getComponent("rigid-body");
+            if (!rigidBody.isEnabled) {
+                return;
+            }
             if (collidable != null) {
                 var activeCollisions = collidable.activeCollisions;
                 activeCollisions.forEach((collision) => {
                     var otherEntity = this.game.getEntityById(collision.entityId);
-                    if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
+                    var otherRigidBody = otherEntity.getComponent("rigid-body");
+                    if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(entity, otherEntity) || !otherRigidBody.isEnabled) {
                         return;
                     }
                     this.intersects(entity, otherEntity);

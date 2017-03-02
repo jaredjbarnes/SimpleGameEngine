@@ -45,6 +45,7 @@ define(["require", "exports"], function (require, exports) {
                 if (collision.endTimestamp == null) {
                     position.x = position.x + Math.round(collision.penetration.x);
                     position.y = position.y + Math.round(collision.penetration.y);
+                    position.isDirty = true;
                 }
             });
         }

@@ -276,7 +276,6 @@ class NarrowPhaseCollisionSystem {
         collisionB.endTimestamp = null;
         collisionB.entity = entityA;
 
-
         if (overlapA.overlap < overlapB.overlap) {
 
             minOverlap = overlapA.overlap;
@@ -353,10 +352,10 @@ class NarrowPhaseCollisionSystem {
     isStaticAndInitialized(entityA: Entity, entityB: Entity) {
         var rigidBodyA = entityA.getComponent<RigidBody>("rigid-body");
         var rigidBodyB = entityB.getComponent<RigidBody>("rigid-body");
-        var collidableA = entityA.getComponent<Collidable>("collidable");
-        var collidableB = entityB.getComponent<Collidable>("collidable");
+        var positionA = entityA.getComponent<Position>("position");
+        var positionB = entityB.getComponent<Position>("position");
 
-        if (!collidableA.isStatic || !collidableB.isStatic) {
+        if (!positionA.isStatic || !positionB.isStatic) {
             return false;
         }
 
@@ -369,14 +368,20 @@ class NarrowPhaseCollisionSystem {
 
     handleCollisions(entity: Entity) {
         var collidable = entity.getComponent<Collidable>("collidable");
+        var rigidBody = entity.getComponent<RigidBody>("rigid-body");
+
+        if (!rigidBody.isEnabled){
+            return;
+        }
 
         if (collidable != null) {
             var activeCollisions = collidable.activeCollisions;
 
             activeCollisions.forEach((collision) => {
                 var otherEntity = this.game.getEntityById(collision.entityId);
+                var otherRigidBody = otherEntity.getComponent<RigidBody>("rigid-body");
 
-                if (otherEntity == null || !otherEntity.hasComponents(["rigid-body"]) || this.isStaticAndInitialized(entity, otherEntity)) {
+                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(entity, otherEntity) || !otherRigidBody.isEnabled) {
                     return;
                 }
 

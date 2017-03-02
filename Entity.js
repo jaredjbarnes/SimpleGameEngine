@@ -6,6 +6,7 @@ define(["require", "exports", "./util"], function (require, exports, util) {
             this._delegate = null;
             this._components = new Map();
             this.id = createGuid();
+            this.type = null;
         }
         _invokeMethod(obj, methodName, args) {
             args = Array.isArray(args) ? args : [];

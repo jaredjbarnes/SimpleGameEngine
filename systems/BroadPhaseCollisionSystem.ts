@@ -184,9 +184,9 @@ class BroadPhaseCollisionSystem {
         var currentTimestamp = this._currentTimestamp;
 
         entities.forEach((entity) => {
-            var collisions = entity.collidable.activeCollisions;
+            var collisions = <Map<string, Collision>>entity.collidable.activeCollisions;
 
-            Array.from(collisions.entries).forEach(function (entry) {
+            Array.from(collisions.entries()).forEach(function (entry) {
                 var key = entry[0];
                 var collision = entry[1];
 
@@ -229,7 +229,6 @@ class BroadPhaseCollisionSystem {
                 }
 
                 collidableA.activeCollisions.set(entityB.id, collisionDataA);
-                collidableA.isInitialized = true;
             } else {
                 collisionDataA.timestamp = currentTimestamp;
                 collisionDataA.endTimestamp = null;
@@ -246,7 +245,6 @@ class BroadPhaseCollisionSystem {
                     collisionDataB.isStatic = true;
                 }
 
-                collidableB.isInitialized = true;
                 collidableB.activeCollisions.set(entityA.id, collisionDataB)
 
             } else {

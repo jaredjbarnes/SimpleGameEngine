@@ -10,6 +10,7 @@ class RigidBody {
     activeCollisions: Map<string, any>;
     projectionVertices: Array<{ x: number; y: number }>;
     isInitialized: boolean;
+    isEnabled: boolean;
     
     constructor() {
         this.type = "rigid-body";
@@ -23,6 +24,7 @@ class RigidBody {
         this.size = { width: 0, height: 0 };
         this.origin = { x: 0, y: 0 };
         this.isInitialized = false;
+        this.isEnabled = true;
     }
 
 }

@@ -3,7 +3,6 @@
     name: string;
     isEnabled: boolean;
     isStatic: boolean;
-    isInitialized: boolean;
     activeCollisions: Map<string, any>;
 
     constructor() {

@@ -1,4 +1,4 @@
-define(["require", "exports", "./../components/ZIndex"], function (require, exports, ZIndex) {
+define(["require", "exports", "./../components/ZIndex", "./../systems/render/CompositeCanvas"], function (require, exports, ZIndex, CompositeCanvas) {
     "use strict";
     var defaultZIndex = new ZIndex();
     var defaultCachePosition = { x: 0, y: 0 };
@@ -128,7 +128,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             });
             for (var x = 0; x < cacheKeys.length; x++) {
                 key = cacheKeys[x];
-                context.drawImage(caches[key], Math.floor(cameraPosition.x), Math.floor(cameraPosition.y), Math.floor(cameraSize.width), Math.floor(cameraSize.height), 0, 0, Math.floor(cameraSize.width), Math.floor(cameraSize.height));
+                caches[key].transferImage(canvas, 0, 0, Math.floor(cameraSize.width), Math.floor(cameraSize.height), Math.floor(cameraPosition.x), Math.floor(cameraPosition.y), Math.floor(cameraSize.width), Math.floor(cameraSize.height));
             }
             activeCollisions.forEach((collision) => {
                 var entity = game.getEntityById(collision.entityId);
@@ -367,10 +367,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
         getCanvasByZIndex(zIndex) {
             var canvas = this._staticCacheByZIndex[zIndex];
             if (canvas == null) {
-                canvas = this._staticCacheByZIndex[zIndex] = document.createElement("canvas");
-                canvas.width = this._game.size.width;
-                canvas.height = this._game.size.height;
-                canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+                canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 100);
             }
             return canvas;
         }
@@ -383,10 +380,7 @@ define(["require", "exports", "./../components/ZIndex"], function (require, expo
             if (entities == null) {
                 return;
             }
-            var context = canvas.getContext("2d");
-            canvas.width = this._game.size.width;
-            canvas.height = this._game.size.height;
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.clearRect(0, 0, this._game.size.width, this._game.size.height);
             entities.sort(this._defaultSort);
             entities.forEach((entity) => {
                 self.drawEntityOnCanvas(entity, canvas);

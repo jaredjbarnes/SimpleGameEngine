@@ -4,6 +4,7 @@ import Position = require("./../components/Position");
 import Size = require("./../components/Size");
 import ZIndex = require("./../components/ZIndex");
 import Collidable = require("./../components/Collidable");
+import CompositeCanvas = require("./../systems/render/CompositeCanvas");
 
 var defaultZIndex = new ZIndex();
 var defaultCachePosition = { x: 0, y: 0 };
@@ -26,7 +27,7 @@ class RenderSystem {
     private _cameraPosition: { x: number; y: number; };
     private _cameraSize: { width: number; height: number; };
     private _cameraDependencies: Array<string>;
-    private _staticCacheByZIndex: { [id: string]: HTMLCanvasElement };
+    private _staticCacheByZIndex: { [id: string]: CompositeCanvas };
     private _entitiesByZIndex: { [id: string]: Array<Entity> };
     private _sort: (entityA, entityB) => number;
     private _zIndexSort: (entityA: Entity, entityB: Entity) => number;
@@ -188,7 +189,19 @@ class RenderSystem {
 
         for (var x = 0; x < cacheKeys.length; x++) {
             key = cacheKeys[x];
-            context.drawImage(
+            caches[key].transferImage(
+                canvas, 
+                0,
+                0,
+                Math.floor(cameraSize.width),
+                Math.floor(cameraSize.height),
+                Math.floor(cameraPosition.x),
+                Math.floor(cameraPosition.y),
+                Math.floor(cameraSize.width),
+                Math.floor(cameraSize.height),
+            );
+            
+            /*context.drawImage(
                 caches[key],
                 Math.floor(cameraPosition.x),
                 Math.floor(cameraPosition.y),
@@ -198,7 +211,7 @@ class RenderSystem {
                 0,
                 Math.floor(cameraSize.width),
                 Math.floor(cameraSize.height)
-            )
+            )*/
         }
 
         activeCollisions.forEach((collision) => {
@@ -243,7 +256,7 @@ class RenderSystem {
         this._entitiesToBeRedrawn.length = 0;
     }
 
-    redrawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement, drawEntity: boolean = true) {
+    redrawEntityOnCanvas(entity: Entity, canvas: any, drawEntity: boolean = true) {
         if (canvas == null) {
             return;
         }
@@ -348,7 +361,7 @@ class RenderSystem {
         });
     }
 
-    drawEntityOnCanvas(entity: Entity, canvas: HTMLCanvasElement) {
+    drawEntityOnCanvas(entity: Entity, canvas: any) {
         if (canvas == null) {
             return;
         }
@@ -511,10 +524,7 @@ class RenderSystem {
         var canvas = this._staticCacheByZIndex[zIndex];
 
         if (canvas == null) {
-            canvas = this._staticCacheByZIndex[zIndex] = document.createElement("canvas");
-            canvas.width = this._game.size.width;
-            canvas.height = this._game.size.height;
-            canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+            canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 100)
         }
 
         return canvas;
@@ -531,12 +541,7 @@ class RenderSystem {
             return;
         }
 
-        var context = canvas.getContext("2d");
-
-        canvas.width = this._game.size.width;
-        canvas.height = this._game.size.height;
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.clearRect(0, 0, this._game.size.width, this._game.size.height);
 
         entities.sort(this._defaultSort);
         entities.forEach((entity) => {

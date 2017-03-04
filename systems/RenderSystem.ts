@@ -190,7 +190,7 @@ class RenderSystem {
         for (var x = 0; x < cacheKeys.length; x++) {
             key = cacheKeys[x];
             caches[key].transferImage(
-                canvas, 
+                canvas,
                 0,
                 0,
                 Math.floor(cameraSize.width),
@@ -200,7 +200,7 @@ class RenderSystem {
                 Math.floor(cameraSize.width),
                 Math.floor(cameraSize.height),
             );
-            
+
             /*context.drawImage(
                 caches[key],
                 Math.floor(cameraPosition.x),
@@ -524,7 +524,7 @@ class RenderSystem {
         var canvas = this._staticCacheByZIndex[zIndex];
 
         if (canvas == null) {
-            canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 100)
+            canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 1000)
         }
 
         return canvas;

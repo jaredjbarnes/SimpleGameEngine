@@ -367,7 +367,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
         getCanvasByZIndex(zIndex) {
             var canvas = this._staticCacheByZIndex[zIndex];
             if (canvas == null) {
-                canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 100);
+                canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 1000);
             }
             return canvas;
         }

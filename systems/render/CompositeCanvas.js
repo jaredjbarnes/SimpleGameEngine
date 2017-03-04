@@ -24,10 +24,10 @@ define(["require", "exports"], function (require, exports) {
                 return;
             }
             if (left > destinationX) {
-                sourceX += left - destinationX;
+                sourceX += destinationWidth - width;
             }
             if (top > destinationY) {
-                sourceY += top - destinationY;
+                sourceY += destinationHeight - height;
             }
             context.drawImage(sourceCanvas, sourceX, sourceY, width, height, dx, dy, width, height);
         }

@@ -42,17 +42,15 @@ class StateManagerSystem {
 
     updateState(entity: Entity) {
         var state = entity.getComponent<State>("state");
-        var stateName = state.name;
 
-        this.updateStates(stateName, entity);
-
-        var newStateName = state.name;
-
-        if (newStateName !== stateName) {
-            this.deactivateStates(stateName, entity);
-            this.activateStates(newStateName, entity);
-            this.updateStates(newStateName, entity);
+        if (state.activeName !== state.name) {
+            this.deactivateStates(state.activeName, entity);
+            this.activateStates(state.name, entity);
+            state.activeName = state.name;
         }
+
+        this.updateStates(state.name, entity);
+        
     }
 
     update() {
@@ -102,7 +100,7 @@ class StateManagerSystem {
         }
     }
 
-    componentRemoved = function (entity, component:State) {
+    componentRemoved = function (entity, component: State) {
         if (component.type === "state") {
             this.entities.delete(entity.id);
         }

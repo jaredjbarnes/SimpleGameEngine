@@ -39,14 +39,12 @@ define(["require", "exports"], function (require, exports) {
         }
         updateState(entity) {
             var state = entity.getComponent("state");
-            var stateName = state.name;
-            this.updateStates(stateName, entity);
-            var newStateName = state.name;
-            if (newStateName !== stateName) {
-                this.deactivateStates(stateName, entity);
-                this.activateStates(newStateName, entity);
-                this.updateStates(newStateName, entity);
+            if (state.activeName !== state.name) {
+                this.deactivateStates(state.activeName, entity);
+                this.activateStates(state.name, entity);
+                state.activeName = state.name;
             }
+            this.updateStates(state.name, entity);
         }
         update() {
             this.entities.forEach((entity) => {

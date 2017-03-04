@@ -3,6 +3,7 @@ define(["require", "exports"], function (require, exports) {
     class State {
         constructor() {
             this.type = "state";
+            this.activeName = null;
             this.name = null;
             this.stateManagerName = null;
         }

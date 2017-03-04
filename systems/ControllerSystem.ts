@@ -39,7 +39,7 @@ class ControllerSystem {
 
     componentAdded(entity, component) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity);
+            this.entities.set(entity, entity);
         }
     }
 

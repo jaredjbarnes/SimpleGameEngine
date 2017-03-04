@@ -26,7 +26,7 @@ define(["require", "exports"], function (require, exports) {
         }
         componentAdded(entity, component) {
             if (entity.hasComponents(DEPENDENCIES)) {
-                this.entities.set(entity);
+                this.entities.set(entity, entity);
             }
         }
         componentRemoved(entity, component) {

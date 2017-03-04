@@ -6,6 +6,8 @@ define(["require", "exports"], function (require, exports) {
             this.activeName = null;
             this.name = null;
             this.stateManagerName = null;
+            this.options = {};
+            this.activeOptions = {};
         }
     }
     return State;

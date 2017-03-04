@@ -25,37 +25,38 @@ class StateManagerSystem {
         this.states = new Map();
     }
 
-    updateStates(stateName, entity) {
+    updateState(stateName, entity) {
         var state = this.states.get(stateName);
         invokeMethod(state, "update", [entity]);
     }
 
-    activateStates(stateName, entity) {
+    activateState(stateName, entity) {
         var state = this.states.get(stateName);
         invokeMethod(state, "activated", [entity]);
     }
 
-    deactivateStates(stateName, entity) {
+    deactivateState(stateName, entity) {
         var state = this.states.get(stateName);
         invokeMethod(state, "deactivated", [entity]);
     }
 
-    updateState(entity: Entity) {
+    maintainState(entity: Entity) {
         var state = entity.getComponent<State>("state");
 
         if (state.activeName !== state.name) {
-            this.deactivateStates(state.activeName, entity);
-            this.activateStates(state.name, entity);
+            this.deactivateState(state.activeName, entity);
             state.activeName = state.name;
+            state.activeOptions = state.options;
+            this.activateState(state.name, entity);
         }
 
-        this.updateStates(state.name, entity);
+        this.updateState(state.name, entity);
         
     }
 
     update() {
         this.entities.forEach((entity) => {
-            this.updateState(entity);
+            this.maintainState(entity);
         });
     };
 
@@ -73,7 +74,7 @@ class StateManagerSystem {
             var state = entity.getComponent<State>("state");
             var stateName = state.name;
 
-            this.activateStates(stateName, entity);
+            this.activateState(stateName, entity);
         });
 
     }

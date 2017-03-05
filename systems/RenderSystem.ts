@@ -201,17 +201,6 @@ class RenderSystem {
                 Math.floor(cameraSize.height),
             );
 
-            /*context.drawImage(
-                caches[key],
-                Math.floor(cameraPosition.x),
-                Math.floor(cameraPosition.y),
-                Math.floor(cameraSize.width),
-                Math.floor(cameraSize.height),
-                0,
-                0,
-                Math.floor(cameraSize.width),
-                Math.floor(cameraSize.height)
-            )*/
         }
 
         activeCollisions.forEach((collision) => {

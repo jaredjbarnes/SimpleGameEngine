@@ -120,7 +120,9 @@ define(["require", "exports"], function (require, exports) {
         }
         cleanCollisions(entities) {
             var currentTimestamp = this._currentTimestamp;
-            entities.forEach((entity) => {
+            // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
+            var _entities = entities;
+            _entities.forEach((entity) => {
                 var collisions = entity.collidable.activeCollisions;
                 Array.from(collisions.entries()).forEach(function (entry) {
                     var key = entry[0];
@@ -138,7 +140,9 @@ define(["require", "exports"], function (require, exports) {
         }
         assignTimestamps(pairs) {
             var currentTimestamp = this._currentTimestamp;
-            pairs.forEach(function (pair, index) {
+            // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
+            var _pairs = pairs;
+            _pairs.forEach(function (pair, index) {
                 var entityA = pair[0];
                 var entityB = pair[1];
                 var collidableA = entityA.collidable;

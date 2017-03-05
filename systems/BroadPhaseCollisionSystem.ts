@@ -172,7 +172,7 @@ class BroadPhaseCollisionSystem {
             this.assignTimestamps(pairs);
             this.cleanCollisions(entities);
 
-            entities.forEach((entity)=>{
+            entities.forEach((entity) => {
                 entity.position.isDirty = false;
             });
         })
@@ -182,8 +182,10 @@ class BroadPhaseCollisionSystem {
 
     cleanCollisions(entities) {
         var currentTimestamp = this._currentTimestamp;
+        // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
+        var _entities = entities;
 
-        entities.forEach((entity) => {
+        _entities.forEach((entity) => {
             var collisions = <Map<string, Collision>>entity.collidable.activeCollisions;
 
             Array.from(collisions.entries()).forEach(function (entry) {
@@ -208,7 +210,10 @@ class BroadPhaseCollisionSystem {
     assignTimestamps(pairs) {
         var currentTimestamp = this._currentTimestamp;
 
-        pairs.forEach(function (pair: Array<BroadPhaseEntity>, index) {
+        // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
+        var _pairs = pairs;
+
+        _pairs.forEach(function (pair: Array<BroadPhaseEntity>, index) {
             var entityA = pair[0];
             var entityB = pair[1];
             var collidableA = entityA.collidable;

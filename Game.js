@@ -23,6 +23,7 @@ define(["require", "exports"], function (require, exports) {
             this._systems = [];
             this._entities = [];
             this._entitiesById = {};
+            this._services = new Map();
             this.isRunning = false;
             this.size = size;
         }
@@ -54,6 +55,15 @@ define(["require", "exports"], function (require, exports) {
                 systems.push(system);
                 this._invokeMethod(system, "activated", [this]);
             }
+        }
+        addService(name, service) {
+            this._services.set(name, service);
+            this.notifySystems("serviceAdded", [name, service]);
+        }
+        removeService(name) {
+            var service = this._services.get(service);
+            this._services.delete(name);
+            this.notifySystems("serviceRemoved", [name, service]);
         }
         removeSystem(system) {
             var systems = this._systems;

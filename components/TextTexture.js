@@ -20,6 +20,7 @@ define(["require", "exports"], function (require, exports) {
             this.text = "";
             this.verticalAlignment = "top";
             this.horizontalAlignment = "left";
+            this.lineHeight = 0;
             this.isDirty = false;
         }
     }

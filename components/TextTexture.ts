@@ -3,7 +3,8 @@ class TextTexture {
     text: string;
     verticalAlignment: string;
     horizontalAlignment: string;
-
+    lineHeight: number;
+    
     font: {
         size: number;
         style: string;
@@ -41,6 +42,7 @@ class TextTexture {
         this.text = "";
         this.verticalAlignment = "top";
         this.horizontalAlignment = "left";
+        this.lineHeight = 0;
         this.isDirty = false;
     }
 }

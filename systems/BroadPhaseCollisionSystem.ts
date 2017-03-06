@@ -145,20 +145,20 @@ class BroadPhaseCollisionSystem {
         var grid = this._grid;
 
         this._entities.forEach((entity) => {
+            var _entity = entity;
+            if (_entity.position.isDirty) {
 
-            if (entity.position.isDirty) {
+                var regions = this.getRegions(_entity);
+                var lastRegions = this._lastRegions.get(_entity.id);
 
-                var regions = this.getRegions(entity);
-                var lastRegions = this._lastRegions.get(entity.id);
-
-                this._removeLastRegionsFromGrid(entity, lastRegions);
+                this._removeLastRegionsFromGrid(_entity, lastRegions);
 
                 regions.forEach((region) => {
                     dirtyRegions[region[0] + "|" + region[1]] = true;
-                    grid[region[0]][region[1]].push(entity);
+                    grid[region[0]][region[1]].push(_entity);
                 });
 
-                this._lastRegions.set(entity.id, regions);
+                this._lastRegions.set(_entity.id, regions);
 
             }
 

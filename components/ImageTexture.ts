@@ -4,6 +4,7 @@
     position: { x: number; y: number; };
     size: { width: number; height: number; };
     padding: { top: number; right: number; bottom: number; left: number; }
+    isDirty: boolean;
 
     constructor() {
         this.type = "image-texture";
@@ -22,6 +23,7 @@
             bottom: 0,
             left: 0
         };
+        this.isDirty = true;
     }
 }
 

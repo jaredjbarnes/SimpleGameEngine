@@ -18,6 +18,7 @@ define(["require", "exports"], function (require, exports) {
                 bottom: 0,
                 left: 0
             };
+            this.isDirty = true;
         }
     }
     return ImageTexture;

@@ -23,7 +23,8 @@ class SpriteSystem {
 
         this.entities.forEach((entity) => {
             var sprite = entity.getComponent<Sprite>("sprite");
-            var imageTexture = entity.getComponent("image-texture");
+            var imageTexture = entity.getComponent<any>("image-texture");
+            var position = entity.getComponent<any>("position");
 
             var index = Math.floor(sprite.index);
             var newImageTexture = sprite.images[index];
@@ -39,8 +40,11 @@ class SpriteSystem {
                 imageTexture[key] = newImageTexture[key];
             });
 
+            imageTexture.isDirty = true;
+
             sprite.index += (sprite.timeScale * 1);
             sprite.index = sprite.index >= sprite.images.length ? 0 : sprite.index;
+
         });
 
 

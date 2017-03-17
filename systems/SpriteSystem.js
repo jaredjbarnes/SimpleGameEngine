@@ -15,6 +15,7 @@ define(["require", "exports"], function (require, exports) {
             this.entities.forEach((entity) => {
                 var sprite = entity.getComponent("sprite");
                 var imageTexture = entity.getComponent("image-texture");
+                var position = entity.getComponent("position");
                 var index = Math.floor(sprite.index);
                 var newImageTexture = sprite.images[index];
                 if (newImageTexture == null) {
@@ -26,6 +27,7 @@ define(["require", "exports"], function (require, exports) {
                     }
                     imageTexture[key] = newImageTexture[key];
                 });
+                imageTexture.isDirty = true;
                 sprite.index += (sprite.timeScale * 1);
                 sprite.index = sprite.index >= sprite.images.length ? 0 : sprite.index;
             });

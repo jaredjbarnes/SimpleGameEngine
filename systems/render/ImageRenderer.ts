@@ -5,43 +5,34 @@ class ImageRenderer {
     document: HTMLDocument;
     cachedCanvases: any;
     sourceCanvases: any;
+    assetRoot: string;
+    loadingImages: any;
 
-    constructor(document) {
+
+    constructor(document, assetRoot?: string) {
         this.type = "image-texture";
         this.document = document;
         this.cachedCanvases = {};
+        this.loadingImages = {};
         this.sourceCanvases = {};
+        this.assetRoot = assetRoot || "";
     }
 
-    cacheCanvasBySize(path, referenceCanvas, size) {
-        var document = this.document;
-        var sizes = this.cachedCanvases[path];
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("2d");
+    getKey(imageTexture) {
+        var position = imageTexture.position;
+        var size = imageTexture.size;
+        var path = imageTexture.path;
 
-        if (sizes == null) {
-            sizes = {};
+        return path + "|" + position.x + "|" + position.y + "|" + size.width + "|" + size.height;
+    }
+
+    cacheCanvas(image, imageTexture) {
+        var key = this.getKey(imageTexture);
+
+        if (this.cachedCanvases[key]) {
+            return;
         }
 
-        canvas.width = size.width;
-        canvas.height = size.height;
-
-        context.drawImage(
-            referenceCanvas,
-            0,
-            0,
-            referenceCanvas.width,
-            referenceCanvas.height,
-            0,
-            0,
-            size.width,
-            size.height
-        );
-
-        sizes[size.width + "|" + size.height] = canvas;
-    }
-
-    createCanvasByImage(image, imageTexture) {
         var document = this.document;
         var canvas = document.createElement("canvas");
         var context = canvas.getContext("2d");
@@ -66,38 +57,37 @@ class ImageRenderer {
             size.height
         );
 
+        this.cachedCanvases[key] = canvas;
         return canvas;
     }
 
-    getCanvas(imageTexture, size) {
-        var cachedCanvases = this.cachedCanvases;
-        var path = imageTexture.path;
-        var sizeKey = size.width + "|" + size.height;
-
-        if (cachedCanvases[path] && cachedCanvases[path][sizeKey]) {
-            return cachedCanvases[path][sizeKey];
-        }
-
-        return null;
+    getPath(path) {
+        return this.assetRoot + "/" + path;
     }
 
-    loadImageBySize(imageTexture, size) {
-        var path = imageTexture.path;
-        var sourceCanvas = this.sourceCanvases[path];
+    getCanvas(imageTexture) {
+        var cachedCanvases = this.cachedCanvases;
+        var key = this.getKey(imageTexture);
+        return cachedCanvases[key] || null;
+    }
 
-        if (sourceCanvas != null) {
-            this.cacheCanvasBySize(path, sourceCanvas, size);
+    loadImage(imageTexture) {
+        var path = this.getPath(imageTexture.path);
+        var image = this.sourceCanvases[path];
+
+        if (this.loadingImages[path]) {
             return;
         }
 
-        var image = new Image();
+        image = new Image();
 
-        image.onload =  ()=> {
-            var canvas = this.createCanvasByImage(image, imageTexture);
-            this.sourceCanvases[path] = canvas;
-            this.cacheCanvasBySize(path, canvas, size);
+        image.onload = () => {
+            this.loadingImages[path] = false;
+            this.sourceCanvases[path] = image;
+            this.cacheCanvas(image, imageTexture);
         };
 
+        this.loadingImages[path] = true;
         image.src = path;
     }
 
@@ -106,14 +96,25 @@ class ImageRenderer {
             return;
         }
 
-        var imageTexture = entity.getProperty("image-texture");
-        var entityCanvas = this.getCanvas(imageTexture, size);
+        var imageTexture = entity.getComponent("image-texture");
+        var imagePosition = imageTexture.position;
+        var entityCanvas = this.getCanvas(imageTexture);
+        var path = this.getPath(imageTexture.path);
+        var imageSource = this.sourceCanvases[path];
 
-        // If it isn't loaded yet then load the image and draw it next call.
-        if (entityCanvas == null) {
-            this.loadImageBySize(imageTexture, size);
+        // If the image isn't loaded yet then load the image and draw it next call.
+        if (imageSource == null) {
+            this.loadImage(imageTexture);
+            imageTexture.isDirty = true;
             return;
         }
+
+        if (entityCanvas == null) {
+            this.cacheCanvas(imageSource, imageTexture);
+            entityCanvas = this.getCanvas(imageTexture);
+        }
+
+        imageTexture.isDirty = false;
 
         var context = canvas.getContext("2d");
 
@@ -121,7 +122,7 @@ class ImageRenderer {
             offset.x,
             offset.y,
             size.width,
-            size.heigth,
+            size.height,
             position.x,
             position.y,
             size.width,
@@ -130,3 +131,5 @@ class ImageRenderer {
 
     }
 }
+
+export = ImageRenderer;

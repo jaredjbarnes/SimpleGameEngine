@@ -14,6 +14,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
             this._staticCacheByZIndex = {};
             this._entitiesByZIndex = {};
             this._entitiesToBeRedrawn = [];
+            this._tempEntitiesToBeRedrawn = [];
             this._sort = sort || null;
             var defaultSort = this._defaultSort = function (entityA, entityB) {
                 var value = 0;
@@ -119,10 +120,10 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
             if (cameraPosition == null || game == null) {
                 return;
             }
-            this.updateCaches();
-            this.context.clearRect(0, 0, canvas.width, canvas.height);
             // This is how we optimize rendering. We use the collision system with the camera entity.
             var activeCollisions = this.camera.getComponent("collidable").activeCollisions;
+            this.updateCaches();
+            this.context.clearRect(0, 0, canvas.width, canvas.height);
             var cacheKeys = Object.keys(this._staticCacheByZIndex).sort(function (a, b) {
                 return parseInt(a, 10) - parseInt(b, 10);
             });
@@ -155,10 +156,14 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
         }
         updateCaches() {
             var self = this;
+            this._tempEntitiesToBeRedrawn.length = 0;
             this._entitiesToBeRedrawn.forEach((entity) => {
                 this.cacheEntity(entity);
             });
             this._entitiesToBeRedrawn.length = 0;
+            this._tempEntitiesToBeRedrawn.forEach((entity) => {
+                this._entitiesToBeRedrawn.push(entity);
+            });
         }
         redrawEntityOnCanvas(entity, canvas, drawEntity = true) {
             if (canvas == null) {
@@ -204,7 +209,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
             }
             entities.sort(this._zIndexSort);
             context.clearRect(left, top, width, height);
-            entities.forEach(function (otherEntity) {
+            entities.forEach((otherEntity) => {
                 var otherPosition = otherEntity.getComponent("position");
                 var otherSize = otherEntity.getComponent("size");
                 var otherTop = Math.max(otherPosition.y, position.y, 0);
@@ -224,7 +229,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
                 if (otherPosition.y < otherTop) {
                     offsetY = otherTop - otherPosition.y;
                 }
-                rendererTypes.forEach(function (type) {
+                rendererTypes.forEach((type) => {
                     var component = otherEntity.getComponent(type);
                     if (component != null) {
                         renderers[type].draw(otherEntity, canvas, {
@@ -237,6 +242,9 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
                             x: Math.floor(offsetX),
                             y: Math.floor(offsetY)
                         });
+                        if (component.isDirty) {
+                            this._tempEntitiesToBeRedrawn.push(otherEntity);
+                        }
                     }
                 });
             });

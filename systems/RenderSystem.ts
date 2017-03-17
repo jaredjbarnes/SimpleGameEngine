@@ -33,6 +33,7 @@ class RenderSystem {
     private _zIndexSort: (entityA: Entity, entityB: Entity) => number;
     private _defaultSort: (entityA: Entity, entityB: Entity) => number;
     private _entitiesToBeRedrawn: Array<Entity>;
+    private _tempEntitiesToBeRedrawn: Array<Entity>;
 
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
@@ -48,6 +49,7 @@ class RenderSystem {
         this._staticCacheByZIndex = {};
         this._entitiesByZIndex = {};
         this._entitiesToBeRedrawn = [];
+        this._tempEntitiesToBeRedrawn = []
         this._sort = sort || null;
 
         var defaultSort = this._defaultSort = function (entityA, entityB) {
@@ -177,11 +179,11 @@ class RenderSystem {
             return;
         }
 
-        this.updateCaches();
-        this.context.clearRect(0, 0, canvas.width, canvas.height);
-
         // This is how we optimize rendering. We use the collision system with the camera entity.
         var activeCollisions = this.camera.getComponent<Collidable>("collidable").activeCollisions;
+
+        this.updateCaches();
+        this.context.clearRect(0, 0, canvas.width, canvas.height);
 
         var cacheKeys = Object.keys(this._staticCacheByZIndex).sort(function (a, b) {
             return parseInt(a, 10) - parseInt(b, 10);
@@ -237,12 +239,16 @@ class RenderSystem {
 
     updateCaches() {
         var self = this;
+        this._tempEntitiesToBeRedrawn.length = 0;
 
         this._entitiesToBeRedrawn.forEach((entity) => {
             this.cacheEntity(entity);
         });
 
         this._entitiesToBeRedrawn.length = 0;
+        this._tempEntitiesToBeRedrawn.forEach((entity) => {
+            this._entitiesToBeRedrawn.push(entity);
+        });
     }
 
     redrawEntityOnCanvas(entity: Entity, canvas: any, drawEntity: boolean = true) {
@@ -301,7 +307,7 @@ class RenderSystem {
 
         context.clearRect(left, top, width, height);
 
-        entities.forEach(function (otherEntity: Entity) {
+        entities.forEach((otherEntity: Entity) => {
             var otherPosition = otherEntity.getComponent<Position>("position");
             var otherSize = otherEntity.getComponent<Size>("size");
 
@@ -326,8 +332,8 @@ class RenderSystem {
                 offsetY = otherTop - otherPosition.y;
             }
 
-            rendererTypes.forEach(function (type) {
-                var component = otherEntity.getComponent(type);
+            rendererTypes.forEach((type) => {
+                var component = otherEntity.getComponent<any>(type);
                 if (component != null) {
                     renderers[type].draw(
                         otherEntity,
@@ -345,6 +351,10 @@ class RenderSystem {
                             y: Math.floor(offsetY)
                         }
                     );
+
+                    if (component.isDirty) {
+                        this._tempEntitiesToBeRedrawn.push(otherEntity);
+                    }
                 }
             });
         });

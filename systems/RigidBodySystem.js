@@ -1,7 +1,7 @@
-define(["require", "exports", "./../Vector"], function (require, exports, Vector) {
+define(["require", "exports", "./../Vector"], function (require, exports, Vector_1) {
     "use strict";
     const DEPENDENCIES = ["collidable", "rigid-body", "position"];
-    class NarrowPhaseCollisionSystem {
+    class RigidBodySystem {
         constructor() {
             this.entities = [];
             this.projectionA = {
@@ -37,7 +37,7 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                 };
             });
             rigidBody.normals = rigidBody.vertices.map(function (vertex, index) {
-                return Vector.normalize(Vector.getLeftNormal(vertex));
+                return Vector_1.default.normalize(Vector_1.default.getLeftNormal(vertex));
             });
             var finalVector = rigidBody.vertices.reduce(function (accumulator, vertex) {
                 accumulator.x += vertex.x;
@@ -51,7 +51,7 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                     x: -finalVector.x,
                     y: -finalVector.y
                 });
-                rigidBody.normals.push(Vector.getLeftNormal(rigidBody.vertices[rigidBody.vertices.length - 1]));
+                rigidBody.normals.push(Vector_1.default.getLeftNormal(rigidBody.vertices[rigidBody.vertices.length - 1]));
             }
         }
         setSize(rigidBody) {
@@ -77,11 +77,11 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             rigidBody.origin.y = (height / 2) + top;
         }
         projectToAxis(vertices, axis, projection) {
-            var min = Vector.dot(vertices[0], axis);
+            var min = Vector_1.default.dot(vertices[0], axis);
             var max = min;
             var dot;
             for (var i = 1; i < vertices.length; i += 1) {
-                dot = Vector.dot(vertices[i], axis);
+                dot = Vector_1.default.dot(vertices[i], axis);
                 if (dot > max) {
                     max = dot;
                 }
@@ -161,8 +161,8 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             var penetration;
             var minOverlap;
             var normal;
-            var originA = Vector.add(positionA, rigidBodyA.origin);
-            var originB = Vector.add(positionB, rigidBodyB.origin);
+            var originA = Vector_1.default.add(positionA, rigidBodyA.origin);
+            var originB = Vector_1.default.add(positionB, rigidBodyB.origin);
             rigidBodyA.isInitialized = true;
             rigidBodyB.isInitialized = true;
             // If the collision was already handled from the other side then stop detection.
@@ -203,22 +203,24 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             collisionA.startTimestamp = this.timestamp;
             collisionA.timestamp = this.timestamp;
             collisionA.endTimestamp = null;
-            collisionA.entity = entityB;
+            collisionA.otherEntity = entityB;
+            collisionA.entity = entityA;
             collisionB.startTimestamp = this.timestamp;
             collisionB.timestamp = this.timestamp;
             collisionB.endTimestamp = null;
-            collisionB.entity = entityA;
+            collisionB.otherEntity = entityA;
+            collisionB.entity = entityB;
             if (overlapA.overlap < overlapB.overlap) {
                 minOverlap = overlapA.overlap;
                 normal = overlapA.axis;
-                if (Vector.dot(normal, Vector.subtract(originA, originB)) > 0) {
-                    normal = Vector.negate(normal);
+                if (Vector_1.default.dot(normal, Vector_1.default.subtract(originA, originB)) > 0) {
+                    normal = Vector_1.default.negate(normal);
                 }
                 penetration = {
                     x: minOverlap * normal.x,
                     y: minOverlap * normal.y
                 };
-                collisionA.penetration = Vector.negate(penetration);
+                collisionA.penetration = Vector_1.default.negate(penetration);
                 collisionA.normal = normal;
                 collisionB.penetration = penetration;
                 collisionB.normal = normal;
@@ -226,8 +228,8 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             else {
                 minOverlap = overlapB.overlap;
                 normal = overlapB.axis;
-                if (Vector.dot(normal, Vector.subtract(originB, originA)) > 0) {
-                    normal = Vector.negate(normal);
+                if (Vector_1.default.dot(normal, Vector_1.default.subtract(originB, originA)) > 0) {
+                    normal = Vector_1.default.negate(normal);
                 }
                 penetration = {
                     x: minOverlap * normal.x,
@@ -235,7 +237,7 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
                 };
                 collisionA.penetration = penetration;
                 collisionA.normal = normal;
-                collisionB.penetration = Vector.negate(penetration);
+                collisionB.penetration = Vector_1.default.negate(penetration);
                 collisionB.normal = normal;
             }
             rigidBodyA.activeCollisions.set(entityB.id, collisionA);
@@ -334,6 +336,7 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             this.entityAdded(entity);
         }
     }
-    return NarrowPhaseCollisionSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = RigidBodySystem;
 });
-//# sourceMappingURL=NarrowPhaseCollisionSystem.js.map
+//# sourceMappingURL=RigidBodySystem.js.map

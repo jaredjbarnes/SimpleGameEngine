@@ -1,8 +1,8 @@
-﻿import Collidable = require("./../components/Collidable");
-import Position = require("./../components/Position");
-import Size = require("./../components/Size");
-import Game = require("./../Game");
-import Entity = require("./../Entity");
+﻿import Collidable from "./../components/Collidable";
+import Position from "./../components/Position";
+import Size from "./../components/Size";
+import Game from "./../Game";
+import Entity from "./../Entity";
 
 const DEPENDENCIES = ["position", "size", "collidable"];
 
@@ -37,7 +37,7 @@ class Collision {
     }
 }
 
-class BroadPhaseCollisionSystem {
+export default class CollisionSystem {
     private _game: Game;
     private _cellSize: number;
     private _currentTimestamp: number;
@@ -355,5 +355,3 @@ class BroadPhaseCollisionSystem {
     }
 
 }
-
-export = BroadPhaseCollisionSystem;

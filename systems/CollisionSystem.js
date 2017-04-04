@@ -19,7 +19,7 @@ define(["require", "exports"], function (require, exports) {
             this.isStatic = false;
         }
     }
-    class BroadPhaseCollisionSystem {
+    class CollisionSystem {
         constructor(cellSize) {
             this._game = null;
             this._cellSize = cellSize || 200;
@@ -259,6 +259,7 @@ define(["require", "exports"], function (require, exports) {
             this._detectionAreaSize = size;
         }
     }
-    return BroadPhaseCollisionSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CollisionSystem;
 });
-//# sourceMappingURL=BroadPhaseCollisionSystem.js.map
+//# sourceMappingURL=CollisionSystem.js.map

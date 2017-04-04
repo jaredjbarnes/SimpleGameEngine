@@ -1,13 +1,13 @@
-import Entity = require("./../Entity");
-import Game = require("./../Game");
-import Vector = require("./../Vector");
-import RigidBody = require("./../components/RigidBody");
-import Position = require("./../components/Position");
-import Collidable = require("./../components/Collidable");
+import Entity from "./../Entity";
+import Game from "./../Game";
+import Vector from "./../Vector";
+import {RigidBody} from "./../components/RigidBody";
+import Position from "./../components/Position";
+import Collidable from "./../components/Collidable";
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
 
-class NarrowPhaseCollisionSystem {
+export default class RigidBodySystem {
     game: Game;
     entities: Array<Entity>;
     projectionA: { min: number; max: number; };
@@ -269,12 +269,14 @@ class NarrowPhaseCollisionSystem {
         collisionA.startTimestamp = this.timestamp;
         collisionA.timestamp = this.timestamp;
         collisionA.endTimestamp = null;
-        collisionA.entity = entityB;
+        collisionA.otherEntity = entityB;
+        collisionA.entity = entityA;
 
         collisionB.startTimestamp = this.timestamp;
         collisionB.timestamp = this.timestamp;
         collisionB.endTimestamp = null;
-        collisionB.entity = entityA;
+        collisionB.otherEntity = entityA;
+        collisionB.entity = entityB;
 
         if (overlapA.overlap < overlapB.overlap) {
 
@@ -442,5 +444,3 @@ class NarrowPhaseCollisionSystem {
     }
 
 }
-
-export = NarrowPhaseCollisionSystem;

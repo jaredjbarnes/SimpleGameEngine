@@ -21,6 +21,7 @@ define(["require", "exports"], function (require, exports) {
             audio.play();
         }
     }
-    return AudioManager;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AudioManager;
 });
 //# sourceMappingURL=AudioManager.js.map

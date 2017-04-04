@@ -24,6 +24,7 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = false;
         }
     }
-    return TextTexture;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = TextTexture;
 });
 //# sourceMappingURL=TextTexture.js.map

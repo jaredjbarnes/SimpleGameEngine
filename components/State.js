@@ -10,6 +10,7 @@ define(["require", "exports"], function (require, exports) {
             this.activeOptions = {};
         }
     }
-    return State;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = State;
 });
 //# sourceMappingURL=State.js.map

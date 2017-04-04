@@ -7,6 +7,7 @@ define(["require", "exports"], function (require, exports) {
             this.y = 0;
         }
     }
-    return Movable;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Movable;
 });
 //# sourceMappingURL=Movable.js.map

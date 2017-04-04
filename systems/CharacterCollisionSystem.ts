@@ -1,11 +1,11 @@
-import RigidBody = require("./../components/RigidBody");
-import Position = require("./../components/Position");
-import Game = require("./../Game");
-import Entity = require("./../Entity");
+import { RigidBody } from "./../components/RigidBody";
+import Position from "./../components/Position";
+import Game from "./../Game";
+import Entity from "./../Entity";
 
 const DEPENDENCIES = ["character-collidable", "rigid-body", "position"];
 
-class CharacterCollisionSystem {
+export default class CharacterCollisionSystem {
     game: Game;
     entities: Map<string, Entity>;
 
@@ -15,14 +15,14 @@ class CharacterCollisionSystem {
     }
 
     update() {
-        this.entities.forEach( (entity)=> {
+        this.entities.forEach((entity) => {
             this.updateEntity(entity);
         });
     }
 
     activated(game: Game) {
         this.game = game;
-        game.getEntities().forEach( (entity) =>{
+        game.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
@@ -42,13 +42,13 @@ class CharacterCollisionSystem {
         this.entities.delete(entity.id);
     }
 
-    componentAdded(entity:Entity, component) {
+    componentAdded(entity: Entity, component) {
         this.entityAdded(entity);
     }
 
-    componentRemoved(entity:Entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1){
-            this.entities.delete(entity.id); 
+    componentRemoved(entity: Entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this.entities.delete(entity.id);
         }
     }
 
@@ -68,6 +68,3 @@ class CharacterCollisionSystem {
     }
 
 }
-
-
-export = CharacterCollisionSystem;

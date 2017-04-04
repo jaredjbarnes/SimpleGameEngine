@@ -1,4 +1,4 @@
-﻿class Collidable {
+﻿export default class Collidable {
     type: string;
     name: string;
     isEnabled: boolean;
@@ -12,5 +12,3 @@
         this.activeCollisions = new Map();
     }
 }
-
-export = Collidable;

@@ -1,1 +1,1 @@
-{"version":3,"file":"KeyboardInput.js","sourceRoot":"","sources":["KeyboardInput.ts"],"names":[],"mappings":";;IAAA;QAII;YACI,IAAI,CAAC,IAAI,GAAG,gBAAgB,CAAC;YAC7B,IAAI,CAAC,WAAW,GAAG,EAAE,CAAC;QAC1B,CAAC;KACJ;IAED,OAAS,aAAa,CAAC"}
+{"version":3,"file":"KeyboardInput.js","sourceRoot":"","sources":["KeyboardInput.ts"],"names":[],"mappings":";;IAAA;QAII;YACI,IAAI,CAAC,IAAI,GAAG,gBAAgB,CAAC;YAC7B,IAAI,CAAC,WAAW,GAAG,EAAE,CAAC;QAC1B,CAAC;KACJ;;IARD,gCAQC"}

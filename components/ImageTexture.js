@@ -21,6 +21,7 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = true;
         }
     }
-    return ImageTexture;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ImageTexture;
 });
 //# sourceMappingURL=ImageTexture.js.map

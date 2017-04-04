@@ -63,6 +63,7 @@ define(["require", "exports"], function (require, exports) {
             context.drawImage(entityCanvas, offset.x, offset.y, size.width, size.height, position.x, position.y, size.width, size.height);
         }
     }
-    return ShapeRenderer;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ShapeRenderer;
 });
 //# sourceMappingURL=ShapeRenderer.js.map

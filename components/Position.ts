@@ -1,4 +1,4 @@
-﻿class Position {
+﻿export default class Position {
     type: string;
     x: number;
     y: number;
@@ -13,5 +13,3 @@
         this.isDirty = false;
     }
 }
-
-export = Position;

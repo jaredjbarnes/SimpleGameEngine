@@ -1,9 +1,7 @@
-class UserInterfaceSystem {
+export default class UserInterfaceSystem {
     constructor(){
 
     }
 
     update(){}
 }
-
-export = UserInterfaceSystem;

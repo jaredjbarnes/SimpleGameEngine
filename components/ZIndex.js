@@ -6,6 +6,7 @@ define(["require", "exports"], function (require, exports) {
             this.value = 0;
         }
     }
-    return ZIndex;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ZIndex;
 });
 //# sourceMappingURL=ZIndex.js.map

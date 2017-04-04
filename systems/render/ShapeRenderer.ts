@@ -1,4 +1,4 @@
-﻿class ShapeRenderer {
+﻿export default class ShapeRenderer {
     type: string;
     document: HTMLDocument;
     shapeCache: any;
@@ -95,5 +95,3 @@
 
     }
 }
-
-export = ShapeRenderer;

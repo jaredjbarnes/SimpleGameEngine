@@ -50,6 +50,7 @@ define(["require", "exports"], function (require, exports) {
             });
         }
     }
-    return CharacterCollisionSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CharacterCollisionSystem;
 });
 //# sourceMappingURL=CharacterCollisionSystem.js.map

@@ -5,6 +5,7 @@ define(["require", "exports"], function (require, exports) {
             this.type = "character-collidable";
         }
     }
-    return CharacterCollidable;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CharacterCollidable;
 });
 //# sourceMappingURL=CharacterCollidable.js.map

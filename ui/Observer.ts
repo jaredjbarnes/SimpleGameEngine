@@ -1,4 +1,4 @@
-class Observer {
+export default class Observer {
     isDisposed: boolean;
     isStopped: boolean;
     disposer: () => void;
@@ -30,5 +30,3 @@ class Observer {
         this.isStopped = false;
     }
 }
-
-export = Observer;

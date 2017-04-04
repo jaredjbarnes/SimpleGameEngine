@@ -1,4 +1,4 @@
-﻿class Size  {
+﻿export default class Size  {
     type: string;
     width: number;
     height: number;
@@ -11,5 +11,3 @@
         this.isDirty = false;
     }
 }
-
-export = Size;

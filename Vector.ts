@@ -1,4 +1,4 @@
-class Vector {
+export default class Vector {
      static add  (vectorA, vectorB, optionalVector?) {
         optionalVector = optionalVector || {};
         optionalVector.x = vectorA.x + vectorB.x;
@@ -99,5 +99,3 @@ class Vector {
         return optionalVector;
     }
 }
-
-export = Vector;

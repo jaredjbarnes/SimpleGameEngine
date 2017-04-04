@@ -1,4 +1,4 @@
-﻿class Camera {
+﻿export default class Camera {
     type: string;
     name: string;
 
@@ -7,5 +7,3 @@
         this.name = null;
     }
 }
-
-export = Camera;

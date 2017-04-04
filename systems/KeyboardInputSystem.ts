@@ -1,6 +1,6 @@
-﻿import Game = require("./../Game");
+﻿import Game from "./../Game";
 
-class KeyboardInputSystem {
+export default class KeyboardInputSystem {
     private _game: Game;
     pressedKeys: any;
 
@@ -60,5 +60,3 @@ class KeyboardInputSystem {
         }
     }
 }
-
-export = KeyboardInputSystem;

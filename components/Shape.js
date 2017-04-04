@@ -21,6 +21,7 @@ define(["require", "exports"], function (require, exports) {
             this.points = [];
         }
     }
-    return Shape;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Shape;
 });
 //# sourceMappingURL=Shape.js.map

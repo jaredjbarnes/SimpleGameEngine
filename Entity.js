@@ -59,6 +59,7 @@ define(["require", "exports", "./util"], function (require, exports, util) {
             });
         }
     }
-    return Entity;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Entity;
 });
 //# sourceMappingURL=Entity.js.map

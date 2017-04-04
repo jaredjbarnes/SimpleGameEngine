@@ -94,6 +94,7 @@ define(["require", "exports"], function (require, exports) {
             return this;
         }
     }
-    return CompositeCanvas;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CompositeCanvas;
 });
 //# sourceMappingURL=CompositeCanvas.js.map

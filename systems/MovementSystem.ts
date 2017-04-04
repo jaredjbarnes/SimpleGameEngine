@@ -1,7 +1,7 @@
-import Game = require("./../Game");
-import Entity = require("./../Entity");
-import Movable = require("./../components/Movable");
-import Position = require("./../components/Position");
+import Game from "./../Game";
+import Entity from "./../Entity";
+import Movable from "./../components/Movable";
+import Position from "./../components/Position";
 
 const DEPENDENCIES = ["movable", "position"];
 
@@ -15,7 +15,7 @@ class MovementEntity {
     }
 }
 
-class MovementSystem {
+export default class MovementSystem {
     game: Game;
     entities: Map<string, MovementEntity>
 
@@ -77,5 +77,3 @@ class MovementSystem {
     }
 
 }
-
-export = MovementSystem;

@@ -1,4 +1,4 @@
-class TextTexture {
+export default class TextTexture {
     type: string;
     text: string;
     verticalAlignment: string;
@@ -46,5 +46,3 @@ class TextTexture {
         this.isDirty = false;
     }
 }
-
-export = TextTexture;

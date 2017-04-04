@@ -6,6 +6,7 @@ define(["require", "exports"], function (require, exports) {
             this.name = null;
         }
     }
-    return Camera;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Camera;
 });
 //# sourceMappingURL=Camera.js.map

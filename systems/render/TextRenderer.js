@@ -70,6 +70,7 @@ define(["require", "exports"], function (require, exports) {
             context.drawImage(entityCanvas, offset.x, offset.y, size.width, size.height, position.x, position.y, size.width, size.height);
         }
     }
-    return TextRenderer;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = TextRenderer;
 });
 //# sourceMappingURL=TextRenderer.js.map

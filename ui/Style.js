@@ -1,10 +1,10 @@
-define(["require", "exports", "Color"], function (require, exports, Color) {
+define(["require", "exports", "Color"], function (require, exports, Color_1) {
     "use strict";
     class Style {
         constructor() {
-            this.border.color = new Color();
+            this.border.color = new Color_1.default();
             this.border.thickness = 0;
-            this.backgroundColor = new Color();
+            this.backgroundColor = new Color_1.default();
             this.size.width = 0;
             this.size.height = 0;
             this.position.x = 0;
@@ -13,6 +13,7 @@ define(["require", "exports", "Color"], function (require, exports, Color) {
             this.isFixed = false;
         }
     }
-    return Color;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Style;
 });
 //# sourceMappingURL=Style.js.map

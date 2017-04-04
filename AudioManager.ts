@@ -1,4 +1,4 @@
-class AudioManager {
+export default class AudioManager {
     private _sounds: Map<string, HTMLAudioElement>;
 
     constructor(){
@@ -26,5 +26,3 @@ class AudioManager {
 
     }
 }
-
-export = AudioManager;

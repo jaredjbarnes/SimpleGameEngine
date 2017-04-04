@@ -9,6 +9,7 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = false;
         }
     }
-    return Position;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Position;
 });
 //# sourceMappingURL=Position.js.map

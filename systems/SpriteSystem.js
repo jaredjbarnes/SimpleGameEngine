@@ -59,6 +59,7 @@ define(["require", "exports"], function (require, exports) {
             this.entities = new Map();
         }
     }
-    return SpriteSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = SpriteSystem;
 });
 //# sourceMappingURL=SpriteSystem.js.map

@@ -8,6 +8,7 @@ define(["require", "exports"], function (require, exports) {
             this.activeCollisions = new Map();
         }
     }
-    return Collidable;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Collidable;
 });
 //# sourceMappingURL=Collidable.js.map

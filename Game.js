@@ -137,6 +137,7 @@ define(["require", "exports"], function (require, exports) {
             return this._entitiesById[id] || null;
         }
     }
-    return Game;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Game;
 });
 //# sourceMappingURL=Game.js.map

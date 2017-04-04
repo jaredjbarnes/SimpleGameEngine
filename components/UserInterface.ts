@@ -1,10 +1,8 @@
-import View = require("./../ui/View");
+import View from "./../ui/View";
 
-class UserInterface {
+export default class UserInterface {
     root: View;
     constructor(){
         this.root = null;
     }
 }
-
-export = UserInterface;

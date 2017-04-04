@@ -8,6 +8,7 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = false;
         }
     }
-    return Size;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Size;
 });
 //# sourceMappingURL=Size.js.map

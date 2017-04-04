@@ -1,10 +1,10 @@
-﻿import Camera = require("./../entities/Camera");
-import Entity = require("./../Entity");
-import Game = require("./../Game");
-import Position = require("./../components/Position");
-import Size = require("./../components/Size");
+﻿import Camera from "./../entities/Camera";
+import Entity from "./../Entity";
+import Game from "./../Game";
+import Position from "./../components/Position";
+import Size from "./../components/Size";
 
-class FollowEntityCameraSystem {
+export default class FollowEntityCameraSystem {
     private _camera: Camera;
     private _cameraPosition: { x: number; y: number; };
     private _cameraSize: { width: number; height: number; };
@@ -78,5 +78,3 @@ class FollowEntityCameraSystem {
 
     deactivate() { }
 }
-
-export = FollowEntityCameraSystem;

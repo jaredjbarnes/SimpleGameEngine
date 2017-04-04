@@ -1,11 +1,11 @@
-﻿import Game = require("./../Game");
-import Entity = require("./../Entity");
-import Position = require("./../components/Position");
-import KeyboardInput = require("./../components/KeyboardInput");
+﻿import Game  from "./../Game";
+import Entity from "./../Entity";
+import Position from "./../components/Position";
+import KeyboardInput from "./../components/KeyboardInput";
 
 const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position","movable"];
 
-class ControllerSystem {
+export default class ControllerSystem {
     private entities: Map<string, Entity>;
     private _game: Game;
 
@@ -82,5 +82,3 @@ class ControllerSystem {
 
     }
 }
-
-export = ControllerSystem;

@@ -1,6 +1,6 @@
-﻿import Size = require("./../../components/Size");
+﻿import Size from "./../../components/Size";
 
-class ImageRenderer {
+export default class ImageRenderer {
     type: string;
     document: HTMLDocument;
     cachedCanvases: any;
@@ -131,5 +131,3 @@ class ImageRenderer {
 
     }
 }
-
-export = ImageRenderer;

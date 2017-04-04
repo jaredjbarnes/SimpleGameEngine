@@ -6,6 +6,7 @@ define(["require", "exports"], function (require, exports) {
             this.pressedKeys = {};
         }
     }
-    return KeyboardInput;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = KeyboardInput;
 });
 //# sourceMappingURL=KeyboardInput.js.map

@@ -1,11 +1,10 @@
-﻿import Entity = require("./../Entity");
-import CameraComponent = require("./../components/Camera");
-import Size = require("./../components/Size");
-import Position = require("./../components/Position");
-import Collidable = require("./../components/Collidable");
+﻿import Entity from "./../Entity";
+import CameraComponent from "./../components/Camera";
+import Size from "./../components/Size";
+import Position from "./../components/Position";
+import Collidable from "./../components/Collidable";
 
-
-class Camera extends Entity {
+export default class Camera extends Entity {
     constructor(name?) {
         super();
 
@@ -23,5 +22,3 @@ class Camera extends Entity {
 
     }
 }
-
-export = Camera;

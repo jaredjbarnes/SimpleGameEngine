@@ -1,8 +1,8 @@
-﻿import TextTexture = require("./../../components/TextTexture");
-import Size = require("./../../components/Size");
-import Entity = require("./../../Entity");
+﻿import TextTexture from "./../../components/TextTexture";
+import Size from "./../../components/Size";
+import Entity from "./../../Entity";
 
-class TextRenderer {
+export default class TextRenderer {
     type: string;
     fontCache: any;
 
@@ -104,5 +104,3 @@ class TextRenderer {
 
     }
 }
-
-export = TextRenderer;

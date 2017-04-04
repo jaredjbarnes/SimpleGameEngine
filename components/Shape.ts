@@ -1,4 +1,4 @@
-﻿class Shape {
+﻿export default class Shape {
     type: string;
     fillColor: { red: number; green: number; blue: number; alpha: number };
     border: { thickness: number; color: { red: number; green: number; blue: number; alpha: number; } }
@@ -28,5 +28,3 @@
 
     }
 }
-
-export = Shape;

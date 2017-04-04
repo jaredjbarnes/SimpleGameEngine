@@ -1,12 +1,12 @@
-import util = require("./../util");
-import Color = require("./Color");
-import Style = require("./Style");
-import Observable = require("./Observable");
+import * as util from "./../util";
+import Color from "./Color";
+import Style from "./Style";
+import Observable from "./Observable";
 
 var createGuid = util.createGuid;
 var invokeMethod = util.invokeMethod;
 
-class View extends Observable {
+export default class View extends Observable {
     id: string;
     isDirty: boolean;
     style: Style;
@@ -29,5 +29,3 @@ class View extends Observable {
     }
    
 }
-
-export = View;

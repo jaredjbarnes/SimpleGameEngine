@@ -76,6 +76,7 @@ define(["require", "exports"], function (require, exports) {
             return optionalVector;
         }
     }
-    return Vector;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Vector;
 });
 //# sourceMappingURL=Vector.js.map

@@ -1,6 +1,6 @@
-define(["require", "exports", "./../components/ZIndex", "./../systems/render/CompositeCanvas"], function (require, exports, ZIndex, CompositeCanvas) {
+define(["require", "exports", "./../components/ZIndex", "./../systems/render/CompositeCanvas"], function (require, exports, ZIndex_1, CompositeCanvas_1) {
     "use strict";
-    var defaultZIndex = new ZIndex();
+    var defaultZIndex = new ZIndex_1.default();
     var defaultCachePosition = { x: 0, y: 0 };
     class RenderSystem {
         constructor(canvas, sort) {
@@ -375,7 +375,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
         getCanvasByZIndex(zIndex) {
             var canvas = this._staticCacheByZIndex[zIndex];
             if (canvas == null) {
-                canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 1000);
+                canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas_1.default(this._game.size.width, this._game.size.height, 1000);
             }
             return canvas;
         }
@@ -469,6 +469,7 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
             this.camera = cameras[0];
         }
     }
-    return RenderSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = RenderSystem;
 });
 //# sourceMappingURL=RenderSystem.js.map

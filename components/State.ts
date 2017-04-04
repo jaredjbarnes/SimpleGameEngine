@@ -1,4 +1,4 @@
-﻿class State {
+﻿export default class State {
     activeOptions: any;
     activeName: string;
     type: string;
@@ -15,5 +15,3 @@
         this.activeOptions = {};
     }
 }
-
-export = State;

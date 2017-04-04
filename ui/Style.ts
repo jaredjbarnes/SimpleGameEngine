@@ -1,6 +1,6 @@
-import Color = require("Color");
+import Color from "Color";
 
-class Style {
+export default class Style {
     backgroundColor: Color;
     border: {
         thickness: number;
@@ -24,5 +24,3 @@ class Style {
         this.isFixed = false;
     }
 }
-
-export = Color;

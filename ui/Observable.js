@@ -1,4 +1,4 @@
-define(["require", "exports", "./Observer"], function (require, exports, Observer) {
+define(["require", "exports", "./Observer"], function (require, exports, Observer_1) {
     "use strict";
     class Observable {
         constructor() {
@@ -10,7 +10,7 @@ define(["require", "exports", "./Observer"], function (require, exports, Observe
                 observers = new Map();
                 this.observers.set(name, observers);
             }
-            var observer = new Observer(callback, () => {
+            var observer = new Observer_1.default(callback, () => {
                 observers.delete(observer);
             });
             return observer;
@@ -26,6 +26,7 @@ define(["require", "exports", "./Observer"], function (require, exports, Observe
             });
         }
     }
-    return Observable;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Observable;
 });
 //# sourceMappingURL=Observable.js.map

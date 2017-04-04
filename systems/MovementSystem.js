@@ -55,6 +55,7 @@ define(["require", "exports"], function (require, exports) {
             }
         }
     }
-    return MovementSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = MovementSystem;
 });
 //# sourceMappingURL=MovementSystem.js.map

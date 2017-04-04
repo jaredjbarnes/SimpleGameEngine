@@ -1,6 +1,6 @@
-import Observer = require("./Observer");
+import Observer from "./Observer";
 
-class Observable {
+export default class Observable {
     observers: Map<string, Map<Observer, Observer>>;
 
     constructor() {
@@ -38,5 +38,3 @@ class Observable {
     }
 
 }
-
-export = Observable;

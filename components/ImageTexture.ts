@@ -1,4 +1,4 @@
-﻿class ImageTexture {
+﻿export default class ImageTexture {
     type: string;
     path: string;
     position: { x: number; y: number; };
@@ -26,5 +26,3 @@
         this.isDirty = true;
     }
 }
-
-export = ImageTexture;

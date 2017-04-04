@@ -54,6 +54,7 @@ define(["require", "exports"], function (require, exports) {
         }
         deactivate() { }
     }
-    return FollowEntityCameraSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = FollowEntityCameraSystem;
 });
 //# sourceMappingURL=FollowEntityCameraSystem.js.map

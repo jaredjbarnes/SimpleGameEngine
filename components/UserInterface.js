@@ -5,6 +5,7 @@ define(["require", "exports"], function (require, exports) {
             this.root = null;
         }
     }
-    return UserInterface;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = UserInterface;
 });
 //# sourceMappingURL=UserInterface.js.map

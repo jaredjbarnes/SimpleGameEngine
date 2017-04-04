@@ -45,6 +45,7 @@ define(["require", "exports"], function (require, exports) {
             }
         }
     }
-    return KeyboardInputSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = KeyboardInputSystem;
 });
 //# sourceMappingURL=KeyboardInputSystem.js.map

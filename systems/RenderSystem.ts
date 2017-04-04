@@ -1,15 +1,15 @@
-﻿import Game = require("./../Game");
-import Entity = require("./../Entity");
-import Position = require("./../components/Position");
-import Size = require("./../components/Size");
-import ZIndex = require("./../components/ZIndex");
-import Collidable = require("./../components/Collidable");
-import CompositeCanvas = require("./../systems/render/CompositeCanvas");
+﻿import Game from "./../Game";
+import Entity from "./../Entity";
+import Position from "./../components/Position";
+import Size from "./../components/Size";
+import ZIndex from "./../components/ZIndex";
+import Collidable from "./../components/Collidable";
+import CompositeCanvas from "./../systems/render/CompositeCanvas";
 
 var defaultZIndex = new ZIndex();
 var defaultCachePosition = { x: 0, y: 0 };
 
-class RenderSystem {
+export default class RenderSystem {
     private _renderers: {
         [id: string]: {
             draw: (
@@ -643,5 +643,3 @@ class RenderSystem {
         this.camera = cameras[0];
     }
 }
-
-export = RenderSystem;

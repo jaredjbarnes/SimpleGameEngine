@@ -23,6 +23,7 @@ define(["require", "exports"], function (require, exports) {
             this.isStopped = false;
         }
     }
-    return Observer;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Observer;
 });
 //# sourceMappingURL=Observer.js.map

@@ -1,4 +1,4 @@
-class Movable {
+export default class Movable {
     type: string;
     x: number;
     y: number;
@@ -8,5 +8,3 @@ class Movable {
         this.y = 0;
     }
 }
-
-export = Movable;

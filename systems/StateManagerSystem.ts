@@ -1,6 +1,6 @@
-import State = require("./../components/State");
-import Game = require("./../Game");
-import Entity = require("./../Entity");
+import State from "./../components/State";
+import Game from "./../Game";
+import Entity from "./../Entity";
 
 const DEPENDENCIES = ["state"];
 
@@ -10,7 +10,7 @@ var invokeMethod = function (obj, methodName, args) {
     }
 };
 
-class StateManagerSystem {
+export default class StateManagerSystem {
     game: Game;
     isReady: boolean;
     name: string;
@@ -115,7 +115,5 @@ class StateManagerSystem {
     }
 
 }
-
-export = StateManagerSystem;
 
 

@@ -1,6 +1,6 @@
-﻿import Entity = require("./Entity");
+﻿import Entity from "./Entity";
 
-class Game {
+export default class Game {
     private _animationFrame: number;
     private _startTime: number;
     private _timespans: Array<number>;
@@ -184,5 +184,3 @@ class Game {
     }
 
 }
-
-export = Game;

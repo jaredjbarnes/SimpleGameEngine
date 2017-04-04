@@ -1,4 +1,4 @@
-﻿class KeyboardInput {
+﻿export default class KeyboardInput {
     type: string;
     pressedKeys: any;
 
@@ -7,5 +7,3 @@
         this.pressedKeys = {};
     }
 }
-
-export = KeyboardInput;

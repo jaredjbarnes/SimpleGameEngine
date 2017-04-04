@@ -1,10 +1,10 @@
-import Sprite = require("./../components/Sprite");
-import Game = require("./../Game");
-import Entity = require("./../Entity");
+import Sprite from "./../components/Sprite";
+import Game from "./../Game";
+import Entity from "./../Entity";
 
 const DEPENDENCIES = ["sprite", "image-texture"];
 
-class SpriteSystem {
+export default class SpriteSystem {
     game: Game;
     entities: Map<string, Entity>;
 
@@ -83,7 +83,5 @@ class SpriteSystem {
     }
 
 }
-
-export = SpriteSystem;
 
 

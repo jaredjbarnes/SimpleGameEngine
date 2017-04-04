@@ -8,6 +8,7 @@ define(["require", "exports"], function (require, exports) {
             this.images = [];
         }
     }
-    return Sprite;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Sprite;
 });
 //# sourceMappingURL=Sprite.js.map

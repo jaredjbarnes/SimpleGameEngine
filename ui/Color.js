@@ -8,6 +8,7 @@ define(["require", "exports"], function (require, exports) {
             this.opacity = 0;
         }
     }
-    return Color;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Color;
 });
 //# sourceMappingURL=Color.js.map

@@ -1,4 +1,4 @@
-class Color {
+export default class Color {
     red: number;
     green: number;
     blue: number;
@@ -10,5 +10,3 @@ class Color {
         this.opacity = 0;
     }
 }
-
-export = Color;

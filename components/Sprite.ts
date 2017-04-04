@@ -1,6 +1,5 @@
-import ImageTexture = require("./ImageTexture");
-
-class Sprite {
+import ImageTexture from "./ImageTexture";
+export default class Sprite {
     type: string;
     index: number;
     timeScale: number;
@@ -13,5 +12,3 @@ class Sprite {
         this.images = [];
     }
 }
-
-export = Sprite;

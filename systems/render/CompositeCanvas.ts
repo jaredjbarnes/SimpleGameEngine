@@ -114,7 +114,7 @@ class CompositeCanvasCell {
 
 }
 
-class CompositeCanvas {
+export default class CompositeCanvas {
 
     private _cells: Array<CompositeCanvasCell>;
     private _cellSize: number;
@@ -185,5 +185,3 @@ class CompositeCanvas {
     }
 
 }
-
-export = CompositeCanvas;

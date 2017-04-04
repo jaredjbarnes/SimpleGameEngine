@@ -1,8 +1,8 @@
-﻿import util = require("./util");
+﻿import * as util from "./util";
 
 var createGuid = util.createGuid;
 
-class Entity {
+export default class Entity {
     private _delegate: any;
     private _components: Map<string, any>;
     id: string;
@@ -82,5 +82,3 @@ class Entity {
     }
 }
 
-
-export = Entity;

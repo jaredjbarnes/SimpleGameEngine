@@ -1,4 +1,4 @@
-﻿class ZIndex {
+﻿export default class ZIndex {
     type: string;
     value: number;
 
@@ -7,5 +7,3 @@
         this.value = 0;
     }
 }
-
-export = ZIndex;

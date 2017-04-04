@@ -59,6 +59,7 @@ define(["require", "exports"], function (require, exports) {
             });
         }
     }
-    return ControllerSystem;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ControllerSystem;
 });
 //# sourceMappingURL=ControllerSystem.js.map

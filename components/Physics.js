@@ -6,8 +6,6 @@ define(["require", "exports"], function (require, exports) {
             this.mass = 1;
             this.elasticity = 1;
             this.friction = { x: 0, y: 0 };
-            this.activeCollisions = [];
-            this.appliedCollisions = [];
         }
     }
     Object.defineProperty(exports, "__esModule", { value: true });

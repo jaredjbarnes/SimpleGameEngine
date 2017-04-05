@@ -1,6 +1,15 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     class Part {
+        constructor() {
+            this.points = [];
+            this.vertices = [];
+            this.normals = [];
+            this.worldPoints = [];
+            this.projectionVertices = [];
+            this.origin = { x: 0, y: 0 };
+            this.size = { width: 0, height: 0 };
+        }
     }
     exports.Part = Part;
     class RigidBody {
@@ -10,14 +19,7 @@ define(["require", "exports"], function (require, exports) {
             this.isInitialized = false;
             this.isEnabled = true;
             this.activeCollisions = new Map();
-            this.size = { width: 0, height: 0 };
-            this.origin = { x: 0, y: 0 };
             this.parts = [];
-            this.points = [];
-            this.vertices = [];
-            this.normals = [];
-            this.worldPoints = [];
-            this.projectionVertices = [];
         }
     }
     exports.RigidBody = RigidBody;

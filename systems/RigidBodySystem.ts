@@ -1,7 +1,7 @@
 import Entity from "./../Entity";
 import Game from "./../Game";
 import Vector from "./../Vector";
-import {RigidBody} from "./../components/RigidBody";
+import { RigidBody, Part } from "./../components/RigidBody";
 import Position from "./../components/Position";
 import Collidable from "./../components/Collidable";
 
@@ -28,62 +28,65 @@ export default class RigidBodySystem {
     }
 
     prepareRigidBody(rigidBody: RigidBody) {
-        var points = rigidBody.points;
-        var length = points.length;
 
-        if (points.length === rigidBody.vertices.length &&
-            points.length === rigidBody.normals.length &&
-            points.length === rigidBody.projectionVertices.length) {
-            return;
-        }
+        rigidBody.parts.forEach((part) => {
+            var points = part.points;
 
-        this.setSize(rigidBody);
+            if (points.length === part.vertices.length &&
+                points.length === part.normals.length &&
+                points.length === part.projectionVertices.length) {
+                return;
+            }
 
-        rigidBody.vertices = points.map(function (point, index) {
-            var nextPoint = points[index + 1] || points[0];
-            return {
-                x: point.x - nextPoint.x,
-                y: point.y - nextPoint.y
-            };
-        });
+            this.setSize(part);
 
-        rigidBody.worldPoints = points.map(function (point) {
-            return {
-                x: point.x,
-                y: point.y
-            };
-        });
-
-        rigidBody.normals = rigidBody.vertices.map(function (vertex, index) {
-            return Vector.normalize(Vector.getLeftNormal(vertex));
-        });
-
-        var finalVector = rigidBody.vertices.reduce(function (accumulator, vertex) {
-            accumulator.x += vertex.x;
-            accumulator.y += vertex.y;
-
-            return accumulator;
-        }, { x: 0, y: 0 });
-
-        // If the final vector isn't (0,0) then make it so, to finish the polygon.
-        if (finalVector.x !== 0 || finalVector.y !== 0) {
-            rigidBody.points.push(rigidBody.points[0]);
-
-            rigidBody.vertices.push({
-                x: -finalVector.x,
-                y: -finalVector.y
+            part.vertices = points.map(function (point, index) {
+                var nextPoint = points[index + 1] || points[0];
+                return {
+                    x: point.x - nextPoint.x,
+                    y: point.y - nextPoint.y
+                };
             });
 
-            rigidBody.normals.push(Vector.getLeftNormal(rigidBody.vertices[rigidBody.vertices.length - 1]));
-        }
+            part.worldPoints = points.map(function (point) {
+                return {
+                    x: point.x,
+                    y: point.y
+                };
+            });
+
+            part.normals = part.vertices.map(function (vertex, index) {
+                return Vector.normalize(Vector.getLeftNormal(vertex));
+            });
+
+            var finalVector = part.vertices.reduce(function (accumulator, vertex) {
+                accumulator.x += vertex.x;
+                accumulator.y += vertex.y;
+
+                return accumulator;
+            }, { x: 0, y: 0 });
+
+            // If the final vector isn't (0,0) then make it so, to finish the polygon.
+            if (finalVector.x !== 0 || finalVector.y !== 0) {
+                part.points.push(part.points[0]);
+
+                part.vertices.push({
+                    x: -finalVector.x,
+                    y: -finalVector.y
+                });
+
+                part.normals.push(Vector.getLeftNormal(part.vertices[part.vertices.length - 1]));
+            }
+        });
+
     }
 
-    setSize(rigidBody: RigidBody) {
+    setSize(part: Part) {
+        var points = part.points;
+
         var width;
         var height;
-        var points = rigidBody.points;
         var length = points.length;
-
         var top = points[0].y;
         var left = points[0].x;
         var bottom = points[0].y;
@@ -99,11 +102,11 @@ export default class RigidBodySystem {
         width = right - left;
         height = bottom - top;
 
-        rigidBody.size.width = width;
-        rigidBody.size.height = height;
+        part.size.width = width;
+        part.size.height = height;
 
-        rigidBody.origin.x = (width / 2) + left;
-        rigidBody.origin.y = (height / 2) + top;
+        part.origin.x = (width / 2) + left;
+        part.origin.y = (height / 2) + top;
     }
 
     projectToAxis(vertices, axis, projection) {
@@ -168,162 +171,168 @@ export default class RigidBodySystem {
     updateWorldPoints(entity: Entity) {
         var rigidBody = entity.getComponent<RigidBody>("rigid-body");
         var position = entity.getComponent<Position>("position");
-        var worldPoints = rigidBody.worldPoints;
-        worldPoints.length = rigidBody.points.length;
 
-        rigidBody.points.forEach(function (point, index) {
-            var worldPoint = worldPoints[index];
+        rigidBody.parts.forEach((part) => {
+            var worldPoints = part.worldPoints;
 
-            worldPoint.x = point.x + position.x;
-            worldPoint.y = point.y + position.y;
+            part.points.forEach(function (point, index) {
+                var worldPoint = worldPoints[index];
+                worldPoint.x = point.x + position.x;
+                worldPoint.y = point.y + position.y;
+            });
         });
 
     }
 
     intersects(entityA: Entity, entityB: Entity) {
+        var _entityA = entityA;
+        var _entityB = entityB;
+
         var x;
         var vx;
         var normal;
 
-        var rigidBodyA = entityA.getComponent<RigidBody>("rigid-body");
-        var rigidBodyB = entityB.getComponent<RigidBody>("rigid-body");
-        var positionA = entityA.getComponent<Position>("position");
-        var positionB = entityB.getComponent<Position>("position");
-        var collidableA = entityA.getComponent<Collidable>("collidable");
-        var collidableB = entityA.getComponent<Collidable>("collidable");
+        var rigidBodyA = _entityA.getComponent<RigidBody>("rigid-body");
+        var rigidBodyB = _entityB.getComponent<RigidBody>("rigid-body");
+        var positionA = _entityA.getComponent<Position>("position");
+        var positionB = _entityB.getComponent<Position>("position");
+        var collidableA = _entityA.getComponent<Collidable>("collidable");
+        var collidableB = _entityB.getComponent<Collidable>("collidable");
 
-        if (!collidableA.isStatic) {
-            this.updateWorldPoints(entityA);
-        }
+        this.updateWorldPoints(entityA);
+        this.updateWorldPoints(entityB);
 
-        if (!collidableB.isStatic) {
-            this.updateWorldPoints(entityB);
-        }
+        return rigidBodyA.parts.some((partA) => {
 
-        var normalsA = rigidBodyA.normals;
-        var normalsB = rigidBodyB.normals;
-        var projectionA = this.projectionA;
-        var projectionB = this.projectionB;
-        var verticesA = rigidBodyA.worldPoints;
-        var verticesB = rigidBodyB.worldPoints;
-        var collisionA = rigidBodyA.activeCollisions.get(entityB.id);
-        var collisionB = rigidBodyB.activeCollisions.get(entityA.id);
-        var penetration;
-        var minOverlap;
-        var normal;
+            return rigidBodyB.parts.some((partB) => {
+                var normalsA = partA.normals;
+                var normalsB = partB.normals;
+                var projectionA = this.projectionA;
+                var projectionB = this.projectionB;
+                var verticesA = partA.worldPoints;
+                var verticesB = partB.worldPoints;
+                var collisionA = rigidBodyA.activeCollisions.get(entityB.id);
+                var collisionB = rigidBodyB.activeCollisions.get(entityA.id);
+                var penetration;
+                var minOverlap;
+                var normal;
 
-        var originA = Vector.add(positionA, rigidBodyA.origin);
-        var originB = Vector.add(positionB, rigidBodyB.origin);
+                var originA = Vector.add(positionA, partA.origin);
+                var originB = Vector.add(positionB, partB.origin);
 
-        rigidBodyA.isInitialized = true;
-        rigidBodyB.isInitialized = true;
+                rigidBodyA.isInitialized = true;
+                rigidBodyB.isInitialized = true;
 
-        // If the collision was already handled from the other side then stop detection.
-        if (collisionA != null && collisionA.timestamp === this.timestamp) {
-            return collisionA.endTimestamp != null;
-        }
+                // If the collision was already handled from the other side then stop detection.
+                if (collisionA != null && collisionA.timestamp === this.timestamp) {
+                    return collisionA.endTimestamp != null;
+                }
 
-        var overlapA = this.overlapAxes(verticesA, verticesB, normalsA);
+                var overlapA = this.overlapAxes(verticesA, verticesB, normalsA);
 
-        if (overlapA.overlap <= 0) {
+                if (overlapA.overlap <= 0) {
 
-            if (collisionA != null) {
-                collisionA.endTimestamp = this.timestamp;
+                    if (collisionA != null) {
+                        collisionA.endTimestamp = this.timestamp;
+                        collisionA.timestamp = this.timestamp;
+                    }
+
+                    if (collisionB != null) {
+                        collisionB.endTimestamp = this.timestamp;
+                        collisionB.timestamp = this.timestamp;
+                    }
+
+                    return false;
+                }
+
+                var overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
+
+                if (overlapB.overlap <= 0) {
+                    collisionB = rigidBodyB.activeCollisions[entityA.id];
+
+                    if (collisionA != null) {
+                        collisionA.endTimestamp = this.timestamp;
+                        collisionA.timestamp = this.timestamp;
+                    }
+
+                    if (collisionB != null) {
+                        collisionB.endTimestamp = this.timestamp;
+                        collisionB.timestamp = this.timestamp;
+                    }
+
+                    return false;
+                }
+
+                if (collisionA == null) {
+                    collisionA = {};
+                }
+
+                if (collisionB == null) {
+                    collisionB = {};
+                }
+
+                collisionA.startTimestamp = this.timestamp;
                 collisionA.timestamp = this.timestamp;
-            }
+                collisionA.endTimestamp = null;
+                collisionA.otherEntity = entityB;
+                collisionA.entity = entityA;
 
-            if (collisionB != null) {
-                collisionB.endTimestamp = this.timestamp;
+                collisionB.startTimestamp = this.timestamp;
                 collisionB.timestamp = this.timestamp;
-            }
+                collisionB.endTimestamp = null;
+                collisionB.otherEntity = entityA;
+                collisionB.entity = entityB;
 
-            return false;
-        }
+                if (overlapA.overlap < overlapB.overlap) {
 
-        var overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
+                    minOverlap = overlapA.overlap;
+                    normal = overlapA.axis;
 
-        if (overlapB.overlap <= 0) {
-            collisionB = rigidBodyB.activeCollisions[entityA.id];
+                    if (Vector.dot(normal, Vector.subtract(originA, originB)) > 0) {
+                        normal = Vector.negate(normal);
+                    }
 
-            if (collisionA != null) {
-                collisionA.endTimestamp = this.timestamp;
-                collisionA.timestamp = this.timestamp;
-            }
+                    penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
 
-            if (collisionB != null) {
-                collisionB.endTimestamp = this.timestamp;
-                collisionB.timestamp = this.timestamp;
-            }
+                    collisionA.penetration = Vector.negate(penetration);
+                    collisionA.normal = normal;
 
-            return false;
-        }
+                    collisionB.penetration = penetration;
+                    collisionB.normal = normal;
 
-        if (collisionA == null) {
-            collisionA = {};
-        }
+                } else {
 
-        if (collisionB == null) {
-            collisionB = {};
-        }
+                    minOverlap = overlapB.overlap;
+                    normal = overlapB.axis;
 
-        collisionA.startTimestamp = this.timestamp;
-        collisionA.timestamp = this.timestamp;
-        collisionA.endTimestamp = null;
-        collisionA.otherEntity = entityB;
-        collisionA.entity = entityA;
+                    if (Vector.dot(normal, Vector.subtract(originB, originA)) > 0) {
+                        normal = Vector.negate(normal);
+                    }
 
-        collisionB.startTimestamp = this.timestamp;
-        collisionB.timestamp = this.timestamp;
-        collisionB.endTimestamp = null;
-        collisionB.otherEntity = entityA;
-        collisionB.entity = entityB;
+                    penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
 
-        if (overlapA.overlap < overlapB.overlap) {
+                    collisionA.penetration = penetration;
+                    collisionA.normal = normal;
 
-            minOverlap = overlapA.overlap;
-            normal = overlapA.axis;
+                    collisionB.penetration = Vector.negate(penetration);
+                    collisionB.normal = normal;
 
-            if (Vector.dot(normal, Vector.subtract(originA, originB)) > 0) {
-                normal = Vector.negate(normal);
-            }
+                }
 
-            penetration = {
-                x: minOverlap * normal.x,
-                y: minOverlap * normal.y
-            };
+                rigidBodyA.activeCollisions.set(entityB.id, collisionA);
+                rigidBodyB.activeCollisions.set(entityA.id, collisionB);
 
-            collisionA.penetration = Vector.negate(penetration);
-            collisionA.normal = normal;
+                return true;
+            });
 
-            collisionB.penetration = penetration;
-            collisionB.normal = normal;
+        });
 
-        } else {
-
-            minOverlap = overlapB.overlap;
-            normal = overlapB.axis;
-
-            if (Vector.dot(normal, Vector.subtract(originB, originA)) > 0) {
-                normal = Vector.negate(normal);
-            }
-
-            penetration = {
-                x: minOverlap * normal.x,
-                y: minOverlap * normal.y
-            };
-
-            collisionA.penetration = penetration;
-            collisionA.normal = normal;
-
-            collisionB.penetration = Vector.negate(penetration);
-            collisionB.normal = normal;
-
-        }
-
-        rigidBodyA.activeCollisions.set(entityB.id, collisionA);
-        rigidBodyB.activeCollisions.set(entityA.id, collisionB);
-
-        return true;
     }
 
     cleanCollisions(entity: Entity) {
@@ -372,7 +381,7 @@ export default class RigidBodySystem {
         var collidable = entity.getComponent<Collidable>("collidable");
         var rigidBody = entity.getComponent<RigidBody>("rigid-body");
 
-        if (!rigidBody.isEnabled){
+        if (!rigidBody.isEnabled) {
             return;
         }
 

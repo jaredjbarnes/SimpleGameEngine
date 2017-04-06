@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Vector {
         static add(vectorA, vectorB, optionalVector) {
             optionalVector = optionalVector || {};
@@ -76,7 +77,6 @@ define(["require", "exports"], function (require, exports) {
             return optionalVector;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Vector;
 });
 //# sourceMappingURL=Vector.js.map

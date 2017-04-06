@@ -1,5 +1,6 @@
 define(["require", "exports", "./util"], function (require, exports, util) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var createGuid = util.createGuid;
     class Entity {
         constructor() {
@@ -59,7 +60,6 @@ define(["require", "exports", "./util"], function (require, exports, util) {
             });
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Entity;
 });
 //# sourceMappingURL=Entity.js.map

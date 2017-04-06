@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class ImageTexture {
         constructor() {
             this.type = "image-texture";
@@ -21,7 +22,6 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = true;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = ImageTexture;
 });
 //# sourceMappingURL=ImageTexture.js.map

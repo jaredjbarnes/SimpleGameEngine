@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const MAX_CELL_SIZE = 1000;
     class CompositeCanvasCell {
         constructor(size, offset) {
@@ -94,7 +95,6 @@ define(["require", "exports"], function (require, exports) {
             return this;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = CompositeCanvas;
 });
 //# sourceMappingURL=CompositeCanvas.js.map

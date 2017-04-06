@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class TextTexture {
         constructor() {
             this.type = "text-texture";
@@ -24,7 +25,6 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = false;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = TextTexture;
 });
 //# sourceMappingURL=TextTexture.js.map

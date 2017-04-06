@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Physics {
         constructor() {
             this.velocity = { x: 0, y: 0 };
@@ -8,7 +9,6 @@ define(["require", "exports"], function (require, exports) {
             this.friction = { x: 0, y: 0 };
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Physics;
 });
 //# sourceMappingURL=Physics.js.map

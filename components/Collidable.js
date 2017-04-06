@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Collidable {
         constructor() {
             this.type = "collidable";
@@ -8,7 +9,6 @@ define(["require", "exports"], function (require, exports) {
             this.activeCollisions = new Map();
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Collidable;
 });
 //# sourceMappingURL=Collidable.js.map

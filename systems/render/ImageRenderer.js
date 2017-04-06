@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class ImageRenderer {
         constructor(document, assetRoot) {
             this.type = "image-texture";
@@ -81,7 +82,6 @@ define(["require", "exports"], function (require, exports) {
             context.drawImage(entityCanvas, offset.x, offset.y, size.width, size.height, position.x, position.y, size.width, size.height);
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = ImageRenderer;
 });
 //# sourceMappingURL=ImageRenderer.js.map

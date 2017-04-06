@@ -1,5 +1,6 @@
 define(["require", "exports", "./../components/ZIndex", "./../systems/render/CompositeCanvas"], function (require, exports, ZIndex_1, CompositeCanvas_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var defaultZIndex = new ZIndex_1.default();
     var defaultCachePosition = { x: 0, y: 0 };
     class RenderSystem {
@@ -469,7 +470,6 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
             this.camera = cameras[0];
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = RenderSystem;
 });
 //# sourceMappingURL=RenderSystem.js.map

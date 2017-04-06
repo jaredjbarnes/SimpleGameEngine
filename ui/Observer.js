@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Observer {
         constructor(callback, disposer) {
             this.isDisposed = false;
@@ -23,7 +24,6 @@ define(["require", "exports"], function (require, exports) {
             this.isStopped = false;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Observer;
 });
 //# sourceMappingURL=Observer.js.map

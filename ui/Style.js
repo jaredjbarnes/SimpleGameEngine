@@ -1,5 +1,6 @@
 define(["require", "exports", "Color"], function (require, exports, Color_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Style {
         constructor() {
             this.border.color = new Color_1.default();
@@ -13,7 +14,6 @@ define(["require", "exports", "Color"], function (require, exports, Color_1) {
             this.isFixed = false;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Style;
 });
 //# sourceMappingURL=Style.js.map

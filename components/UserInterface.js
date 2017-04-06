@@ -1,11 +1,11 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class UserInterface {
         constructor() {
             this.root = null;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = UserInterface;
 });
 //# sourceMappingURL=UserInterface.js.map

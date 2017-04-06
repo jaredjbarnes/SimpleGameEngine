@@ -312,7 +312,7 @@ export default class CollisionSystem {
                 left = Math.max(positionA.x, positionB.x);
                 right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
 
-                if (top <= bottom && left <= right) {
+                if (top < bottom && left < right) {
                     pairs.push([entityA, entityB]);
                 }
 

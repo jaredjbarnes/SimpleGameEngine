@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["movable", "position"];
     class MovementEntity {
         constructor(entity) {
@@ -55,7 +56,6 @@ define(["require", "exports"], function (require, exports) {
             }
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = MovementSystem;
 });
 //# sourceMappingURL=MovementSystem.js.map

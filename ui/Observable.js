@@ -1,5 +1,6 @@
 define(["require", "exports", "./Observer"], function (require, exports, Observer_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Observable {
         constructor() {
             this.observers = new Map();
@@ -26,7 +27,6 @@ define(["require", "exports", "./Observer"], function (require, exports, Observe
             });
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Observable;
 });
 //# sourceMappingURL=Observable.js.map

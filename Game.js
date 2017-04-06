@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Game {
         constructor(size) {
             var self = this;
@@ -137,7 +138,6 @@ define(["require", "exports"], function (require, exports) {
             return this._entitiesById[id] || null;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Game;
 });
 //# sourceMappingURL=Game.js.map

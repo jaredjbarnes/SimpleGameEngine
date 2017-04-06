@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position", "movable"];
     class ControllerSystem {
         constructor() {
@@ -59,7 +60,6 @@ define(["require", "exports"], function (require, exports) {
             });
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = ControllerSystem;
 });
 //# sourceMappingURL=ControllerSystem.js.map

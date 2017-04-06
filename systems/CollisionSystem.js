@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["position", "size", "collidable"];
     class BroadPhaseEntity {
         constructor(entity) {
@@ -224,7 +225,7 @@ define(["require", "exports"], function (require, exports) {
                     bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
                     left = Math.max(positionA.x, positionB.x);
                     right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
-                    if (top <= bottom && left <= right) {
+                    if (top < bottom && left < right) {
                         pairs.push([entityA, entityB]);
                     }
                 }
@@ -268,7 +269,6 @@ define(["require", "exports"], function (require, exports) {
             this._detectionAreaSize = size;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = CollisionSystem;
 });
 //# sourceMappingURL=CollisionSystem.js.map

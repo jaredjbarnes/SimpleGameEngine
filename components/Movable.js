@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Movable {
         constructor() {
             this.type = "movable";
@@ -7,7 +8,6 @@ define(["require", "exports"], function (require, exports) {
             this.y = 0;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Movable;
 });
 //# sourceMappingURL=Movable.js.map

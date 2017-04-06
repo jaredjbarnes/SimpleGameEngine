@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Sprite {
         constructor() {
             this.type = "sprite";
@@ -8,7 +9,6 @@ define(["require", "exports"], function (require, exports) {
             this.images = [];
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Sprite;
 });
 //# sourceMappingURL=Sprite.js.map

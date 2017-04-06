@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Size {
         constructor() {
             this.type = "size";
@@ -8,7 +9,6 @@ define(["require", "exports"], function (require, exports) {
             this.isDirty = false;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Size;
 });
 //# sourceMappingURL=Size.js.map

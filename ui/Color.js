@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Color {
         constructor() {
             this.red = 0;
@@ -8,7 +9,6 @@ define(["require", "exports"], function (require, exports) {
             this.opacity = 0;
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Color;
 });
 //# sourceMappingURL=Color.js.map

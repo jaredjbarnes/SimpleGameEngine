@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class FollowEntityCameraSystem {
         constructor() {
             this._camera = null;
@@ -54,7 +55,6 @@ define(["require", "exports"], function (require, exports) {
         }
         deactivate() { }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = FollowEntityCameraSystem;
 });
 //# sourceMappingURL=FollowEntityCameraSystem.js.map

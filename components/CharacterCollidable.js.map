@@ -1,1 +1,1 @@
-{"version":3,"file":"CharacterCollidable.js","sourceRoot":"","sources":["CharacterCollidable.ts"],"names":[],"mappings":";;IAAA;QAEI;YACI,IAAI,CAAC,IAAI,GAAG,sBAAsB,CAAC;QACvC,CAAC;KACJ;;IALD,sCAKC"}
+{"version":3,"file":"CharacterCollidable.js","sourceRoot":"","sources":["CharacterCollidable.ts"],"names":[],"mappings":";;;IAAA;QAEI;YACI,IAAI,CAAC,IAAI,GAAG,sBAAsB,CAAC;QACvC,CAAC;KACJ;IALD,sCAKC"}

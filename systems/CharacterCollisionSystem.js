@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["character-collidable", "rigid-body", "position"];
     class CharacterCollisionSystem {
         constructor() {
@@ -50,7 +51,6 @@ define(["require", "exports"], function (require, exports) {
             });
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = CharacterCollisionSystem;
 });
 //# sourceMappingURL=CharacterCollisionSystem.js.map

@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var S4 = function () {
         return Math.floor(Math.random() * 0x10000 /* 65536 */).toString(16);
     };

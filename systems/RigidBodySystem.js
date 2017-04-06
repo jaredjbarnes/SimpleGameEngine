@@ -1,5 +1,6 @@
 define(["require", "exports", "./../Vector"], function (require, exports, Vector_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["collidable", "rigid-body", "position"];
     class RigidBodySystem {
         constructor() {
@@ -337,7 +338,6 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             this.entityAdded(entity);
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = RigidBodySystem;
 });
 //# sourceMappingURL=RigidBodySystem.js.map

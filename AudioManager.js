@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class AudioManager {
         constructor() {
             this._sounds = new Map();
@@ -21,7 +22,6 @@ define(["require", "exports"], function (require, exports) {
             audio.play();
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = AudioManager;
 });
 //# sourceMappingURL=AudioManager.js.map

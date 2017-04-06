@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Shape {
         constructor() {
             this.type = "shape";
@@ -21,7 +22,6 @@ define(["require", "exports"], function (require, exports) {
             this.points = [];
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Shape;
 });
 //# sourceMappingURL=Shape.js.map

@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["state"];
     var invokeMethod = function (obj, methodName, args) {
         if (obj != null && typeof obj[methodName] === "function") {
@@ -86,7 +87,6 @@ define(["require", "exports"], function (require, exports) {
             }
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = StateManagerSystem;
 });
 //# sourceMappingURL=StateManagerSystem.js.map

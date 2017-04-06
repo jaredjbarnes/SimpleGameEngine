@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     const DEPENDENCIES = ["sprite", "image-texture"];
     class SpriteSystem {
         constructor() {
@@ -59,7 +60,6 @@ define(["require", "exports"], function (require, exports) {
             this.entities = new Map();
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = SpriteSystem;
 });
 //# sourceMappingURL=SpriteSystem.js.map

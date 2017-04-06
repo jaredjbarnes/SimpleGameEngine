@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class State {
         constructor() {
             this.type = "state";
@@ -10,7 +11,6 @@ define(["require", "exports"], function (require, exports) {
             this.activeOptions = {};
         }
     }
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = State;
 });
 //# sourceMappingURL=State.js.map

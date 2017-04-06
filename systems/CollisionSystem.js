@@ -50,9 +50,18 @@ define(["require", "exports"], function (require, exports) {
             var grid = this._grid;
             regions.forEach((region) => {
                 var bucket = grid[region[0]][region[1]];
-                grid[region[0]][region[1]] = bucket.filter((broadPhaseEntity) => {
-                    return broadPhaseEntity.id != entity.id;
+                var index = -1;
+                bucket.some((broadPhaseEntity, x) => {
+                    if (broadPhaseEntity.id == entity.id) {
+                        index = x;
+                        return true;
+                    }
+                    ;
+                    return false;
                 });
+                if (index > -1) {
+                    bucket.splice(index, 1);
+                }
             });
         }
         activated(game) {

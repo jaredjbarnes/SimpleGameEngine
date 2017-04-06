@@ -1,9 +1,9 @@
-﻿import Game  from "./../Game";
+﻿import Game from "./../Game";
 import Entity from "./../Entity";
 import Position from "./../components/Position";
 import KeyboardInput from "./../components/KeyboardInput";
 
-const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position","movable"];
+const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position", "movable"];
 
 export default class ControllerSystem {
     private entities: Map<string, Entity>;

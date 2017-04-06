@@ -253,18 +253,15 @@ define(["require", "exports", "./../Vector"], function (require, exports, Vector
             var collidable = entity.getComponent("collidable");
             var activeCollisions = rigidBody.activeCollisions;
             var timestamp = this.timestamp;
-            Array.from(activeCollisions.entries()).forEach((entry) => {
-                var collision = entry[1];
-                var key = entry[0];
-                if (collision == null || key == null) {
-                    return;
-                }
-                if (collision.endTimestamp != null && timestamp - collision.endTimestamp > 3000) {
+            activeCollisions.forEach((collision) => {
+                var _collision = collision;
+                var key = _collision.otherEntity.id;
+                if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
                     activeCollisions.delete(key);
                 }
                 // Checking the status of the broadphase collision.
-                if (collision.endTimestamp == null && collidable.activeCollisions.has(key) && collidable.activeCollisions.get(key).endTimestamp != null) {
-                    collision.endTimestamp = collidable.activeCollisions.get(key).endTimestamp;
+                if (_collision.endTimestamp == null && collidable.activeCollisions.has(key) && collidable.activeCollisions.get(key).endTimestamp != null) {
+                    _collision.endTimestamp = collidable.activeCollisions.get(key).endTimestamp;
                 }
             });
         }

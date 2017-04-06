@@ -324,11 +324,11 @@ export default class RenderSystem {
                 return;
             }
 
-            if (otherPosition.x < otherLeft) {
+            if (otherPosition.x <= otherLeft) {
                 offsetX = otherLeft - otherPosition.x;
             }
 
-            if (otherPosition.y < otherTop) {
+            if (otherPosition.y <= otherTop) {
                 offsetY = otherTop - otherPosition.y;
             }
 
@@ -480,11 +480,11 @@ export default class RenderSystem {
                 return;
             }
 
-            if (otherPosition.x < otherLeft) {
+            if (otherPosition.x <= otherLeft) {
                 offsetX = otherLeft - otherPosition.x;
             }
 
-            if (otherPosition.y < otherTop) {
+            if (otherPosition.y <= otherTop) {
                 offsetY = otherTop - otherPosition.y;
             }
 

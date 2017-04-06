@@ -224,10 +224,10 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
                 if (otherWidth <= 0 || otherHeight <= 0) {
                     return;
                 }
-                if (otherPosition.x < otherLeft) {
+                if (otherPosition.x <= otherLeft) {
                     offsetX = otherLeft - otherPosition.x;
                 }
-                if (otherPosition.y < otherTop) {
+                if (otherPosition.y <= otherTop) {
                     offsetY = otherTop - otherPosition.y;
                 }
                 rendererTypes.forEach((type) => {
@@ -344,10 +344,10 @@ define(["require", "exports", "./../components/ZIndex", "./../systems/render/Com
                 if (otherWidth <= 0 || otherHeight <= 0) {
                     return;
                 }
-                if (otherPosition.x < otherLeft) {
+                if (otherPosition.x <= otherLeft) {
                     offsetX = otherLeft - otherPosition.x;
                 }
-                if (otherPosition.y < otherTop) {
+                if (otherPosition.y <= otherTop) {
                     offsetY = otherTop - otherPosition.y;
                 }
                 rendererTypes.forEach(function (type) {

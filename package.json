@@ -1,7 +1,16 @@
 {
-   "name": "clarity-game-engine",
-   "version": "0.0.1",
-   "description": "Dream about gaming.",
-   "author": "Jared J Barnes",
-   "license": "MIT"
+  "name": "clarity-game-engine",
+  "version": "0.0.1",
+  "description": "Dream about gaming.",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "webpack": "^3.5.1"
+  },
+  "dependencies": {},
+  "author": "Jared J Barnes",
+  "license": "MIT"
 }

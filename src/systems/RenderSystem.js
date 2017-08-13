@@ -251,7 +251,7 @@ export default class RenderSystem {
         }).map(function (collision) {
             return game.getEntityById(collision.entityId);
         }).filter(function (entity) {
-            return entity != null;
+            return entity != null && entity.getComponent("position").isStatic;
         });
 
         if (drawEntity) {

@@ -8,7 +8,7 @@ export default class extends RenderSystem {
         super(options.canvas, options.sort);
 
         this.addRenderer(new ImageRenderer(options.document, options.assetRoot));
-        this.addRenderer(new TextRenderer(options.document));
         this.addRenderer(new ShapeRenderer(options.document));
+        this.addRenderer(new TextRenderer(options.document));
     }
 }

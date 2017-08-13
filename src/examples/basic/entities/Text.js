@@ -6,6 +6,8 @@ import Collidable from "./../../../components/Collidable";
 import KeyboardController from "./../../../components/KeyboardController";
 import KeyboardInput from "./../../../components/KeyboardInput";
 import Movable from "./../../../components/Movable";
+import Shape from "./../../../components/Shape";
+import { Part, RigidBody } from "./../../../components/RigidBody";
 
 export default class Text extends Entity {
     constructor(text) {
@@ -17,12 +19,37 @@ export default class Text extends Entity {
         var keyboardController = new KeyboardController();
         var keyboardInput = new KeyboardInput();
         var movable = new Movable();
+        var shape = new Shape();
+        var rigidBody = new RigidBody();
+        var part = new Part();
+
+        part.points.push(
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
+            { x: 0, y: 0 },
+        );
+
+        rigidBody.parts.push(part);
 
         textTexture.text = text;
         textTexture.font.size = 17;
+        textTexture.verticalAlignment = "middle";
 
         size.width = 100;
-        size.height = 50;
+        size.height = 30;
+
+        shape.border.thickness = 1;
+        shape.fillColor.blue = 255;
+        shape.fillColor.green = 100;
+        shape.fillColor.red = 100;
+        shape.points.push(
+            {x: 0, y: 0},
+            {x: 0.9, y: 0},
+            {x: 0.9, y: 0.9},
+            {x: 0, y: 0.9},
+            {x: 0, y: 0}
+        );
 
         this.addComponent(size);
         this.addComponent(position);
@@ -31,5 +58,7 @@ export default class Text extends Entity {
         this.addComponent(keyboardController);
         this.addComponent(keyboardInput);
         this.addComponent(movable);
+        this.addComponent(shape);
+        this.addComponent(rigidBody);
     }
 }

@@ -6,7 +6,7 @@ export default class TextTexture {
             style: "normal",
             family: "arial",
             weight: "normal",
-            baseline: "alphabetic",
+            baseline: "top",
             variant: "normal",
             color: {
                 red: 0,

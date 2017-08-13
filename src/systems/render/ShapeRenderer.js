@@ -62,8 +62,10 @@
 
     getCanvas(entity) {
         var canvas = this.shapeCache[entity.id];
+        var shapeComponent = entity.getComponent("shape");
 
-        if (canvas == null) {
+        if (canvas == null || shapeComponent.isDirty) {
+            shapeComponent.isDirty = false;
             canvas = this.createCachedVersion(entity);
         }
 

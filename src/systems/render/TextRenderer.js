@@ -51,7 +51,7 @@
         }
 
         if (textTexture.verticalAlignment === "top") {
-            y = textHeight;
+            y = 0;
         } else if (textTexture.verticalAlignment === "middle") {
             y = (size.height / 2) - (textHeight / 2);
         } else if (textTexture.verticalAlignment === "bottom") {
@@ -61,7 +61,7 @@
         var color = this.convertToRgba(textTexture.font.color);
 
         context.fillStyle = color;
-        context.fillText(textTexture.text, x, y);
+        context.fillText(textTexture.text, parseInt(x, 10), parseInt(y, 10));
 
         this.fontCache[entity.id] = canvas;
 

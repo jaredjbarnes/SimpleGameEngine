@@ -4,9 +4,11 @@ import Position from "./../../../components/Position";
 import TextTexture from "./../../../components/TextTexture";
 import Collidable from "./../../../components/Collidable";
 
-export default class Text extends Entity {
+export default class StaticText extends Entity {
     constructor(text) {
         super();
+        this.type = "static-star";
+
         var size = new Size();
         var position = new Position();
         var textTexture = new TextTexture();

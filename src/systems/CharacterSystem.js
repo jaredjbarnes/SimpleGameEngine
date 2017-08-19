@@ -1,6 +1,6 @@
-const DEPENDENCIES = ["character-collidable", "rigid-body", "position"];
+const DEPENDENCIES = ["character", "rigid-body", "position"];
 
-export default class CharacterCollisionSystem {
+export default class CharacterSystem {
     constructor() {
         this.entities = new Map();
         this.game = null;

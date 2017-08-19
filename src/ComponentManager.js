@@ -1,5 +1,5 @@
 import Camera from "./components/Camera";
-import CharacterCollidable from "./components/CharacterCollidable";
+import Character from "./components/Character";
 import Collidable from "./components/Collidable";
 import FixedPosition from "./components/FixedPosition";
 import Force from "./components/Force";
@@ -22,7 +22,7 @@ export default class ComponentManager {
     constructor() {
         this.types = {
             "camera": Camera,
-            "character-collidable": CharacterCollidable,
+            "character": Character,
             "collidable": Collidable,
             "fixed-position": FixedPosition,
             "force": Force,
@@ -51,7 +51,6 @@ export default class ComponentManager {
         }
 
         var defaultComponent = new ComponentType();
-
         return Object.assign(defaultComponent, properties);
     }
 }

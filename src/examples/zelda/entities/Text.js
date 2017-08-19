@@ -5,7 +5,7 @@ import TextTexture from "./../../../components/TextTexture";
 import Collidable from "./../../../components/Collidable";
 import KeyboardController from "./../../../components/KeyboardController";
 import KeyboardInput from "./../../../components/KeyboardInput";
-import Force from "./../../../components/Force";
+import Movable from "./../../../components/Movable";
 import Physics from "./../../../components/Physics";
 import Shape from "./../../../components/Shape";
 import { Part, RigidBody } from "./../../../components/RigidBody";
@@ -19,7 +19,7 @@ export default class Text extends Entity {
         var collidable = new Collidable();
         var keyboardController = new KeyboardController();
         var keyboardInput = new KeyboardInput();
-        var force = new Force();
+        var movable = new Movable();
         var shape = new Shape();
         var rigidBody = new RigidBody();
         var physics = new Physics();
@@ -46,11 +46,11 @@ export default class Text extends Entity {
         shape.fillColor.green = 100;
         shape.fillColor.red = 100;
         shape.points.push(
-            {x: 0, y: 0},
-            {x: 0.9, y: 0},
-            {x: 0.9, y: 0.9},
-            {x: 0, y: 0.9},
-            {x: 0, y: 0}
+            { x: 0, y: 0 },
+            { x: 0.9, y: 0 },
+            { x: 0.9, y: 0.9 },
+            { x: 0, y: 0.9 },
+            { x: 0, y: 0 }
         );
 
         this.addComponent(size);
@@ -59,7 +59,7 @@ export default class Text extends Entity {
         this.addComponent(collidable);
         this.addComponent(keyboardController);
         this.addComponent(keyboardInput);
-        this.addComponent(force);
+        this.addComponent(movable);
         this.addComponent(shape);
         this.addComponent(rigidBody);
         this.addComponent(physics);

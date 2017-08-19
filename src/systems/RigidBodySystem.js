@@ -1,7 +1,9 @@
+import Vector from "./../Vector";
+
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
 
 export default class RigidBodySystem {
-constructor() {
+    constructor() {
         this.entities = [];
         this.projectionA = {
             min: 0,

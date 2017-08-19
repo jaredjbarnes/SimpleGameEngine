@@ -1,13 +1,13 @@
-const DEPENDENCIES = ["movable", "position"];
+const DEPENDENCIES = ["force", "position"];
 
-class MovableEntity {
+class ForceEntity {
 constructor(entity) {
-        this.movable = entity.getComponent("movable");
+        this.force = entity.getComponent("force");
         this.position = entity.getComponent("position");
     }
 }
 
-export default class MovementSystem {
+export default class ForceSystem {
     constructor() {
         this.game = null;
         this.entities = new Map();
@@ -16,17 +16,14 @@ export default class MovementSystem {
     update() {
         this.entities.forEach((entity) => {
             var position = entity.position;
-            var movable = entity.movable;
+            var force = entity.force;
 
-            position.x += movable.x;
-            position.y += movable.y;
+            position.x += force.x;
+            position.y += force.y;
 
-            if (movable.x != 0 || movable.y != 0) {
+            if (force.x != 0 || force.y != 0) {
                 position.isDirty = true;
             }
-
-            movable.x = 0;
-            movable.y = 0;
         });
     }
 
@@ -43,7 +40,7 @@ export default class MovementSystem {
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity.id, new MovableEntity(entity));
+            this.entities.set(entity.id, new ForceEntity(entity));
         }
     }
 
@@ -55,7 +52,7 @@ export default class MovementSystem {
 
     componentAdded(entity, component) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity.id, new MovableEntity(entity));
+            this.entities.set(entity.id, new ForceEntity(entity));
         }
     }
 

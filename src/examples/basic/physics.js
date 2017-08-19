@@ -5,6 +5,7 @@ import KeyboardInputSystem from "./../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../systems/ControllerSystem";
 import MovementSystem from "./../../systems/MovementSystem";
 import PhysicsSystem from "./../../systems/PhysicsSystem";
+import RigidBodySystem from "./../../systems/RigidBodySystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
 import Triangle from "./entities/Triangle";
@@ -26,13 +27,15 @@ var keyboardInputSystem = new KeyboardInputSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 var physicsSystem = new PhysicsSystem();
+var rigidBodySystem = new RigidBodySystem();
 
 // ADD SYSTEMS
 game.addSystem(collisionSystem);
 game.addSystem(keyboardInputSystem);
 game.addSystem(controllerSystem);
-game.addSystem(movementSystem);
+game.addSystem(rigidBodySystem);
 game.addSystem(physicsSystem);
+game.addSystem(movementSystem);
 game.addSystem(renderSystem);
 
 // ADD ENTITIES

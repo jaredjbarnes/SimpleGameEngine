@@ -1,4 +1,4 @@
-﻿export default class Game {
+﻿export default class World {
     constructor(size) {
         var self = this;
 

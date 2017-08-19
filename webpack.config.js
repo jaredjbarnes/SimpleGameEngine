@@ -1,20 +1,11 @@
 const path = require('path');
 
-const index = {
-    entry: "./src/examples/basic/index.js",
+const zelda = {
+    entry: "./src/examples/zelda/index.js",
     output: {
-        filename: "bundle.js",
-        path: path.resolve(__dirname, 'dist/basic')
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/zelda/dist')
     }
 };
 
-const physics = {
-    entry: "./src/examples/basic/physics.js",
-    output: {
-        filename: "physics.js",
-        path: path.resolve(__dirname, 'dist/basic')
-    }
-};
-
-
-module.exports = [index, physics];
+module.exports = [zelda];

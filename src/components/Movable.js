@@ -1,5 +1,5 @@
 export default class Movable {
-    constructor(){
+    constructor() {
         this.type = "movable";
         this.x = 0;
         this.y = 0;

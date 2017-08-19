@@ -21,9 +21,9 @@ export default class StateManagerSystem {
         invokeMethod(state, "update", [entity]);
     }
 
-    activateState(stateName, entity) {
+    activateState(stateName, entity, options) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "activated", [entity]);
+        invokeMethod(state, "activated", [entity, options]);
     }
 
     deactivateState(stateName, entity) {
@@ -38,11 +38,11 @@ export default class StateManagerSystem {
             this.deactivateState(state.activeName, entity);
             state.activeName = state.name;
             state.activeOptions = state.options;
-            this.activateState(state.name, entity);
+            this.activateState(state.name, entity, state.options);
         }
 
         this.updateState(state.name, entity);
-        
+
     }
 
     update() {
@@ -92,13 +92,13 @@ export default class StateManagerSystem {
         }
     }
 
-    componentRemoved (entity, component) {
+    componentRemoved(entity, component) {
         if (component.type === "state") {
             this.entities.delete(entity.id);
         }
     }
 
-    addState (name, state) {
+    addState(name, state) {
         if (typeof name === "string" && state != null) {
             this.states.set(name, state);
             invokeMethod(state, "initialize", [this.game]);

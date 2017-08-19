@@ -325,8 +325,9 @@ export default class RigidBodySystem {
     }
 
     cleanCollisions(entity) {
-        var rigidBody = entity.getComponent("rigid-body");
-        var collidable = entity.getComponent("collidable");
+        var _entity = entity;
+        var rigidBody = _entity.getComponent("rigid-body");
+        var collidable = _entity.getComponent("collidable");
         var activeCollisions = rigidBody.activeCollisions;
         var timestamp = this.timestamp;
 
@@ -363,8 +364,9 @@ export default class RigidBodySystem {
     }
 
     handleCollisions(entity) {
-        var collidable = entity.getComponent("collidable");
-        var rigidBody = entity.getComponent("rigid-body");
+        var _entity = entity;
+        var collidable = _entity.getComponent("collidable");
+        var rigidBody = _entity.getComponent("rigid-body");
 
         if (!rigidBody.isEnabled) {
             return;
@@ -377,14 +379,14 @@ export default class RigidBodySystem {
                 var otherEntity = this.game.getEntityById(collision.entityId);
                 var otherRigidBody = otherEntity.getComponent("rigid-body");
 
-                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(entity, otherEntity) || !otherRigidBody.isEnabled) {
+                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
                     return;
                 }
 
-                this.intersects(entity, otherEntity);
+                this.intersects(_entity, otherEntity);
             })
 
-            this.cleanCollisions(entity);
+            this.cleanCollisions(_entity);
         }
 
     }
@@ -402,7 +404,8 @@ export default class RigidBodySystem {
         this.timestamp = this.game.getTime();
 
         entities.forEach((entity) => {
-            this.handleCollisions(entity);
+            var _entity = entity;
+            this.handleCollisions(_entity);
         });
     }
 
@@ -413,7 +416,9 @@ export default class RigidBodySystem {
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
             this.prepareRigidBody(entity.getComponent("rigid-body"));
-            this.entities.push(entity);
+            if (!entity.getComponent("position").isStatic) {
+                this.entities.push(entity);
+            }
         }
     };
 

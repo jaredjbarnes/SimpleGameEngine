@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(25);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -238,78 +238,32 @@ class TextTexture {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_FollowEntityCameraSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_Text__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_StaticText__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Camera__ = __webpack_require__(29);
-
-
-
-
-
-
-
-
-
-
-
-var game = new __WEBPACK_IMPORTED_MODULE_0__Game__["a" /* default */]();
-
-// ENTITIES
-var text = new __WEBPACK_IMPORTED_MODULE_7__entities_Text__["a" /* default */]("Hello World!");
-var camera = new __WEBPACK_IMPORTED_MODULE_9__entities_Camera__["a" /* default */]("main");
-
-var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
-    canvas: document.getElementById("viewport")
-});
-
-var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
-var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
-var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
-var movementSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__["a" /* default */]();
-var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_FollowEntityCameraSystem__["a" /* default */]();
-
-followEntityCameraSystem.camera = camera;
-followEntityCameraSystem.setEntityToFollow(text);
-
-// ADD SYSTEMS
-game.addSystem(renderSystem);
-game.addSystem(collisionSystem);
-game.addSystem(keyboardInputSystem);
-game.addSystem(controllerSystem);
-game.addSystem(movementSystem);
-game.addSystem(followEntityCameraSystem);
-
-// ADD ENTITIES
-game.addEntity(text);
-game.addEntity(camera);
-
-for (let x = 0; x < 1000; x++) {
-    let staticText = new __WEBPACK_IMPORTED_MODULE_8__entities_StaticText__["a" /* default */](x + "entity");
-
-    let position = staticText.getComponent("position");
-    let textTexture = staticText.getComponent("text-texture");
-
-    position.x = parseInt(Math.random() * 1000);
-    position.y = parseInt(Math.random() * 1000);
-
-    textTexture.font.color.red = parseInt(Math.random() * 255);
-    textTexture.font.color.green = parseInt(Math.random() * 255);
-    textTexture.font.color.blue = parseInt(Math.random() * 255);
-
-    game.addEntity(staticText);
+class Part {
+    constructor() {
+        this.points = [];
+        this.vertices = [];
+        this.normals = [];
+        this.worldPoints = [];
+        this.projectionVertices = [];
+        this.origin = { x: 0, y: 0 };
+        this.size = { width: 0, height: 0 };
+    }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = Part;
 
-renderSystem.setCameraByName("main");
 
-game.play();
+class RigidBody {
+    constructor() {
+        this.type = "rigid-body";
+        this.name = null;
+        this.isInitialized = false;
+        this.isEnabled = true;
+        this.activeCollisions = new Map();
+        this.parts = [];
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
 
 
 /***/ }),
@@ -317,7 +271,97 @@ game.play();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class Game {
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_FollowEntityCameraSystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Camera__ = __webpack_require__(33);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
+world.size.height = 20000;
+world.size.width = 20000;
+
+// ENTITIES
+var text = new __WEBPACK_IMPORTED_MODULE_9__entities_Text__["a" /* default */]("Hello World!");
+var camera = new __WEBPACK_IMPORTED_MODULE_11__entities_Camera__["a" /* default */]("main");
+
+var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
+    canvas: document.getElementById("viewport")
+});
+
+var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
+var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__["a" /* default */]();
+var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
+var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
+var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
+var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_FollowEntityCameraSystem__["a" /* default */]();
+var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__["a" /* default */]();
+
+followEntityCameraSystem.camera = camera;
+followEntityCameraSystem.setEntityToFollow(text);
+
+// ADD SYSTEMS
+world.addSystem(keyboardInputSystem);
+world.addSystem(controllerSystem);
+world.addSystem(followEntityCameraSystem);
+world.addSystem(movementSystem);
+world.addSystem(collisionSystem);
+world.addSystem(rigidBodySystem);
+world.addSystem(characterSystem);
+world.addSystem(renderSystem);
+
+// ADD ENTITIES
+world.addEntity(text);
+world.addEntity(camera);
+
+for (let x = 0; x < 20000; x++) {
+    let staticText = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x + "entity");
+
+    let position = staticText.getComponent("position");
+    let textTexture = staticText.getComponent("text-texture");
+
+    position.x = parseInt(Math.random() * 20000);
+    position.y = parseInt(Math.random() * 20000);
+
+    textTexture.font.color.red = parseInt(Math.random() * 255);
+    textTexture.font.color.green = parseInt(Math.random() * 255);
+    textTexture.font.color.blue = parseInt(Math.random() * 255);
+
+    world.addEntity(staticText);
+}
+
+renderSystem.setCameraByName("main");
+
+world.play();
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class World {
     constructor(size) {
         var self = this;
 
@@ -489,18 +533,18 @@ game.play();
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Game;
+/* harmony export (immutable) */ __webpack_exports__["a"] = World;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(15);
 
 
 
@@ -517,12 +561,12 @@ game.play();
 });
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(12);
 ﻿
 
 
@@ -1125,11 +1169,11 @@ class RenderSystem {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(11);
 
 
 const MAX_CELL_SIZE = 1000;
@@ -1203,7 +1247,7 @@ class CompositeCanvas {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1320,7 +1364,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1334,7 +1378,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1465,7 +1509,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1575,7 +1619,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1678,7 +1722,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1718,7 +1762,7 @@ class CollisionSystem {
         this._entities = new Map();
     }
 
-     _createGrid() {
+    _createGrid() {
         this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
         this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
 
@@ -1732,7 +1776,7 @@ class CollisionSystem {
         }
     }
 
-     _removeLastRegionsFromGrid(entity, regions) {
+    _removeLastRegionsFromGrid(entity, regions) {
         if (regions == null) {
             return;
         }
@@ -1831,7 +1875,8 @@ class CollisionSystem {
         });
 
         Object.keys(dirtyRegions).forEach((key) => {
-            var region = key.split("|");
+            var _key = key;
+            var region = _key.split("|");
             var entities = grid[region[0]][region[1]];
             var pairs = this.queryForCollisions(entities);
 
@@ -1852,11 +1897,13 @@ class CollisionSystem {
         var _entities = entities;
 
         _entities.forEach((entity) => {
-            var collisions = entity.collidable.activeCollisions;
+            var _entity = entity;
+            var collisions = _entity.collidable.activeCollisions;
 
             Array.from(collisions.entries()).forEach(function (entry) {
-                var key = entry[0];
-                var collision = entry[1];
+                var _entry = entry;
+                var key = _entry[0];
+                var collision = _entry[1];
 
                 if (collision.timestamp !== currentTimestamp) {
 
@@ -1880,8 +1927,10 @@ class CollisionSystem {
         var _pairs = pairs;
 
         _pairs.forEach(function (pair, index) {
-            var entityA = pair[0];
-            var entityB = pair[1];
+            var _pair = pair;
+            var _index = index;
+            var entityA = _pair[0];
+            var entityB = _pair[1];
             var collidableA = entityA.collidable;
             var collidableB = entityB.collidable;
             var collisionDataA = collidableA.activeCollisions.get(entityB.id);
@@ -1928,8 +1977,8 @@ class CollisionSystem {
 
     queryForCollisions(entities) {
         var pairs = [];
-
-        var entityA = entities[0];
+        var _entities = entities;
+        var entityA = _entities[0];
         var entityB;
         var collidableA;
         var collidableB;
@@ -1941,13 +1990,13 @@ class CollisionSystem {
         var right;
         var bottom;
         var left;
-        var length = entities.length;
+        var length = _entities.length;
 
         for (var index = 0; index < length; index++) {
-            entityA = entities[index];
+            entityA = _entities[index];
 
             for (var x = index + 1; x < length; x++) {
-                entityB = entities[x];
+                entityB = _entities[x];
 
                 collidableA = entityA.collidable;
                 collidableB = entityB.collidable;
@@ -1979,6 +2028,7 @@ class CollisionSystem {
     }
 
     getRegions(entity) {
+        var _entity = entity;
         var indexes = [];
         var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
         var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
@@ -1987,8 +2037,8 @@ class CollisionSystem {
         var boundsLeft = 0;
         var boundsRight = this._game.size.width;
         var cellSize = this._cellSize;
-        var position = entity.position;
-        var size = entity.size;
+        var position = _entity.position;
+        var size = _entity.size;
 
         // If entity is outside the detection region, then ignore it.
         if (position.x + size.width < boundsLeft ||
@@ -2025,7 +2075,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2091,7 +2141,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2175,7 +2225,78 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const DEPENDENCIES = ["character", "rigid-body", "position"];
+
+class CharacterSystem {
+    constructor() {
+        this.entities = new Map();
+        this.game = null;
+    }
+
+    update() {
+        this.entities.forEach((entity) => {
+            this.updateEntity(entity);
+        });
+    }
+
+    activated(game) {
+        this.game = game;
+        game.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    deactivated() {
+        this.game = null;
+        this.entities.clear();
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this.entities.set(entity.id, entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        this.entities.delete(entity.id);
+    }
+
+    componentAdded(entity, component) {
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this.entities.delete(entity.id);
+        }
+    }
+
+    updateEntity(entity) {
+        var activeCollisions = entity.getComponent("rigid-body").activeCollisions;
+        var collisions = Array.from(activeCollisions.values());
+        var position = entity.getComponent("position");
+
+        collisions.forEach((collision) => {
+            if (collision.endTimestamp == null) {
+                position.x = position.x + Math.round(collision.penetration.x);
+                position.y = position.y + Math.round(collision.penetration.y);
+                position.isDirty = true;
+            }
+        });
+
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CharacterSystem;
+
+
+
+/***/ }),
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2251,7 +2372,571 @@ class MovementSystem {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(22);
+
+
+const DEPENDENCIES = ["collidable", "rigid-body", "position"];
+
+class RigidBodySystem {
+    constructor() {
+        this.entities = [];
+        this.projectionA = {
+            min: 0,
+            max: 0
+        };
+        this.projectionB = {
+            min: 0,
+            max: 0
+        };
+        this.timestamp = 0;
+    }
+
+    prepareRigidBody(rigidBody) {
+
+        rigidBody.parts.forEach((part) => {
+            var points = part.points;
+
+            if (points.length === part.vertices.length &&
+                points.length === part.normals.length &&
+                points.length === part.projectionVertices.length) {
+                return;
+            }
+
+            this.setSize(part);
+
+            part.vertices = points.map(function (point, index) {
+                var nextPoint = points[index + 1] || points[0];
+                return {
+                    x: point.x - nextPoint.x,
+                    y: point.y - nextPoint.y
+                };
+            });
+
+            part.worldPoints = points.map(function (point) {
+                return {
+                    x: point.x,
+                    y: point.y
+                };
+            });
+
+            part.normals = part.vertices.map(function (vertex, index) {
+                return __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].normalize(__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].getLeftNormal(vertex));
+            });
+
+            var finalVector = part.vertices.reduce(function (accumulator, vertex) {
+                accumulator.x += vertex.x;
+                accumulator.y += vertex.y;
+
+                return accumulator;
+            }, { x: 0, y: 0 });
+
+            // If the final vector isn't (0,0) then make it so, to finish the polygon.
+            if (finalVector.x !== 0 || finalVector.y !== 0) {
+                part.points.push(part.points[0]);
+
+                part.vertices.push({
+                    x: -finalVector.x,
+                    y: -finalVector.y
+                });
+
+                part.normals.push(__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].getLeftNormal(part.vertices[part.vertices.length - 1]));
+            }
+        });
+
+    }
+
+    setSize(part) {
+        var points = part.points;
+
+        var width;
+        var height;
+        var length = points.length;
+        var top = points[0].y;
+        var left = points[0].x;
+        var bottom = points[0].y;
+        var right = points[0].x;
+
+        for (var x = 1; x < length; x++) {
+            top = Math.min(top, points[x].y);
+            left = Math.min(left, points[x].x);
+            bottom = Math.max(bottom, points[x].y);
+            right = Math.max(right, points[x].x);
+        }
+
+        width = right - left;
+        height = bottom - top;
+
+        part.size.width = width;
+        part.size.height = height;
+
+        part.origin.x = (width / 2) + left;
+        part.origin.y = (height / 2) + top;
+    }
+
+    projectToAxis(vertices, axis, projection) {
+        var min = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(vertices[0], axis);
+        var max = min;
+        var dot;
+
+        for (var i = 1; i < vertices.length; i += 1) {
+            dot = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(vertices[i], axis);
+
+            if (dot > max) {
+                max = dot;
+            } else if (dot < min) {
+                min = dot;
+            }
+        }
+
+        projection.min = min;
+        projection.max = max;
+    }
+
+    overlapAxes(verticesA, verticesB, axes) {
+        var projectionA = this.projectionA;
+        var projectionB = this.projectionB;
+        var result = {
+            overlap: Number.MAX_VALUE,
+            axis: null,
+            axisNumber: null
+        };
+
+        var overlap;
+        var axis;
+
+        projectionA.min = 0;
+        projectionA.max = 0;
+        projectionB.min = 0;
+        projectionB.max = 0;
+
+        for (var i = 0; i < axes.length; i++) {
+            axis = axes[i];
+
+            this.projectToAxis(verticesA, axis, projectionA);
+            this.projectToAxis(verticesB, axis, projectionB);
+
+            overlap = Math.min(projectionA.max - projectionB.min, projectionB.max - projectionA.min);
+
+            if (overlap <= 0) {
+                result.overlap = overlap;
+                return result;
+            }
+
+            if (overlap < result.overlap) {
+                result.overlap = overlap;
+                result.axis = axis;
+                result.axisNumber = i;
+            }
+        }
+
+        return result;
+    }
+
+    updateWorldPoints(entity) {
+        var rigidBody = entity.getComponent("rigid-body");
+        var position = entity.getComponent("position");
+
+        rigidBody.parts.forEach((part) => {
+            var worldPoints = part.worldPoints;
+
+            part.points.forEach(function (point, index) {
+                var worldPoint = worldPoints[index];
+                worldPoint.x = point.x + position.x;
+                worldPoint.y = point.y + position.y;
+            });
+        });
+
+    }
+
+    intersects(entityA, entityB) {
+        var _entityA = entityA;
+        var _entityB = entityB;
+
+        var x;
+        var vx;
+        var normal;
+
+        var rigidBodyA = _entityA.getComponent("rigid-body");
+        var rigidBodyB = _entityB.getComponent("rigid-body");
+        var positionA = _entityA.getComponent("position");
+        var positionB = _entityB.getComponent("position");
+        var collidableA = _entityA.getComponent("collidable");
+        var collidableB = _entityB.getComponent("collidable");
+
+        this.updateWorldPoints(entityA);
+        this.updateWorldPoints(entityB);
+
+        return rigidBodyA.parts.some((partA) => {
+
+            return rigidBodyB.parts.some((partB) => {
+                var normalsA = partA.normals;
+                var normalsB = partB.normals;
+                var projectionA = this.projectionA;
+                var projectionB = this.projectionB;
+                var verticesA = partA.worldPoints;
+                var verticesB = partB.worldPoints;
+                var collisionA = rigidBodyA.activeCollisions.get(entityB.id);
+                var collisionB = rigidBodyB.activeCollisions.get(entityA.id);
+                var penetration;
+                var minOverlap;
+                var normal;
+
+                var originA = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionA, partA.origin);
+                var originB = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionB, partB.origin);
+
+                rigidBodyA.isInitialized = true;
+                rigidBodyB.isInitialized = true;
+
+                // If the collision was already handled from the other side then stop detection.
+                if (collisionA != null && collisionA.timestamp === this.timestamp) {
+                    return collisionA.endTimestamp != null;
+                }
+
+                var overlapA = this.overlapAxes(verticesA, verticesB, normalsA);
+
+                if (overlapA.overlap <= 0) {
+
+                    if (collisionA != null) {
+                        collisionA.endTimestamp = this.timestamp;
+                        collisionA.timestamp = this.timestamp;
+                    }
+
+                    if (collisionB != null) {
+                        collisionB.endTimestamp = this.timestamp;
+                        collisionB.timestamp = this.timestamp;
+                    }
+
+                    return false;
+                }
+
+                var overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
+
+                if (overlapB.overlap <= 0) {
+                    collisionB = rigidBodyB.activeCollisions[entityA.id];
+
+                    if (collisionA != null) {
+                        collisionA.endTimestamp = this.timestamp;
+                        collisionA.timestamp = this.timestamp;
+                    }
+
+                    if (collisionB != null) {
+                        collisionB.endTimestamp = this.timestamp;
+                        collisionB.timestamp = this.timestamp;
+                    }
+
+                    return false;
+                }
+
+                if (collisionA == null) {
+                    collisionA = {};
+                }
+
+                if (collisionB == null) {
+                    collisionB = {};
+                }
+
+                collisionA.startTimestamp = this.timestamp;
+                collisionA.timestamp = this.timestamp;
+                collisionA.endTimestamp = null;
+                collisionA.otherEntity = entityB;
+                collisionA.entity = entityA;
+
+                collisionB.startTimestamp = this.timestamp;
+                collisionB.timestamp = this.timestamp;
+                collisionB.endTimestamp = null;
+                collisionB.otherEntity = entityA;
+                collisionB.entity = entityB;
+
+                if (overlapA.overlap < overlapB.overlap) {
+
+                    minOverlap = overlapA.overlap;
+                    normal = overlapA.axis;
+
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(originA, originB)) > 0) {
+                        normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+                    }
+
+                    penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
+                    collisionA.normal = normal;
+
+                    collisionB.penetration = penetration;
+                    collisionB.normal = normal;
+
+                } else {
+
+                    minOverlap = overlapB.overlap;
+                    normal = overlapB.axis;
+
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(originB, originA)) > 0) {
+                        normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+                    }
+
+                    penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = penetration;
+                    collisionA.normal = normal;
+
+                    collisionB.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
+                    collisionB.normal = normal;
+
+                }
+
+                rigidBodyA.activeCollisions.set(entityB.id, collisionA);
+                rigidBodyB.activeCollisions.set(entityA.id, collisionB);
+
+                return true;
+            });
+
+        });
+
+    }
+
+    cleanCollisions(entity) {
+        var _entity = entity;
+        var rigidBody = _entity.getComponent("rigid-body");
+        var collidable = _entity.getComponent("collidable");
+        var activeCollisions = rigidBody.activeCollisions;
+        var timestamp = this.timestamp;
+
+        activeCollisions.forEach((collision) => {
+            var _collision = collision;
+            var key = _collision.otherEntity.id;
+
+            if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
+                activeCollisions.delete(key);
+            }
+
+            // Checking the status of the broadphase collision.
+            if (_collision.endTimestamp == null && collidable.activeCollisions.has(key) && collidable.activeCollisions.get(key).endTimestamp != null) {
+                _collision.endTimestamp = collidable.activeCollisions.get(key).endTimestamp;
+            }
+        });
+    }
+
+    isStaticAndInitialized(entityA, entityB) {
+        var rigidBodyA = entityA.getComponent("rigid-body");
+        var rigidBodyB = entityB.getComponent("rigid-body");
+        var positionA = entityA.getComponent("position");
+        var positionB = entityB.getComponent("position");
+
+        if (!positionA.isStatic || !positionB.isStatic) {
+            return false;
+        }
+
+        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
+            return false;
+        }
+
+        return true;
+    }
+
+    handleCollisions(entity) {
+        var _entity = entity;
+        var collidable = _entity.getComponent("collidable");
+        var rigidBody = _entity.getComponent("rigid-body");
+
+        if (!rigidBody.isEnabled) {
+            return;
+        }
+
+        if (collidable != null) {
+            var activeCollisions = collidable.activeCollisions;
+
+            activeCollisions.forEach((collision) => {
+                var otherEntity = this.game.getEntityById(collision.entityId);
+                var otherRigidBody = otherEntity.getComponent("rigid-body");
+
+                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
+                    return;
+                }
+
+                this.intersects(_entity, otherEntity);
+            })
+
+            this.cleanCollisions(_entity);
+        }
+
+    }
+
+    activated(game) {
+        this.game = game;
+        this.game.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    update() {
+        var entity;
+        var entities = this.entities;
+        this.timestamp = this.game.getTime();
+
+        entities.forEach((entity) => {
+            var _entity = entity;
+            this.handleCollisions(_entity);
+        });
+    }
+
+    deactivated() {
+
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this.prepareRigidBody(entity.getComponent("rigid-body"));
+            if (!entity.getComponent("position").isStatic) {
+                this.entities.push(entity);
+            }
+        }
+    };
+
+    entityRemoved(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            var index = this.entities.indexOf(entity);
+
+            if (index > -1) {
+                this.entities.splice(index, 1);
+            }
+        }
+    }
+
+    componentRemoved(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this.entityRemoved(entity);
+        }
+    }
+
+    componentAdded(entity, component) {
+        this.entityAdded(entity);
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = RigidBodySystem;
+
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Vector {
+     static add  (vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x + vectorB.x;
+        optionalVector.y = vectorA.y + vectorB.y;
+
+        return optionalVector;
+    }
+
+    static subtract (vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x - vectorB.x;
+        optionalVector.y = vectorA.y - vectorB.y;
+
+        return optionalVector;
+    }
+
+    static multiply (vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x * vectorB.x;
+        optionalVector.y = vectorA.y * vectorB.y;
+
+        return optionalVector;
+    }
+
+    static divide  (vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x / vectorB.x;
+        optionalVector.y = vectorA.y / vectorB.y;
+
+        return optionalVector;
+    }
+
+    static scale (vector, scale, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = scale * vector.x;
+        optionalVector.y = scale * vector.y;
+
+        return optionalVector;
+    }
+
+    static project (vectorA, vectorB, optionalVector) {
+        var scale; 
+        
+        var firstDot = Vector.dot(vectorA, vectorB);
+        var secondDot = Vector.dot(vectorB, vectorB);
+
+        if (!firstDot || !secondDot){
+            scale = 0;
+        } else {
+            scale = firstDot / secondDot;
+        }
+        
+        return Vector.scale(vectorB, scale, optionalVector);
+    }
+
+    static getLeftNormal (vector, optionalVector) {
+        optionalVector = optionalVector || {};
+
+        optionalVector.x = -vector.y;
+        optionalVector.y = vector.x;
+
+        return optionalVector;
+    }
+
+    static getRightNormal (vector, optionalVector) {
+        optionalVector = optionalVector || {};
+
+        optionalVector.x = vector.y;
+        optionalVector.y = -vector.x;
+
+        return optionalVector;
+    }
+
+    static magnitude  (vector) {
+        return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
+    }
+
+    static dot  (vectorA, vectorB) {
+        return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
+    }
+
+    static negate (vector) {
+        return { x: -vector.x, y: -vector.y };
+    }
+
+    static normalize (vector, optionalVector) {
+        optionalVector = optionalVector || {};
+        var magnitude = Vector.magnitude(vector);
+
+        if (magnitude === 0) {
+            optionalVector.x = 0;
+            optionalVector.y = 0;
+        }
+
+        optionalVector.x = vector.x / magnitude;
+        optionalVector.y = vector.y / magnitude;
+
+        return optionalVector;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
+
+
+/***/ }),
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2325,7 +3010,7 @@ constructor() {
 
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2334,12 +3019,14 @@ constructor() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Character__ = __webpack_require__(31);
+
 
 
 
@@ -2366,11 +3053,13 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var rigidBody = new __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__["b" /* RigidBody */]();
         var physics = new __WEBPACK_IMPORTED_MODULE_8__components_Physics__["a" /* default */]();
         var part = new __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__["a" /* Part */]();
+        var character = new __WEBPACK_IMPORTED_MODULE_11__components_Character__["a" /* default */]();
 
         part.points.push(
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
+            { x: 0, y: 30 },
             { x: 0, y: 0 },
         );
 
@@ -2405,14 +3094,14 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(shape);
         this.addComponent(rigidBody);
         this.addComponent(physics);
-
+        this.addComponent(character);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Text;
 
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2442,7 +3131,7 @@ function invokeMethod(obj, methodName, args){
 }
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2455,7 +3144,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2469,7 +3158,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2484,7 +3173,7 @@ class Movable {
 
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2505,7 +3194,7 @@ class Physics {
 
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2540,40 +3229,20 @@ class Physics {
 
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Part {
-    constructor() {
-        this.points = [];
-        this.vertices = [];
-        this.normals = [];
-        this.worldPoints = [];
-        this.projectionVertices = [];
-        this.origin = { x: 0, y: 0 };
-        this.size = { width: 0, height: 0 };
+class Character  {
+    constructor(){
+        this.type = "character";
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Part;
-
-
-class RigidBody {
-    constructor() {
-        this.type = "rigid-body";
-        this.name = null;
-        this.isInitialized = false;
-        this.isEnabled = true;
-        this.activeCollisions = new Map();
-        this.parts = [];
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Character;
 
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2582,6 +3251,8 @@ class RigidBody {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__ = __webpack_require__(5);
+
 
 
 
@@ -2597,31 +3268,45 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
         var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__["a" /* default */]();
         var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        var rigidBody = new __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__["b" /* RigidBody */]();
 
         position.isStatic = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;
+        textTexture.verticalAlignment = "middle";
 
         size.width = 100;
-        size.height = 50;
+        size.height = 30;
+
+        var part = new __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__["a" /* Part */]();
+        part.points.push(
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
+            { x: 0, y: 30 },
+            { x: 0, y: 0 }
+        );
+
+        rigidBody.parts.push(part);
 
         this.addComponent(size);
         this.addComponent(position);
         this.addComponent(textTexture);
         this.addComponent(collidable);
+        this.addComponent(rigidBody);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = StaticText;
 
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -2653,7 +3338,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

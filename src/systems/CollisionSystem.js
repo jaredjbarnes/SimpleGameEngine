@@ -34,7 +34,7 @@ export default class CollisionSystem {
         this._entities = new Map();
     }
 
-     _createGrid() {
+    _createGrid() {
         this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
         this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
 
@@ -48,7 +48,7 @@ export default class CollisionSystem {
         }
     }
 
-     _removeLastRegionsFromGrid(entity, regions) {
+    _removeLastRegionsFromGrid(entity, regions) {
         if (regions == null) {
             return;
         }
@@ -147,7 +147,8 @@ export default class CollisionSystem {
         });
 
         Object.keys(dirtyRegions).forEach((key) => {
-            var region = key.split("|");
+            var _key = key;
+            var region = _key.split("|");
             var entities = grid[region[0]][region[1]];
             var pairs = this.queryForCollisions(entities);
 
@@ -168,11 +169,13 @@ export default class CollisionSystem {
         var _entities = entities;
 
         _entities.forEach((entity) => {
-            var collisions = entity.collidable.activeCollisions;
+            var _entity = entity;
+            var collisions = _entity.collidable.activeCollisions;
 
             Array.from(collisions.entries()).forEach(function (entry) {
-                var key = entry[0];
-                var collision = entry[1];
+                var _entry = entry;
+                var key = _entry[0];
+                var collision = _entry[1];
 
                 if (collision.timestamp !== currentTimestamp) {
 
@@ -196,8 +199,10 @@ export default class CollisionSystem {
         var _pairs = pairs;
 
         _pairs.forEach(function (pair, index) {
-            var entityA = pair[0];
-            var entityB = pair[1];
+            var _pair = pair;
+            var _index = index;
+            var entityA = _pair[0];
+            var entityB = _pair[1];
             var collidableA = entityA.collidable;
             var collidableB = entityB.collidable;
             var collisionDataA = collidableA.activeCollisions.get(entityB.id);
@@ -244,8 +249,8 @@ export default class CollisionSystem {
 
     queryForCollisions(entities) {
         var pairs = [];
-
-        var entityA = entities[0];
+        var _entities = entities;
+        var entityA = _entities[0];
         var entityB;
         var collidableA;
         var collidableB;
@@ -257,13 +262,13 @@ export default class CollisionSystem {
         var right;
         var bottom;
         var left;
-        var length = entities.length;
+        var length = _entities.length;
 
         for (var index = 0; index < length; index++) {
-            entityA = entities[index];
+            entityA = _entities[index];
 
             for (var x = index + 1; x < length; x++) {
-                entityB = entities[x];
+                entityB = _entities[x];
 
                 collidableA = entityA.collidable;
                 collidableB = entityB.collidable;
@@ -295,6 +300,7 @@ export default class CollisionSystem {
     }
 
     getRegions(entity) {
+        var _entity = entity;
         var indexes = [];
         var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
         var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
@@ -303,8 +309,8 @@ export default class CollisionSystem {
         var boundsLeft = 0;
         var boundsRight = this._game.size.width;
         var cellSize = this._cellSize;
-        var position = entity.position;
-        var size = entity.size;
+        var position = _entity.position;
+        var size = _entity.size;
 
         // If entity is outside the detection region, then ignore it.
         if (position.x + size.width < boundsLeft ||

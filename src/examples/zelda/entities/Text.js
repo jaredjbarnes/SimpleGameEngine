@@ -9,6 +9,7 @@ import Movable from "./../../../components/Movable";
 import Physics from "./../../../components/Physics";
 import Shape from "./../../../components/Shape";
 import { Part, RigidBody } from "./../../../components/RigidBody";
+import Character from "./../../../components/Character";
 
 export default class Text extends Entity {
     constructor(text) {
@@ -24,11 +25,13 @@ export default class Text extends Entity {
         var rigidBody = new RigidBody();
         var physics = new Physics();
         var part = new Part();
+        var character = new Character();
 
         part.points.push(
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
+            { x: 0, y: 30 },
             { x: 0, y: 0 },
         );
 
@@ -63,6 +66,6 @@ export default class Text extends Entity {
         this.addComponent(shape);
         this.addComponent(rigidBody);
         this.addComponent(physics);
-
+        this.addComponent(character);
     }
 }

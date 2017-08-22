@@ -64,6 +64,7 @@
         if (index === -1) {
             systems.push(system);
             this._invokeMethod(system, "activated", [this]);
+            this._invokeMethod(system, "systemAdded", [system]);
         }
     }
 
@@ -86,6 +87,8 @@
         if (index > -1) {
             systems.splice(index, 1);
             this._invokeMethod(system, "deactivated", [this]);
+            this._invokeMethod(system, "systemRemoved", [system]);
+            
         }
     }
 

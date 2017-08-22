@@ -14,6 +14,7 @@ export default class StateManagerSystem {
         this.name = null;
         this.entities = new Map();
         this.states = new Map();
+        this.stateOptions = [];
     }
 
     updateState(stateName, entity) {

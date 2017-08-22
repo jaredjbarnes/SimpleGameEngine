@@ -22,7 +22,7 @@ class Collision {
 
 export default class CollisionSystem {
     constructor(cellSize) {
-        this._game = null;
+        this._world = null;
         this._cellSize = cellSize || 200;
         this._currentTimestamp = 0;
         this._detectionAreaPosition = null;
@@ -35,8 +35,8 @@ export default class CollisionSystem {
     }
 
     _createGrid() {
-        this._gridWidth = Math.floor((this._game.size.width) / this._cellSize);
-        this._gridHeight = Math.floor((this._game.size.height) / this._cellSize);
+        this._gridWidth = Math.floor((this._world.size.width) / this._cellSize);
+        this._gridHeight = Math.floor((this._world.size.height) / this._cellSize);
 
         this._grid = new Array(this._gridWidth);
 
@@ -73,19 +73,19 @@ export default class CollisionSystem {
 
     }
 
-    activated(game) {
+    activated(world) {
         var self = this;
-        this._game = game;
+        this._world = world;
 
         this._createGrid();
 
-        game.getEntities().forEach(function (entity) {
+        world.getEntities().forEach(function (entity) {
             self.entityAdded(entity);
         });
     }
 
     deactivated() {
-        this._game = null;
+        this._world = null;
     }
 
     entityAdded(entity) {
@@ -120,7 +120,7 @@ export default class CollisionSystem {
     }
 
     update() {
-        this._currentTimestamp = this._game.getTime();
+        this._currentTimestamp = this._world.getTime();
 
         var dirtyRegions = {};
         var entities = [];
@@ -302,12 +302,12 @@ export default class CollisionSystem {
     getRegions(entity) {
         var _entity = entity;
         var indexes = [];
-        var gridWidth = Math.floor((this._game.size.width) / this._cellSize);
-        var gridHeight = Math.floor((this._game.size.height) / this._cellSize);
+        var gridWidth = Math.floor((this._world.size.width) / this._cellSize);
+        var gridHeight = Math.floor((this._world.size.height) / this._cellSize);
         var boundsTop = 0;
-        var boundsBottom = this._game.size.height;
+        var boundsBottom = this._world.size.height;
         var boundsLeft = 0;
-        var boundsRight = this._game.size.width;
+        var boundsRight = this._world.size.width;
         var cellSize = this._cellSize;
         var position = _entity.position;
         var size = _entity.size;

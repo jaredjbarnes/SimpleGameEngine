@@ -9,7 +9,7 @@ var invokeMethod = function (obj, methodName, args) {
 
 export default class StateManagerSystem {
     constructor() {
-        this.game = null;
+        this.world = null;
         this.isReady = true;
         this.name = null;
         this.entities = new Map();
@@ -52,13 +52,13 @@ export default class StateManagerSystem {
     };
 
     cacheEntities() {
-        this.game.getEntities().forEach((entity) => {
+        this.world.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
 
-    activated(game) {
-        this.game = game;
+    activated(world) {
+        this.world = world;
         this.cacheEntities();
 
         this.entities.forEach((entity) => {
@@ -71,7 +71,7 @@ export default class StateManagerSystem {
     }
 
     deactivated() {
-        this.game = null;
+        this.world = null;
         this.entities = new Map();
     }
 
@@ -101,7 +101,7 @@ export default class StateManagerSystem {
     addState(name, state) {
         if (typeof name === "string" && state != null) {
             this.states.set(name, state);
-            invokeMethod(state, "initialize", [this.game]);
+            invokeMethod(state, "initialize", [this.world]);
         }
     }
 

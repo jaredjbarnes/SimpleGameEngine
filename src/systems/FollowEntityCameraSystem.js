@@ -7,7 +7,7 @@ constructor() {
         this._entityToFollow = null;
         this._entitySize = null;
         this._entityPosition = null;
-        this._game = null;
+        this._world = null;
         this._worldSize = null;
     }
 
@@ -57,9 +57,9 @@ constructor() {
         }
     }
 
-    activated(game) {
-        this._game = game;
-        this._worldSize = game.size;
+    activated(world) {
+        this._world = world;
+        this._worldSize = world.size;
     }
 
     deactivate() { }

@@ -376,7 +376,7 @@ export default class RigidBodySystem {
             var activeCollisions = collidable.activeCollisions;
 
             activeCollisions.forEach((collision) => {
-                var otherEntity = this.game.getEntityById(collision.entityId);
+                var otherEntity = this.world.getEntityById(collision.entityId);
                 var otherRigidBody = otherEntity.getComponent("rigid-body");
 
                 if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
@@ -391,9 +391,9 @@ export default class RigidBodySystem {
 
     }
 
-    activated(game) {
-        this.game = game;
-        this.game.getEntities().forEach((entity) => {
+    activated(world) {
+        this.world = world;
+        this.world.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
@@ -401,7 +401,7 @@ export default class RigidBodySystem {
     update() {
         var entity;
         var entities = this.entities;
-        this.timestamp = this.game.getTime();
+        this.timestamp = this.world.getTime();
 
         entities.forEach((entity) => {
             var _entity = entity;

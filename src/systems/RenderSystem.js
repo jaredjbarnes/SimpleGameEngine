@@ -7,7 +7,7 @@ var defaultCachePosition = { x: 0, y: 0 };
 export default class RenderSystem {
     constructor(canvas, sort) {
         this._renderers = {};
-        this._game = null;
+        this._world = null;
         this._dependencies = ["position", "size"];
         this._cameraDependencies = ["camera", "position", "size"];
         this._camera = null;
@@ -79,8 +79,8 @@ export default class RenderSystem {
     addRenderer(renderer) {
         var type = renderer.type;
 
-        if (this._game != null) {
-            throw new Error("Cannot add renderers when activated by a game.");
+        if (this._world != null) {
+            throw new Error("Cannot add renderers when activated by a world.");
         }
 
         var renderers = this._renderers;
@@ -93,8 +93,8 @@ export default class RenderSystem {
     removeRenderer(renderer) {
         var type = renderer.type;
 
-        if (this._game != null) {
-            throw new Error("Cannot remove renderers when activated by a game.");
+        if (this._world != null) {
+            throw new Error("Cannot remove renderers when activated by a world.");
         }
 
         var renderers = this._renderers;
@@ -113,11 +113,11 @@ export default class RenderSystem {
     }
 
     // System Strategy Starts
-    activated(game) {
+    activated(world) {
         var self = this;
-        this._game = game;
+        this._world = world;
 
-        game.getEntities().forEach(function (entity) {
+        world.getEntities().forEach(function (entity) {
             self.registerEntity(entity);
         });
 
@@ -135,7 +135,7 @@ export default class RenderSystem {
     }
 
     deactivated() {
-        this._game = null;
+        this._world = null;
         this.canvas = null;
         this.context = null;
     }
@@ -156,14 +156,14 @@ export default class RenderSystem {
     update() {
         var key;
         var self = this;
-        var game = this._game;
+        var world = this._world;
         var canvas = this.canvas;
         var context = canvas.getContext("2d");
         var cameraPosition = this._cameraPosition;
         var cameraSize = this._cameraSize;
         var caches = this._staticCacheByZIndex;
 
-        if (cameraPosition == null || game == null) {
+        if (cameraPosition == null || world == null) {
             return;
         }
 
@@ -194,7 +194,7 @@ export default class RenderSystem {
         }
 
         activeCollisions.forEach((collision) => {
-            var entity = game.getEntityById(collision.entityId);
+            var entity = world.getEntityById(collision.entityId);
             if (this.isDynamicEntity(entity)) {
                 this.drawEntityOnCamera(entity, canvas);
             }
@@ -223,7 +223,7 @@ export default class RenderSystem {
         }
 
         var self = this;
-        var game = this._game;
+        var world = this._world;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;
         var rendererTypes = Object.keys(renderers);
@@ -249,7 +249,7 @@ export default class RenderSystem {
         entities = Array.from(activeCollisions.values()).filter(function (collision) {
             return collision.endTimestamp == null;
         }).map(function (collision) {
-            return game.getEntityById(collision.entityId);
+            return world.getEntityById(collision.entityId);
         }).filter(function (entity) {
             return entity != null && entity.getComponent("position").isStatic;
         });
@@ -320,7 +320,7 @@ export default class RenderSystem {
         }
 
         var self = this;
-        var game = this._game;
+        var world = this._world;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;
         var rendererTypes = Object.keys(renderers);
@@ -381,7 +381,7 @@ export default class RenderSystem {
         }
 
         var self = this;
-        var game = this._game;
+        var world = this._world;
         var context = canvas.getContext("2d");
         var renderers = this._renderers;
         var rendererTypes = Object.keys(renderers);
@@ -408,7 +408,7 @@ export default class RenderSystem {
         var entities = Array.from(activeCollisions.values()).filter(function (collision) {
             return collision.endTimestamp == null;
         }).map(function (collision) {
-            return game.getEntityById(collision.entityId);
+            return world.getEntityById(collision.entityId);
         }).filter(function (entity) {
             return entity != null;
         });
@@ -477,7 +477,7 @@ export default class RenderSystem {
         var canvas = this._staticCacheByZIndex[zIndex];
 
         if (canvas == null) {
-            canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._game.size.width, this._game.size.height, 1000)
+            canvas = this._staticCacheByZIndex[zIndex] = new CompositeCanvas(this._world.size.width, this._world.size.height, 1000)
         }
 
         return canvas;
@@ -494,7 +494,7 @@ export default class RenderSystem {
             return;
         }
 
-        canvas.clearRect(0, 0, this._game.size.width, this._game.size.height);
+        canvas.clearRect(0, 0, this._world.size.width, this._world.size.height);
 
         entities.sort(this._defaultSort);
         entities.forEach((entity) => {
@@ -574,7 +574,7 @@ export default class RenderSystem {
     setCameraByName(name) {
         var cameraDependencies = this._cameraDependencies;
 
-        var cameras = this._game.getEntitiesByFilter(function (entity) {
+        var cameras = this._world.getEntitiesByFilter(function (entity) {
             var isCamera = entity.hasComponents(cameraDependencies);
             if (isCamera) {
                 var camera = entity.getComponent("camera");

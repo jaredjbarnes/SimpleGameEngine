@@ -2,12 +2,12 @@ const DEPENDENCIES = ["sprite", "image-texture"];
 
 export default class SpriteSystem {
     constructor() {
-        this.game = null;
+        this.world = null;
         this.entities = new Map();
     }
 
     cacheEntities() {
-        this.game.getEntities().forEach((entity) => {
+        this.world.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
@@ -65,13 +65,13 @@ export default class SpriteSystem {
         }
     }
 
-    activated(game) {
-        this.game = game;
+    activated(world) {
+        this.world = world;
         this.cacheEntities();
     }
 
     deactivated() {
-        this.game = null;
+        this.world = null;
         this.entities = new Map();
     }
 

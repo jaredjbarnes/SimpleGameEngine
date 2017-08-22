@@ -3,7 +3,7 @@ const DEPENDENCIES = ["character", "rigid-body", "position"];
 export default class CharacterSystem {
     constructor() {
         this.entities = new Map();
-        this.game = null;
+        this.world = null;
     }
 
     update() {
@@ -12,15 +12,15 @@ export default class CharacterSystem {
         });
     }
 
-    activated(game) {
-        this.game = game;
-        game.getEntities().forEach((entity) => {
+    activated(world) {
+        this.world = world;
+        world.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
 
     deactivated() {
-        this.game = null;
+        this.world = null;
         this.entities.clear();
     }
 

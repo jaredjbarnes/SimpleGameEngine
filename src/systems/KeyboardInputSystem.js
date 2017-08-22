@@ -1,6 +1,6 @@
 ﻿export default class KeyboardInputSystem {
     constructor(doc) {
-        this._game = null;
+        this._world = null;
         var pressedKeys = this.pressedKeys = {};
         doc = doc || document;
 
@@ -13,11 +13,11 @@
         });
     }
 
-    activated(game) {
+    activated(world) {
         var self = this;
-        this._game = game;
+        this._world = world;
 
-        game.getEntities().forEach(function (entity) {
+        world.getEntities().forEach(function (entity) {
             self.entityAdded(entity);
         });
     }

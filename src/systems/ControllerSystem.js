@@ -3,20 +3,20 @@
 export default class ControllerSystem {
     constructor() {
         this.entities = new Map();
-        this._game = null;
+        this._world = null;
     }
 
-    activated(game) {
+    activated(world) {
         var self = this;
-        this._game = game;
+        this._world = world;
 
-        game.getEntities().forEach(function (entity) {
+        world.getEntities().forEach(function (entity) {
             self.entityAdded(entity);
         });
     }
 
     deactivated() {
-        this._game = null;
+        this._world = null;
     }
 
     entityAdded(entity) {

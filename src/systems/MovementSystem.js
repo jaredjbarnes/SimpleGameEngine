@@ -9,7 +9,7 @@ constructor(entity) {
 
 export default class MovementSystem {
     constructor() {
-        this.game = null;
+        this.world = null;
         this.entities = new Map();
     }
 
@@ -30,15 +30,15 @@ export default class MovementSystem {
         });
     }
 
-    activated(game) {
-        this.game = game;
-        this.game.getEntities().forEach((entity) => {
+    activated(world) {
+        this.world = world;
+        this.world.getEntities().forEach((entity) => {
             this.entityAdded(entity);
         });
     }
 
     deactivated() {
-        this.game = null;
+        this.world = null;
     }
 
     entityAdded(entity) {

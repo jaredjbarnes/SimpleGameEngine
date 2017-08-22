@@ -157,6 +157,10 @@
         return time;
     }
 
+    log(){
+
+    }
+
     getEntities() {
         return this._entities.slice(0);
     }

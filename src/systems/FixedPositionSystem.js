@@ -2,7 +2,7 @@ const DEPENDENCIES = ["position", "fixed-position"];
 
 export default class FixedPositionSystem {
     constructor() {
-        this.game = null;
+        this.world = null;
         this.entities = [];
         this.cameraName = null;
         this.camera = null;
@@ -14,8 +14,8 @@ export default class FixedPositionSystem {
         });
     }
 
-    activated(game) {
-        this.game = game;
+    activated(world) {
+        this.world = world;
     }
 
     componentAdded() {
@@ -51,7 +51,7 @@ export default class FixedPositionSystem {
         }
 
         if (this.camera == null || this.cameraName != this.camera.name) {
-            this.camera = this.game.getEntitiesByFilter((entity) => {
+            this.camera = this.world.getEntitiesByFilter((entity) => {
                 var cameraComponent = entity.getComponent("camera");
                 return cameraComponent && cameraComponent.name === this.cameraName;
             })[0];

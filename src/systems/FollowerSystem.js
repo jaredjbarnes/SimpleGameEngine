@@ -1,4 +1,6 @@
-const DEPENDENCIES = ["follower", "position", "size"];
+import Vector from "./../Vector";
+
+const DEPENDENCIES = ["follower", "position", "size", "movable"];
 
 export default class FollowerSystem {
     constructor() {
@@ -12,6 +14,39 @@ export default class FollowerSystem {
             this.entities.push(entity);
         }
     }
+
+    _getEntitiesNextPosition(entity) {
+        var _entity = entity;
+        var movable = _entity.getComponent("movable");
+        var position = _enitty.getComponent("position");
+
+        if (movable == null || position == null) {
+            throw new Error("Entity needs to have both movable and position components.");
+        }
+
+        return {
+            x: position.x + movable.x,
+            y: position.y + movable.y
+        };
+    }
+
+    _getFollowerEntitysDesiredPosition(followedPosition, followedDirection, distance){
+        
+    }
+
+    _getFollowingEntitysNextPosition(followed, follower) {
+        var _followed;
+        var _follower;
+
+        var followedNextPosition = this._getEntitiesNextPosition(_followed);
+        var followerNextPosition = this._getEntitiesNextPosition(_follower);
+
+        var followerComponent = _follower.getComponent("follower");
+        var distanceToGo = {
+            x: followedNextPosition.x - followerNextPosition.x,
+            y: followedNextPosition.y - followerNextPosition.y
+        }
+    };
 
     _removeEntity(entity) {
         var index = this.entities.indexOf(entity);

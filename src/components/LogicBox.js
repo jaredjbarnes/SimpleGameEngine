@@ -9,7 +9,7 @@ class Action {
 class Condition {
     constructor() {
         this.entityId = null;
-        this.stateName = null;
+        this.stateNames = [];
     }
 }
 

@@ -8,4 +8,12 @@ const zelda = {
     }
 };
 
-module.exports = [zelda];
+const logicBox = {
+    entry: "./src/examples/basic/logicbox.js",
+    output: {
+        filename: "logicbox.js",
+        path: path.resolve(__dirname, 'src/examples/basic/dist')
+    }
+}
+
+module.exports = [zelda, logicBox];

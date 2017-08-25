@@ -184,7 +184,7 @@ export default class CollisionSystem {
 
                     // Allow for some time to pass, before removing, because its likely they'll hit again.
                     if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
-                        delete collisions[key];
+                         collisions.delete(key);
                     }
                 }
             });

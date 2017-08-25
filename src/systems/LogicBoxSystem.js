@@ -80,7 +80,7 @@ export default class LogicBoxSystem {
             var shouldExecuteAction = logicBox.conditions.every((condition) => {
                 var state = this._getStateComponent(condition.entityId);
 
-                return state.name === condition.stateName;
+                return condition.stateName.indexOf(state.name) > -1;
             });
 
             if (shouldExecuteAction) {

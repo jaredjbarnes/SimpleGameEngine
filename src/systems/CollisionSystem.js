@@ -128,7 +128,7 @@ export default class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty) {
+            if (_entity.position.isDirty || !_entity.position.isStatic) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -141,7 +141,6 @@ export default class CollisionSystem {
                 });
 
                 this._lastRegions.set(_entity.id, regions);
-
             }
 
         });

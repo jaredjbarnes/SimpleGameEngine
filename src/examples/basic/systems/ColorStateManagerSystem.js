@@ -31,9 +31,9 @@ export default class ColorStateManager extends StateManagerSystem {
                 var shape = entity.getComponent("shape");
 
                 if (shape != null) {
-                    shape.fillColor.red = 0;
-                    shape.fillColor.green = 0;
-                    shape.fillColor.blue = 255;
+                    shape.fillColor.red = 255;
+                    shape.fillColor.green = 150;
+                    shape.fillColor.blue = 0;
                     shape.fillColor.alpha = 1;
                     shape.isDirty = true;
                 }
@@ -51,9 +51,9 @@ export default class ColorStateManager extends StateManagerSystem {
             activated: (entity) => {
                 var shape = entity.getComponent("shape");
                 if (shape) {
-                    shape.fillColor.red = 255;
+                    shape.fillColor.red = 180;
                     shape.fillColor.green = 0;
-                    shape.fillColor.blue = 0;
+                    shape.fillColor.blue = 180;
                     shape.fillColor.alpha = 1;
                     shape.isDirty = true;
                 }

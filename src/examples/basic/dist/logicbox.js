@@ -1885,7 +1885,7 @@ class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty) {
+            if (_entity.position.isDirty || !_entity.position.isStatic) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -1898,7 +1898,6 @@ class CollisionSystem {
                 });
 
                 this._lastRegions.set(_entity.id, regions);
-
             }
 
         });
@@ -3107,9 +3106,9 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
                 var shape = entity.getComponent("shape");
 
                 if (shape != null) {
-                    shape.fillColor.red = 0;
-                    shape.fillColor.green = 0;
-                    shape.fillColor.blue = 255;
+                    shape.fillColor.red = 255;
+                    shape.fillColor.green = 150;
+                    shape.fillColor.blue = 0;
                     shape.fillColor.alpha = 1;
                     shape.isDirty = true;
                 }
@@ -3127,9 +3126,9 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             activated: (entity) => {
                 var shape = entity.getComponent("shape");
                 if (shape) {
-                    shape.fillColor.red = 255;
+                    shape.fillColor.red = 180;
                     shape.fillColor.green = 0;
-                    shape.fillColor.blue = 0;
+                    shape.fillColor.blue = 180;
                     shape.fillColor.alpha = 1;
                     shape.isDirty = true;
                 }

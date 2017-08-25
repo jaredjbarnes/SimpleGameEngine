@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(29);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -299,13 +299,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_ColorStateManagerSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_FollowEntityCameraSystem__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_Text__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_ColorPlatform__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_StaticText__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_Camera__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Text__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__entities_StaticText__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(40);
+
+
 
 
 
@@ -326,22 +330,27 @@ world.size.height = 2000;
 world.size.width = 2000;
 
 // ENTITIES
-var colorPlatform = new __WEBPACK_IMPORTED_MODULE_11__entities_ColorPlatform__["a" /* default */]();
-var text = new __WEBPACK_IMPORTED_MODULE_10__entities_Text__["a" /* default */]("Hello World!");
-var camera = new __WEBPACK_IMPORTED_MODULE_13__entities_Camera__["a" /* default */]("main");
+var colorPlatform = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](0, 0);
+var colorPlatform2 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](150, 0);
+var colorPlatform3 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](75, 150);
+
+var colorLogicBox = new __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__["a" /* default */](colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
+var text = new __WEBPACK_IMPORTED_MODULE_11__entities_Text__["a" /* default */]("Hello World!");
+var camera = new __WEBPACK_IMPORTED_MODULE_15__entities_Camera__["a" /* default */]("main");
 
 var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
     canvas: document.getElementById("viewport")
 });
 
+var logicBoxSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__["a" /* default */]();
 var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
 var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
-var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_9__systems_FollowEntityCameraSystem__["a" /* default */]();
-var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__["a" /* default */]();
-var colorStateManagerSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_ColorStateManagerSystem__["a" /* default */]();
+var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__["a" /* default */]();
+var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__["a" /* default */]();
+var colorStateManagerSystem = new __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(text);
@@ -355,10 +364,14 @@ world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
 world.addSystem(colorStateManagerSystem);
+world.addSystem(logicBoxSystem);
 world.addSystem(renderSystem);
 
 // ADD ENTITIES
 world.addEntity(colorPlatform);
+world.addEntity(colorPlatform2);
+world.addEntity(colorPlatform3);
+world.addEntity(colorLogicBox);
 world.addEntity(text);
 world.addEntity(camera);
 
@@ -2392,7 +2405,111 @@ class MovementSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(23);
+const DEPENDENCIES = ["logic-box"];
+
+class LogicBoxSystem {
+    constructor() {
+        this.world = null;
+        this.entities = [];
+    }
+
+    _addEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index === -1) {
+            this.entities.push(entity);
+        }
+    }
+
+    _getStateComponent(entityId) {
+        var entity = this.world.getEntityById(entityId);
+
+        if (entity == null) {
+            throw new Error(`Couldn't find entity with id: ${entityId}`);
+        }
+
+        var state = entity.getComponent("state");
+
+        if (state == null) {
+            throw new Error(`The entity, ${entity.id} needs to have a state component.`);
+        }
+        return state;
+    }
+
+    _removeEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index > -1) {
+            this.entities.splice(index, 1);
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+        this.world.getEntities().forEach((entity) => {
+            var _entity = entity;
+            this.entityAdded(entity);
+        });
+    }
+
+    deactivated() {
+
+    }
+
+    componentAdded(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._addEntity(entity);
+        }
+    }
+
+    componentRemove(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._removeEntity(entity);
+        }
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._addEntity(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._removeEntity(entity);
+        }
+    }
+
+    update() {
+        this.entities.forEach((entity) => {
+            var _entity = entity;
+
+            var logicBox = _entity.getComponent("logic-box");
+
+            var shouldExecuteAction = logicBox.conditions.every((condition) => {
+                var state = this._getStateComponent(condition.entityId);
+
+                return condition.stateNames.indexOf(state.name) > -1;
+            });
+
+            if (shouldExecuteAction) {
+                logicBox.actions.forEach((action) => {
+                    var state = this._getStateComponent(action.entityId);
+
+                    state.name = action.stateName;
+                    state.options = action.options;
+                });
+            }
+        });
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LogicBoxSystem;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(24);
 
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
@@ -2843,7 +2960,7 @@ class RigidBodySystem {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2952,11 +3069,11 @@ class Vector {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__ = __webpack_require__(26);
 
 
 
@@ -3000,7 +3117,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && isCharacterOn(collidable)) {
+                if (collidable != null && !isCharacterOn(collidable)) {
                     state.name = "red-state";
                 }
             }
@@ -3022,7 +3139,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && !isCharacterOn(collidable)) {
+                if (collidable != null && isCharacterOn(collidable)) {
                     state.name = "blue-state";
                 }
             }
@@ -3036,7 +3153,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3156,7 +3273,7 @@ class StateManagerSystem {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3230,7 +3347,7 @@ constructor() {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3239,14 +3356,14 @@ constructor() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_State__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Character__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Character__ = __webpack_require__(35);
 
 
 
@@ -3323,7 +3440,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3353,7 +3470,7 @@ function invokeMethod(obj, methodName, args){
 }
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3366,7 +3483,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3380,7 +3497,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3395,7 +3512,7 @@ class Movable {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3416,7 +3533,7 @@ class Physics {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3449,7 +3566,7 @@ class RigidBody {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3462,7 +3579,7 @@ class Character  {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3480,7 +3597,7 @@ class Character  {
 
 
 class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor() {
+    constructor(x, y) {
         super();
 
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
@@ -3505,6 +3622,9 @@ class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
         state.stateManagerName = "color-state-manager";
         state.name = "blue-state";
 
+        position.x = x;
+        position.y = y;
+
         this.addComponent(position);
         this.addComponent(size);
         this.addComponent(collidable);
@@ -3516,7 +3636,77 @@ class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
 
 
 /***/ }),
-/* 36 */
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__ = __webpack_require__(38);
+
+
+
+class ColorLogicBox extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor(entityIdA, entityIdB, targetEntityId) {
+        super();
+
+        var logicBox = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["c" /* LogicBox */]();
+        var entityACondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
+        var entityBCondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
+        var action = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["a" /* Action */]();
+
+        entityACondition.entityId = entityIdA;
+        entityACondition.stateNames.push("blue-state");
+
+        entityBCondition.entityId = entityIdB;
+        entityBCondition.stateNames.push("blue-state");
+
+        action.entityId = targetEntityId;
+        action.stateName = "blue-state";
+
+        logicBox.conditions.push(entityACondition, entityBCondition);
+        logicBox.actions.push(action);
+
+        this.addComponent(logicBox);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ColorLogicBox;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Action; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Condition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return LogicBox; });
+class Action {
+    constructor() {
+        this.entityId = null;
+        this.stateName = null;
+        this.options = {};
+    }
+}
+
+class Condition {
+    constructor() {
+        this.entityId = null;
+        this.stateNames = [];
+    }
+}
+
+class LogicBox {
+    constructor() {
+        this.type = "logic-box";
+        this.conditions = [];
+        this.actions = [];
+    }
+}
+
+
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3559,12 +3749,12 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -3596,7 +3786,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

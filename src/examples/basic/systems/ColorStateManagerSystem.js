@@ -41,7 +41,7 @@ export default class ColorStateManager extends StateManagerSystem {
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && isCharacterOn(collidable)) {
+                if (collidable != null && !isCharacterOn(collidable)) {
                     state.name = "red-state";
                 }
             }
@@ -63,7 +63,7 @@ export default class ColorStateManager extends StateManagerSystem {
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && !isCharacterOn(collidable)) {
+                if (collidable != null && isCharacterOn(collidable)) {
                     state.name = "blue-state";
                 }
             }

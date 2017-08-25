@@ -21,7 +21,7 @@ class LogicBox {
     }
 }
 
-export default {
+export {
     Action,
     Condition,
     LogicBox

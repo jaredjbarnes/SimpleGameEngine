@@ -6,7 +6,7 @@ import Collidable from "./../../../components/Collidable";
 import Shape from "./../../../components/Shape";
 
 export default class ColorPlatform extends Entity {
-    constructor() {
+    constructor(x, y) {
         super();
 
         var position = new Position();
@@ -30,6 +30,9 @@ export default class ColorPlatform extends Entity {
 
         state.stateManagerName = "color-state-manager";
         state.name = "blue-state";
+
+        position.x = x;
+        position.y = y;
 
         this.addComponent(position);
         this.addComponent(size);

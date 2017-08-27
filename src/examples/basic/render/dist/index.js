@@ -157,11 +157,12 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class Size  {
-   constructor() {
+﻿class Size {
+    constructor() {
         this.type = "size";
         this.width = 0;
         this.height = 0;
+        this.isDirty = false;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Size;
@@ -264,6 +265,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
 
+
 // ENTITIES
 var text = new __WEBPACK_IMPORTED_MODULE_6__entities_Text__["a" /* default */]("Hello World!");
 var camera = new __WEBPACK_IMPORTED_MODULE_9__entities_Camera__["a" /* default */]("main");
@@ -274,7 +276,7 @@ var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem
 
 var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
-var textSizeAdjustmentSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_TextSizeAdjustmentSystem__["a" /* default */](document);
+var textSizeAdjustmentSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_TextSizeAdjustmentSystem__["a" /* default */]();
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__["a" /* default */]();
 
@@ -284,7 +286,7 @@ world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movementSystem);
 world.addSystem(renderSystem);
-//world.addSystem(textSizeAdjustmentSystem);
+world.addSystem(textSizeAdjustmentSystem);
 
 // ADD ENTITIES
 world.addEntity(text);
@@ -1820,7 +1822,7 @@ class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty || !_entity.position.isStatic) {
+            if (_entity.position.isDirty || _entity.size.isDirty || !_entity.position.isStatic) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -1848,6 +1850,7 @@ class CollisionSystem {
 
             entities.forEach((entity) => {
                 entity.position.isDirty = false;
+                entity.size.isDirty = false;
             });
         })
 
@@ -1875,7 +1878,7 @@ class CollisionSystem {
 
                     // Allow for some time to pass, before removing, because its likely they'll hit again.
                     if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
-                         collisions.delete(key);
+                        collisions.delete(key);
                     }
                 }
             });
@@ -2558,22 +2561,39 @@ const DEPENDENCIES = ["text-size-adjustment", "size", "text-texture"];
 class TextSizeAdjustmentSystem {
     constructor() {
         this.world = null;
+        this.entities = [];
     }
 
-    _addEntity(entity) {
-        var size = entity.getComponent("size");
-        var textSizeAdjustment = entity.getComponent("text-size-adjustment");
-        var textTexture = entity.getComponent("text-texture");
+    _adjustEntity(entity) {
+        var _entity = entity;
+        var size = _entity.getComponent("size");
+        var textSizeAdjustment = _entity.getComponent("text-size-adjustment");
+        var textTexture = _entity.getComponent("text-texture");
 
         if (textSizeAdjustment.adjustWidth) {
-            size.width = textTexture.width;
+            size.width = parseInt(textTexture.width, 10);
         }
 
         if (textSizeAdjustment.adjustHeight) {
-            size.height = textTexture.height;
+            size.height = parseInt(textTexture.height, 10);
         }
 
+        size.isDirty = true;
         textSizeAdjustment.isAdjusted = true;
+    }
+
+    _addEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index === -1) {
+            this.entities.push(entity);
+        }
+    }
+
+    _removedEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index > -1) {
+            this.entities.splice(index, 1);
+        }
     }
 
     activated(world) {
@@ -2588,12 +2608,28 @@ class TextSizeAdjustmentSystem {
 
     deactivated(world) {
         this.world = null;
+        this.entities = [];
     }
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
             this._addEntity(entity);
         }
+    }
+
+    entityRemoved(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._removedEntity(entity);
+        }
+    }
+
+    update() {
+        this.entities.forEach((entity) => {
+            var _entity = entity;
+            this._adjustEntity(_entity);
+        });
+
+        this.entities.length = 0;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = TextSizeAdjustmentSystem;

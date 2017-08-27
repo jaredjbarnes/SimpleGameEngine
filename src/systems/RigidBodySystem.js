@@ -1,6 +1,6 @@
 import Vector from "./../Vector";
 
-const DEPENDENCIES = ["collidable", "rigid-body", "position"];
+const DEPENDENCIES = ["collidable", "rigid-body", "position", "size"];
 
 export default class RigidBodySystem {
     constructor() {

@@ -3,6 +3,7 @@ import Size from "./../../../components/Size";
 import Position from "./../../../components/Position";
 import TextTexture from "./../../../components/TextTexture";
 import Collidable from "./../../../components/Collidable";
+import TextSizeAdjustment from "./../../../components/TextSizeAdjustment";
 import { Part, RigidBody } from "./../../../components/RigidBody";
 
 export default class StaticText extends Entity {
@@ -15,6 +16,7 @@ export default class StaticText extends Entity {
         var textTexture = new TextTexture();
         var collidable = new Collidable();
         var rigidBody = new RigidBody();
+        var textSizedAdjustment = new TextSizeAdjustment();
 
         position.isStatic = true;
 
@@ -41,5 +43,7 @@ export default class StaticText extends Entity {
         this.addComponent(textTexture);
         this.addComponent(collidable);
         this.addComponent(rigidBody);
+        this.addComponent(textSizedAdjustment);
+
     }
 }

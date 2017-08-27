@@ -11,6 +11,7 @@ import Camera from "./../../../entities/Camera";
 
 var world = new World();
 
+
 // ENTITIES
 var text = new Text("Hello World!");
 var camera = new Camera("main");
@@ -21,7 +22,7 @@ var renderSystem = new RenderSystem({
 
 var collisionSystem = new CollisionSystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
-var textSizeAdjustmentSystem = new TextSizeAdjustmentSystem(document);
+var textSizeAdjustmentSystem = new TextSizeAdjustmentSystem();
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 
@@ -31,7 +32,7 @@ world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movementSystem);
 world.addSystem(renderSystem);
-//world.addSystem(textSizeAdjustmentSystem);
+world.addSystem(textSizeAdjustmentSystem);
 
 // ADD ENTITIES
 world.addEntity(text);

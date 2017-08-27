@@ -157,11 +157,12 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class Size  {
-   constructor() {
+﻿class Size {
+    constructor() {
         this.type = "size";
         this.width = 0;
         this.height = 0;
+        this.isDirty = false;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Size;
@@ -1893,7 +1894,7 @@ class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty || !_entity.position.isStatic) {
+            if (_entity.position.isDirty || _entity.size.isDirty || !_entity.position.isStatic) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -1921,6 +1922,7 @@ class CollisionSystem {
 
             entities.forEach((entity) => {
                 entity.position.isDirty = false;
+                entity.size.isDirty = false;
             });
         })
 
@@ -1948,7 +1950,7 @@ class CollisionSystem {
 
                     // Allow for some time to pass, before removing, because its likely they'll hit again.
                     if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
-                         collisions.delete(key);
+                        collisions.delete(key);
                     }
                 }
             });
@@ -2519,7 +2521,7 @@ class LogicBoxSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(24);
 
 
-const DEPENDENCIES = ["collidable", "rigid-body", "position"];
+const DEPENDENCIES = ["collidable", "rigid-body", "position", "size"];
 
 class RigidBodySystem {
     constructor() {

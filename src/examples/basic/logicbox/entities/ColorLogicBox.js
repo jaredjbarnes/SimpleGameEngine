@@ -1,5 +1,5 @@
-import Entity from "./../../../Entity";
-import { LogicBox, Condition, Action } from "./../../../components/LogicBox";
+import Entity from "./../../../../Entity";
+import { LogicBox, Condition, Action } from "./../../../../components/LogicBox";
 
 export default class ColorLogicBox extends Entity {
     constructor(entityIdA, entityIdB, targetEntityId) {

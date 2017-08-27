@@ -1,9 +1,9 @@
-import Entity from "./../../../Entity";
-import State from "./../../../components/State"
-import Position from "./../../../components/Position";
-import Size from "./../../../components/Size";
-import Collidable from "./../../../components/Collidable";
-import Shape from "./../../../components/Shape";
+import Entity from "./../../../../Entity";
+import State from "./../../../../components/State"
+import Position from "./../../../../components/Position";
+import Size from "./../../../../components/Size";
+import Collidable from "./../../../../components/Collidable";
+import Shape from "./../../../../components/Shape";
 
 export default class ColorPlatform extends Entity {
     constructor(x, y) {

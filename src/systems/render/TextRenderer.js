@@ -44,6 +44,9 @@
         var x = 0;
         var y = 0;
 
+        textTexture.height = textHeight;
+        textTexture.width = textWidth;
+
         if (textTexture.horizontalAlignment === "center") {
             x = size.width / 2;
         } else if (textTexture.horizontalAlignment === "right") {

@@ -1,14 +1,15 @@
-import Game from "./../../Game";
-import RenderSystem from "./../../systems/CompleteRenderSystem";
-import CollisionSystem from "./../../systems/CollisionSystem";
-import KeyboardInputSystem from "./../../systems/KeyboardInputSystem";
-import ControllerSystem from "./../../systems/ControllerSystem";
-import MovementSystem from "./../../systems/MovementSystem";
+import World from "./../../../World";
+import RenderSystem from "./../../../systems/CompleteRenderSystem";
+import CollisionSystem from "./../../../systems/CollisionSystem";
+import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
+import ControllerSystem from "./../../../systems/ControllerSystem";
+import MovementSystem from "./../../../systems/MovementSystem";
 import Text from "./entities/Text";
+import TextSizeAdjustmentSystem from "./../../../systems/TextSizeAdjustmentSystem";
 import StaticText from "./entities/StaticText";
-import Camera from "./../../entities/Camera";
+import Camera from "./../../../entities/Camera";
 
-var game = new Game();
+var world = new World();
 
 // ENTITIES
 var text = new Text("Hello World!");
@@ -20,19 +21,21 @@ var renderSystem = new RenderSystem({
 
 var collisionSystem = new CollisionSystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
+var textSizeAdjustmentSystem = new TextSizeAdjustmentSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 
 // ADD SYSTEMS
-game.addSystem(renderSystem);
-game.addSystem(collisionSystem);
-game.addSystem(keyboardInputSystem);
-game.addSystem(controllerSystem);
-game.addSystem(movementSystem);
+world.addSystem(collisionSystem);
+world.addSystem(keyboardInputSystem);
+world.addSystem(controllerSystem);
+world.addSystem(movementSystem);
+world.addSystem(renderSystem);
+//world.addSystem(textSizeAdjustmentSystem);
 
 // ADD ENTITIES
-game.addEntity(text);
-game.addEntity(camera);
+world.addEntity(text);
+world.addEntity(camera);
 
 for (let x = 0; x < 1000; x++) {
     let staticText = new StaticText(x + "entity");
@@ -47,9 +50,9 @@ for (let x = 0; x < 1000; x++) {
     textTexture.font.color.green = parseInt(Math.random() * 255);
     textTexture.font.color.blue = parseInt(Math.random() * 255);
 
-    game.addEntity(staticText);
+    world.addEntity(staticText);
 }
 
 renderSystem.setCameraByName("main");
 
-game.play();
+world.play();

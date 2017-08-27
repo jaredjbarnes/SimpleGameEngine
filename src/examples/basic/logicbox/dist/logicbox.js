@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(29);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -240,32 +240,34 @@ class TextTexture {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Part {
+﻿class Shape {
     constructor() {
+        this.type = "shape";
+
+        this.fillColor = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        };
+
+        this.border = {
+            thickness: 0,
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
         this.points = [];
-        this.vertices = [];
-        this.normals = [];
-        this.worldPoints = [];
-        this.projectionVertices = [];
-        this.origin = { x: 0, y: 0 };
-        this.size = { width: 0, height: 0 };
+
+        this.isDirty = false;
+
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Part;
-
-
-class RigidBody {
-    constructor() {
-        this.type = "rigid-body";
-        this.name = null;
-        this.isInitialized = false;
-        this.isEnabled = true;
-        this.activeCollisions = new Map();
-        this.parts = [];
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
 
 
 /***/ }),
@@ -273,19 +275,44 @@ class RigidBody {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+﻿class State {
+    constructor() {
+        this.type = "state";
+        this.activeName = null;
+        this.name = null;
+        this.stateManagerName = null;
+        this.options = {};
+        this.activeOptions = {};
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = State;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_FollowEntityCameraSystem__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Camera__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Text__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__entities_StaticText__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(41);
+
+
+
 
 
 
@@ -301,24 +328,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
-world.size.height = 20000;
-world.size.width = 20000;
+world.size.height = 2000;
+world.size.width = 2000;
 
 // ENTITIES
-var text = new __WEBPACK_IMPORTED_MODULE_9__entities_Text__["a" /* default */]("Hello World!");
-var camera = new __WEBPACK_IMPORTED_MODULE_11__entities_Camera__["a" /* default */]("main");
+var colorPlatform = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](0, 0);
+var colorPlatform2 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](150, 0);
+var colorPlatform3 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](75, 150);
+
+var colorLogicBox = new __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__["a" /* default */](colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
+var text = new __WEBPACK_IMPORTED_MODULE_11__entities_Text__["a" /* default */]("Hello World!");
+var camera = new __WEBPACK_IMPORTED_MODULE_15__entities_Camera__["a" /* default */]("main");
 
 var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
     canvas: document.getElementById("viewport")
 });
 
+var logicBoxSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__["a" /* default */]();
 var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
 var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
-var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_FollowEntityCameraSystem__["a" /* default */]();
-var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_7__systems_RigidBodySystem__["a" /* default */]();
+var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__["a" /* default */]();
+var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__["a" /* default */]();
+var colorStateManagerSystem = new __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(text);
@@ -331,35 +365,27 @@ world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
+world.addSystem(colorStateManagerSystem);
+world.addSystem(logicBoxSystem);
 world.addSystem(renderSystem);
 
 // ADD ENTITIES
+world.addEntity(colorPlatform);
+world.addEntity(colorPlatform2);
+world.addEntity(colorPlatform3);
+world.addEntity(colorLogicBox);
 world.addEntity(text);
 world.addEntity(camera);
-
-for (let x = 0; x < 20000; x++) {
-    let staticText = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x + "entity");
-
-    let position = staticText.getComponent("position");
-    let textTexture = staticText.getComponent("text-texture");
-
-    position.x = parseInt(Math.random() * 20000);
-    position.y = parseInt(Math.random() * 20000);
-
-    textTexture.font.color.red = parseInt(Math.random() * 255);
-    textTexture.font.color.green = parseInt(Math.random() * 255);
-    textTexture.font.color.blue = parseInt(Math.random() * 255);
-
-    world.addEntity(staticText);
-}
 
 renderSystem.setCameraByName("main");
 
 world.play();
 
+window.world = world;
+window.colorPlatform = colorPlatform;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -542,14 +568,14 @@ world.play();
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(16);
 
 
 
@@ -566,12 +592,12 @@ world.play();
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(13);
 ﻿
 
 
@@ -1174,11 +1200,11 @@ class RenderSystem {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(12);
 
 
 const MAX_CELL_SIZE = 1000;
@@ -1252,7 +1278,7 @@ class CompositeCanvas {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1265,7 +1291,6 @@ class CompositeCanvasCell {
 
         this.canvas.width = size;
         this.canvas.height = size;
-        this.context = this.canvas.getContext("2d");
         this.canvas.getContext("2d").clearRect(0, 0, size, size);
     }
 
@@ -1363,8 +1388,6 @@ class CompositeCanvasCell {
         y = Math.max(y, this.offset.y);
         width = Math.min(width, this.size);
         height = Math.min(height, this.size);
-
-        this.context.clearRect(x, y, width, height);
     }
 
 }
@@ -1372,7 +1395,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1386,7 +1409,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1517,7 +1540,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1630,7 +1653,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1733,7 +1756,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2085,7 +2108,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2151,7 +2174,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2235,7 +2258,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2306,7 +2329,7 @@ class CharacterSystem {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2382,11 +2405,115 @@ class MovementSystem {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(22);
+const DEPENDENCIES = ["logic-box"];
+
+class LogicBoxSystem {
+    constructor() {
+        this.world = null;
+        this.entities = [];
+    }
+
+    _addEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index === -1) {
+            this.entities.push(entity);
+        }
+    }
+
+    _getStateComponent(entityId) {
+        var entity = this.world.getEntityById(entityId);
+
+        if (entity == null) {
+            throw new Error(`Couldn't find entity with id: ${entityId}`);
+        }
+
+        var state = entity.getComponent("state");
+
+        if (state == null) {
+            throw new Error(`The entity, ${entity.id} needs to have a state component.`);
+        }
+        return state;
+    }
+
+    _removeEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index > -1) {
+            this.entities.splice(index, 1);
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+        this.world.getEntities().forEach((entity) => {
+            var _entity = entity;
+            this.entityAdded(entity);
+        });
+    }
+
+    deactivated() {
+
+    }
+
+    componentAdded(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._addEntity(entity);
+        }
+    }
+
+    componentRemove(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._removeEntity(entity);
+        }
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._addEntity(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._removeEntity(entity);
+        }
+    }
+
+    update() {
+        this.entities.forEach((entity) => {
+            var _entity = entity;
+
+            var logicBox = _entity.getComponent("logic-box");
+
+            var shouldExecuteAction = logicBox.conditions.every((condition) => {
+                var state = this._getStateComponent(condition.entityId);
+
+                return condition.stateNames.indexOf(state.name) > -1;
+            });
+
+            if (shouldExecuteAction) {
+                logicBox.actions.forEach((action) => {
+                    var state = this._getStateComponent(action.entityId);
+
+                    state.name = action.stateName;
+                    state.options = action.options;
+                });
+            }
+        });
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LogicBoxSystem;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(24);
 
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position"];
@@ -2837,7 +2964,7 @@ class RigidBodySystem {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2946,7 +3073,211 @@ class Vector {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__ = __webpack_require__(26);
+
+
+
+
+class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__["a" /* default */] {
+    constructor() {
+        super();
+        this.name = "color-state-manager";
+    }
+
+    activated(world) {
+        super.activated(world);
+
+        var isCharacterOn = (collidable) => {
+            var matches = [];
+            collidable.activeCollisions.forEach((collision) => {
+                var _collision = collision;
+                var entity = world.getEntityById(_collision.entityId);
+
+                if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
+                    matches.push(entity);
+                }
+
+            });
+
+            return matches.length > 0;
+        };
+
+        var blueState = {
+            activated: (entity) => {
+                var shape = entity.getComponent("shape");
+
+                if (shape != null) {
+                    shape.fillColor.red = 255;
+                    shape.fillColor.green = 150;
+                    shape.fillColor.blue = 0;
+                    shape.fillColor.alpha = 1;
+                    shape.isDirty = true;
+                }
+            },
+            update: (entity) => {
+                var collidable = entity.getComponent("collidable");
+                var state = entity.getComponent("state");
+                if (collidable != null && !isCharacterOn(collidable)) {
+                    state.name = "red-state";
+                }
+            }
+        };
+
+        var redState = {
+            activated: (entity) => {
+                var shape = entity.getComponent("shape");
+                if (shape) {
+                    shape.fillColor.red = 180;
+                    shape.fillColor.green = 0;
+                    shape.fillColor.blue = 180;
+                    shape.fillColor.alpha = 1;
+                    shape.isDirty = true;
+                }
+
+
+            },
+            update: (entity) => {
+                var collidable = entity.getComponent("collidable");
+                var state = entity.getComponent("state");
+                if (collidable != null && isCharacterOn(collidable)) {
+                    state.name = "blue-state";
+                }
+            }
+        }
+
+        this.addState("blue-state", blueState);
+        this.addState("red-state", redState);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ColorStateManager;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+const DEPENDENCIES = ["state"];
+
+var invokeMethod = function (obj, methodName, args) {
+    if (obj != null && typeof obj[methodName] === "function") {
+        return obj[methodName].apply(obj, args);
+    }
+};
+
+class StateManagerSystem {
+    constructor() {
+        this.world = null;
+        this.isReady = true;
+        this.name = null;
+        this.entities = new Map();
+        this.states = new Map();
+        this.stateOptions = [];
+    }
+
+    updateState(stateName, entity) {
+        var state = this.states.get(stateName);
+        invokeMethod(state, "update", [entity]);
+    }
+
+    activateState(stateName, entity, options) {
+        var state = this.states.get(stateName);
+        invokeMethod(state, "activated", [entity, options]);
+    }
+
+    deactivateState(stateName, entity) {
+        var state = this.states.get(stateName);
+        invokeMethod(state, "deactivated", [entity]);
+    }
+
+    maintainState(entity) {
+        var state = entity.getComponent("state");
+
+        if (state.activeName !== state.name) {
+            this.deactivateState(state.activeName, entity);
+            state.activeName = state.name;
+            state.activeOptions = state.options;
+            this.activateState(state.name, entity, state.options);
+        }
+
+        this.updateState(state.name, entity);
+
+    }
+
+    update() {
+        this.entities.forEach((entity) => {
+            this.maintainState(entity);
+        });
+    };
+
+    cacheEntities() {
+        this.world.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    activated(world) {
+        this.world = world;
+        this.cacheEntities();
+
+        this.entities.forEach((entity) => {
+            var state = entity.getComponent("state");
+            var stateName = state.name;
+
+            this.activateState(stateName, entity);
+        });
+
+    }
+
+    deactivated() {
+        this.world = null;
+        this.entities = new Map();
+    }
+
+    entityAdded(entity) {
+        var state = entity.getComponent("state");
+        if (state != null && state.stateManagerName === this.name) {
+            this.entities.set(entity.id, entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        this.entities.delete(entity.id);
+    }
+
+    componentAdded(entity, component) {
+        if (component.type === "state" && component.stateManagerName === this.name) {
+            this.entities.set(entity.id, entity);
+        }
+    }
+
+    componentRemoved(entity, component) {
+        if (component.type === "state") {
+            this.entities.delete(entity.id);
+        }
+    }
+
+    addState(name, state) {
+        if (typeof name === "string" && state != null) {
+            this.states.set(name, state);
+            invokeMethod(state, "initialize", [this.world]);
+        }
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = StateManagerSystem;
+
+
+
+
+
+/***/ }),
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3020,7 +3351,7 @@ constructor() {
 
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3029,13 +3360,15 @@ constructor() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Character__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_State__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Character__ = __webpack_require__(35);
+
 
 
 
@@ -3060,10 +3393,10 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
         var movable = new __WEBPACK_IMPORTED_MODULE_7__components_Movable__["a" /* default */]();
         var shape = new __WEBPACK_IMPORTED_MODULE_9__components_Shape__["a" /* default */]();
-        var rigidBody = new __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__["b" /* RigidBody */]();
+        var rigidBody = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["b" /* RigidBody */]();
         var physics = new __WEBPACK_IMPORTED_MODULE_8__components_Physics__["a" /* default */]();
-        var part = new __WEBPACK_IMPORTED_MODULE_10__components_RigidBody__["a" /* Part */]();
-        var character = new __WEBPACK_IMPORTED_MODULE_11__components_Character__["a" /* default */]();
+        var part = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["a" /* Part */]();
+        var character = new __WEBPACK_IMPORTED_MODULE_12__components_Character__["a" /* default */]();
 
         part.points.push(
             { x: 0, y: 0 },
@@ -3111,7 +3444,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3141,7 +3474,7 @@ function invokeMethod(obj, methodName, args){
 }
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3154,7 +3487,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3168,7 +3501,7 @@ function invokeMethod(obj, methodName, args){
 
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3183,7 +3516,7 @@ class Movable {
 
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3204,42 +3537,40 @@ class Physics {
 
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class Shape {
+class Part {
     constructor() {
-        this.type = "shape";
-
-        this.fillColor = {
-            red: 0,
-            green: 0,
-            blue: 0,
-            alpha: 1
-        };
-
-        this.border = {
-            thickness: 0,
-            color: {
-                red: 0,
-                green: 0,
-                blue: 0,
-                alpha: 1
-            }
-        };
-
         this.points = [];
-
-        this.isDirty = false;
-
+        this.vertices = [];
+        this.normals = [];
+        this.worldPoints = [];
+        this.projectionVertices = [];
+        this.origin = { x: 0, y: 0 };
+        this.size = { width: 0, height: 0 };
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Part;
+
+
+class RigidBody {
+    constructor() {
+        this.type = "rigid-body";
+        this.name = null;
+        this.isInitialized = false;
+        this.isEnabled = true;
+        this.activeCollisions = new Map();
+        this.parts = [];
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
 
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3252,7 +3583,134 @@ class Character  {
 
 
 /***/ }),
-/* 32 */
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_State__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Shape__ = __webpack_require__(5);
+
+
+
+
+
+
+
+class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor(x, y) {
+        super();
+
+        var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
+        var size = new __WEBPACK_IMPORTED_MODULE_3__components_Size__["a" /* default */]();
+        var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        var shape = new __WEBPACK_IMPORTED_MODULE_5__components_Shape__["a" /* default */]();
+        var state = new __WEBPACK_IMPORTED_MODULE_1__components_State__["a" /* default */]();
+
+        shape.points.push(
+            { x: 0, y: 0 },
+            { x: 1, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0, y: 1 },
+            { x: 0, y: 0 }
+        );
+
+        shape.fillColor.red = 255;
+
+        size.width = 100;
+        size.height = 100;
+
+        state.stateManagerName = "color-state-manager";
+        state.name = "blue-state";
+
+        position.x = x;
+        position.y = y;
+
+        this.addComponent(position);
+        this.addComponent(size);
+        this.addComponent(collidable);
+        this.addComponent(shape);
+        this.addComponent(state);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ColorPlatform;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__ = __webpack_require__(38);
+
+
+
+class ColorLogicBox extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor(entityIdA, entityIdB, targetEntityId) {
+        super();
+
+        var logicBox = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["c" /* LogicBox */]();
+        var entityACondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
+        var entityBCondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
+        var action = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["a" /* Action */]();
+
+        entityACondition.entityId = entityIdA;
+        entityACondition.stateNames.push("blue-state");
+
+        entityBCondition.entityId = entityIdB;
+        entityBCondition.stateNames.push("blue-state");
+
+        action.entityId = targetEntityId;
+        action.stateName = "blue-state";
+
+        logicBox.conditions.push(entityACondition, entityBCondition);
+        logicBox.actions.push(action);
+
+        this.addComponent(logicBox);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ColorLogicBox;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Action; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Condition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return LogicBox; });
+class Action {
+    constructor() {
+        this.entityId = null;
+        this.stateName = null;
+        this.options = {};
+    }
+}
+
+class Condition {
+    constructor() {
+        this.entityId = null;
+        this.stateNames = [];
+    }
+}
+
+class LogicBox {
+    constructor() {
+        this.type = "logic-box";
+        this.conditions = [];
+        this.actions = [];
+    }
+}
+
+
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3260,8 +3718,8 @@ class Character  {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextSizeAdjustment__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Collidable__ = __webpack_require__(3);
 
 
 
@@ -3277,46 +3735,50 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         var size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
         var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__["a" /* default */]();
-        var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
-        var rigidBody = new __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__["b" /* RigidBody */]();
+        var collidable = new __WEBPACK_IMPORTED_MODULE_5__components_Collidable__["a" /* default */]();
+        var textSizedAdjustment = new __WEBPACK_IMPORTED_MODULE_4__components_TextSizeAdjustment__["a" /* default */]();
 
         position.isStatic = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;
-        textTexture.verticalAlignment = "middle";
 
         size.width = 100;
-        size.height = 30;
-
-        var part = new __WEBPACK_IMPORTED_MODULE_5__components_RigidBody__["a" /* Part */]();
-        part.points.push(
-            { x: 0, y: 0 },
-            { x: 100, y: 0 },
-            { x: 100, y: 30 },
-            { x: 0, y: 30 },
-            { x: 0, y: 0 }
-        );
-
-        rigidBody.parts.push(part);
+        size.height = 50;
 
         this.addComponent(size);
         this.addComponent(position);
         this.addComponent(textTexture);
         this.addComponent(collidable);
-        this.addComponent(rigidBody);
+        this.addComponent(textSizedAdjustment);
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = StaticText;
+/* unused harmony export default */
 
 
 /***/ }),
-/* 33 */
+/* 40 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class TextSizeAdjustement {
+    constructor() {
+        this.type = "text-size-adjustment";
+        this.adjustWidth = true;
+        this.adjustHeight = true;
+        this.isAdjusted = false;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TextSizeAdjustement;
+
+
+/***/ }),
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -3348,7 +3810,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 34 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

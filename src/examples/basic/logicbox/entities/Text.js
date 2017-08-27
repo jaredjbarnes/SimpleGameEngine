@@ -1,16 +1,16 @@
-import Entity from "./../../../Entity";
-import Size from "./../../../components/Size";
-import Position from "./../../../components/Position";
-import TextTexture from "./../../../components/TextTexture";
-import Collidable from "./../../../components/Collidable";
-import KeyboardController from "./../../../components/KeyboardController";
-import KeyboardInput from "./../../../components/KeyboardInput";
-import Movable from "./../../../components/Movable";
-import Physics from "./../../../components/Physics";
-import Shape from "./../../../components/Shape";
-import State from "./../../../components/State";
-import { Part, RigidBody } from "./../../../components/RigidBody";
-import Character from "./../../../components/Character";
+import Entity from "./../../../../Entity";
+import Size from "./../../../../components/Size";
+import Position from "./../../../../components/Position";
+import TextTexture from "./../../../../components/TextTexture";
+import Collidable from "./../../../../components/Collidable";
+import KeyboardController from "./../../../../components/KeyboardController";
+import KeyboardInput from "./../../../../components/KeyboardInput";
+import Movable from "./../../../../components/Movable";
+import Physics from "./../../../../components/Physics";
+import Shape from "./../../../../components/Shape";
+import State from "./../../../../components/State";
+import { Part, RigidBody } from "./../../../../components/RigidBody";
+import Character from "./../../../../components/Character";
 
 export default class Text extends Entity {
     constructor(text) {

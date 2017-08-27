@@ -7,6 +7,7 @@ export default class CompositeCanvasCell {
 
         this.canvas.width = size;
         this.canvas.height = size;
+        this.context = this.canvas.getContext("2d");
         this.canvas.getContext("2d").clearRect(0, 0, size, size);
     }
 
@@ -104,6 +105,8 @@ export default class CompositeCanvasCell {
         y = Math.max(y, this.offset.y);
         width = Math.min(width, this.size);
         height = Math.min(height, this.size);
+
+        this.context.clearRect(x, y, width, height);
     }
 
 }

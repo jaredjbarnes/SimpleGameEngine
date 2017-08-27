@@ -1,5 +1,5 @@
 export default class TextTexture {
-   constructor() {
+    constructor() {
         this.type = "text-texture";
         this.font = {
             size: 12,
@@ -19,6 +19,8 @@ export default class TextTexture {
         this.text = "";
         this.verticalAlignment = "top";
         this.horizontalAlignment = "left";
+        this.width = 0;
+        this.height = 0;
         this.lineHeight = 0;
         this.isDirty = false;
     }

@@ -535,7 +535,8 @@ world.play();
     }
 
     getEntityById(id) {
-        return this._entitiesById[id] || null;
+        var _id = id;
+        return this._entitiesById[_id] || null;
     }
 
 }

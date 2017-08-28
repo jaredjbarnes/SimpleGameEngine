@@ -10,21 +10,23 @@ export default class ColorStateManager extends StateManagerSystem {
 
     activated(world) {
         super.activated(world);
+        var _world = world;
 
         var isCharacterOn = (collidable) => {
             var _collidable = collidable;
-            var matches = [];
+            var isOn = false;
+
             _collidable.activeCollisions.forEach((collision) => {
                 var _collision = collision;
-                var entity = world.getEntityById(_collision.entityId);
+                var entity = _world.getEntityById(_collision.entityId);
 
                 if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
-                    matches.push(entity);
+                    isOn = true;
                 }
 
             });
 
-            return matches.length > 0;
+            return isOn;
         };
 
         var blueState = {

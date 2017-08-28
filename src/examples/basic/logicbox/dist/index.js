@@ -370,7 +370,7 @@ world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
 
-for (let z = 0; z < 1000; z++) {
+for (let z = 0; z < 2000; z++) {
     let x = getRandomNumber(10000);
     let y = getRandomNumber(10000);
 
@@ -573,7 +573,8 @@ window.world = world;
     }
 
     getEntityById(id) {
-        return this._entitiesById[id] || null;
+        var _id = id;
+        return this._entitiesById[_id] || null;
     }
 
 }
@@ -3111,21 +3112,23 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
 
     activated(world) {
         super.activated(world);
+        var _world = world;
 
         var isCharacterOn = (collidable) => {
             var _collidable = collidable;
-            var matches = [];
+            var isOn = false;
+
             _collidable.activeCollisions.forEach((collision) => {
                 var _collision = collision;
-                var entity = world.getEntityById(_collision.entityId);
+                var entity = _world.getEntityById(_collision.entityId);
 
                 if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
-                    matches.push(entity);
+                    isOn = true;
                 }
 
             });
 
-            return matches.length > 0;
+            return isOn;
         };
 
         var blueState = {

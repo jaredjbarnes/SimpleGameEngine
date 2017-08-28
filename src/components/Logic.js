@@ -13,9 +13,10 @@ class Condition {
     }
 }
 
-class LogicBox {
+class Logic {
     constructor() {
-        this.type = "logic-box";
+        this.type = "logic";
+        this.name = null;
         this.conditions = [];
         this.actions = [];
     }
@@ -24,5 +25,5 @@ class LogicBox {
 export {
     Action,
     Condition,
-    LogicBox
+    Logic
 }

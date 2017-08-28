@@ -20,6 +20,7 @@
         };
 
         this.points = [];
+        this.path = null;
 
         this.isDirty = false;
 

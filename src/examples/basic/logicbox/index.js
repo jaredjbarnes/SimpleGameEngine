@@ -5,7 +5,7 @@ import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
 import CharacterSystem from "./../../../systems/CharacterSystem";
 import MovementSystem from "./../../../systems/MovementSystem";
-import LogicBoxSystem from "./../../../systems/LogicBoxSystem";
+import LogicSystem from "./../../../systems/LogicSystem";
 import RigidBodySystem from "./../../../systems/RigidBodySystem";
 import ColorStateManagerSystem from "./systems/ColorStateManagerSystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
@@ -32,7 +32,7 @@ var renderSystem = new RenderSystem({
     canvas: document.getElementById("viewport")
 });
 
-var logicBoxSystem = new LogicBoxSystem();
+var logicSystem = new LogicSystem();
 var collisionSystem = new CollisionSystem();
 var characterSystem = new CharacterSystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
@@ -54,7 +54,7 @@ world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
 world.addSystem(colorStateManagerSystem);
-world.addSystem(logicBoxSystem);
+world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
 // ADD ENTITIES

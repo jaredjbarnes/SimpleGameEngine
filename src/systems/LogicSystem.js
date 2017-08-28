@@ -1,6 +1,6 @@
-const DEPENDENCIES = ["logic-box"];
+const DEPENDENCIES = ["logic"];
 
-export default class LogicBoxSystem {
+export default class LogicSystem {
     constructor() {
         this.world = null;
         this.entities = [];
@@ -75,7 +75,7 @@ export default class LogicBoxSystem {
         this.entities.forEach((entity) => {
             var _entity = entity;
 
-            var logicBox = _entity.getComponent("logic-box");
+            var logicBox = _entity.getComponent("logic");
 
             var shouldExecuteAction = logicBox.conditions.every((condition) => {
                 var state = this._getStateComponent(condition.entityId);

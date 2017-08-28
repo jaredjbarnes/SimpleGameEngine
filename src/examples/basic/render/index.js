@@ -5,7 +5,6 @@ import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
 import MovementSystem from "./../../../systems/MovementSystem";
 import Text from "./entities/Text";
-import TextSizeAdjustmentSystem from "./../../../systems/TextSizeAdjustmentSystem";
 import StaticText from "./entities/StaticText";
 import Camera from "./../../../entities/Camera";
 
@@ -32,7 +31,6 @@ world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movementSystem);
 world.addSystem(renderSystem);
-world.addSystem(textSizeAdjustmentSystem);
 
 // ADD ENTITIES
 world.addEntity(text);

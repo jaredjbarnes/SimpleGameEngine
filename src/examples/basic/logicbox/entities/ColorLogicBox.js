@@ -1,11 +1,11 @@
 import Entity from "./../../../../Entity";
-import { LogicBox, Condition, Action } from "./../../../../components/LogicBox";
+import { Logic, Condition, Action } from "./../../../../components/Logic";
 
 export default class ColorLogicBox extends Entity {
     constructor(entityIdA, entityIdB, targetEntityId) {
         super();
 
-        var logicBox = new LogicBox();
+        var logicBox = new Logic();
         var entityACondition = new Condition();
         var entityBCondition = new Condition();
         var action = new Action();

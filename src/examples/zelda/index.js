@@ -7,7 +7,6 @@ import CharacterSystem from "./../../systems/CharacterSystem";
 import MovementSystem from "./../../systems/MovementSystem";
 import RigidBodySystem from "./../../systems/RigidBodySystem";
 import FollowEntityCameraSystem from "./../../systems/FollowEntityCameraSystem";
-import TextSizeAdjustmentSystem from "./../../systems/TextSizeAdjustmentSystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
 import Camera from "./../../entities/Camera";
@@ -31,7 +30,6 @@ var keyboardInputSystem = new KeyboardInputSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 var followEntityCameraSystem = new FollowEntityCameraSystem();
-var textSizeAdjustmentSystem = new TextSizeAdjustmentSystem();
 var rigidBodySystem = new RigidBodySystem();
 
 followEntityCameraSystem.camera = camera;
@@ -46,7 +44,6 @@ world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
 world.addSystem(renderSystem);
-//world.addSystem(textSizeAdjustmentSystem);
 
 // ADD ENTITIES
 world.addEntity(text);

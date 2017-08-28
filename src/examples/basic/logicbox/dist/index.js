@@ -263,6 +263,7 @@ class TextTexture {
         };
 
         this.points = [];
+        this.path = null;
 
         this.isDirty = false;
 
@@ -302,7 +303,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(27);
@@ -310,7 +311,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__entities_StaticText__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(40);
 
 
 
@@ -345,7 +346,7 @@ var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem
     canvas: document.getElementById("viewport")
 });
 
-var logicBoxSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__["a" /* default */]();
+var logicSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__["a" /* default */]();
 var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
 var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
@@ -367,7 +368,7 @@ world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
 world.addSystem(colorStateManagerSystem);
-world.addSystem(logicBoxSystem);
+world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
 // ADD ENTITIES
@@ -2414,9 +2415,9 @@ class MovementSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const DEPENDENCIES = ["logic-box"];
+const DEPENDENCIES = ["logic"];
 
-class LogicBoxSystem {
+class LogicSystem {
     constructor() {
         this.world = null;
         this.entities = [];
@@ -2491,7 +2492,7 @@ class LogicBoxSystem {
         this.entities.forEach((entity) => {
             var _entity = entity;
 
-            var logicBox = _entity.getComponent("logic-box");
+            var logicBox = _entity.getComponent("logic");
 
             var shouldExecuteAction = logicBox.conditions.every((condition) => {
                 var state = this._getStateComponent(condition.entityId);
@@ -2510,7 +2511,7 @@ class LogicBoxSystem {
         });
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = LogicBoxSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = LogicSystem;
 
 
 /***/ }),
@@ -3650,7 +3651,7 @@ class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Logic__ = __webpack_require__(38);
 
 
 
@@ -3658,10 +3659,10 @@ class ColorLogicBox extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
     constructor(entityIdA, entityIdB, targetEntityId) {
         super();
 
-        var logicBox = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["c" /* LogicBox */]();
-        var entityACondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
-        var entityBCondition = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["b" /* Condition */]();
-        var action = new __WEBPACK_IMPORTED_MODULE_1__components_LogicBox__["a" /* Action */]();
+        var logicBox = new __WEBPACK_IMPORTED_MODULE_1__components_Logic__["c" /* Logic */]();
+        var entityACondition = new __WEBPACK_IMPORTED_MODULE_1__components_Logic__["b" /* Condition */]();
+        var entityBCondition = new __WEBPACK_IMPORTED_MODULE_1__components_Logic__["b" /* Condition */]();
+        var action = new __WEBPACK_IMPORTED_MODULE_1__components_Logic__["a" /* Action */]();
 
         entityACondition.entityId = entityIdA;
         entityACondition.stateNames.push("blue-state");
@@ -3688,7 +3689,7 @@ class ColorLogicBox extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Action; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Condition; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return LogicBox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return Logic; });
 class Action {
     constructor() {
         this.entityId = null;
@@ -3704,9 +3705,10 @@ class Condition {
     }
 }
 
-class LogicBox {
+class Logic {
     constructor() {
-        this.type = "logic-box";
+        this.type = "logic";
+        this.name = null;
         this.conditions = [];
         this.actions = [];
     }
@@ -3723,9 +3725,7 @@ class LogicBox {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextSizeAdjustment__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Collidable__ = __webpack_require__(3);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
 
 
 
@@ -3740,8 +3740,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         var size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
         var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__["a" /* default */]();
-        var collidable = new __WEBPACK_IMPORTED_MODULE_5__components_Collidable__["a" /* default */]();
-        var textSizedAdjustment = new __WEBPACK_IMPORTED_MODULE_4__components_TextSizeAdjustment__["a" /* default */]();
+        var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
 
         position.isStatic = true;
 
@@ -3755,7 +3754,6 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         this.addComponent(position);
         this.addComponent(textTexture);
         this.addComponent(collidable);
-        this.addComponent(textSizedAdjustment);
     }
 }
 /* unused harmony export default */
@@ -3766,24 +3764,8 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class TextSizeAdjustement {
-    constructor() {
-        this.type = "text-size-adjustment";
-        this.adjustWidth = true;
-        this.adjustHeight = true;
-        this.isAdjusted = false;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TextSizeAdjustement;
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -3815,7 +3797,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

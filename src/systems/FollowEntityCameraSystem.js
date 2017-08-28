@@ -1,6 +1,6 @@
 ﻿
 export default class FollowEntityCameraSystem {
-constructor() {
+    constructor() {
         this._camera = null;
         this._cameraSize = null;
         this._cameraPosition = null;
@@ -54,6 +54,7 @@ constructor() {
 
             this._cameraPosition.x = x;
             this._cameraPosition.y = y;
+            this._cameraPosition.isDirty = true;
         }
     }
 

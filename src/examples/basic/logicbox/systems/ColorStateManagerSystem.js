@@ -12,8 +12,9 @@ export default class ColorStateManager extends StateManagerSystem {
         super.activated(world);
 
         var isCharacterOn = (collidable) => {
+            var _collidable = collidable;
             var matches = [];
-            collidable.activeCollisions.forEach((collision) => {
+            _collidable.activeCollisions.forEach((collision) => {
                 var _collision = collision;
                 var entity = world.getEntityById(_collision.entityId);
 

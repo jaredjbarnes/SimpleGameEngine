@@ -15,16 +15,14 @@ import ColorLogicBox from "./entities/ColorLogicBox";
 import StaticText from "./entities/StaticText";
 import Camera from "./../../../entities/Camera";
 
+var getRandomNumber = (max) => {
+    return parseInt(Math.random() * max, 10);
+}
+
 var world = new World();
-world.size.height = 2000;
-world.size.width = 2000;
+world.size.height = 20000;
+world.size.width = 20000;
 
-// ENTITIES
-var colorPlatform = new ColorPlatform(0, 0);
-var colorPlatform2 = new ColorPlatform(150, 0);
-var colorPlatform3 = new ColorPlatform(75, 150);
-
-var colorLogicBox = new ColorLogicBox(colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
 var text = new Text("Hello World!");
 var camera = new Camera("main");
 
@@ -57,11 +55,25 @@ world.addSystem(colorStateManagerSystem);
 world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
-// ADD ENTITIES
-world.addEntity(colorPlatform);
-world.addEntity(colorPlatform2);
-world.addEntity(colorPlatform3);
-world.addEntity(colorLogicBox);
+
+for (let z = 0; z < 1000; z++) {
+    let x = getRandomNumber(10000);
+    let y = getRandomNumber(10000);
+
+    // ENTITIES
+    let colorPlatform = new ColorPlatform(x, y);
+    let colorPlatform2 = new ColorPlatform(x + 150, y);
+    let colorPlatform3 = new ColorPlatform(x + 75, y + 150);
+
+    let colorLogicBox = new ColorLogicBox(colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
+
+    // ADD ENTITIES
+    world.addEntity(colorPlatform);
+    world.addEntity(colorPlatform2);
+    world.addEntity(colorPlatform3);
+    world.addEntity(colorLogicBox);
+}
+
 world.addEntity(text);
 world.addEntity(camera);
 
@@ -70,4 +82,3 @@ renderSystem.setCameraByName("main");
 world.play();
 
 window.world = world;
-window.colorPlatform = colorPlatform;

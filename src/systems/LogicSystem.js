@@ -14,7 +14,8 @@ export default class LogicSystem {
     }
 
     _getStateComponent(entityId) {
-        var entity = this.world.getEntityById(entityId);
+        var _entityId = entityId;
+        var entity = this.world.getEntityById(_entityId);
 
         if (entity == null) {
             throw new Error(`Couldn't find entity with id: ${entityId}`);
@@ -78,17 +79,19 @@ export default class LogicSystem {
             var logicBox = _entity.getComponent("logic");
 
             var shouldExecuteAction = logicBox.conditions.every((condition) => {
-                var state = this._getStateComponent(condition.entityId);
+                var _condition = condition;
+                var state = this._getStateComponent(_condition.entityId);
 
-                return condition.stateNames.indexOf(state.name) > -1;
+                return _condition.stateNames.indexOf(state.name) > -1;
             });
 
             if (shouldExecuteAction) {
                 logicBox.actions.forEach((action) => {
-                    var state = this._getStateComponent(action.entityId);
+                    var _action = action;
+                    var state = this._getStateComponent(_action.entityId);
 
-                    state.name = action.stateName;
-                    state.options = action.options;
+                    state.name = _action.stateName;
+                    state.options = _action.options;
                 });
             }
         });

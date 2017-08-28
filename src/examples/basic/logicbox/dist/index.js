@@ -329,16 +329,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+var getRandomNumber = (max) => {
+    return parseInt(Math.random() * max, 10);
+}
+
 var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
-world.size.height = 2000;
-world.size.width = 2000;
+world.size.height = 20000;
+world.size.width = 20000;
 
-// ENTITIES
-var colorPlatform = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](0, 0);
-var colorPlatform2 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](150, 0);
-var colorPlatform3 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](75, 150);
-
-var colorLogicBox = new __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__["a" /* default */](colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
 var text = new __WEBPACK_IMPORTED_MODULE_11__entities_Text__["a" /* default */]("Hello World!");
 var camera = new __WEBPACK_IMPORTED_MODULE_15__entities_Camera__["a" /* default */]("main");
 
@@ -371,11 +369,25 @@ world.addSystem(colorStateManagerSystem);
 world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
-// ADD ENTITIES
-world.addEntity(colorPlatform);
-world.addEntity(colorPlatform2);
-world.addEntity(colorPlatform3);
-world.addEntity(colorLogicBox);
+
+for (let z = 0; z < 1000; z++) {
+    let x = getRandomNumber(10000);
+    let y = getRandomNumber(10000);
+
+    // ENTITIES
+    let colorPlatform = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](x, y);
+    let colorPlatform2 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](x + 150, y);
+    let colorPlatform3 = new __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__["a" /* default */](x + 75, y + 150);
+
+    let colorLogicBox = new __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__["a" /* default */](colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
+
+    // ADD ENTITIES
+    world.addEntity(colorPlatform);
+    world.addEntity(colorPlatform2);
+    world.addEntity(colorPlatform3);
+    world.addEntity(colorLogicBox);
+}
+
 world.addEntity(text);
 world.addEntity(camera);
 
@@ -384,7 +396,6 @@ renderSystem.setCameraByName("main");
 world.play();
 
 window.world = world;
-window.colorPlatform = colorPlatform;
 
 /***/ }),
 /* 8 */
@@ -1895,7 +1906,7 @@ class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty || _entity.size.isDirty || !_entity.position.isStatic) {
+            if (_entity.position.isDirty || _entity.size.isDirty) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -1939,10 +1950,11 @@ class CollisionSystem {
             var _entity = entity;
             var collisions = _entity.collidable.activeCollisions;
 
-            Array.from(collisions.entries()).forEach(function (entry) {
-                var _entry = entry;
-                var key = _entry[0];
-                var collision = _entry[1];
+            var iterator = collisions.entries();
+
+            for (let entry of iterator) {
+                var key = entry[0];
+                var collision = entry[1];
 
                 if (collision.timestamp !== currentTimestamp) {
 
@@ -1954,7 +1966,7 @@ class CollisionSystem {
                         collisions.delete(key);
                     }
                 }
-            });
+            }
 
         });
     }
@@ -2431,7 +2443,8 @@ class LogicSystem {
     }
 
     _getStateComponent(entityId) {
-        var entity = this.world.getEntityById(entityId);
+        var _entityId = entityId;
+        var entity = this.world.getEntityById(_entityId);
 
         if (entity == null) {
             throw new Error(`Couldn't find entity with id: ${entityId}`);
@@ -2495,17 +2508,19 @@ class LogicSystem {
             var logicBox = _entity.getComponent("logic");
 
             var shouldExecuteAction = logicBox.conditions.every((condition) => {
-                var state = this._getStateComponent(condition.entityId);
+                var _condition = condition;
+                var state = this._getStateComponent(_condition.entityId);
 
-                return condition.stateNames.indexOf(state.name) > -1;
+                return _condition.stateNames.indexOf(state.name) > -1;
             });
 
             if (shouldExecuteAction) {
                 logicBox.actions.forEach((action) => {
-                    var state = this._getStateComponent(action.entityId);
+                    var _action = action;
+                    var state = this._getStateComponent(_action.entityId);
 
-                    state.name = action.stateName;
-                    state.options = action.options;
+                    state.name = _action.stateName;
+                    state.options = _action.options;
                 });
             }
         });
@@ -3098,8 +3113,9 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
         super.activated(world);
 
         var isCharacterOn = (collidable) => {
+            var _collidable = collidable;
             var matches = [];
-            collidable.activeCollisions.forEach((collision) => {
+            _collidable.activeCollisions.forEach((collision) => {
                 var _collision = collision;
                 var entity = world.getEntityById(_collision.entityId);
 
@@ -3289,7 +3305,7 @@ class StateManagerSystem {
 "use strict";
 ﻿
 class FollowEntityCameraSystem {
-constructor() {
+    constructor() {
         this._camera = null;
         this._cameraSize = null;
         this._cameraPosition = null;
@@ -3343,6 +3359,7 @@ constructor() {
 
             this._cameraPosition.x = x;
             this._cameraPosition.y = y;
+            this._cameraPosition.isDirty = true;
         }
     }
 

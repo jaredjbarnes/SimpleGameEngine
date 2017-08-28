@@ -1819,7 +1819,7 @@ class CollisionSystem {
 
         this._entities.forEach((entity) => {
             var _entity = entity;
-            if (_entity.position.isDirty || _entity.size.isDirty || !_entity.position.isStatic) {
+            if (_entity.position.isDirty || _entity.size.isDirty) {
 
                 var regions = this.getRegions(_entity);
                 var lastRegions = this._lastRegions.get(_entity.id);
@@ -1863,10 +1863,11 @@ class CollisionSystem {
             var _entity = entity;
             var collisions = _entity.collidable.activeCollisions;
 
-            Array.from(collisions.entries()).forEach(function (entry) {
-                var _entry = entry;
-                var key = _entry[0];
-                var collision = _entry[1];
+            var iterator = collisions.entries();
+
+            for (let entry of iterator) {
+                var key = entry[0];
+                var collision = entry[1];
 
                 if (collision.timestamp !== currentTimestamp) {
 
@@ -1878,7 +1879,7 @@ class CollisionSystem {
                         collisions.delete(key);
                     }
                 }
-            });
+            }
 
         });
     }

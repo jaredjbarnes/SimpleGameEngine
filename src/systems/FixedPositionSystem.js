@@ -1,3 +1,5 @@
+// INCOMPLETE
+
 const DEPENDENCIES = ["position", "fixed-position"];
 
 export default class FixedPositionSystem {

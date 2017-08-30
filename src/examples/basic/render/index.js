@@ -21,7 +21,6 @@ var renderSystem = new RenderSystem({
 
 var collisionSystem = new CollisionSystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
-var textSizeAdjustmentSystem = new TextSizeAdjustmentSystem();
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 

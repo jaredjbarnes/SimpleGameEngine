@@ -1,7 +1,7 @@
 export default class StateOption {
     constructor() {
         this.name = null;
-        this.options = null;
+        this.type = null;
         this.description = null;
     }
 }

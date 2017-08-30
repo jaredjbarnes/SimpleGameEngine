@@ -16,4 +16,13 @@ const render = {
     }
 }
 
-module.exports = [logicBox, render];
+const sprite = {
+    entry: "./src/examples/basic/sprites/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/sprites/dist')
+    }
+}
+
+
+module.exports = [logicBox, render, sprite];

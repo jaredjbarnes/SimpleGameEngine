@@ -6,8 +6,8 @@ import ControllerSystem from "./../../../systems/ControllerSystem";
 import CharacterSystem from "./../../../systems/CharacterSystem";
 import MovementSystem from "./../../../systems/MovementSystem";
 import LogicSystem from "./../../../systems/LogicSystem";
+import SpriteSystem from "./../../../systems/SpriteSystem";
 import RigidBodySystem from "./../../../systems/RigidBodySystem";
-import ColorStateManagerSystem from "./systems/ColorStateManagerSystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
 import Sprite from "./entities/Sprite";
 import Camera from "./../../../entities/Camera";
@@ -17,14 +17,14 @@ var getRandomNumber = (max) => {
 }
 
 var world = new World();
-world.size.height = 20000;
-world.size.width = 20000;
+world.size.height = 2000;
+world.size.width = 2000;
 
-var sprite = new Sprite();
 var camera = new Camera("main");
 
 var renderSystem = new RenderSystem({
-    canvas: document.getElementById("viewport")
+    canvas: document.getElementById("viewport"),
+    assetRoot: "/src/examples/basic/sprites"
 });
 
 var logicSystem = new LogicSystem();
@@ -35,10 +35,9 @@ var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 var followEntityCameraSystem = new FollowEntityCameraSystem();
 var rigidBodySystem = new RigidBodySystem();
-var colorStateManagerSystem = new ColorStateManagerSystem();
+var spriteSystem = new SpriteSystem();
 
 followEntityCameraSystem.camera = camera;
-followEntityCameraSystem.setEntityToFollow(text);
 
 // ADD SYSTEMS
 world.addSystem(keyboardInputSystem);
@@ -48,31 +47,20 @@ world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
-world.addSystem(colorStateManagerSystem);
 world.addSystem(logicSystem);
+world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
-
-for (let z = 0; z < 2000; z++) {
-    let x = getRandomNumber(20000);
-    let y = getRandomNumber(20000);
-
-    // ENTITIES
-    let colorPlatform = new ColorPlatform(x, y);
-    let colorPlatform2 = new ColorPlatform(x + 150, y);
-    let colorPlatform3 = new ColorPlatform(x + 75, y + 150);
-
-    let colorLogicBox = new ColorLogicBox(colorPlatform.id, colorPlatform2.id, colorPlatform3.id);
-
-    // ADD ENTITIES
-    world.addEntity(colorPlatform);
-    world.addEntity(colorPlatform2);
-    world.addEntity(colorPlatform3);
-    world.addEntity(colorLogicBox);
-}
-
-world.addEntity(text);
 world.addEntity(camera);
+
+for (let x = 0; x < 1000; x++) {
+
+    let sprite = new Sprite();
+    sprite.getComponent("position").x = getRandomNumber(2000);
+    sprite.getComponent("position").y = getRandomNumber(2000);
+
+    world.addEntity(sprite);
+}
 
 renderSystem.setCameraByName("main");
 

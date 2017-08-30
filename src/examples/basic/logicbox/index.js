@@ -57,8 +57,8 @@ world.addSystem(renderSystem);
 
 
 for (let z = 0; z < 2000; z++) {
-    let x = getRandomNumber(10000);
-    let y = getRandomNumber(10000);
+    let x = getRandomNumber(20000);
+    let y = getRandomNumber(20000);
 
     // ENTITIES
     let colorPlatform = new ColorPlatform(x, y);

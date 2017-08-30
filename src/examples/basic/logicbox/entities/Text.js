@@ -51,9 +51,9 @@ export default class Text extends Entity {
         shape.fillColor.red = 100;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 0.9, y: 0 },
-            { x: 0.9, y: 0.9 },
-            { x: 0, y: 0.9 },
+            { x: 1, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0, y: 1 },
             { x: 0, y: 0 }
         );
 

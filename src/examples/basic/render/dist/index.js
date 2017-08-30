@@ -345,6 +345,8 @@ world.play();
 
         this.isRunning = false;
         this.size = size;
+        this._loop = this._loop.bind(this);
+
 
     }
 
@@ -356,11 +358,8 @@ world.play();
     }
 
     _loop() {
-        var self = this;
         this.update();
-        this._animationFrame = requestAnimationFrame(function () {
-            self._loop();
-        });
+        this._animationFrame = requestAnimationFrame(this._loop);
     }
 
     notifySystems(methodName, args) {
@@ -405,7 +404,7 @@ world.play();
             systems.splice(index, 1);
             this._invokeMethod(system, "deactivated", [this]);
             this._invokeMethod(system, "systemRemoved", [system]);
-            
+
         }
     }
 
@@ -545,6 +544,7 @@ class RenderSystem {
         this._entitiesToBeRedrawn = [];
         this._tempEntitiesToBeRedrawn = []
         this._sort = sort || null;
+        this._drawDynamicCollision = this._drawDynamicCollision.bind(this);
 
         var defaultSort = this._defaultSort = function (entityA, entityB) {
             var value = 0;
@@ -583,6 +583,14 @@ class RenderSystem {
 
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
+    }
+
+    _drawDynamicCollision(collision) {
+        var _collision = collision;
+        var entity = this._world.getEntityById(_collision.entityId);
+        if (this.isDynamicEntity(entity)) {
+            this.drawEntityOnCamera(entity, this.canvas);
+        }
     }
 
     _invokeMethod(obj, methodName, args) {
@@ -720,12 +728,7 @@ class RenderSystem {
 
         }
 
-        activeCollisions.forEach((collision) => {
-            var entity = world.getEntityById(collision.entityId);
-            if (this.isDynamicEntity(entity)) {
-                this.drawEntityOnCamera(entity, canvas);
-            }
-        });
+        activeCollisions.forEach(this._drawDynamicCollision);
 
     }
 

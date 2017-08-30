@@ -28,6 +28,8 @@
 
         this.isRunning = false;
         this.size = size;
+        this._loop = this._loop.bind(this);
+
 
     }
 
@@ -39,11 +41,8 @@
     }
 
     _loop() {
-        var self = this;
         this.update();
-        this._animationFrame = requestAnimationFrame(function () {
-            self._loop();
-        });
+        this._animationFrame = requestAnimationFrame(this._loop);
     }
 
     notifySystems(methodName, args) {
@@ -88,7 +87,7 @@
             systems.splice(index, 1);
             this._invokeMethod(system, "deactivated", [this]);
             this._invokeMethod(system, "systemRemoved", [system]);
-            
+
         }
     }
 

@@ -18,6 +18,7 @@ export default class RenderSystem {
         this._entitiesToBeRedrawn = [];
         this._tempEntitiesToBeRedrawn = []
         this._sort = sort || null;
+        this._drawDynamicCollision = this._drawDynamicCollision.bind(this);
 
         var defaultSort = this._defaultSort = function (entityA, entityB) {
             var value = 0;
@@ -56,6 +57,14 @@ export default class RenderSystem {
 
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
+    }
+
+    _drawDynamicCollision(collision) {
+        var _collision = collision;
+        var entity = this._world.getEntityById(_collision.entityId);
+        if (this.isDynamicEntity(entity)) {
+            this.drawEntityOnCamera(entity, this.canvas);
+        }
     }
 
     _invokeMethod(obj, methodName, args) {
@@ -193,12 +202,7 @@ export default class RenderSystem {
 
         }
 
-        activeCollisions.forEach((collision) => {
-            var entity = world.getEntityById(collision.entityId);
-            if (this.isDynamicEntity(entity)) {
-                this.drawEntityOnCamera(entity, canvas);
-            }
-        });
+        activeCollisions.forEach(this._drawDynamicCollision);
 
     }
 

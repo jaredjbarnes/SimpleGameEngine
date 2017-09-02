@@ -33,13 +33,32 @@ export default class FollowerSystem {
     _getFollowersDesiredPosition(leader, follower) {
         var _leader = leader;
         var _follower = follower;
-        var distance = _follower.getComponent("follower").distance;
+        var followerComponent = _follower.getComponent("follower");
+        var distance = followerComponent.distance;
+        var followersSize = _follower.getComponent("size");
+        var leadersPosition = _leader.getComponent("position");
+        var leadersSize = _leader.getComponent("size");
+        var leadersCenter = {
+            x: Math.floor(leadersSize.width / 2) + leadersPosition.x - Math.floor(followersSize.width / 2),
+            y: Math.floor(leadersSize.height / 2) + leadersPosition.y - Math.floor(followersSize.height / 2)
+        };
 
         var leadersDirection = leader.getComponent("movable");
         var followerNextPosition = this._getEntitysNextPosition(_follower);
         var direction = Vector.normalize(leadersDirection);
 
-        return Vector.multiply(direction, distance);
+        if (isNaN(direction.x)) {
+            direction.x = followerComponent.lastDirection.x;;
+        }
+
+        if (isNaN(direction.y)) {
+            direction.y = followerComponent.lastDirection.y;
+        }
+
+        followerComponent.lastDirection.x = direction.x;
+        followerComponent.lastDirection.y = direction.y;
+
+        return Vector.add(leadersCenter, Vector.multiply(direction, distance));
     }
 
     _setFollowersNextPosition(leader, follower) {
@@ -51,8 +70,31 @@ export default class FollowerSystem {
         var maxSpeed = follower.getComponent("follower").maxSpeed;
         var movable = follower.getComponent("movable");
 
-        movable.x += parseInt(direction.x * maxSpeed, 10);
-        movable.y += parseInt(direction.y * maxSpeed, 10);
+        if (isNaN(direction.x)) {
+            direction.x = 0;
+        }
+
+        if (isNaN(direction.y)) {
+            direction.y = 0;
+        }
+
+        var moveX = Math.ceil(direction.x * maxSpeed);
+        var moveY = Math.ceil(direction.y * maxSpeed);
+
+        if (Math.abs(distance.x) > maxSpeed) {
+            movable.x += moveX;
+        } else {
+            movable.x += Math.ceil(distance.x);
+        }
+
+        if (Math.abs(distance.y) > maxSpeed) {
+            movable.y += moveY;
+        } else {
+            movable.y += Math.ceil(distance.y);
+        }
+
+
+
     }
 
     _removeEntity(entity) {

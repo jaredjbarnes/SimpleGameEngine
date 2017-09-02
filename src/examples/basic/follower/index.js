@@ -55,7 +55,7 @@ world.addSystem(renderSystem);
 world.addEntity(camera);
 world.addEntity(leader);
 
-for (let x = 0; x < 30; x++) {
+for (let x = 0; x < 200; x++) {
 
     let follower = new Follower(leader.id);
     follower.getComponent("position").x = getRandomNumber(2000);

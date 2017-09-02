@@ -7,5 +7,9 @@ export default class Follower {
             x: 0,
             y: 0
         }
+        this.lastDirection = {
+            x: 1,
+            y: 1
+        };
     }
 }

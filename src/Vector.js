@@ -87,20 +87,15 @@ export default class Vector {
     static normalize(vector, optionalVector) {
         optionalVector = optionalVector || {};
 
-        if (vector.x === 0 && vector.y === 0) {
+        var magnitude = Vector.magnitude(vector);
+
+        if (magnitude === 0) {
             optionalVector.x = 0;
             optionalVector.y = 0;
-        } else {
-            var magnitude = Vector.magnitude(vector);
-
-            if (magnitude === 0) {
-                optionalVector.x = 0;
-                optionalVector.y = 0;
-            }
-
-            optionalVector.x = vector.x / magnitude;
-            optionalVector.y = vector.y / magnitude;
         }
+
+        optionalVector.x = vector.x / magnitude;
+        optionalVector.y = vector.y / magnitude;
 
         return optionalVector;
     }

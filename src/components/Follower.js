@@ -1,7 +1,7 @@
 export default class Follower {
     constructor() {
         this.type = "follower";
-        this.followEntityId = null;
+        this.leaderEntityId = null;
         this.maxSpeed = 2;
         this.distance = {
             x: 0,

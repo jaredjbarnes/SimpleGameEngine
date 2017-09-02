@@ -15,10 +15,10 @@ export default class FollowerSystem {
         }
     }
 
-    _getEntitiesNextPosition(entity) {
+    _getEntitysNextPosition(entity) {
         var _entity = entity;
         var movable = _entity.getComponent("movable");
-        var position = _enitty.getComponent("position");
+        var position = _entity.getComponent("position");
 
         if (movable == null || position == null) {
             throw new Error("Entity needs to have both movable and position components.");
@@ -30,23 +30,30 @@ export default class FollowerSystem {
         };
     }
 
-    _getFollowerEntitysDesiredPosition(followedPosition, followedDirection, distance){
-        
+    _getFollowersDesiredPosition(leader, follower) {
+        var _leader = leader;
+        var _follower = follower;
+        var distance = _follower.getComponent("follower").distance;
+
+        var leadersDirection = leader.getComponent("movable");
+        var followerNextPosition = this._getEntitysNextPosition(_follower);
+        var direction = Vector.normalize(leadersDirection);
+
+        return Vector.multiply(direction, distance);
     }
 
-    _getFollowingEntitysNextPosition(followed, follower) {
-        var _followed;
-        var _follower;
+    _setFollowersNextPosition(leader, follower) {
+        var desiredPosition = this._getFollowersDesiredPosition(leader, follower);
+        var currentPosition = this._getEntitysNextPosition(follower);
 
-        var followedNextPosition = this._getEntitiesNextPosition(_followed);
-        var followerNextPosition = this._getEntitiesNextPosition(_follower);
+        var distance = Vector.subtract(desiredPosition, currentPosition);
+        var direction = Vector.normalize(distance);
+        var maxSpeed = follower.getComponent("follower").maxSpeed;
+        var movable = follower.getComponent("movable");
 
-        var followerComponent = _follower.getComponent("follower");
-        var distanceToGo = {
-            x: followedNextPosition.x - followerNextPosition.x,
-            y: followedNextPosition.y - followerNextPosition.y
-        }
-    };
+        movable.x += parseInt(direction.x * maxSpeed, 10);
+        movable.y += parseInt(direction.y * maxSpeed, 10);
+    }
 
     _removeEntity(entity) {
         var index = this.entities.indexOf(entity);
@@ -64,7 +71,8 @@ export default class FollowerSystem {
     }
 
     deactivated() {
-
+        this.world = null;
+        this.entities = [];
     }
 
     componentAdded(entity, component) {
@@ -92,12 +100,13 @@ export default class FollowerSystem {
     }
 
     update() {
-        this.entities.forEach((entity) => {
-            var _entity = entity;
+        this.entities.forEach((follower) => {
+            var _follower = follower;
 
-            var follower = _entity.getComponent("follower");
+            var followerComponent = _follower.getComponent("follower");
+            var leader = this.world.getEntityById(followerComponent.leaderEntityId);
 
-
+            this._setFollowersNextPosition(leader, _follower);
         });
     }
 }

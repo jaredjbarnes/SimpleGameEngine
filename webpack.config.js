@@ -24,5 +24,13 @@ const sprite = {
     }
 }
 
+const follower = {
+    entry: "./src/examples/basic/follower/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/follower/dist')
+    }
+}
 
-module.exports = [logicBox, render, sprite];
+
+module.exports = [logicBox, render, sprite, follower];

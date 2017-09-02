@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(27);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -157,35 +157,6 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class ImageTexture {
-    constructor() {
-        this.type = "image-texture";
-        this.path = null;
-        this.position = {
-            x: 0,
-            y: 0
-        };
-        this.size = {
-            width: 0,
-            height: 0
-        };
-        this.padding = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        };
-        this.isDirty = true;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageTexture;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 ﻿class Position {
     constructor() {
         this.type = "position";
@@ -199,7 +170,7 @@ class Entity {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -215,7 +186,7 @@ class Entity {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -231,24 +202,192 @@ class Entity {
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Vector {
+    static add(vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x + vectorB.x;
+        optionalVector.y = vectorA.y + vectorB.y;
+
+        return optionalVector;
+    }
+
+    static subtract(vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x - vectorB.x;
+        optionalVector.y = vectorA.y - vectorB.y;
+
+        return optionalVector;
+    }
+
+    static multiply(vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x * vectorB.x;
+        optionalVector.y = vectorA.y * vectorB.y;
+
+        return optionalVector;
+    }
+
+    static divide(vectorA, vectorB, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = vectorA.x / vectorB.x;
+        optionalVector.y = vectorA.y / vectorB.y;
+
+        return optionalVector;
+    }
+
+    static scale(vector, scale, optionalVector) {
+        optionalVector = optionalVector || {};
+        optionalVector.x = scale * vector.x;
+        optionalVector.y = scale * vector.y;
+
+        return optionalVector;
+    }
+
+    static project(vectorA, vectorB, optionalVector) {
+        var scale;
+
+        var firstDot = Vector.dot(vectorA, vectorB);
+        var secondDot = Vector.dot(vectorB, vectorB);
+
+        if (!firstDot || !secondDot) {
+            scale = 0;
+        } else {
+            scale = firstDot / secondDot;
+        }
+
+        return Vector.scale(vectorB, scale, optionalVector);
+    }
+
+    static getLeftNormal(vector, optionalVector) {
+        optionalVector = optionalVector || {};
+
+        optionalVector.x = -vector.y;
+        optionalVector.y = vector.x;
+
+        return optionalVector;
+    }
+
+    static getRightNormal(vector, optionalVector) {
+        optionalVector = optionalVector || {};
+
+        optionalVector.x = vector.y;
+        optionalVector.y = -vector.x;
+
+        return optionalVector;
+    }
+
+    static magnitude(vector) {
+        return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
+    }
+
+    static dot(vectorA, vectorB) {
+        return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
+    }
+
+    static negate(vector) {
+        return { x: -vector.x, y: -vector.y };
+    }
+
+    static normalize(vector, optionalVector) {
+        optionalVector = optionalVector || {};
+
+        if (vector.x === 0 && vector.y === 0) {
+            optionalVector.x = 0;
+            optionalVector.y = 0;
+        } else {
+            var magnitude = Vector.magnitude(vector);
+
+            if (magnitude === 0) {
+                optionalVector.x = 0;
+                optionalVector.y = 0;
+            }
+
+            optionalVector.x = vector.x / magnitude;
+            optionalVector.y = vector.y / magnitude;
+        }
+
+        return optionalVector;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class Movable {
+    constructor() {
+        this.type = "movable";
+        this.x = 0;
+        this.y = 0;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Movable;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class Shape {
+    constructor() {
+        this.type = "shape";
+
+        this.fillColor = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        };
+
+        this.border = {
+            thickness: 0,
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
+        this.points = [];
+        this.path = null;
+
+        this.isDirty = false;
+
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_RigidBodySystem__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Sprite__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_Camera__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_FollowerSystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_RigidBodySystem__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Follower__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_Leader__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_Camera__ = __webpack_require__(30);
+
 
 
 
@@ -271,11 +410,11 @@ var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
 world.size.height = 2000;
 world.size.width = 2000;
 
-var camera = new __WEBPACK_IMPORTED_MODULE_12__entities_Camera__["a" /* default */]("main");
+var camera = new __WEBPACK_IMPORTED_MODULE_13__entities_Camera__["a" /* default */]("main");
+var leader = new __WEBPACK_IMPORTED_MODULE_12__entities_Leader__["a" /* default */]();
 
 var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
-    canvas: document.getElementById("viewport"),
-    assetRoot: "/src/examples/basic/sprites"
+    canvas: document.getElementById("viewport")
 });
 
 var logicSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__["a" /* default */]();
@@ -284,9 +423,9 @@ var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
+var followerSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_FollowerSystem__["a" /* default */]();
 var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__["a" /* default */]();
 var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_9__systems_RigidBodySystem__["a" /* default */]();
-var spriteSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
 
@@ -294,23 +433,24 @@ followEntityCameraSystem.camera = camera;
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
+world.addSystem(followerSystem);
 world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
 world.addSystem(characterSystem);
 world.addSystem(logicSystem);
-world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
 world.addEntity(camera);
+world.addEntity(leader);
 
-for (let x = 0; x < 1000; x++) {
+for (let x = 0; x < 30; x++) {
 
-    let sprite = new __WEBPACK_IMPORTED_MODULE_11__entities_Sprite__["a" /* default */]();
-    sprite.getComponent("position").x = getRandomNumber(2000);
-    sprite.getComponent("position").y = getRandomNumber(2000);
+    let follower = new __WEBPACK_IMPORTED_MODULE_11__entities_Follower__["a" /* default */](leader.id);
+    follower.getComponent("position").x = getRandomNumber(2000);
+    follower.getComponent("position").y = getRandomNumber(2000);
 
-    world.addEntity(sprite);
+    world.addEntity(follower);
 }
 
 renderSystem.setCameraByName("main");
@@ -320,7 +460,7 @@ world.play();
 window.world = world;
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -503,14 +643,14 @@ window.world = world;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(16);
 
 
 
@@ -527,12 +667,12 @@ window.world = world;
 });
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(13);
 ﻿
 
 
@@ -1139,11 +1279,11 @@ class RenderSystem {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(12);
 
 
 const MAX_CELL_SIZE = 1000;
@@ -1217,7 +1357,7 @@ class CompositeCanvas {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1337,7 +1477,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1351,7 +1491,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1482,7 +1622,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1595,7 +1735,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1698,7 +1838,7 @@ class CompositeCanvasCell {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2052,7 +2192,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2118,7 +2258,7 @@ class CollisionSystem {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2202,7 +2342,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2273,7 +2413,7 @@ class CharacterSystem {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2349,7 +2489,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2456,100 +2596,132 @@ class LogicSystem {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const DEPENDENCIES = ["sprite", "image-texture"];
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(4);
 
-class SpriteSystem {
+
+const DEPENDENCIES = ["follower", "position", "size", "movable"];
+
+class FollowerSystem {
     constructor() {
         this.world = null;
-        this.entities = new Map();
+        this.entities = [];
     }
 
-    cacheEntities() {
-        this.world.getEntities().forEach((entity) => {
-            this.entityAdded(entity);
-        });
-    }
-
-    update() {
-
-        this.entities.forEach((entity) => {
-            var sprite = entity.getComponent("sprite");
-            var imageTexture = entity.getComponent("image-texture");
-            var position = entity.getComponent("position");
-
-            var index = Math.floor(sprite.index);
-            var newImageTexture = sprite.imageTextures[index];
-
-            if (newImageTexture == null) {
-                return;
-            }
-
-            Object.keys(newImageTexture).forEach(function (key) {
-                if (key === "type") {
-                    return;
-                }
-                imageTexture[key] = newImageTexture[key];
-            });
-
-            imageTexture.isDirty = true;
-
-            sprite.index += (sprite.timeScale * 1);
-            sprite.index = sprite.index >= sprite.imageTextures.length ? 0 : sprite.index;
-
-        });
-
-
-    }
-
-    entityAdded(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity.id, entity);
+    _addEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index === -1) {
+            this.entities.push(entity);
         }
     }
 
-    entityRemoved(entity) {
-        this.entities.delete(entity.id);
-    }
+    _getEntitysNextPosition(entity) {
+        var _entity = entity;
+        var movable = _entity.getComponent("movable");
+        var position = _entity.getComponent("position");
 
-    componentAdded(entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1) {
-            this.entities.set(entity.id, entity);
+        if (movable == null || position == null) {
+            throw new Error("Entity needs to have both movable and position components.");
         }
+
+        return {
+            x: position.x + movable.x,
+            y: position.y + movable.y
+        };
     }
 
-    componentRemoved(entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1) {
-            this.entities.delete(entity.id);
+    _getFollowersDesiredPosition(leader, follower) {
+        var _leader = leader;
+        var _follower = follower;
+        var distance = _follower.getComponent("follower").distance;
+
+        var leadersDirection = leader.getComponent("movable");
+        var followerNextPosition = this._getEntitysNextPosition(_follower);
+        var direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].normalize(leadersDirection);
+
+        return __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].multiply(direction, distance);
+    }
+
+    _setFollowersNextPosition(leader, follower) {
+        var desiredPosition = this._getFollowersDesiredPosition(leader, follower);
+        var currentPosition = this._getEntitysNextPosition(follower);
+
+        var distance = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(desiredPosition, currentPosition);
+        var direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].normalize(distance);
+        var maxSpeed = follower.getComponent("follower").maxSpeed;
+        var movable = follower.getComponent("movable");
+
+        movable.x += parseInt(direction.x * maxSpeed, 10);
+        movable.y += parseInt(direction.y * maxSpeed, 10);
+    }
+
+    _removeEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index > -1) {
+            this.entities.splice(index, 1);
         }
     }
 
     activated(world) {
         this.world = world;
-        this.cacheEntities();
+        this.world.getEntities().forEach((entity) => {
+            var _entity = entity;
+            this.entityAdded(entity);
+        });
     }
 
     deactivated() {
         this.world = null;
-        this.entities = new Map();
+        this.entities = [];
     }
 
+    componentAdded(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._addEntity(entity);
+        }
+    }
+
+    componentRemove(entity, component) {
+        if (DEPENDENCIES.indexOf(component.type) > -1) {
+            this._removeEntity(entity);
+        }
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._addEntity(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (entity.hasComponents(DEPENDENCIES)) {
+            this._removeEntity(entity);
+        }
+    }
+
+    update() {
+        this.entities.forEach((follower) => {
+            var _follower = follower;
+
+            var followerComponent = _follower.getComponent("follower");
+            var leader = this.world.getEntityById(followerComponent.leaderEntityId);
+
+            this._setFollowersNextPosition(leader, _follower);
+        });
+    }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = SpriteSystem;
-
-
-
+/* harmony export (immutable) */ __webpack_exports__["a"] = FollowerSystem;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(4);
 
 
 const DEPENDENCIES = ["collidable", "rigid-body", "position", "size"];
@@ -3000,122 +3172,7 @@ class RigidBodySystem {
 
 
 /***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Vector {
-    static add(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x + vectorB.x;
-        optionalVector.y = vectorA.y + vectorB.y;
-
-        return optionalVector;
-    }
-
-    static subtract(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x - vectorB.x;
-        optionalVector.y = vectorA.y - vectorB.y;
-
-        return optionalVector;
-    }
-
-    static multiply(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x * vectorB.x;
-        optionalVector.y = vectorA.y * vectorB.y;
-
-        return optionalVector;
-    }
-
-    static divide(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x / vectorB.x;
-        optionalVector.y = vectorA.y / vectorB.y;
-
-        return optionalVector;
-    }
-
-    static scale(vector, scale, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = scale * vector.x;
-        optionalVector.y = scale * vector.y;
-
-        return optionalVector;
-    }
-
-    static project(vectorA, vectorB, optionalVector) {
-        var scale;
-
-        var firstDot = Vector.dot(vectorA, vectorB);
-        var secondDot = Vector.dot(vectorB, vectorB);
-
-        if (!firstDot || !secondDot) {
-            scale = 0;
-        } else {
-            scale = firstDot / secondDot;
-        }
-
-        return Vector.scale(vectorB, scale, optionalVector);
-    }
-
-    static getLeftNormal(vector, optionalVector) {
-        optionalVector = optionalVector || {};
-
-        optionalVector.x = -vector.y;
-        optionalVector.y = vector.x;
-
-        return optionalVector;
-    }
-
-    static getRightNormal(vector, optionalVector) {
-        optionalVector = optionalVector || {};
-
-        optionalVector.x = vector.y;
-        optionalVector.y = -vector.x;
-
-        return optionalVector;
-    }
-
-    static magnitude(vector) {
-        return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
-    }
-
-    static dot(vectorA, vectorB) {
-        return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
-    }
-
-    static negate(vector) {
-        return { x: -vector.x, y: -vector.y };
-    }
-
-    static normalize(vector, optionalVector) {
-        optionalVector = optionalVector || {};
-
-        if (vector.x === 0 && vector.y === 0) {
-            optionalVector.x = 0;
-            optionalVector.y = 0;
-        } else {
-            var magnitude = Vector.magnitude(vector);
-
-            if (magnitude === 0) {
-                optionalVector.x = 0;
-                optionalVector.y = 0;
-            }
-
-            optionalVector.x = vector.x / magnitude;
-            optionalVector.y = vector.y / magnitude;
-        }
-
-        return optionalVector;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
-
-
-/***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3190,16 +3247,18 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Sprite__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Movable__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Shape__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Follower__ = __webpack_require__(28);
+
 
 
 
@@ -3208,40 +3267,45 @@ class FollowEntityCameraSystem {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor() {
+    constructor(leaderEntityId, maxSpeed = 5) {
         super();
 
-        let position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
-        let size = new __WEBPACK_IMPORTED_MODULE_3__components_Size__["a" /* default */]();
-        let sprite = new __WEBPACK_IMPORTED_MODULE_1__components_Sprite__["a" /* default */]();
-        let imageTexture = new __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__["a" /* default */]();
+        let position = new __WEBPACK_IMPORTED_MODULE_1__components_Position__["a" /* default */]();
+        let size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
+        let movable = new __WEBPACK_IMPORTED_MODULE_3__components_Movable__["a" /* default */]();
         let collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        let shape = new __WEBPACK_IMPORTED_MODULE_5__components_Shape__["a" /* default */]();
+        let follower = new __WEBPACK_IMPORTED_MODULE_6__components_Follower__["a" /* default */]();
 
-        size.width = 85;
-        size.height = 85;
+        size.width = 30;
+        size.height = 30;
 
-        for (let x = 0; x < 8; x++) {
-            let frame = new __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__["a" /* default */]();
-            frame.path = "./assets/hero_spritesheet.png";
-            frame.position.x = 80 * x;
-            frame.size.width = 80;
-            frame.size.height = 85;
+        shape.points.push(
+            { x: 0, y: 0 },
+            { x: 30, y: 0 },
+            { x: 30, y: 30 },
+            { x: 0, y: 30 },
+            { x: 0, y: 0 }
+        );
 
-            sprite.imageTextures.push(frame);
-        }
+        shape.fillColor.blue = 255;
 
-        sprite.timeScale = 0.25;
+        follower.leaderEntityId = leaderEntityId;
+        follower.distance.x = -2;
+        follower.distance.y = -2;
+        follower.maxSpeed = maxSpeed;
 
         this.addComponent(position);
         this.addComponent(size);
-        this.addComponent(sprite);
-        this.addComponent(imageTexture);
+        this.addComponent(shape);
+        this.addComponent(movable);
         this.addComponent(collidable);
+        this.addComponent(follower);
     }
 });
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3271,35 +3335,83 @@ function invokeMethod(obj, methodName, args){
 }
 
 /***/ }),
-/* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ImageTexture__ = __webpack_require__(1);
-
-class Sprite {
-    constructor(){
-        this.type = "sprite";
-        this.name = null;
-        this.index = 0;
-        this.timeScale = 1;
-        this.imageTextures = [];
-        this.isDirty = false;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Sprite;
-
-
-/***/ }),
 /* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class Follower {
+    constructor() {
+        this.type = "follower";
+        this.leaderEntityId = null;
+        this.maxSpeed = 2;
+        this.distance = {
+            x: 0,
+            y: 0
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Follower;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Movable__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Shape__ = __webpack_require__(6);
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor() {
+        super();
+
+        let position = new __WEBPACK_IMPORTED_MODULE_1__components_Position__["a" /* default */]();
+        let size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
+        let movable = new __WEBPACK_IMPORTED_MODULE_3__components_Movable__["a" /* default */]();
+        let collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        let shape = new __WEBPACK_IMPORTED_MODULE_5__components_Shape__["a" /* default */]();
+
+        size.width = 85;
+        size.height = 85;
+
+        shape.points.push(
+            {x: 0, y: 0},
+            {x: 85, y: 0},
+            {x: 85, y: 85},
+            {x: 0, y: 85},
+            {x: 0, y: 0}            
+        );
+
+        shape.fillColor.red = 255;
+
+        this.addComponent(position);
+        this.addComponent(size);
+        this.addComponent(shape);
+        this.addComponent(movable);
+        this.addComponent(collidable);
+    }
+});
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
 ﻿
 
 
@@ -3328,7 +3440,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

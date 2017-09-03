@@ -5,7 +5,7 @@ var createGuid = util.createGuid;
 export default class Entity {
     constructor() {
         this._delegate = null;
-        this._components = new Map();
+        this._components = {};
         this.id = createGuid();
         this.type = null;
     }
@@ -30,7 +30,7 @@ export default class Entity {
             throw new Error("Components need to have a type property.");
         }
 
-        components.set(type, component);
+        components[type] = component;
 
         if (delegate != null) {
             this._invokeMethod(delegate, "componentAdded", [this, component]);
@@ -46,9 +46,9 @@ export default class Entity {
             throw new Error("Components need to have a type property.");
         }
 
-        if (components.get(type) === component) {
-            
-            components.delete(component.type);
+        if (components[type] === component) {
+
+            components[component.type] = null;
 
             if (delegate != null) {
                 this._invokeMethod(delegate, "componentRemoved", [this, component]);
@@ -58,21 +58,21 @@ export default class Entity {
     }
 
     getComponent(type) {
-        return this._components.get(type) || null;
+        return this._components[type] || null;
     }
 
     getComponents() {
-        var keys = Array.from(this._components.keys());
+        var keys = Object.keys(this._components);
 
         return keys.map((key) => {
-            return this._components.get(key);
+            return this._components[key];
         });
     }
 
     hasComponents(componentTypes) {
         var components = this._components;
         return componentTypes.every((type) => {
-            return components.has(type);
+            return components[type] != null;
         })
     }
 }

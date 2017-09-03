@@ -39,8 +39,8 @@ export default class FollowerSystem {
         var leadersPosition = _leader.getComponent("position");
         var leadersSize = _leader.getComponent("size");
         var leadersCenter = {
-            x: Math.floor(leadersSize.width / 2) + leadersPosition.x - Math.floor(followersSize.width / 2),
-            y: Math.floor(leadersSize.height / 2) + leadersPosition.y - Math.floor(followersSize.height / 2)
+            x: Math.round(leadersSize.width / 2) + leadersPosition.x - Math.round(followersSize.width / 2),
+            y: Math.round(leadersSize.height / 2) + leadersPosition.y - Math.round(followersSize.height / 2)
         };
 
         var leadersDirection = leader.getComponent("movable");
@@ -78,19 +78,19 @@ export default class FollowerSystem {
             direction.y = 0;
         }
 
-        var moveX = Math.ceil(direction.x * maxSpeed);
-        var moveY = Math.ceil(direction.y * maxSpeed);
+        var moveX = Math.round(direction.x * maxSpeed);
+        var moveY = Math.round(direction.y * maxSpeed);
 
         if (Math.abs(distance.x) > maxSpeed) {
             movable.x += moveX;
         } else {
-            movable.x += Math.ceil(distance.x);
+            movable.x += Math.round(distance.x);
         }
 
         if (Math.abs(distance.y) > maxSpeed) {
             movable.y += moveY;
         } else {
-            movable.y += Math.ceil(distance.y);
+            movable.y += Math.round(distance.y);
         }
 
 

@@ -40,9 +40,9 @@ export default class CollisionSystem {
 
         this._grid = new Array(this._gridWidth);
 
-        for (var x = 0; x < this._gridWidth; x++) {
+        for (let x = 0; x < this._gridWidth; x++) {
             this._grid[x] = new Array(this._gridHeight);
-            for (var y = 0; y < this._gridHeight; y++) {
+            for (let y = 0; y < this._gridHeight; y++) {
                 this._grid[x][y] = [];
             }
         }
@@ -53,10 +53,10 @@ export default class CollisionSystem {
             return;
         }
 
-        var grid = this._grid;
+        let grid = this._grid;
         regions.forEach((region) => {
-            var bucket = grid[region[0]][region[1]];
-            var index = -1;
+            let bucket = grid[region[0]][region[1]];
+            let index = -1;
 
             bucket.some((broadPhaseEntity, x) => {
                 if (broadPhaseEntity.id == entity.id) {
@@ -74,7 +74,7 @@ export default class CollisionSystem {
     }
 
     activated(world) {
-        var self = this;
+        let self = this;
         this._world = world;
 
         this._createGrid();
@@ -90,7 +90,7 @@ export default class CollisionSystem {
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            var broadPhaseEntity = new BroadPhaseEntity(entity);
+            let broadPhaseEntity = new BroadPhaseEntity(entity);
             broadPhaseEntity.position.isDirty = true;
 
             this._entities.set(entity.id, broadPhaseEntity);
@@ -98,8 +98,8 @@ export default class CollisionSystem {
     }
 
     entityRemoved(entity) {
-        var broadPhaseEntity = this._entities.get(entity.id);
-        var grid = this._grid;
+        let broadPhaseEntity = this._entities.get(entity.id);
+        let grid = this._grid;
 
         if (broadPhaseEntity != null) {
 
@@ -122,16 +122,16 @@ export default class CollisionSystem {
     update() {
         this._currentTimestamp = this._world.getTime();
 
-        var dirtyRegions = {};
-        var entities = [];
-        var grid = this._grid;
+        let dirtyRegions = {};
+        let entities = [];
+        let grid = this._grid;
 
         this._entities.forEach((entity) => {
-            var _entity = entity;
+            let _entity = entity;
             if (_entity.position.isDirty || _entity.size.isDirty) {
 
-                var regions = this.getRegions(_entity);
-                var lastRegions = this._lastRegions.get(_entity.id);
+                let regions = this.getRegions(_entity);
+                let lastRegions = this._lastRegions.get(_entity.id);
 
                 this._removeLastRegionsFromGrid(_entity, lastRegions);
 
@@ -146,10 +146,10 @@ export default class CollisionSystem {
         });
 
         Object.keys(dirtyRegions).forEach((key) => {
-            var _key = key;
-            var region = _key.split("|");
-            var entities = grid[region[0]][region[1]];
-            var pairs = this.queryForCollisions(entities);
+            let _key = key;
+            let region = _key.split("|");
+            let entities = grid[region[0]][region[1]];
+            let pairs = this.queryForCollisions(entities);
 
             this.assignTimestamps(pairs);
             this.cleanCollisions(entities);
@@ -164,19 +164,16 @@ export default class CollisionSystem {
     }
 
     cleanCollisions(entities) {
-        var currentTimestamp = this._currentTimestamp;
+        let currentTimestamp = this._currentTimestamp;
         // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
-        var _entities = entities;
+        let _entities = entities;
 
         _entities.forEach((entity) => {
-            var _entity = entity;
-            var collisions = _entity.collidable.activeCollisions;
+            let _entity = entity;
+            let collisions = _entity.collidable.activeCollisions;
 
-            var iterator = collisions.entries();
-
-            for (let entry of iterator) {
-                var key = entry[0];
-                var collision = entry[1];
+            for (let key in collisions) {
+                let collision = collisions[key];
 
                 if (collision.timestamp !== currentTimestamp) {
 
@@ -185,7 +182,7 @@ export default class CollisionSystem {
 
                     // Allow for some time to pass, before removing, because its likely they'll hit again.
                     if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
-                        collisions.delete(key);
+                        delete collisions[key];
                     }
                 }
             }
@@ -194,20 +191,20 @@ export default class CollisionSystem {
     }
 
     assignTimestamps(pairs) {
-        var currentTimestamp = this._currentTimestamp;
+        let currentTimestamp = this._currentTimestamp;
 
         // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
-        var _pairs = pairs;
+        let _pairs = pairs;
 
         _pairs.forEach(function (pair, index) {
-            var _pair = pair;
-            var _index = index;
-            var entityA = _pair[0];
-            var entityB = _pair[1];
-            var collidableA = entityA.collidable;
-            var collidableB = entityB.collidable;
-            var collisionDataA = collidableA.activeCollisions.get(entityB.id);
-            var collisionDataB = collidableB.activeCollisions.get(entityA.id);
+            let _pair = pair;
+            let _index = index;
+            let entityA = _pair[0];
+            let entityB = _pair[1];
+            let collidableA = entityA.collidable;
+            let collidableB = entityB.collidable;
+            let collisionDataA = collidableA.activeCollisions[entityB.id];
+            let collisionDataB = collidableB.activeCollisions[entityA.id];
 
             if (collisionDataA == null) {
 
@@ -221,7 +218,7 @@ export default class CollisionSystem {
                     collisionDataA.isStatic = true;
                 }
 
-                collidableA.activeCollisions.set(entityB.id, collisionDataA);
+                collidableA.activeCollisions[entityB.id] = collisionDataA;
             } else {
                 collisionDataA.timestamp = currentTimestamp;
                 collisionDataA.endTimestamp = null;
@@ -238,7 +235,7 @@ export default class CollisionSystem {
                     collisionDataB.isStatic = true;
                 }
 
-                collidableB.activeCollisions.set(entityA.id, collisionDataB)
+                collidableB.activeCollisions[entityA.id] = collisionDataB;
 
             } else {
                 collisionDataB.timestamp = currentTimestamp;
@@ -249,26 +246,26 @@ export default class CollisionSystem {
     }
 
     queryForCollisions(entities) {
-        var pairs = [];
-        var _entities = entities;
-        var entityA = _entities[0];
-        var entityB;
-        var collidableA;
-        var collidableB;
-        var positionA;
-        var sizeA;
-        var positionB;
-        var sizeB;
-        var top;
-        var right;
-        var bottom;
-        var left;
-        var length = _entities.length;
+        let pairs = [];
+        let _entities = entities;
+        let entityA = _entities[0];
+        let entityB;
+        let collidableA;
+        let collidableB;
+        let positionA;
+        let sizeA;
+        let positionB;
+        let sizeB;
+        let top;
+        let right;
+        let bottom;
+        let left;
+        let length = _entities.length;
 
-        for (var index = 0; index < length; index++) {
+        for (let index = 0; index < length; index++) {
             entityA = _entities[index];
 
-            for (var x = index + 1; x < length; x++) {
+            for (let x = index + 1; x < length; x++) {
                 entityB = _entities[x];
 
                 collidableA = entityA.collidable;
@@ -301,17 +298,17 @@ export default class CollisionSystem {
     }
 
     getRegions(entity) {
-        var _entity = entity;
-        var indexes = [];
-        var gridWidth = Math.floor((this._world.size.width) / this._cellSize);
-        var gridHeight = Math.floor((this._world.size.height) / this._cellSize);
-        var boundsTop = 0;
-        var boundsBottom = this._world.size.height;
-        var boundsLeft = 0;
-        var boundsRight = this._world.size.width;
-        var cellSize = this._cellSize;
-        var position = _entity.position;
-        var size = _entity.size;
+        let _entity = entity;
+        let indexes = [];
+        let gridWidth = Math.floor((this._world.size.width) / this._cellSize);
+        let gridHeight = Math.floor((this._world.size.height) / this._cellSize);
+        let boundsTop = 0;
+        let boundsBottom = this._world.size.height;
+        let boundsLeft = 0;
+        let boundsRight = this._world.size.width;
+        let cellSize = this._cellSize;
+        let position = _entity.position;
+        let size = _entity.size;
 
         // If entity is outside the detection region, then ignore it.
         if (position.x + size.width < boundsLeft ||
@@ -322,13 +319,13 @@ export default class CollisionSystem {
         }
 
         // Find the cells that the entity overlaps.
-        var left = Math.floor((position.x - boundsLeft) / cellSize);
-        var right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
-        var top = Math.floor((position.y - boundsTop) / cellSize);
-        var bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
+        let left = Math.floor((position.x - boundsLeft) / cellSize);
+        let right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
+        let top = Math.floor((position.y - boundsTop) / cellSize);
+        let bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
 
-        for (var x = left; x <= right; x++) {
-            for (var y = top; y <= bottom; y++) {
+        for (let x = left; x <= right; x++) {
+            for (let y = top; y <= bottom; y++) {
                 if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
                     indexes.push([x, y]);
                 }

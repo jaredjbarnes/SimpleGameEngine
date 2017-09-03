@@ -9,12 +9,12 @@ import LogicSystem from "./../../../systems/LogicSystem";
 import FollowerSystem from "./../../../systems/FollowerSystem";
 import RigidBodySystem from "./../../../systems/RigidBodySystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
-import Follower from "./entities/Follower";
-import Leader from "./entities/Leader";
+import RigidBody from "./entities/RigidBody";
+import Character from "./entities/Character";
 import Camera from "./../../../entities/Camera";
 
 var getRandomNumber = (max) => {
-    return parseInt(Math.random() * max, 10);
+    return Math.floor(Math.random() * max, 10);
 }
 
 var world = new World();
@@ -22,7 +22,7 @@ world.size.height = 2000;
 world.size.width = 2000;
 
 var camera = new Camera("main");
-var leader = new Leader();
+var character = new Character();
 
 var renderSystem = new RenderSystem({
     canvas: document.getElementById("viewport")
@@ -39,7 +39,7 @@ var followEntityCameraSystem = new FollowEntityCameraSystem();
 var rigidBodySystem = new RigidBodySystem();
 
 followEntityCameraSystem.camera = camera;
-followEntityCameraSystem.setEntityToFollow(leader);
+followEntityCameraSystem.setEntityToFollow(character);
 
 // ADD SYSTEMS
 world.addSystem(keyboardInputSystem);
@@ -54,15 +54,15 @@ world.addSystem(rigidBodySystem);
 world.addSystem(renderSystem);
 
 world.addEntity(camera);
-world.addEntity(leader);
+world.addEntity(character);
 
-for (let x = 0; x < 200; x++) {
+for (let x = 0; x < 300; x++) {
 
-    let follower = new Follower(leader.id);
-    follower.getComponent("position").x = getRandomNumber(2000);
-    follower.getComponent("position").y = getRandomNumber(2000);
+    let rigidBody = new RigidBody(character.id);
+    rigidBody.getComponent("position").x = getRandomNumber(2000);
+    rigidBody.getComponent("position").y = getRandomNumber(2000);
 
-    world.addEntity(follower);
+    world.addEntity(rigidBody);
 }
 
 renderSystem.setCameraByName("main");

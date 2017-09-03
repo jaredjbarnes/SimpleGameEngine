@@ -16,15 +16,15 @@ export default class ColorStateManager extends StateManagerSystem {
             var _collidable = collidable;
             var isOn = false;
 
-            _collidable.activeCollisions.forEach((collision) => {
-                var _collision = collision;
-                var entity = _world.getEntityById(_collision.entityId);
+            for (let key in _collidable.activeCollisions) {
+                var collision = _collidable.activeCollisions[key];
+                var entity = _world.getEntityById(collision.entityId);
 
-                if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
+                if (collision.endTimestamp == null && entity.hasComponents(["character"])) {
                     isOn = true;
+                    break;
                 }
-
-            });
+            }
 
             return isOn;
         };

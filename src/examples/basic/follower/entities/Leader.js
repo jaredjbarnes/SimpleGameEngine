@@ -54,7 +54,7 @@ export default class extends Entity {
         this.addComponent(collidable);
         this.addComponent(keyboardController);
         this.addComponent(keyboardInput);
-        this.addComponent(character);
+        //this.addComponent(character);
         this.addComponent(rigidBody);
     }
 }

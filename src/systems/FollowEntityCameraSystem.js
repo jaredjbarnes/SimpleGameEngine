@@ -52,8 +52,11 @@ export default class FollowEntityCameraSystem {
                 y = this._worldSize.height - this._cameraSize.height;
             }
 
-            this._cameraPosition.x = x;
-            this._cameraPosition.y = y;
+            this._cameraPosition.x = Math.floor(x);
+            this._cameraPosition.y = Math.floor(y);
+        }
+
+        if (this._camera != null) {
             this._cameraPosition.isDirty = true;
         }
     }

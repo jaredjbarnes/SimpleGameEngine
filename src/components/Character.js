@@ -1,5 +1,5 @@
-export default class Character  {
-    constructor(){
+export default class Character {
+    constructor() {
         this.type = "character";
     }
 }

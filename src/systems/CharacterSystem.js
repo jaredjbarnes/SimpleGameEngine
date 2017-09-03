@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["character", "rigid-body", "position"];
+const DEPENDENCIES = ["character", "rigid-body", "movable"];
 
 export default class CharacterSystem {
     constructor() {
@@ -45,18 +45,18 @@ export default class CharacterSystem {
     }
 
     updateEntity(entity) {
-        var activeCollisions = entity.getComponent("rigid-body").activeCollisions;
-        var collisions = Array.from(activeCollisions.values());
-        var position = entity.getComponent("position");
+        let activeCollisions = entity.getComponent("rigid-body").activeCollisions;
+        let movable = entity.getComponent("movable");
+        let character = entity.getComponent("character");
 
-        collisions.forEach((collision) => {
+        for (let key in activeCollisions) {
+            let collision = activeCollisions[key];
             if (collision.endTimestamp == null) {
-                position.x = position.x + Math.round(collision.penetration.x);
-                position.y = position.y + Math.round(collision.penetration.y);
-                position.isDirty = true;
+                movable.x += Math.round(collision.penetration.x);
+                movable.y += Math.round(collision.penetration.y);
             }
-        });
 
+        }
     }
 
 }

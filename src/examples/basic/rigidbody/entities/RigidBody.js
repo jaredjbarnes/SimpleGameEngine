@@ -4,8 +4,6 @@ import Size from "./../../../../components/Size";
 import Movable from "./../../../../components/Movable";
 import Collidable from "./../../../../components/Collidable";
 import Shape from "./../../../../components/Shape";
-import Follower from "./../../../../components/Follower";
-import Character from "./../../../../components/Character";
 import { RigidBody, Part } from "./../../../../components/RigidBody";
 
 export default class extends Entity {
@@ -17,8 +15,6 @@ export default class extends Entity {
         let movable = new Movable();
         let collidable = new Collidable();
         let shape = new Shape();
-        let follower = new Follower();
-        let character = new Character();
         let rigidBody = new RigidBody();
         let part = new Part();
 
@@ -44,18 +40,11 @@ export default class extends Entity {
 
         shape.fillColor.blue = 255;
 
-        follower.leaderEntityId = leaderEntityId;
-        follower.distance.x = 100;
-        follower.distance.y = 100;
-        follower.maxSpeed = maxSpeed;
-
         this.addComponent(position);
         this.addComponent(size);
         this.addComponent(shape);
         this.addComponent(movable);
         this.addComponent(collidable);
-        this.addComponent(follower);
-        this.addComponent(character);
         this.addComponent(rigidBody);
     }
 }

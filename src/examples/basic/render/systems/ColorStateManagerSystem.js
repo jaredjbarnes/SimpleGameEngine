@@ -13,16 +13,14 @@ export default class ColorStateManager extends StateManagerSystem {
 
         var isCharacterOn = (collidable) => {
             var matches = [];
-            collidable.activeCollisions.forEach((collision) => {
-                var _collision = collision;
-                var entity = world.getEntityById(_collision.entityId);
+            for (let key in collidable.activeCollisions) {
+                let collision = collidable.activeCollisions[key];
+                let entity = world.getEntityById(_collision.entityId);
 
-                if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
+                if (collision.endTimestamp == null && entity.hasComponents(["character"])) {
                     matches.push(entity);
                 }
-
-            });
-
+            }
             return matches.length > 0;
         };
 

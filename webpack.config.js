@@ -32,5 +32,13 @@ const follower = {
     }
 }
 
+const rigidbody = {
+    entry: "./src/examples/basic/rigidbody/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/rigidbody/dist')
+    }
+}
 
-module.exports = [logicBox, render, sprite, follower];
+
+module.exports = [logicBox, render, sprite, follower, rigidbody];

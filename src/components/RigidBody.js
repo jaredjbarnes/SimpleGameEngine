@@ -16,7 +16,7 @@ export class RigidBody {
         this.name = null;
         this.isInitialized = false;
         this.isEnabled = true;
-        this.activeCollisions = new Map();
+        this.activeCollisions = {};
         this.parts = [];
     }
 

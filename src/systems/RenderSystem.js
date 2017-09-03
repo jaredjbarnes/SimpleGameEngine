@@ -177,7 +177,7 @@ export default class RenderSystem {
         }
 
         // This is how we optimize rendering. We use the collision system with the camera entity.
-        var activeCollisions = this.camera.getComponent("collidable").activeCollisions;
+        var activeCollisions = this.getCollisions(this.camera.getComponent("collidable"));
 
         this.updateCaches();
         this.context.clearRect(0, 0, canvas.width, canvas.height);
@@ -236,7 +236,7 @@ export default class RenderSystem {
         var position = entity.getComponent("position");
         var zIndex = entity.getComponent("z-index") || defaultZIndex;
         var collidable = entity.getComponent("collidable");
-        var activeCollisions = collidable.activeCollisions;
+        var activeCollisions = this.getCollisions(collidable);
 
         var top = Math.max(position.y, 0);
         var left = Math.max(position.x, 0);
@@ -250,7 +250,7 @@ export default class RenderSystem {
             return;
         }
 
-        entities = Array.from(activeCollisions.values()).filter(function (collision) {
+        entities = activeCollisions.filter(function (collision) {
             return collision.endTimestamp == null;
         }).map(function (collision) {
             return world.getEntityById(collision.entityId);
@@ -378,6 +378,17 @@ export default class RenderSystem {
         });
     }
 
+    getCollisions(collidable) {
+        let _collidable = collidable;
+        let collisions = [];
+        let activeCollisions = _collidable.activeCollisions;
+
+        for (let key in activeCollisions) {
+            collisions.push(activeCollisions[key]);
+        }
+
+        return collisions;
+    }
 
     drawEntityOnCamera(entity, canvas) {
         if (canvas == null) {
@@ -396,7 +407,7 @@ export default class RenderSystem {
 
         var cameraPosition = this._cameraPosition;
         var cameraSize = this._cameraSize;
-        var activeCollisions = collidable.activeCollisions;
+        var activeCollisions = this.getCollisions(collidable);
 
         var top = Math.max(position.y, cameraPosition.y);
         var left = Math.max(position.x, cameraPosition.x);
@@ -409,7 +420,7 @@ export default class RenderSystem {
             return;
         }
 
-        var entities = Array.from(activeCollisions.values()).filter(function (collision) {
+        var entities = activeCollisions.filter(function (collision) {
             return collision.endTimestamp == null;
         }).map(function (collision) {
             return world.getEntityById(collision.entityId);

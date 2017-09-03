@@ -19,7 +19,7 @@ export default class RigidBodySystem {
     prepareRigidBody(rigidBody) {
 
         rigidBody.parts.forEach((part) => {
-            var points = part.points;
+            let points = part.points;
 
             if (points.length === part.vertices.length &&
                 points.length === part.normals.length &&
@@ -30,7 +30,7 @@ export default class RigidBodySystem {
             this.setSize(part);
 
             part.vertices = points.map(function (point, index) {
-                var nextPoint = points[index + 1] || points[0];
+                let nextPoint = points[index + 1] || points[0];
                 return {
                     x: point.x - nextPoint.x,
                     y: point.y - nextPoint.y
@@ -48,7 +48,7 @@ export default class RigidBodySystem {
                 return Vector.normalize(Vector.getLeftNormal(vertex));
             });
 
-            var finalVector = part.vertices.reduce(function (accumulator, vertex) {
+            let finalVector = part.vertices.reduce(function (accumulator, vertex) {
                 accumulator.x += vertex.x;
                 accumulator.y += vertex.y;
 
@@ -71,17 +71,17 @@ export default class RigidBodySystem {
     }
 
     setSize(part) {
-        var points = part.points;
+        let points = part.points;
 
-        var width;
-        var height;
-        var length = points.length;
-        var top = points[0].y;
-        var left = points[0].x;
-        var bottom = points[0].y;
-        var right = points[0].x;
+        let width;
+        let height;
+        let length = points.length;
+        let top = points[0].y;
+        let left = points[0].x;
+        let bottom = points[0].y;
+        let right = points[0].x;
 
-        for (var x = 1; x < length; x++) {
+        for (let x = 1; x < length; x++) {
             top = Math.min(top, points[x].y);
             left = Math.min(left, points[x].x);
             bottom = Math.max(bottom, points[x].y);
@@ -99,11 +99,11 @@ export default class RigidBodySystem {
     }
 
     projectToAxis(vertices, axis, projection) {
-        var min = Vector.dot(vertices[0], axis);
-        var max = min;
-        var dot;
+        let min = Vector.dot(vertices[0], axis);
+        let max = min;
+        let dot;
 
-        for (var i = 1; i < vertices.length; i += 1) {
+        for (let i = 1; i < vertices.length; i += 1) {
             dot = Vector.dot(vertices[i], axis);
 
             if (dot > max) {
@@ -118,23 +118,23 @@ export default class RigidBodySystem {
     }
 
     overlapAxes(verticesA, verticesB, axes) {
-        var projectionA = this.projectionA;
-        var projectionB = this.projectionB;
-        var result = {
+        let projectionA = this.projectionA;
+        let projectionB = this.projectionB;
+        let result = {
             overlap: Number.MAX_VALUE,
             axis: null,
             axisNumber: null
         };
 
-        var overlap;
-        var axis;
+        let overlap;
+        let axis;
 
         projectionA.min = 0;
         projectionA.max = 0;
         projectionB.min = 0;
         projectionB.max = 0;
 
-        for (var i = 0; i < axes.length; i++) {
+        for (let i = 0; i < axes.length; i++) {
             axis = axes[i];
 
             this.projectToAxis(verticesA, axis, projectionA);
@@ -158,14 +158,14 @@ export default class RigidBodySystem {
     }
 
     updateWorldPoints(entity) {
-        var rigidBody = entity.getComponent("rigid-body");
-        var position = entity.getComponent("position");
+        let rigidBody = entity.getComponent("rigid-body");
+        let position = entity.getComponent("position");
 
         rigidBody.parts.forEach((part) => {
-            var worldPoints = part.worldPoints;
+            let worldPoints = part.worldPoints;
 
             part.points.forEach(function (point, index) {
-                var worldPoint = worldPoints[index];
+                let worldPoint = worldPoints[index];
                 worldPoint.x = point.x + position.x;
                 worldPoint.y = point.y + position.y;
             });
@@ -174,50 +174,56 @@ export default class RigidBodySystem {
     }
 
     intersects(entityA, entityB) {
-        var _entityA = entityA;
-        var _entityB = entityB;
+        let _entityA = entityA;
+        let _entityB = entityB;
 
-        var x;
-        var vx;
-        var normal;
+        let x;
+        let vx;
+        let normal;
 
-        var rigidBodyA = _entityA.getComponent("rigid-body");
-        var rigidBodyB = _entityB.getComponent("rigid-body");
-        var positionA = _entityA.getComponent("position");
-        var positionB = _entityB.getComponent("position");
-        var collidableA = _entityA.getComponent("collidable");
-        var collidableB = _entityB.getComponent("collidable");
+        let rigidBodyA = _entityA.getComponent("rigid-body");
+        let rigidBodyB = _entityB.getComponent("rigid-body");
+        let positionA = _entityA.getComponent("position");
+        let positionB = _entityB.getComponent("position");
+        let collidableA = _entityA.getComponent("collidable");
+        let collidableB = _entityB.getComponent("collidable");
+        let aParts = rigidBodyA.parts;
+        let bParts = rigidBodyB.parts;
 
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
 
-        return rigidBodyA.parts.some((partA) => {
 
-            return rigidBodyB.parts.some((partB) => {
-                var normalsA = partA.normals;
-                var normalsB = partB.normals;
-                var projectionA = this.projectionA;
-                var projectionB = this.projectionB;
-                var verticesA = partA.worldPoints;
-                var verticesB = partB.worldPoints;
-                var collisionA = rigidBodyA.activeCollisions.get(entityB.id);
-                var collisionB = rigidBodyB.activeCollisions.get(entityA.id);
-                var penetration;
-                var minOverlap;
-                var normal;
+        for (let aPartIndex = 0; aPartIndex < aParts.length; aPartIndex++) {
+            let partA = aParts[aPartIndex];
 
-                var originA = Vector.add(positionA, partA.origin);
-                var originB = Vector.add(positionB, partB.origin);
+            for (let bPartIndex = 0; bPartIndex < bParts.length; bPartIndex++) {
+                let partB = bParts[bPartIndex];
+
+                let normalsA = partA.normals;
+                let normalsB = partB.normals;
+                let projectionA = this.projectionA;
+                let projectionB = this.projectionB;
+                let verticesA = partA.worldPoints;
+                let verticesB = partB.worldPoints;
+                let collisionA = rigidBodyA.activeCollisions[entityB.id];
+                let collisionB = rigidBodyB.activeCollisions[entityA.id];
+                let penetration;
+                let minOverlap;
+                let normal;
+
+                let originA = Vector.add(positionA, partA.origin);
+                let originB = Vector.add(positionB, partB.origin);
 
                 rigidBodyA.isInitialized = true;
                 rigidBodyB.isInitialized = true;
 
                 // If the collision was already handled from the other side then stop detection.
                 if (collisionA != null && collisionA.timestamp === this.timestamp) {
-                    return collisionA.endTimestamp != null;
+                    continue;
                 }
 
-                var overlapA = this.overlapAxes(verticesA, verticesB, normalsA);
+                let overlapA = this.overlapAxes(verticesA, verticesB, normalsA);
 
                 if (overlapA.overlap <= 0) {
 
@@ -231,13 +237,12 @@ export default class RigidBodySystem {
                         collisionB.timestamp = this.timestamp;
                     }
 
-                    return false;
+                    continue;
                 }
 
-                var overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
+                let overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
 
                 if (overlapB.overlap <= 0) {
-                    collisionB = rigidBodyB.activeCollisions[entityA.id];
 
                     if (collisionA != null) {
                         collisionA.endTimestamp = this.timestamp;
@@ -249,7 +254,7 @@ export default class RigidBodySystem {
                         collisionB.timestamp = this.timestamp;
                     }
 
-                    return false;
+                    continue;
                 }
 
                 if (collisionA == null) {
@@ -314,43 +319,44 @@ export default class RigidBodySystem {
 
                 }
 
-                rigidBodyA.activeCollisions.set(entityB.id, collisionA);
-                rigidBodyB.activeCollisions.set(entityA.id, collisionB);
+                rigidBodyA.activeCollisions[entityB.id] = collisionA;
+                rigidBodyB.activeCollisions[entityA.id] = collisionB;
 
-                return true;
-            });
+            }
 
-        });
+        }
 
     }
 
     cleanCollisions(entity) {
-        var _entity = entity;
-        var rigidBody = _entity.getComponent("rigid-body");
-        var collidable = _entity.getComponent("collidable");
-        var activeCollisions = rigidBody.activeCollisions;
-        var timestamp = this.timestamp;
+        let _entity = entity;
+        let rigidBody = _entity.getComponent("rigid-body");
+        let collidable = _entity.getComponent("collidable");
+        let activeCollisions = rigidBody.activeCollisions;
+        let timestamp = this.timestamp;
 
-        activeCollisions.forEach((collision) => {
-            var _collision = collision;
-            var key = _collision.otherEntity.id;
+        for (let key in activeCollisions) {
+            let _key = key;
+            let _collision = activeCollisions[_key];
+            let collidableKey = _collision.otherEntity.id;
 
             if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
-                activeCollisions.delete(key);
+                delete activeCollisions[key];
             }
 
             // Checking the status of the broadphase collision.
-            if (_collision.endTimestamp == null && collidable.activeCollisions.has(key) && collidable.activeCollisions.get(key).endTimestamp != null) {
-                _collision.endTimestamp = collidable.activeCollisions.get(key).endTimestamp;
+            if (_collision.endTimestamp == null && collidable.activeCollisions[collidableKey] != null && collidable.activeCollisions[collidableKey].endTimestamp != null) {
+                _collision.endTimestamp = collidable.activeCollisions[collidableKey].endTimestamp;
             }
-        });
+        }
+
     }
 
     isStaticAndInitialized(entityA, entityB) {
-        var rigidBodyA = entityA.getComponent("rigid-body");
-        var rigidBodyB = entityB.getComponent("rigid-body");
-        var positionA = entityA.getComponent("position");
-        var positionB = entityB.getComponent("position");
+        let rigidBodyA = entityA.getComponent("rigid-body");
+        let rigidBodyB = entityB.getComponent("rigid-body");
+        let positionA = entityA.getComponent("position");
+        let positionB = entityB.getComponent("position");
 
         if (!positionA.isStatic || !positionB.isStatic) {
             return false;
@@ -364,27 +370,28 @@ export default class RigidBodySystem {
     }
 
     handleCollisions(entity) {
-        var _entity = entity;
-        var collidable = _entity.getComponent("collidable");
-        var rigidBody = _entity.getComponent("rigid-body");
+        let _entity = entity;
+        let collidable = _entity.getComponent("collidable");
+        let rigidBody = _entity.getComponent("rigid-body");
 
         if (!rigidBody.isEnabled) {
             return;
         }
 
         if (collidable != null) {
-            var activeCollisions = collidable.activeCollisions;
+            let activeCollisions = collidable.activeCollisions;
 
-            activeCollisions.forEach((collision) => {
-                var otherEntity = this.world.getEntityById(collision.entityId);
-                var otherRigidBody = otherEntity.getComponent("rigid-body");
+            for (let key in activeCollisions) {
+                let collision = activeCollisions[key];
+                let otherEntity = this.world.getEntityById(collision.entityId);
+                let otherRigidBody = otherEntity.getComponent("rigid-body");
 
                 if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
-                    return;
+                    continue;
                 }
 
                 this.intersects(_entity, otherEntity);
-            })
+            }
 
             this.cleanCollisions(_entity);
         }
@@ -399,12 +406,12 @@ export default class RigidBodySystem {
     }
 
     update() {
-        var entity;
-        var entities = this.entities;
+        let entity;
+        let entities = this.entities;
         this.timestamp = this.world.getTime();
 
         entities.forEach((entity) => {
-            var _entity = entity;
+            let _entity = entity;
             this.handleCollisions(_entity);
         });
     }
@@ -424,7 +431,7 @@ export default class RigidBodySystem {
 
     entityRemoved(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            var index = this.entities.indexOf(entity);
+            let index = this.entities.indexOf(entity);
 
             if (index > -1) {
                 this.entities.splice(index, 1);

@@ -602,6 +602,7 @@ class RenderSystem {
         }
     }
 
+
     _invokeMethod(obj, methodName, args) {
         args = Array.isArray(args) ? args : [];
         if (obj && typeof obj[methodName] === "function") {

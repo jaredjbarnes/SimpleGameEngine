@@ -486,7 +486,7 @@ world.addSystem(renderSystem);
 world.addEntity(camera);
 world.addEntity(leader);
 
-for (let x = 0; x < 200; x++) {
+for (let x = 0; x < 20; x++) {
 
     let follower = new __WEBPACK_IMPORTED_MODULE_11__entities_Follower__["a" /* default */](leader.id);
     follower.getComponent("position").x = getRandomNumber(2000);
@@ -783,6 +783,7 @@ class RenderSystem {
             this.drawEntityOnCamera(entity, this.canvas);
         }
     }
+
 
     _invokeMethod(obj, methodName, args) {
         args = Array.isArray(args) ? args : [];

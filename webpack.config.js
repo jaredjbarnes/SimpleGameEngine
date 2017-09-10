@@ -40,5 +40,13 @@ const rigidbody = {
     }
 }
 
+const animation = {
+    entry: "./src/examples/basic/animation/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/animation/dist')
+    }
+}
 
-module.exports = [logicBox, render, sprite, follower, rigidbody];
+
+module.exports = [logicBox, render, sprite, follower, rigidbody, animation];

@@ -9,8 +9,10 @@ import LogicSystem from "./../../../systems/LogicSystem";
 import SpriteSystem from "./../../../systems/SpriteSystem";
 import RigidBodySystem from "./../../../systems/RigidBodySystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
-import Sprite from "./entities/Sprite";
 import Camera from "./../../../entities/Camera";
+import Animation from "./entities/Animation";
+import AnimateMoveSystem from "./systems/AnimateMoveSystem";
+import AnimationManager from "./../../../services/animation/AnimationManager";
 
 var getRandomNumber = (max) => {
     return parseInt(Math.random() * max, 10);
@@ -36,13 +38,19 @@ var movementSystem = new MovementSystem();
 var followEntityCameraSystem = new FollowEntityCameraSystem();
 var rigidBodySystem = new RigidBodySystem();
 var spriteSystem = new SpriteSystem();
+var animateMoveSystem = new AnimateMoveSystem();
+var animationManager = new AnimationManager();
 
 followEntityCameraSystem.camera = camera;
 
+world.addService("animationManager", animationManager);
+
 // ADD SYSTEMS
+world.addSystem(animationManager);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
+world.addSystem(animateMoveSystem);
 world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
 world.addSystem(rigidBodySystem);
@@ -51,15 +59,16 @@ world.addSystem(logicSystem);
 world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
+
 world.addEntity(camera);
 
-for (let x = 0; x < 1000; x++) {
+for (let x = 0; x < 100; x++) {
 
-    let sprite = new Sprite();
-    sprite.getComponent("position").x = getRandomNumber(2000);
-    sprite.getComponent("position").y = getRandomNumber(2000);
+    let animation = new Animation();
+    animation.getComponent("position").x = getRandomNumber(500);
+    animation.getComponent("position").y = getRandomNumber(500);
 
-    world.addEntity(sprite);
+    world.addEntity(animation);
 }
 
 renderSystem.setCameraByName("main");

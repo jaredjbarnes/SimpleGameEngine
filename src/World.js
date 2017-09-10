@@ -72,6 +72,10 @@
         this.notifySystems("serviceAdded", [name, service]);
     }
 
+    getService(name) {
+        return this._services.get(name) || null;
+    }
+
     removeService(name) {
         var service = this._services.get(service);
 

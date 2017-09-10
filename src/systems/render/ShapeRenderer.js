@@ -73,22 +73,28 @@
     }
 
     draw(entity, canvas, position, size, offset) {
-        if (canvas == null) {
+        let _entity = entity;
+        let _canvas = canvas;
+        let _position = position;
+        let _size = size;
+        let _offset = offset;
+
+        if (_canvas == null) {
             return;
         }
 
-        var entityCanvas = this.getCanvas(entity);
+        var entityCanvas = this.getCanvas(_entity);
         var context = canvas.getContext("2d");
 
         context.drawImage(entityCanvas,
-            offset.x,
-            offset.y,
-            size.width,
-            size.height,
-            position.x,
-            position.y,
-            size.width,
-            size.height
+            _offset.x,
+            _offset.y,
+            _size.width,
+            _size.height,
+            _position.x,
+            _position.y,
+            _size.width,
+            _size.height
         );
 
     }

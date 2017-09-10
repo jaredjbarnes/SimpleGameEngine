@@ -1,4 +1,4 @@
-import easings from "./animations/easings";
+import easings from "./easings";
 
 export default class AnimationManager {
     constructor() {
@@ -8,7 +8,7 @@ export default class AnimationManager {
     }
 
     addAnimation(animation) {
-        animation.push(animation);
+        this.animations.push(animation);
     }
 
     removeAnimation(animation) {
@@ -52,34 +52,30 @@ export default class AnimationManager {
 
             // Handle repeat
             if (onIteration < animation.repeat) {
+                let overlap;
+                let easing = easings[animation.easing] || easings.linear;
 
                 //Handle directions.
                 if (animation.repeatDirection === 0) {
 
-                    let overlap = (currentTime - animation.startTime) % animation.duration;
-                    let easing = easings[animation.easing] || easings.linear;
-                    target[property] = easing(overlap, animation.startValue, change, animation.duration);
+                    overlap = (currentTime - animation.startTime) % animation.duration;
 
                 } else {
 
                     // If divisable by 2 then its going forward.
                     if (onIteration % 2 === 0) {
-
-                        let overlap = (currentTime - animation.startTime) % animation.duration;
-                        let easing = easings[animation.easing] || easings.linear;
-                        target[property] = easing(overlap, animation.startValue, change, animation.duration);
-
+                        overlap = (currentTime - animation.startTime) % animation.duration;
                     } else {
-
-                        let overlap = animation.duration - ((currentTime - animation.startTime) % animation.duration);
-                        let easing = easings[animation.easing] || easings.linear;
-                        target[property] = easing(overlap, animation.startValue, change, animation.duration);
-
+                        overlap = animation.duration - ((currentTime - animation.startTime) % animation.duration);
                     }
 
                 }
 
-
+                if (animation.isInteger) {
+                    target[property] = Math.round(easing(overlap, animation.startValue, change, animation.duration));
+                } else {
+                    target[property] = easing(overlap, animation.startValue, change, animation.duration);
+                }
 
             } else {
 
@@ -114,7 +110,7 @@ export default class AnimationManager {
         this.world = world;
     }
 
-    deactivated(){
+    deactivated() {
         this.world = null;
     }
 

@@ -398,6 +398,10 @@ window.world = world;
         this.notifySystems("serviceAdded", [name, service]);
     }
 
+    getService(name) {
+        return this._services.get(name) || null;
+    }
+
     removeService(name) {
         var service = this._services.get(service);
 
@@ -802,8 +806,9 @@ class RenderSystem {
         context.clearRect(left, top, width, height);
 
         entities.forEach((otherEntity) => {
-            var otherPosition = otherEntity.getComponent("position");
-            var otherSize = otherEntity.getComponent("size");
+            var _otherEntity = otherEntity;
+            var otherPosition = _otherEntity.getComponent("position");
+            var otherSize = _otherEntity.getComponent("size");
 
             var otherTop = Math.max(otherPosition.y, position.y, 0);
             var otherLeft = Math.max(otherPosition.x, position.x, 0);
@@ -827,9 +832,10 @@ class RenderSystem {
             }
 
             rendererTypes.forEach((type) => {
-                var component = otherEntity.getComponent(type);
+                var _type = type;
+                var component = otherEntity.getComponent(_type);
                 if (component != null) {
-                    renderers[type].draw(
+                    renderers[_type].draw(
                         otherEntity,
                         canvas,
                         {
@@ -1686,22 +1692,28 @@ class CompositeCanvasCell {
     }
 
     draw(entity, canvas, position, size, offset) {
-        if (canvas == null) {
+        let _entity = entity;
+        let _canvas = canvas;
+        let _position = position;
+        let _size = size;
+        let _offset = offset;
+
+        if (_canvas == null) {
             return;
         }
 
-        var entityCanvas = this.getCanvas(entity);
+        var entityCanvas = this.getCanvas(_entity);
         var context = canvas.getContext("2d");
 
         context.drawImage(entityCanvas,
-            offset.x,
-            offset.y,
-            size.width,
-            size.height,
-            position.x,
-            position.y,
-            size.width,
-            size.height
+            _offset.x,
+            _offset.y,
+            _size.width,
+            _size.height,
+            _position.x,
+            _position.y,
+            _size.width,
+            _size.height
         );
 
     }

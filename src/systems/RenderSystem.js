@@ -267,8 +267,9 @@ export default class RenderSystem {
         context.clearRect(left, top, width, height);
 
         entities.forEach((otherEntity) => {
-            var otherPosition = otherEntity.getComponent("position");
-            var otherSize = otherEntity.getComponent("size");
+            var _otherEntity = otherEntity;
+            var otherPosition = _otherEntity.getComponent("position");
+            var otherSize = _otherEntity.getComponent("size");
 
             var otherTop = Math.max(otherPosition.y, position.y, 0);
             var otherLeft = Math.max(otherPosition.x, position.x, 0);
@@ -292,9 +293,10 @@ export default class RenderSystem {
             }
 
             rendererTypes.forEach((type) => {
-                var component = otherEntity.getComponent(type);
+                var _type = type;
+                var component = otherEntity.getComponent(_type);
                 if (component != null) {
-                    renderers[type].draw(
+                    renderers[_type].draw(
                         otherEntity,
                         canvas,
                         {

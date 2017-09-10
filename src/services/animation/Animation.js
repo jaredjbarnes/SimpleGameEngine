@@ -1,4 +1,4 @@
-export class Animation {
+export default class Animation {
     constructor() {
         this.target = null;
         this.property = null;
@@ -14,5 +14,6 @@ export class Animation {
         this.repeatDirection = 0;
         this.progress = 0;
         this.isComplete = false;
+        this.isInteger = false;
     }
 }

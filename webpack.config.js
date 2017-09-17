@@ -48,5 +48,13 @@ const animation = {
     }
 }
 
+const line = {
+    entry: "./src/examples/basic/line/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/line/dist')
+    }
+}
 
-module.exports = [logicBox, render, sprite, follower, rigidbody, animation];
+
+module.exports = [logicBox, render, sprite, follower, rigidbody, animation, line];

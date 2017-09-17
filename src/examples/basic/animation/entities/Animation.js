@@ -16,11 +16,11 @@ export default class extends Entity {
         let shape = new Shape();
 
         shape.points.push(
-            { x: 0, y: 0 },
-            { x: 0.96, y: 0 },
+            { x: 0.02, y: 0.02 },
+            { x: 0.96, y: 0.02 },
             { x: 0.96, y: 0.96 },
-            { x: 0, y: 0.96 },
-            { x: 0, y: 0 }
+            { x: 0.02, y: 0.96 },
+            { x: 0.02, y: 0.02 }
         );
         shape.fillColor.red = 255;
         shape.border.thickness = 2;

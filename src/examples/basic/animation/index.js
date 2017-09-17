@@ -59,16 +59,20 @@ world.addSystem(logicSystem);
 world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
-
 world.addEntity(camera);
 
-for (let x = 0; x < 100; x++) {
-
+let createAnimation = () => {
     let animation = new Animation();
     animation.getComponent("position").x = getRandomNumber(500);
     animation.getComponent("position").y = getRandomNumber(500);
+    return animation;
+}
 
+for (let x = 0; x < 100; x++) {
+
+    let animation = createAnimation();
     world.addEntity(animation);
+
 }
 
 renderSystem.setCameraByName("main");

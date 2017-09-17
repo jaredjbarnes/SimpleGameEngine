@@ -283,16 +283,20 @@ world.addSystem(logicSystem);
 world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
-
 world.addEntity(camera);
 
-for (let x = 0; x < 100; x++) {
-
+let createAnimation = () => {
     let animation = new __WEBPACK_IMPORTED_MODULE_12__entities_Animation__["a" /* default */]();
     animation.getComponent("position").x = getRandomNumber(500);
     animation.getComponent("position").y = getRandomNumber(500);
+    return animation;
+}
 
+for (let x = 0; x < 100; x++) {
+
+    let animation = createAnimation();
     world.addEntity(animation);
+
 }
 
 renderSystem.setCameraByName("main");
@@ -1171,6 +1175,146 @@ class CompositeCanvas {
         }
     }
 
+    _invokeOnCells(methodName, args) {
+        this._cells.forEach((cell) => {
+            cell[methodName].apply(methodName, args);
+        });
+    }
+
+    _setPropertyOnCells(property, value) {
+        this._cells.forEach((cell) => {
+            cell[property] = value;
+        });
+    }
+
+    set fillStyle(value) {
+        this._setPropertyOnCells("fillStyle", value);
+    }
+
+    get fillStyle() {
+        return this._cells[0].fillStyle;
+    }
+
+    set font(value) {
+        this._setPropertyOnCells("font", value);
+    }
+
+    get font() {
+        return this._cells[0].font;
+    }
+
+    set globalAlpha(value) {
+        this._setPropertyOnCells("globalAlpha", value);
+    }
+
+    get globalAlpha() {
+        return this._cells[0].globalAlpha;
+    }
+
+    set globalCompositeOperation(value) {
+        this._setPropertyOnCells("globalCompositeOperation", value);
+    }
+
+    get globalCompositeOperation() {
+        return this._cells[0].globalAlpha;
+    }
+
+    set lineCap(value) {
+        this._setPropertyOnCells("lineCap", value);
+    }
+
+    get lineCap() {
+        return this._cells[0].lineCap;
+    }
+
+    set lineDashOffset(value) {
+        this._setPropertyOnCells("lineDashOffset", value);
+    }
+
+    get lineDashOffset() {
+        return this._cells[0].lineDashOffset;
+    }
+
+    set lineJoin(value) {
+        this._setPropertyOnCells("lineJoin", value);
+    }
+
+    get lineJoin() {
+        return this._cells[0].lineJoin;
+    }
+
+    set lineWidth(value) {
+        this._setPropertyOnCells("lineWidth", value);
+    }
+
+    get lineWidth() {
+        return this._cells[0].lineWidth;
+    }
+
+    set miterLimit(value) {
+        this._setPropertyOnCells("miterLimit", value);
+    }
+
+    get miterLimit() {
+        return this._cells[0].miterLimit;
+    }
+
+    set shadowBlur(value) {
+        this._setPropertyOnCells("shadowBlur", value);
+    }
+
+    get shadowBlur() {
+        return this._cells[0].shadowBlur;
+    }
+
+    set shadowColor(value) {
+        this._setPropertyOnCells("shadowColor", value);
+    }
+
+    get shadowColor() {
+        return this._cells[0].shadowColor;
+    }
+
+    set shadowOffsetX(value) {
+        this._setPropertyOnCells("shadowOffsetX", value);
+    }
+
+    get shadowOffsetX() {
+        return this._cells[0].shadowOffsetX;
+    }
+
+    set shadowOffsetY(value) {
+        this._setPropertyOnCells("shadowOffsetY", value);
+    }
+
+    get shadowOffsetY() {
+        return this._cells[0].shadowOffsetY;
+    }
+
+    set strokeStyle(value) {
+        this._setPropertyOnCells("strokeStyle", value);
+    }
+
+    get strokeStyle() {
+        return this._cells[0].strokeStyle;
+    }
+
+    set textAlign(value) {
+        this._setPropertyOnCells("textAlign", value);
+    }
+
+    get textAlign() {
+        return this._cells[0].textAlign;
+    }
+
+    set textBaseline(value) {
+        this._setPropertyOnCells("textBaseline", value);
+    }
+
+    get textBaseline() {
+        return this._cells[0].textBaseline;
+    }
+
     drawImage(sourceCanvas,
         sourceX,
         sourceY,
@@ -1202,14 +1346,68 @@ class CompositeCanvas {
         });
     }
 
-    clearRect(x, y, width, height) {
-        this._cells.forEach((cell) => {
-            cell.clearRect(x, y, width, height);
-        });
+    arc() {
+        this._invokeOnCells("arc", arguments);
+    }
+
+    arcTo() {
+        this._invokeOnCells("arcTo", arguments);
+    }
+
+    beginPath() {
+        this._invokeOnCells("beginPath", arguments);
+    }
+
+    bezierCurveTo() {
+        this._invokeOnCells("bezierCurveTo", arguments);
+    }
+
+    clearRect() {
+        this._invokeOnCells("clearRect", arguments);
+    }
+
+    closePath() {
+        this._invokeOnCells("closePath", arguments);
+    }
+
+    clip() {
+        this._invokeOnCells("clip", arguments);
+    }
+
+    fill() {
+        this._invokeOnCells("fill", arguments);
+    }
+
+    fillRect() {
+        this._invokeOnCells("fillRect", arguments);
+    }
+
+    fillText() {
+        this._invokeOnCells("fillText", arguments);
     }
 
     getContext() {
         return this;
+    }
+
+    lineTo() {
+        this._invokeOnCells("lineTo", arguments);
+    }
+
+    moveTo() {
+        this._invokeOnCells("moveTo", arguments);
+    }
+
+    rect() {
+        this._invokeOnCells("rect", arguments);
+    }
+
+    restore() {
+        this._invokeOnCells("restore", arguments);
+    }
+
+    save() {
+        this._invokeOnCells("save", arguments);
     }
 
 }
@@ -1234,6 +1432,134 @@ class CompositeCanvasCell {
         this.canvas.getContext("2d").clearRect(0, 0, size, size);
     }
 
+    set fillStyle(value) {
+        this.context.fillStyle = value;
+    }
+
+    get fillStyle() {
+        return this.context.fillStyle;
+    }
+
+    set font(value) {
+        this.context.font = value;
+    }
+
+    get font() {
+        return this.context.font;
+    }
+
+    set globalAlpha(value) {
+        this.context.globalAlpha = value;
+    }
+
+    get globalAlpha() {
+        return this.context.globalAlpha;
+    }
+
+    set globalCompositeOperation(value) {
+        this.context.globalCompositeOperation = value;
+    }
+
+    get globalCompositeOperation() {
+        return this.context.globalCompositeOperation;
+    }
+
+    set lineCap(value) {
+        this.context.lineCap = value;
+    }
+
+    get lineCap() {
+        return this.context.lineCap;
+    }
+
+    set lineDashOffset(value) {
+        this.context.lineDashOffset = value;
+    }
+
+    get lineDashOffset() {
+        return this.context.lineDashOffset;
+    }
+
+    set lineJoin(value) {
+        this.context.lineJoin = value;
+    }
+
+    get lineJoin() {
+        return this.context.lineJoin;
+    }
+
+    set lineWidth(value) {
+        this.context.lineWidth = value;
+    }
+
+    get lineWidth() {
+        return this.context.lineWidth;
+    }
+
+    set miterLimit(value) {
+        this.context.miterLimit = value;
+    }
+
+    get miterLimit() {
+        return this.context.miterLimit;
+    }
+
+    set shadowBlur(value) {
+        this.context.shadowBlur = value;
+    }
+
+    get shadowBlur() {
+        return this.context.shadowBlur;
+    }
+
+    set shadowColor(value) {
+        this.context.shadowColor = value;
+    }
+
+    get shadowColor() {
+        return this.context.ShadowColor;
+    }
+
+    set shadowOffsetX(value) {
+        this.context.shadowOffsetX = value;
+    }
+
+    get shadowOffsetX() {
+        return this.context.shadowOffsetX;
+    }
+
+    set shadowOffsetY(value) {
+        this.context.shadowOffsetY = value;
+    }
+
+    get shadowOffsetY() {
+        return this.context.shadowOffsetY;
+    }
+
+    set strokeStyle(value) {
+        this.context.strokeStyle = value;
+    }
+
+    get strokeStyle() {
+        return this.context.strokeStyle;
+    }
+
+    set textAlign(value) {
+        this.context.textAlign = value;
+    }
+
+    get textAlign() {
+        return this.context.textAlign;
+    }
+
+    set textBaseline(value) {
+        this.context.textBaseline = value;
+    }
+
+    get textBaseline() {
+        return this.context.textBaseline;
+    }
+
     drawImage(sourceCanvas,
         sourceX,
         sourceY,
@@ -1244,7 +1570,7 @@ class CompositeCanvasCell {
         destinationWidth,
         destinationHeight) {
 
-        var context = this.canvas.getContext("2d");
+        var context = this.context;
 
         var top = Math.max(destinationY, this.offset.y);
         var left = Math.max(destinationX, this.offset.x);
@@ -1320,7 +1646,40 @@ class CompositeCanvasCell {
             height
         );
 
+    }
 
+    arc(x, y, radius, startAngle, endAngle, anticlockwise) {
+        x = + this.offset.x;
+        y = + this.offset.y;
+
+        this.context.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+    }
+
+    arcTo(x1, y1, x2, y2, radius) {
+        x1 += this.offset.x;
+        x2 += this.offset.x;
+
+        y1 += this.offset.y;
+        y2 += this.offset.y;
+
+        this.context.arcTo(x1, y1, x2, y2, radius);
+    }
+
+    beginPath() {
+        this.context.beginPath();
+    }
+
+    bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+        cp1x += this.offset.x;
+        cp2x += this.offset.x;
+
+        cp1y += this.offset.y;
+        cp2y += this.offset.y;
+
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
     clearRect(x, y, width, height) {
@@ -1329,7 +1688,70 @@ class CompositeCanvasCell {
         width = Math.min(width, this.size);
         height = Math.min(height, this.size);
 
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
         this.context.clearRect(x, y, width, height);
+    }
+
+    closePath() {
+        this.context.closePath();
+    }
+
+    clip() {
+        this.context.clip();
+    }
+
+    fill() {
+        this.context.fill.apply(this.context, arguments);
+    }
+
+    fillRect(x, y, width, height) {
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.context.fillRect(x, y, width, height);
+    }
+
+    fillText(text, x, y, maxWidth) {
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.context.fillText(text, x, y, maxWidth);
+    }
+
+    getContext() {
+        return this;
+    }
+
+    lineTo(x, y) {
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.context.lineTo(x, y);
+    }
+
+    moveTo(x, y) {
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.context.lineTo(x, y);
+    }
+
+    rect(x, y, width, height) {
+        x += this.offset.x;
+        y += this.offset.y;
+
+        this.context.rect(x, y, width, height);
+    }
+
+    restore() {
+        this.context.restore();
+    }
+
+    save() {
+        this.context.save();
     }
 
 }
@@ -3308,11 +3730,11 @@ function invokeMethod(obj, methodName, args){
         let shape = new __WEBPACK_IMPORTED_MODULE_5__components_Shape__["a" /* default */]();
 
         shape.points.push(
-            { x: 0, y: 0 },
-            { x: 0.96, y: 0 },
+            { x: 0.02, y: 0.02 },
+            { x: 0.96, y: 0.02 },
             { x: 0.96, y: 0.96 },
-            { x: 0, y: 0.96 },
-            { x: 0, y: 0 }
+            { x: 0.02, y: 0.96 },
+            { x: 0.02, y: 0.02 }
         );
         shape.fillColor.red = 255;
         shape.border.thickness = 2;

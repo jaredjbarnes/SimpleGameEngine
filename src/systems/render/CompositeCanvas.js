@@ -27,7 +27,7 @@ export default class CompositeCanvas {
 
     _invokeOnCells(methodName, args) {
         this._cells.forEach((cell) => {
-            cell[methodName].apply(methodName, args);
+            cell[methodName].apply(cell, args);
         });
     }
 
@@ -258,6 +258,10 @@ export default class CompositeCanvas {
 
     save() {
         this._invokeOnCells("save", arguments);
+    }
+
+    stroke() {
+        this._invokeOnCells("stroke", arguments);
     }
 
 }

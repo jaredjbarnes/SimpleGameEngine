@@ -20,7 +20,7 @@ class Collision {
     }
 }
 
-export default class CollisionSystem {
+export default class BroadPhaseBroadPhaseCollisionSystem {
     constructor(cellSize) {
         this._world = null;
         this._cellSize = cellSize || 200;

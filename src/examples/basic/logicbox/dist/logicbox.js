@@ -296,13 +296,13 @@ class TextTexture {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Text__ = __webpack_require__(28);
@@ -345,13 +345,13 @@ var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem
 });
 
 var logicBoxSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicBoxSystem__["a" /* default */]();
-var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
-var characterSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_CharacterSystem__["a" /* default */]();
+var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
+var solidBodySystem = new __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
 var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__["a" /* default */]();
-var rigidBodySystem = new __WEBPACK_IMPORTED_MODULE_8__systems_RigidBodySystem__["a" /* default */]();
+var narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
 var colorStateManagerSystem = new __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
@@ -363,8 +363,8 @@ world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
-world.addSystem(rigidBodySystem);
-world.addSystem(characterSystem);
+world.addSystem(narrowPhaseCollisionSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(colorStateManagerSystem);
 world.addSystem(logicBoxSystem);
 world.addSystem(renderSystem);
@@ -1782,7 +1782,7 @@ class Collision {
     }
 }
 
-class CollisionSystem {
+class BroadPhaseCollisionSystem {
     constructor(cellSize) {
         this._world = null;
         this._cellSize = cellSize || 200;
@@ -2104,7 +2104,7 @@ class CollisionSystem {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CollisionSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionSystem;
 
 
 /***/ }),
@@ -2262,9 +2262,9 @@ class ControllerSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const DEPENDENCIES = ["character", "rigid-body", "position"];
+const DEPENDENCIES = ["solid-body", "narrow-phase-collidable", "position"];
 
-class CharacterSystem {
+class SolidBodySystem {
     constructor() {
         this.entities = new Map();
         this.world = null;
@@ -2309,7 +2309,7 @@ class CharacterSystem {
     }
 
     updateEntity(entity) {
-        var activeCollisions = entity.getComponent("rigid-body").activeCollisions;
+        var activeCollisions = entity.getComponent("narrow-phase-collidable").activeCollisions;
         var collisions = Array.from(activeCollisions.values());
         var position = entity.getComponent("position");
 
@@ -2324,7 +2324,7 @@ class CharacterSystem {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CharacterSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBodySystem;
 
 
 
@@ -2516,9 +2516,9 @@ class LogicBoxSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(24);
 
 
-const DEPENDENCIES = ["collidable", "rigid-body", "position"];
+const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position"];
 
-class RigidBodySystem {
+class NarrowPhaseCollisionSystem {
     constructor() {
         this.entities = [];
         this.projectionA = {
@@ -2532,9 +2532,9 @@ class RigidBodySystem {
         this.timestamp = 0;
     }
 
-    prepareRigidBody(rigidBody) {
+    prepareNarrowPhaseCollidable(narrowPhaseCollision) {
 
-        rigidBody.parts.forEach((part) => {
+        narrowPhaseCollision.parts.forEach((part) => {
             var points = part.points;
 
             if (points.length === part.vertices.length &&
@@ -2674,10 +2674,10 @@ class RigidBodySystem {
     }
 
     updateWorldPoints(entity) {
-        var rigidBody = entity.getComponent("rigid-body");
+        var narrowPhaseCollision = entity.getComponent("narrow-phase-collidable");
         var position = entity.getComponent("position");
 
-        rigidBody.parts.forEach((part) => {
+        narrowPhaseCollision.parts.forEach((part) => {
             var worldPoints = part.worldPoints;
 
             part.points.forEach(function (point, index) {
@@ -2697,8 +2697,8 @@ class RigidBodySystem {
         var vx;
         var normal;
 
-        var rigidBodyA = _entityA.getComponent("rigid-body");
-        var rigidBodyB = _entityB.getComponent("rigid-body");
+        var narrowPhaseCollisionA = _entityA.getComponent("narrow-phase-collidable");
+        var narrowPhaseCollisionB = _entityB.getComponent("narrow-phase-collidable");
         var positionA = _entityA.getComponent("position");
         var positionB = _entityB.getComponent("position");
         var collidableA = _entityA.getComponent("collidable");
@@ -2707,17 +2707,17 @@ class RigidBodySystem {
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
 
-        return rigidBodyA.parts.some((partA) => {
+        return narrowPhaseCollisionA.parts.some((partA) => {
 
-            return rigidBodyB.parts.some((partB) => {
+            return narrowPhaseCollisionB.parts.some((partB) => {
                 var normalsA = partA.normals;
                 var normalsB = partB.normals;
                 var projectionA = this.projectionA;
                 var projectionB = this.projectionB;
                 var verticesA = partA.worldPoints;
                 var verticesB = partB.worldPoints;
-                var collisionA = rigidBodyA.activeCollisions.get(entityB.id);
-                var collisionB = rigidBodyB.activeCollisions.get(entityA.id);
+                var collisionA = narrowPhaseCollisionA.activeCollisions.get(entityB.id);
+                var collisionB = narrowPhaseCollisionB.activeCollisions.get(entityA.id);
                 var penetration;
                 var minOverlap;
                 var normal;
@@ -2725,8 +2725,8 @@ class RigidBodySystem {
                 var originA = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionA, partA.origin);
                 var originB = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionB, partB.origin);
 
-                rigidBodyA.isInitialized = true;
-                rigidBodyB.isInitialized = true;
+                narrowPhaseCollisionA.isInitialized = true;
+                narrowPhaseCollisionB.isInitialized = true;
 
                 // If the collision was already handled from the other side then stop detection.
                 if (collisionA != null && collisionA.timestamp === this.timestamp) {
@@ -2753,7 +2753,7 @@ class RigidBodySystem {
                 var overlapB = this.overlapAxes(verticesA, verticesB, normalsB);
 
                 if (overlapB.overlap <= 0) {
-                    collisionB = rigidBodyB.activeCollisions[entityA.id];
+                    collisionB = narrowPhaseCollisionB.activeCollisions[entityA.id];
 
                     if (collisionA != null) {
                         collisionA.endTimestamp = this.timestamp;
@@ -2830,8 +2830,8 @@ class RigidBodySystem {
 
                 }
 
-                rigidBodyA.activeCollisions.set(entityB.id, collisionA);
-                rigidBodyB.activeCollisions.set(entityA.id, collisionB);
+                narrowPhaseCollisionA.activeCollisions.set(entityB.id, collisionA);
+                narrowPhaseCollisionB.activeCollisions.set(entityA.id, collisionB);
 
                 return true;
             });
@@ -2842,9 +2842,9 @@ class RigidBodySystem {
 
     cleanCollisions(entity) {
         var _entity = entity;
-        var rigidBody = _entity.getComponent("rigid-body");
+        var narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
         var collidable = _entity.getComponent("collidable");
-        var activeCollisions = rigidBody.activeCollisions;
+        var activeCollisions = narrowPhaseCollision.activeCollisions;
         var timestamp = this.timestamp;
 
         activeCollisions.forEach((collision) => {
@@ -2863,8 +2863,8 @@ class RigidBodySystem {
     }
 
     isStaticAndInitialized(entityA, entityB) {
-        var rigidBodyA = entityA.getComponent("rigid-body");
-        var rigidBodyB = entityB.getComponent("rigid-body");
+        var narrowPhaseCollisionA = entityA.getComponent("narrow-phase-collidable");
+        var narrowPhaseCollisionB = entityB.getComponent("narrow-phase-collidable");
         var positionA = entityA.getComponent("position");
         var positionB = entityB.getComponent("position");
 
@@ -2872,7 +2872,7 @@ class RigidBodySystem {
             return false;
         }
 
-        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
+        if (!narrowPhaseCollisionA.isInitialized || !narrowPhaseCollisionB.isInitialized) {
             return false;
         }
 
@@ -2882,9 +2882,9 @@ class RigidBodySystem {
     handleCollisions(entity) {
         var _entity = entity;
         var collidable = _entity.getComponent("collidable");
-        var rigidBody = _entity.getComponent("rigid-body");
+        var narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
 
-        if (!rigidBody.isEnabled) {
+        if (!narrowPhaseCollision.isEnabled) {
             return;
         }
 
@@ -2893,9 +2893,9 @@ class RigidBodySystem {
 
             activeCollisions.forEach((collision) => {
                 var otherEntity = this.world.getEntityById(collision.entityId);
-                var otherRigidBody = otherEntity.getComponent("rigid-body");
+                var otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
-                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
+                if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
                     return;
                 }
 
@@ -2931,7 +2931,7 @@ class RigidBodySystem {
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this.prepareRigidBody(entity.getComponent("rigid-body"));
+            this.prepareNarrowPhaseCollidable(entity.getComponent("narrow-phase-collidable"));
             if (!entity.getComponent("position").isStatic) {
                 this.entities.push(entity);
             }
@@ -2959,7 +2959,7 @@ class RigidBodySystem {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = RigidBodySystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = NarrowPhaseCollisionSystem;
 
 
 
@@ -3091,13 +3091,13 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
     activated(world) {
         super.activated(world);
 
-        var isCharacterOn = (collidable) => {
+        var isSolidBodyOn = (collidable) => {
             var matches = [];
             collidable.activeCollisions.forEach((collision) => {
                 var _collision = collision;
                 var entity = world.getEntityById(_collision.entityId);
 
-                if (_collision.endTimestamp == null && entity.hasComponents(["character"])) {
+                if (_collision.endTimestamp == null && entity.hasComponents(["solid-body"])) {
                     matches.push(entity);
                 }
 
@@ -3121,7 +3121,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && !isCharacterOn(collidable)) {
+                if (collidable != null && !isSolidBodyOn(collidable)) {
                     state.name = "red-state";
                 }
             }
@@ -3143,7 +3143,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && isCharacterOn(collidable)) {
+                if (collidable != null && isSolidBodyOn(collidable)) {
                     state.name = "blue-state";
                 }
             }
@@ -3366,8 +3366,8 @@ constructor() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_State__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Character__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__ = __webpack_require__(35);
 
 
 
@@ -3393,10 +3393,10 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
         var movable = new __WEBPACK_IMPORTED_MODULE_7__components_Movable__["a" /* default */]();
         var shape = new __WEBPACK_IMPORTED_MODULE_9__components_Shape__["a" /* default */]();
-        var rigidBody = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["b" /* RigidBody */]();
+        var narrowPhaseCollision = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["b" /* NarrowPhaseCollidable */]();
         var physics = new __WEBPACK_IMPORTED_MODULE_8__components_Physics__["a" /* default */]();
-        var part = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["a" /* Part */]();
-        var character = new __WEBPACK_IMPORTED_MODULE_12__components_Character__["a" /* default */]();
+        var part = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["a" /* Part */]();
+        var solidBody = new __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__["a" /* default */]();
 
         part.points.push(
             { x: 0, y: 0 },
@@ -3406,7 +3406,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
             { x: 0, y: 0 },
         );
 
-        rigidBody.parts.push(part);
+        narrowPhaseCollision.parts.push(part);
 
         textTexture.text = text;
         textTexture.font.size = 17;
@@ -3435,9 +3435,9 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(keyboardInput);
         this.addComponent(movable);
         this.addComponent(shape);
-        this.addComponent(rigidBody);
+        this.addComponent(narrowPhaseCollision);
         this.addComponent(physics);
-        this.addComponent(character);
+        this.addComponent(solidBody);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Text;
@@ -3555,9 +3555,9 @@ class Part {
 /* harmony export (immutable) */ __webpack_exports__["a"] = Part;
 
 
-class RigidBody {
+class NarrowPhaseCollidable {
     constructor() {
-        this.type = "rigid-body";
+        this.type = "narrow-phase-collidable";
         this.name = null;
         this.isInitialized = false;
         this.isEnabled = true;
@@ -3566,7 +3566,7 @@ class RigidBody {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
+/* harmony export (immutable) */ __webpack_exports__["b"] = NarrowPhaseCollidable;
 
 
 /***/ }),
@@ -3574,12 +3574,12 @@ class RigidBody {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Character  {
+class SolidBody  {
     constructor(){
-        this.type = "character";
+        this.type = "solid-body";
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Character;
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
 
 
 /***/ }),

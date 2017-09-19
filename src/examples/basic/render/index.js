@@ -1,6 +1,6 @@
 import World from "./../../../World";
 import RenderSystem from "./../../../systems/CompleteRenderSystem";
-import CollisionSystem from "./../../../systems/CollisionSystem";
+import BroadPhaseCollisionSystem from "./../../../systems/BroadPhaseCollisionSystem";
 import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
 import MovementSystem from "./../../../systems/MovementSystem";
@@ -19,7 +19,7 @@ var renderSystem = new RenderSystem({
     canvas: document.getElementById("viewport")
 });
 
-var collisionSystem = new CollisionSystem();
+var collisionSystem = new BroadPhaseCollisionSystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();

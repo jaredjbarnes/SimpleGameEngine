@@ -1,13 +1,13 @@
 import World from "./../../../World";
 import RenderSystem from "./../../../systems/CompleteRenderSystem";
-import CollisionSystem from "./../../../systems/CollisionSystem";
+import BroadPhaseCollisionSystem from "./../../../systems/BroadPhaseCollisionSystem";
 import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
-import CharacterSystem from "./../../../systems/CharacterSystem";
+import SolidBodySystem from "./../../../systems/SolidBodySystem";
 import MovementSystem from "./../../../systems/MovementSystem";
 import LogicSystem from "./../../../systems/LogicSystem";
 import FollowerSystem from "./../../../systems/FollowerSystem";
-import RigidBodySystem from "./../../../systems/RigidBodySystem";
+import NarrowPhaseCollisionSystem from "./../../../systems/NarrowPhaseCollisionSystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
 import Follower from "./entities/Follower";
 import Leader from "./entities/Leader";
@@ -29,14 +29,14 @@ var renderSystem = new RenderSystem({
 });
 
 var logicSystem = new LogicSystem();
-var collisionSystem = new CollisionSystem();
-var characterSystem = new CharacterSystem();
+var collisionSystem = new BroadPhaseCollisionSystem();
+var solidBodySystem = new SolidBodySystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 var followerSystem = new FollowerSystem();
 var followEntityCameraSystem = new FollowEntityCameraSystem();
-var rigidBodySystem = new RigidBodySystem();
+var narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(leader);
@@ -46,11 +46,11 @@ world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(followerSystem);
-world.addSystem(characterSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(movementSystem);
 world.addSystem(logicSystem);
 world.addSystem(collisionSystem);
-world.addSystem(rigidBodySystem);
+world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(renderSystem);
 
 world.addEntity(camera);

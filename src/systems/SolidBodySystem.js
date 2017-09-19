@@ -1,6 +1,6 @@
-const DEPENDENCIES = ["character", "rigid-body", "movable"];
+const DEPENDENCIES = ["solid-body", "narrow-phase-collidable", "movable"];
 
-export default class CharacterSystem {
+export default class SolidBodySystem {
     constructor() {
         this.entities = new Map();
         this.world = null;
@@ -45,9 +45,9 @@ export default class CharacterSystem {
     }
 
     updateEntity(entity) {
-        let activeCollisions = entity.getComponent("rigid-body").activeCollisions;
+        let activeCollisions = entity.getComponent("narrow-phase-collidable").activeCollisions;
         let movable = entity.getComponent("movable");
-        let character = entity.getComponent("character");
+        let solidBody = entity.getComponent("solid-body");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];

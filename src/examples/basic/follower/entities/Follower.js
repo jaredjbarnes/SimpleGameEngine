@@ -5,8 +5,8 @@ import Movable from "./../../../../components/Movable";
 import Collidable from "./../../../../components/Collidable";
 import Shape from "./../../../../components/Shape";
 import Follower from "./../../../../components/Follower";
-import Character from "./../../../../components/Character";
-import { RigidBody, Part } from "./../../../../components/RigidBody";
+import SolidBody from "./../../../../components/SolidBody";
+import { NarrowPhaseCollidable, Part } from "./../../../../components/NarrowPhaseCollidable";
 
 export default class extends Entity {
     constructor(leaderEntityId, maxSpeed = 3) {
@@ -18,8 +18,8 @@ export default class extends Entity {
         let collidable = new Collidable();
         let shape = new Shape();
         let follower = new Follower();
-        let character = new Character();
-        let rigidBody = new RigidBody();
+        let solidBody = new SolidBody();
+        let narrowPhaseCollision = new NarrowPhaseCollidable();
         let part = new Part();
 
         part.points.push(
@@ -32,7 +32,7 @@ export default class extends Entity {
         size.width = 30;
         size.height = 30;
 
-        rigidBody.parts.push(part);
+        narrowPhaseCollision.parts.push(part);
 
         shape.points.push(
             { x: 0, y: 0 },
@@ -55,7 +55,7 @@ export default class extends Entity {
         this.addComponent(movable);
         this.addComponent(collidable);
         this.addComponent(follower);
-        this.addComponent(character);
-        this.addComponent(rigidBody);
+        this.addComponent(solidBody);
+        this.addComponent(narrowPhaseCollision);
     }
 }

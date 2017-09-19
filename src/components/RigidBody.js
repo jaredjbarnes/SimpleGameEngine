@@ -1,23 +1,13 @@
-export class Part {
-    constructor() {
-        this.points = [];
-        this.vertices = [];
-        this.normals = [];
-        this.worldPoints = [];
-        this.projectionVertices = [];
-        this.origin = { x: 0, y: 0 };
-        this.size = { width: 0, height: 0 };
-    }
-}
-
-export class RigidBody {
+export default class RigidBody {
     constructor() {
         this.type = "rigid-body";
-        this.name = null;
-        this.isInitialized = false;
-        this.isEnabled = true;
-        this.activeCollisions = {};
-        this.parts = [];
+        this.velocity = { x: 0, y: 0 };
+        this.force = { x: 0, y: 0 };
+        this.mass = 1;
+        this.elasticity = 1;
+        this.friction = { x: 0, y: 0 };
+        this.acceleration = { x: 0, y: 0 };
+        this.lastPosition = { x: 0, y: 0 };
     }
 
 }

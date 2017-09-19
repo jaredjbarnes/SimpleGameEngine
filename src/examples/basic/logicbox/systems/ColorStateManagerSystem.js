@@ -12,7 +12,7 @@ export default class ColorStateManager extends StateManagerSystem {
         super.activated(world);
         var _world = world;
 
-        var isCharacterOn = (collidable) => {
+        var isSolidBodyOn = (collidable) => {
             var _collidable = collidable;
             var isOn = false;
 
@@ -20,7 +20,7 @@ export default class ColorStateManager extends StateManagerSystem {
                 var collision = _collidable.activeCollisions[key];
                 var entity = _world.getEntityById(collision.entityId);
 
-                if (collision.endTimestamp == null && entity.hasComponents(["character"])) {
+                if (collision.endTimestamp == null && entity.hasComponents(["solid-body"])) {
                     isOn = true;
                     break;
                 }
@@ -44,7 +44,7 @@ export default class ColorStateManager extends StateManagerSystem {
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && !isCharacterOn(collidable)) {
+                if (collidable != null && !isSolidBodyOn(collidable)) {
                     state.name = "red-state";
                 }
             }
@@ -66,7 +66,7 @@ export default class ColorStateManager extends StateManagerSystem {
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");
                 var state = entity.getComponent("state");
-                if (collidable != null && isCharacterOn(collidable)) {
+                if (collidable != null && isSolidBodyOn(collidable)) {
                     state.name = "blue-state";
                 }
             }

@@ -2,7 +2,7 @@ import Entity from "./../../../../Entity";
 import Position from "./../../../../components/Position";
 import Size from "./../../../../components/Size";
 import Collidable from "./../../../../components/Collidable";
-import Character from "./../../../../components/Character";
+import SolidBody from "./../../../../components/SolidBody";
 import Shape from "./../../../../components/Shape";
 
 export default class extends Entity {
@@ -12,7 +12,7 @@ export default class extends Entity {
         let position = new Position();
         let size = new Size();
         let collidable = new Collidable();
-        let character = new Character();
+        let solidBody = new SolidBody();
         let shape = new Shape();
 
         shape.points.push(
@@ -31,7 +31,7 @@ export default class extends Entity {
         this.addComponent(position);
         this.addComponent(size);
         this.addComponent(collidable);
-        this.addComponent(character);
+        this.addComponent(solidBody);
         this.addComponent(shape);
     }
 }

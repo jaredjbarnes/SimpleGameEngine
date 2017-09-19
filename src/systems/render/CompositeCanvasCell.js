@@ -333,4 +333,8 @@ export default class CompositeCanvasCell {
         this.context.save();
     }
 
+    stroke() {
+        this.context.stroke();
+    }
+
 }

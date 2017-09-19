@@ -9,8 +9,8 @@ import Movable from "./../../../../components/Movable";
 import Physics from "./../../../../components/Physics";
 import Shape from "./../../../../components/Shape";
 import State from "./../../../../components/State";
-import { Part, RigidBody } from "./../../../../components/RigidBody";
-import Character from "./../../../../components/Character";
+import { Part, NarrowPhaseCollidable } from "./../../../../components/NarrowPhaseCollidable";
+import SolidBody from "./../../../../components/SolidBody";
 
 export default class Text extends Entity {
     constructor(text) {
@@ -23,10 +23,10 @@ export default class Text extends Entity {
         var keyboardInput = new KeyboardInput();
         var movable = new Movable();
         var shape = new Shape();
-        var rigidBody = new RigidBody();
+        var narrowPhaseCollision = new NarrowPhaseCollidable();
         var physics = new Physics();
         var part = new Part();
-        var character = new Character();
+        var solidBody = new SolidBody();
 
         part.points.push(
             { x: 0, y: 0 },
@@ -36,7 +36,7 @@ export default class Text extends Entity {
             { x: 0, y: 0 },
         );
 
-        rigidBody.parts.push(part);
+        narrowPhaseCollision.parts.push(part);
 
         textTexture.text = text;
         textTexture.font.size = 17;
@@ -65,8 +65,8 @@ export default class Text extends Entity {
         this.addComponent(keyboardInput);
         this.addComponent(movable);
         this.addComponent(shape);
-        this.addComponent(rigidBody);
+        this.addComponent(narrowPhaseCollision);
         this.addComponent(physics);
-        this.addComponent(character);
+        this.addComponent(solidBody);
     }
 }

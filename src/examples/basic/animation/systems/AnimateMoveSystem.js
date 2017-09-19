@@ -1,6 +1,6 @@
 import Animation from "./../../../../services/animation/Animation";
 
-const DEPENDECIES = ["position", "size", "character"];
+const DEPENDECIES = ["position", "size", "solid-body"];
 
 const getRandomNumber = (min, max) => {
     let range = max - min;

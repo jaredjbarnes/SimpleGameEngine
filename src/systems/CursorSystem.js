@@ -1,3 +1,8 @@
+import Entity from "./../Entity";
+import Cursor from "./../components/Cursor";
+import Position from "./../components/Position";
+import Size from "./../components/Size";
+
 const DEPENDENCIES = ["cursor", "position", "size"];
 const CAMERA_DEPENDENCIES = ["camera", "position"];
 
@@ -9,10 +14,12 @@ export default class CursorSystem {
         this.entities = [];
         this.camera = null;
         this.cameraName = cameraName;
+        this.cameraPosition = null;
         this.cursorPosition = {
             x: 0,
             y: 0
         };
+        this.cursorEntity = null;
     }
 
     _addCamera(entity) {
@@ -25,11 +32,18 @@ export default class CursorSystem {
 
     }
 
-    _addEntity(entity) {
-        var index = this.entities.indexOf(entity);
-        if (index === -1) {
-            this.entities.push(entity);
-        }
+    _createCursorEntity() {
+        let entity = new Entity();
+
+        let size = new Size();
+        let position = new Position();
+        let cursor = new Cursor();
+
+        this.cursorEntity.addComponent(size);
+        this.cursorEntity.addComponent(position);
+        this.cursorEntity.addComponent(cursor);
+
+        return entity;
     }
 
     _mousemove(event) {
@@ -39,15 +53,14 @@ export default class CursorSystem {
         this.cursorPosition.y = event.pageY - rect.top;
     }
 
-    _removeEntity(entity) {
-        var index = this.entities.indexOf("entity");
-        if (index > -1) {
-            this.entities.splice(index, 1);
-        }
+    _removeCamera() {
+        this.camera = null;
+        this.cameraPosition = null;
     }
 
     activated(world) {
         this.world = world;
+        this.cursorEntity = this._createCursorEntity();
         this.canvas.addEventListener("mousemove", this._mousemove, false);
     }
 
@@ -55,15 +68,11 @@ export default class CursorSystem {
         if (entity.hasComponents(CAMERA_DEPENDENCIES)) {
             this._addCamera(entity);
         }
-
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this._addEntity(entity);
-        }
     }
 
     componentRemoved(entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1) {
-            this._removeEntity(entity);
+        if (entity === this.camera && CAMERA_DEPENDENCIES.indexOf(component.type) > -1) {
+            this._removeCamera(entity);
         }
     }
 
@@ -71,21 +80,20 @@ export default class CursorSystem {
         this.canvas.removeEventListener("mousemove", this._mousemove, false);
         this.world = null;
         this.entities = [];
+        this.cursorEntity = null;
+        this.camera = null;
+        this.cameraPosition = null;
     }
 
     entityAdded(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this._addEntity(entity);
+        if (entity.hasComponents(CAMERA_DEPENDENCIES)) {
+            this._addCamera(entity);
         }
     }
 
     entityRemoved(entity) {
-        if (entity.hasComponents(CAMERA_DEPENDENCIES)) {
-            this._removeEntity(entity);
-        }
-
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this._removeEntity(entity);
+        if (entity === this.camera && entity.hasComponents(CAMERA_DEPENDENCIES)) {
+            this._removeCamera(entity);
         }
     }
 

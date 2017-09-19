@@ -6,8 +6,8 @@ import Collidable from "./../../../../components/Collidable";
 import Shape from "./../../../../components/Shape";
 import KeyboardInput from "./../../../../components/KeyboardInput";
 import KeyboardController from "./../../../../components/KeyboardController";
-import Character from "./../../../../components/Character";
-import { RigidBody, Part } from "./../../../../components/RigidBody";
+import SolidBody from "./../../../../components/SolidBody";
+import { NarrowPhaseCollidable, Part } from "./../../../../components/NarrowPhaseCollidable";
 
 export default class extends Entity {
     constructor() {
@@ -20,8 +20,8 @@ export default class extends Entity {
         let shape = new Shape();
         let keyboardController = new KeyboardController();
         let keyboardInput = new KeyboardInput();
-        let character = new Character();
-        let rigidBody = new RigidBody();
+        let solidBody = new SolidBody();
+        let narrowPhaseCollision = new NarrowPhaseCollidable();
         let part = new Part();
 
         part.points.push(
@@ -35,7 +35,7 @@ export default class extends Entity {
         size.width = 85;
         size.height = 85;
 
-        rigidBody.parts.push(part);
+        narrowPhaseCollision.parts.push(part);
 
         shape.points.push(
             { x: 0, y: 0 },
@@ -54,7 +54,7 @@ export default class extends Entity {
         this.addComponent(collidable);
         this.addComponent(keyboardController);
         this.addComponent(keyboardInput);
-        //this.addComponent(character);
-        this.addComponent(rigidBody);
+        //this.addComponent(solidBody);
+        this.addComponent(narrowPhaseCollision);
     }
 }

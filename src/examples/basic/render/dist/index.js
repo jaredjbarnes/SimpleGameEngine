@@ -244,7 +244,7 @@ class TextTexture {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__ = __webpack_require__(19);
@@ -272,7 +272,7 @@ var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem
     canvas: document.getElementById("viewport")
 });
 
-var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_CollisionSystem__["a" /* default */]();
+var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
 var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
 var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
 var movementSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__["a" /* default */]();
@@ -1184,7 +1184,7 @@ class CompositeCanvas {
 
     _invokeOnCells(methodName, args) {
         this._cells.forEach((cell) => {
-            cell[methodName].apply(methodName, args);
+            cell[methodName].apply(cell, args);
         });
     }
 
@@ -1415,6 +1415,10 @@ class CompositeCanvas {
 
     save() {
         this._invokeOnCells("save", arguments);
+    }
+
+    stroke() {
+        this._invokeOnCells("stroke", arguments);
     }
 
 }
@@ -1759,6 +1763,10 @@ class CompositeCanvasCell {
 
     save() {
         this.context.save();
+    }
+
+    stroke() {
+        this.context.stroke();
     }
 
 }
@@ -2254,7 +2262,7 @@ class Collision {
     }
 }
 
-class CollisionSystem {
+class BroadPhaseBroadPhaseCollisionSystem {
     constructor(cellSize) {
         this._world = null;
         this._cellSize = cellSize || 200;
@@ -2575,7 +2583,7 @@ class CollisionSystem {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CollisionSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseBroadPhaseCollisionSystem;
 
 
 /***/ }),
@@ -2820,8 +2828,8 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_State__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Character__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__ = __webpack_require__(29);
 
 
 
@@ -2847,10 +2855,10 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
         var movable = new __WEBPACK_IMPORTED_MODULE_7__components_Movable__["a" /* default */]();
         var shape = new __WEBPACK_IMPORTED_MODULE_9__components_Shape__["a" /* default */]();
-        var rigidBody = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["b" /* RigidBody */]();
+        var narrowPhaseCollision = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["a" /* NarrowPhaseCollidable */]();
         var physics = new __WEBPACK_IMPORTED_MODULE_8__components_Physics__["a" /* default */]();
-        var part = new __WEBPACK_IMPORTED_MODULE_11__components_RigidBody__["a" /* Part */]();
-        var character = new __WEBPACK_IMPORTED_MODULE_12__components_Character__["a" /* default */]();
+        var part = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["b" /* Part */]();
+        var solidBody = new __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__["a" /* default */]();
 
         part.points.push(
             { x: 0, y: 0 },
@@ -2860,7 +2868,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
             { x: 0, y: 0 },
         );
 
-        rigidBody.parts.push(part);
+        narrowPhaseCollision.parts.push(part);
 
         textTexture.text = text;
         textTexture.font.size = 17;
@@ -2889,9 +2897,9 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(keyboardInput);
         this.addComponent(movable);
         this.addComponent(shape);
-        this.addComponent(rigidBody);
+        this.addComponent(narrowPhaseCollision);
         this.addComponent(physics);
-        this.addComponent(character);
+        this.addComponent(solidBody);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Text;
@@ -3059,12 +3067,12 @@ class Part {
         this.size = { width: 0, height: 0 };
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Part;
+/* harmony export (immutable) */ __webpack_exports__["b"] = Part;
 
 
-class RigidBody {
+class NarrowPhaseCollidable {
     constructor() {
-        this.type = "rigid-body";
+        this.type = "narrow-phase-collidable";
         this.name = null;
         this.isInitialized = false;
         this.isEnabled = true;
@@ -3073,7 +3081,7 @@ class RigidBody {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["b"] = RigidBody;
+/* harmony export (immutable) */ __webpack_exports__["a"] = NarrowPhaseCollidable;
 
 
 /***/ }),
@@ -3081,12 +3089,12 @@ class RigidBody {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Character {
+class SolidBody {
     constructor() {
-        this.type = "character";
+        this.type = "solid-body";
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Character;
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
 
 
 /***/ }),

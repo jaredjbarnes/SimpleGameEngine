@@ -1,13 +1,13 @@
 import World from "./../../../World";
 import RenderSystem from "./../../../systems/CompleteRenderSystem";
-import CollisionSystem from "./../../../systems/CollisionSystem";
+import BroadPhaseCollisionSystem from "./../../../systems/BroadPhaseCollisionSystem";
 import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
-import CharacterSystem from "./../../../systems/CharacterSystem";
+import SolidBodySystem from "./../../../systems/SolidBodySystem";
 import MovementSystem from "./../../../systems/MovementSystem";
 import LogicSystem from "./../../../systems/LogicSystem";
 import SpriteSystem from "./../../../systems/SpriteSystem";
-import RigidBodySystem from "./../../../systems/RigidBodySystem";
+import NarrowPhaseCollisionSystem from "./../../../systems/NarrowPhaseCollisionSystem";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
 import Line from "./entities/Line";
 import Text from "./../logicbox/entities/Text";
@@ -30,13 +30,13 @@ var renderSystem = new RenderSystem({
 });
 
 var logicSystem = new LogicSystem();
-var collisionSystem = new CollisionSystem();
-var characterSystem = new CharacterSystem();
+var collisionSystem = new BroadPhaseCollisionSystem();
+var solidBodySystem = new SolidBodySystem();
 var keyboardInputSystem = new KeyboardInputSystem(document);
 var controllerSystem = new ControllerSystem(document);
 var movementSystem = new MovementSystem();
 var followEntityCameraSystem = new FollowEntityCameraSystem();
-var rigidBodySystem = new RigidBodySystem();
+var narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(text);
@@ -47,8 +47,8 @@ world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(movementSystem);
 world.addSystem(collisionSystem);
-world.addSystem(rigidBodySystem);
-world.addSystem(characterSystem);
+world.addSystem(narrowPhaseCollisionSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 

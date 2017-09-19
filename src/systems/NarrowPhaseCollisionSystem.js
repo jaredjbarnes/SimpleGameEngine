@@ -1,8 +1,8 @@
 import Vector from "./../Vector";
 
-const DEPENDENCIES = ["collidable", "rigid-body", "position", "size"];
+const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position", "size"];
 
-export default class RigidBodySystem {
+export default class NarrowPhaseCollisionSystem {
     constructor() {
         this.entities = [];
         this.projectionA = {
@@ -16,9 +16,9 @@ export default class RigidBodySystem {
         this.timestamp = 0;
     }
 
-    prepareRigidBody(rigidBody) {
+    prepareNarrowPhaseCollidable(narrowPhaseCollision) {
 
-        rigidBody.parts.forEach((part) => {
+        narrowPhaseCollision.parts.forEach((part) => {
             let points = part.points;
 
             if (points.length === part.vertices.length &&
@@ -158,10 +158,10 @@ export default class RigidBodySystem {
     }
 
     updateWorldPoints(entity) {
-        let rigidBody = entity.getComponent("rigid-body");
+        let narrowPhaseCollision = entity.getComponent("narrow-phase-collidable");
         let position = entity.getComponent("position");
 
-        rigidBody.parts.forEach((part) => {
+        narrowPhaseCollision.parts.forEach((part) => {
             let worldPoints = part.worldPoints;
 
             part.points.forEach(function (point, index) {
@@ -181,14 +181,14 @@ export default class RigidBodySystem {
         let vx;
         let normal;
 
-        let rigidBodyA = _entityA.getComponent("rigid-body");
-        let rigidBodyB = _entityB.getComponent("rigid-body");
+        let narrowPhaseCollisionA = _entityA.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollisionB = _entityB.getComponent("narrow-phase-collidable");
         let positionA = _entityA.getComponent("position");
         let positionB = _entityB.getComponent("position");
         let collidableA = _entityA.getComponent("collidable");
         let collidableB = _entityB.getComponent("collidable");
-        let aParts = rigidBodyA.parts;
-        let bParts = rigidBodyB.parts;
+        let aParts = narrowPhaseCollisionA.parts;
+        let bParts = narrowPhaseCollisionB.parts;
 
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
@@ -206,8 +206,8 @@ export default class RigidBodySystem {
                 let projectionB = this.projectionB;
                 let verticesA = partA.worldPoints;
                 let verticesB = partB.worldPoints;
-                let collisionA = rigidBodyA.activeCollisions[entityB.id];
-                let collisionB = rigidBodyB.activeCollisions[entityA.id];
+                let collisionA = narrowPhaseCollisionA.activeCollisions[entityB.id];
+                let collisionB = narrowPhaseCollisionB.activeCollisions[entityA.id];
                 let penetration;
                 let minOverlap;
                 let normal;
@@ -215,8 +215,8 @@ export default class RigidBodySystem {
                 let originA = Vector.add(positionA, partA.origin);
                 let originB = Vector.add(positionB, partB.origin);
 
-                rigidBodyA.isInitialized = true;
-                rigidBodyB.isInitialized = true;
+                narrowPhaseCollisionA.isInitialized = true;
+                narrowPhaseCollisionB.isInitialized = true;
 
                 // If the collision was already handled from the other side then stop detection.
                 if (collisionA != null && collisionA.timestamp === this.timestamp) {
@@ -319,8 +319,8 @@ export default class RigidBodySystem {
 
                 }
 
-                rigidBodyA.activeCollisions[entityB.id] = collisionA;
-                rigidBodyB.activeCollisions[entityA.id] = collisionB;
+                narrowPhaseCollisionA.activeCollisions[entityB.id] = collisionA;
+                narrowPhaseCollisionB.activeCollisions[entityA.id] = collisionB;
 
             }
 
@@ -330,9 +330,9 @@ export default class RigidBodySystem {
 
     cleanCollisions(entity) {
         let _entity = entity;
-        let rigidBody = _entity.getComponent("rigid-body");
+        let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
         let collidable = _entity.getComponent("collidable");
-        let activeCollisions = rigidBody.activeCollisions;
+        let activeCollisions = narrowPhaseCollision.activeCollisions;
         let timestamp = this.timestamp;
 
         for (let key in activeCollisions) {
@@ -353,8 +353,8 @@ export default class RigidBodySystem {
     }
 
     isStaticAndInitialized(entityA, entityB) {
-        let rigidBodyA = entityA.getComponent("rigid-body");
-        let rigidBodyB = entityB.getComponent("rigid-body");
+        let narrowPhaseCollisionA = entityA.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollisionB = entityB.getComponent("narrow-phase-collidable");
         let positionA = entityA.getComponent("position");
         let positionB = entityB.getComponent("position");
 
@@ -362,7 +362,7 @@ export default class RigidBodySystem {
             return false;
         }
 
-        if (!rigidBodyA.isInitialized || !rigidBodyB.isInitialized) {
+        if (!narrowPhaseCollisionA.isInitialized || !narrowPhaseCollisionB.isInitialized) {
             return false;
         }
 
@@ -372,9 +372,9 @@ export default class RigidBodySystem {
     handleCollisions(entity) {
         let _entity = entity;
         let collidable = _entity.getComponent("collidable");
-        let rigidBody = _entity.getComponent("rigid-body");
+        let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
 
-        if (!rigidBody.isEnabled) {
+        if (!narrowPhaseCollision.isEnabled) {
             return;
         }
 
@@ -384,9 +384,9 @@ export default class RigidBodySystem {
             for (let key in activeCollisions) {
                 let collision = activeCollisions[key];
                 let otherEntity = this.world.getEntityById(collision.entityId);
-                let otherRigidBody = otherEntity.getComponent("rigid-body");
+                let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
-                if (otherEntity == null || otherRigidBody == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherRigidBody.isEnabled) {
+                if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
                     continue;
                 }
 
@@ -422,7 +422,7 @@ export default class RigidBodySystem {
 
     entityAdded(entity) {
         if (entity.hasComponents(DEPENDENCIES)) {
-            this.prepareRigidBody(entity.getComponent("rigid-body"));
+            this.prepareNarrowPhaseCollidable(entity.getComponent("narrow-phase-collidable"));
             if (!entity.getComponent("position").isStatic) {
                 this.entities.push(entity);
             }

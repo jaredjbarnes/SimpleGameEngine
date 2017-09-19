@@ -1,5 +1,5 @@
 import Camera from "./../components/Camera";
-import Character from "./../components/Character";
+import SolidBody from "./../components/SolidBody";
 import Collidable from "./../components/Collidable";
 import FixedPosition from "./../components/FixedPosition";
 import Force from "./../components/Force";
@@ -9,7 +9,7 @@ import KeyboardInput from "./../components/KeyboardInput";
 import Movable from "./../components/Movable";
 import Physics from "./../components/Physics";
 import Position from "./../components/Position";
-import RigidBody from "./../components/RigidBody";
+import NarrowPhaseCollidable from "./../components/NarrowPhaseCollidable";
 import Serializable from "./../components/Serializable";
 import Shape from "./../components/Shape";
 import Size from "./../components/Size";
@@ -22,7 +22,7 @@ export default class ComponentManager {
     constructor() {
         this.types = {
             "camera": Camera,
-            "character": Character,
+            "solid-body": SolidBody,
             "collidable": Collidable,
             "fixed-position": FixedPosition,
             "force": Force,
@@ -32,7 +32,7 @@ export default class ComponentManager {
             "movable": Movable,
             "physics": Physics,
             "position": Position,
-            "rigid-body": RigidBody,
+            "narrow-phase-collidable": NarrowPhaseCollidable,
             "serializable": Serializable,
             "shape": Shape,
             "size": Size,

@@ -137,11 +137,20 @@ export default class RenderSystem {
     }
 
     componentAdded(entity, component) {
-
+        this.entityAdded(entity);
     }
 
     componentRemoved(entity, component) {
+        let isRenderable = Object.keys(this.renderers).some((type) => {
+            return component.type === type;
+        });
 
+        if (
+            isRenderable ||
+            (this.supportsEntity(entity) && this._dependencies.indexOf(component.type))
+        ) {
+            this.unregisterEntity(entity);
+        }
     }
 
     deactivated() {

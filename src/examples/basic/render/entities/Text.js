@@ -6,7 +6,6 @@ import Collidable from "./../../../../components/Collidable";
 import KeyboardController from "./../../../../components/KeyboardController";
 import KeyboardInput from "./../../../../components/KeyboardInput";
 import Movable from "./../../../../components/Movable";
-import Physics from "./../../../../components/Physics";
 import Shape from "./../../../../components/Shape";
 import State from "./../../../../components/State";
 import { Part, NarrowPhaseCollidable } from "./../../../../components/NarrowPhaseCollidable";
@@ -24,7 +23,6 @@ export default class Text extends Entity {
         var movable = new Movable();
         var shape = new Shape();
         var narrowPhaseCollision = new NarrowPhaseCollidable();
-        var physics = new Physics();
         var part = new Part();
         var solidBody = new SolidBody();
 
@@ -66,7 +64,6 @@ export default class Text extends Entity {
         this.addComponent(movable);
         this.addComponent(shape);
         this.addComponent(narrowPhaseCollision);
-        this.addComponent(physics);
         this.addComponent(solidBody);
     }
 }

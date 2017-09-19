@@ -665,11 +665,20 @@ class RenderSystem {
     }
 
     componentAdded(entity, component) {
-
+        this.entityAdded(entity);
     }
 
     componentRemoved(entity, component) {
+        let isRenderable = Object.keys(this.renderers).some((type) => {
+            return component.type === type;
+        });
 
+        if (
+            isRenderable ||
+            (this.supportsEntity(entity) && this._dependencies.indexOf(component.type))
+        ) {
+            this.unregisterEntity(entity);
+        }
     }
 
     deactivated() {
@@ -2904,13 +2913,13 @@ class LogicSystem {
         var entity = this.world.getEntityById(_entityId);
 
         if (entity == null) {
-            throw new Error(`Couldn't find entity with id: ${entityId}`);
+            return null;
         }
 
         var state = entity.getComponent("state");
 
         if (state == null) {
-            throw new Error(`The entity, ${entity.id} needs to have a state component.`);
+            return null;
         }
         return state;
     }
@@ -2931,7 +2940,8 @@ class LogicSystem {
     }
 
     deactivated() {
-
+        this.world = null;
+        this.entities = [];
     }
 
     componentAdded(entity, component) {
@@ -2968,6 +2978,10 @@ class LogicSystem {
                 var _condition = condition;
                 var state = this._getStateComponent(_condition.entityId);
 
+                if (state == null) {
+                    return false;
+                }
+
                 return _condition.stateNames.indexOf(state.name) > -1;
             });
 
@@ -2975,6 +2989,10 @@ class LogicSystem {
                 logicBox.actions.forEach((action) => {
                     var _action = action;
                     var state = this._getStateComponent(_action.entityId);
+
+                    if (state == null) {
+                        return;
+                    }
 
                     state.name = _action.stateName;
                     state.options = _action.options;

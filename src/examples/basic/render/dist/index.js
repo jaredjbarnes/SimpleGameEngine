@@ -249,8 +249,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_MovementSystem__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__entities_Text__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_StaticText__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Camera__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_StaticText__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Camera__ = __webpack_require__(30);
 
 
 
@@ -669,11 +669,20 @@ class RenderSystem {
     }
 
     componentAdded(entity, component) {
-
+        this.entityAdded(entity);
     }
 
     componentRemoved(entity, component) {
+        let isRenderable = Object.keys(this.renderers).some((type) => {
+            return component.type === type;
+        });
 
+        if (
+            isRenderable ||
+            (this.supportsEntity(entity) && this._dependencies.indexOf(component.type))
+        ) {
+            this.unregisterEntity(entity);
+        }
     }
 
     deactivated() {
@@ -2825,12 +2834,10 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Physics__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Shape__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_State__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__ = __webpack_require__(29);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(28);
 
 
 
@@ -2854,11 +2861,10 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var keyboardController = new __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__["a" /* default */]();
         var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
         var movable = new __WEBPACK_IMPORTED_MODULE_7__components_Movable__["a" /* default */]();
-        var shape = new __WEBPACK_IMPORTED_MODULE_9__components_Shape__["a" /* default */]();
-        var narrowPhaseCollision = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["a" /* NarrowPhaseCollidable */]();
-        var physics = new __WEBPACK_IMPORTED_MODULE_8__components_Physics__["a" /* default */]();
-        var part = new __WEBPACK_IMPORTED_MODULE_11__components_NarrowPhaseCollidable__["b" /* Part */]();
-        var solidBody = new __WEBPACK_IMPORTED_MODULE_12__components_SolidBody__["a" /* default */]();
+        var shape = new __WEBPACK_IMPORTED_MODULE_8__components_Shape__["a" /* default */]();
+        var narrowPhaseCollision = new __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__["a" /* NarrowPhaseCollidable */]();
+        var part = new __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__["b" /* Part */]();
+        var solidBody = new __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__["a" /* default */]();
 
         part.points.push(
             { x: 0, y: 0 },
@@ -2898,7 +2904,6 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(movable);
         this.addComponent(shape);
         this.addComponent(narrowPhaseCollision);
-        this.addComponent(physics);
         this.addComponent(solidBody);
     }
 }
@@ -2982,27 +2987,6 @@ class Movable {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Physics {
-    constructor() {
-        this.type = "physics";
-        this.velocity = { x: 0, y: 0 };
-        this.force = { x: 0, y: 0 };
-        this.mass = 1;
-        this.elasticity = 1;
-        this.friction = { x: 0, y: 0 };
-        this.acceleration = { x: 0, y: 0 };
-        this.lastPosition = { x: 0, y: 0 };
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Physics;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 ﻿class Shape {
     constructor() {
         this.type = "shape";
@@ -3034,7 +3018,7 @@ class Physics {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3052,7 +3036,7 @@ class Physics {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3085,7 +3069,7 @@ class NarrowPhaseCollidable {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3098,7 +3082,7 @@ class SolidBody {
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3141,12 +3125,12 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -3178,7 +3162,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

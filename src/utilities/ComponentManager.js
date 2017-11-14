@@ -30,7 +30,6 @@ export default class ComponentManager {
             "keyboard-controller": Camera,
             "keyboard-input": KeyboardInput,
             "movable": Movable,
-            "physics": Physics,
             "position": Position,
             "narrow-phase-collidable": NarrowPhaseCollidable,
             "serializable": Serializable,

@@ -4068,11 +4068,15 @@ class Movable {
 ﻿class State {
     constructor() {
         this.type = "state";
+        
         this.activeName = null;
-        this.name = null;
-        this.stateManagerName = null;
-        this.options = {};
         this.activeOptions = {};
+        
+        this.name = null;
+        this.options = {};
+        
+        this.stateManagerName = null;
+
     }
 }
 /* unused harmony export default */

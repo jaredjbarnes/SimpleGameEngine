@@ -580,8 +580,7 @@ class RenderSystem {
             }
         };
 
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
+        this.setCanvas(canvas);
     }
 
     _drawDynamicCollision(collision) {
@@ -609,6 +608,11 @@ class RenderSystem {
         renderers.forEach(function (renderer) {
             self._invokeMethod(renderer, methodName, args);
         });
+    }
+
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
     }
 
     addRenderer(renderer) {
@@ -702,7 +706,7 @@ class RenderSystem {
         var self = this;
         var world = this._world;
         var canvas = this.canvas;
-        var context = canvas.getContext("2d");
+        var context = this.context;
         var cameraPosition = this._cameraPosition;
         var cameraSize = this._cameraSize;
         var caches = this._staticCacheByZIndex;
@@ -2173,21 +2177,20 @@ class LineRenderer {
         var size = entity.getComponent("size");
         var line = entity.getComponent("line");
         var position = entity.getComponent("position");
-
         var context = canvas.getContext("2d");
 
         canvas.width = size.width;
         canvas.height = size.height;
 
-        context.beginPath();
-        context.moveTo(line.from.x, line.from.y);
-        context.lineTo(line.to.x, line.to.y);
-        context.closePath();
-
         if (line.thickness > 0) {
+            context.beginPath();
+            context.lineCap = "round";
             context.lineWidth = line.thickness;
             context.strokeStyle = this.convertToRgba(line.color);
+            context.moveTo(line.from.x, line.from.y);
+            context.lineTo(line.to.x, line.to.y);
             context.stroke();
+            context.closePath();
         }
 
         this.lineCache[entity.id] = canvas;
@@ -3757,13 +3760,14 @@ class FollowEntityCameraSystem {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor(from, to) {
+    constructor(from, to, thickness = 10) {
         super();
 
         let position = new __WEBPACK_IMPORTED_MODULE_1__components_Position__["a" /* default */]();
         let size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
         let line = new __WEBPACK_IMPORTED_MODULE_4__components_Line__["a" /* default */]();
         let collidable = new __WEBPACK_IMPORTED_MODULE_3__components_Collidable__["a" /* default */]();
+        let radiusThickness = Math.round(thickness / 2);
 
         position.x = Math.min(from.x, to.x);
         position.y = Math.min(from.y, to.y);
@@ -3771,26 +3775,28 @@ class FollowEntityCameraSystem {
         size.width = Math.max(from.x, to.x) - Math.min(from.x, to.x);
         size.height = Math.max(from.y, to.y) - Math.min(from.y, to.y);
 
+        line.thickness = thickness;
+
         if (position.x === from.x && position.y === from.y) {
-            line.from.x = 0;
-            line.from.y = 0;
-            line.to.x = size.width;
-            line.to.y = size.height;
+            line.from.x = radiusThickness;
+            line.from.y = radiusThickness;
+            line.to.x = size.width - radiusThickness;
+            line.to.y = size.height - radiusThickness;
         } else if (position.x === from.x && position.y !== from.y) {
-            line.from.x = size.width
-            line.from.y = 0;
-            line.to.x = 0;
-            line.to.y = size.height;
+            line.from.x = size.width - radiusThickness;
+            line.from.y = radiusThickness;
+            line.to.x = radiusThickness;
+            line.to.y = size.height - radiusThickness;
         } else if (position.x !== from.x && position.y === from.y) {
-            line.from.x = size.width;
-            line.from.y = 0;
-            line.to.x = 0;
-            line.to.y = size.height;
+            line.from.x = size.width - radiusThickness;
+            line.from.y = radiusThickness;
+            line.to.x = radiusThickness;
+            line.to.y = size.height - radiusThickness;
         } else if (position.x !== from.x && position.y !== from.y) {
-            line.from.x = 0;
-            line.from.y = 0;
-            line.to.x = size.width;
-            line.to.y = size.height;
+            line.from.x = radiusThickness;
+            line.from.y = radiusThickness;
+            line.to.x = size.width - radiusThickness;
+            line.to.y = size.height - radiusThickness;
         }
 
         this.addComponent(position);
@@ -3917,6 +3923,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         textTexture.text = text;
         textTexture.font.size = 17;
         textTexture.verticalAlignment = "middle";
+        textTexture.horizontalAlignment = "center";
 
         size.width = 100;
         size.height = 30;

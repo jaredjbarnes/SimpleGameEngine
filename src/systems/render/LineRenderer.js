@@ -24,21 +24,20 @@ export default class LineRenderer {
         var size = entity.getComponent("size");
         var line = entity.getComponent("line");
         var position = entity.getComponent("position");
-
         var context = canvas.getContext("2d");
 
         canvas.width = size.width;
         canvas.height = size.height;
 
-        context.beginPath();
-        context.moveTo(line.from.x, line.from.y);
-        context.lineTo(line.to.x, line.to.y);
-        context.closePath();
-
         if (line.thickness > 0) {
+            context.beginPath();
+            context.lineCap = "round";
             context.lineWidth = line.thickness;
             context.strokeStyle = this.convertToRgba(line.color);
+            context.moveTo(line.from.x, line.from.y);
+            context.lineTo(line.to.x, line.to.y);
             context.stroke();
+            context.closePath();
         }
 
         this.lineCache[entity.id] = canvas;

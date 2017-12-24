@@ -55,8 +55,7 @@ export default class RenderSystem {
             }
         };
 
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
+        this.setCanvas(canvas);
     }
 
     _drawDynamicCollision(collision) {
@@ -84,6 +83,11 @@ export default class RenderSystem {
         renderers.forEach(function (renderer) {
             self._invokeMethod(renderer, methodName, args);
         });
+    }
+
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
     }
 
     addRenderer(renderer) {
@@ -177,7 +181,7 @@ export default class RenderSystem {
         var self = this;
         var world = this._world;
         var canvas = this.canvas;
-        var context = canvas.getContext("2d");
+        var context = this.context;
         var cameraPosition = this._cameraPosition;
         var cameraSize = this._cameraSize;
         var caches = this._staticCacheByZIndex;

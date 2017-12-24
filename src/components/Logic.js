@@ -17,6 +17,7 @@ class Logic {
     constructor() {
         this.type = "logic";
         this.name = null;
+        this.isDisabled = false;
         this.conditions = [];
         this.actions = [];
     }

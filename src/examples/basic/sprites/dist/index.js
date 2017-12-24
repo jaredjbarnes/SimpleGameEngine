@@ -597,8 +597,7 @@ class RenderSystem {
             }
         };
 
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
+        this.setCanvas(canvas);
     }
 
     _drawDynamicCollision(collision) {
@@ -626,6 +625,11 @@ class RenderSystem {
         renderers.forEach(function (renderer) {
             self._invokeMethod(renderer, methodName, args);
         });
+    }
+
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
     }
 
     addRenderer(renderer) {
@@ -719,7 +723,7 @@ class RenderSystem {
         var self = this;
         var world = this._world;
         var canvas = this.canvas;
-        var context = canvas.getContext("2d");
+        var context = this.context;
         var cameraPosition = this._cameraPosition;
         var cameraSize = this._cameraSize;
         var caches = this._staticCacheByZIndex;
@@ -2190,21 +2194,20 @@ class LineRenderer {
         var size = entity.getComponent("size");
         var line = entity.getComponent("line");
         var position = entity.getComponent("position");
-
         var context = canvas.getContext("2d");
 
         canvas.width = size.width;
         canvas.height = size.height;
 
-        context.beginPath();
-        context.moveTo(line.from.x, line.from.y);
-        context.lineTo(line.to.x, line.to.y);
-        context.closePath();
-
         if (line.thickness > 0) {
+            context.beginPath();
+            context.lineCap = "round";
             context.lineWidth = line.thickness;
             context.strokeStyle = this.convertToRgba(line.color);
+            context.moveTo(line.from.x, line.from.y);
+            context.lineTo(line.to.x, line.to.y);
             context.stroke();
+            context.closePath();
         }
 
         this.lineCache[entity.id] = canvas;

@@ -39,6 +39,7 @@ export default class Text extends Entity {
         textTexture.text = text;
         textTexture.font.size = 17;
         textTexture.verticalAlignment = "middle";
+        textTexture.horizontalAlignment = "center";
 
         size.width = 100;
         size.height = 30;

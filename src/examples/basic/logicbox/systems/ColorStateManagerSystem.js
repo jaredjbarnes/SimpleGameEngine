@@ -60,8 +60,6 @@ export default class ColorStateManager extends StateManagerSystem {
                     shape.fillColor.alpha = 1;
                     shape.isDirty = true;
                 }
-
-
             },
             update: (entity) => {
                 var collidable = entity.getComponent("collidable");

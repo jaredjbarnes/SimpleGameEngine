@@ -45,7 +45,7 @@ export default class SolidBodySystem {
     }
 
     updateEntity(entity) {
-        let activeCollisions = entity.getComponent("narrow-phase-collidable").activeCollisions;
+        let activeCollisions = entity.getComponent("narrow-phase-collidable").collisions;
         let movable = entity.getComponent("movable");
         let solidBody = entity.getComponent("solid-body");
 

@@ -206,8 +206,8 @@ export default class NarrowPhaseCollisionSystem {
                 let projectionB = this.projectionB;
                 let verticesA = partA.worldPoints;
                 let verticesB = partB.worldPoints;
-                let collisionA = narrowPhaseCollisionA.activeCollisions[entityB.id];
-                let collisionB = narrowPhaseCollisionB.activeCollisions[entityA.id];
+                let collisionA = narrowPhaseCollisionA.collisions[entityB.id];
+                let collisionB = narrowPhaseCollisionB.collisions[entityA.id];
                 let penetration;
                 let minOverlap;
                 let normal;
@@ -319,8 +319,8 @@ export default class NarrowPhaseCollisionSystem {
 
                 }
 
-                narrowPhaseCollisionA.activeCollisions[entityB.id] = collisionA;
-                narrowPhaseCollisionB.activeCollisions[entityA.id] = collisionB;
+                narrowPhaseCollisionA.collisions[entityB.id] = collisionA;
+                narrowPhaseCollisionB.collisions[entityA.id] = collisionB;
 
             }
 
@@ -332,7 +332,7 @@ export default class NarrowPhaseCollisionSystem {
         let _entity = entity;
         let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
         let collidable = _entity.getComponent("collidable");
-        let activeCollisions = narrowPhaseCollision.activeCollisions;
+        let activeCollisions = narrowPhaseCollision.collisions;
         let timestamp = this.timestamp;
 
         for (let key in activeCollisions) {
@@ -344,12 +344,18 @@ export default class NarrowPhaseCollisionSystem {
                 delete activeCollisions[key];
             }
 
+            const broadphaseCollision = this.getCollisionByEntityId(collidable.collisions, collidableKey);
+
             // Checking the status of the broadphase collision.
-            if (_collision.endTimestamp == null && collidable.activeCollisions[collidableKey] != null && collidable.activeCollisions[collidableKey].endTimestamp != null) {
-                _collision.endTimestamp = collidable.activeCollisions[collidableKey].endTimestamp;
+            if (_collision.endTimestamp == null && broadphaseCollision != null && broadphaseCollision.endTimestamp != null) {
+                _collision.endTimestamp = broadphaseCollision.endTimestamp;
             }
         }
 
+    }
+
+    getCollisionByEntityId(collisions, id) {
+        return collisions.find(({ entityId }) => entityId === id);
     }
 
     isStaticAndInitialized(entityA, entityB) {
@@ -379,19 +385,16 @@ export default class NarrowPhaseCollisionSystem {
         }
 
         if (collidable != null) {
-            let activeCollisions = collidable.activeCollisions;
-
-            for (let key in activeCollisions) {
-                let collision = activeCollisions[key];
+            collidable.collisions.forEach((collision)=>{
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
                 if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
-                    continue;
+                    return;
                 }
 
                 this.intersects(_entity, otherEntity);
-            }
+            });
 
             this.cleanCollisions(_entity);
         }

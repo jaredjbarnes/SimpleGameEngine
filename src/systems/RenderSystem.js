@@ -394,18 +394,6 @@ export default class RenderSystem {
         });
     }
 
-    getCollisions(collidable) {
-        let _collidable = collidable;
-        let collisions = [];
-        let activeCollisions = _collidable.activeCollisions;
-
-        for (let key in activeCollisions) {
-            collisions.push(activeCollisions[key]);
-        }
-
-        return collisions;
-    }
-
     drawEntityOnCamera(entity, canvas) {
         if (canvas == null) {
             return;
@@ -584,6 +572,13 @@ export default class RenderSystem {
 
         this.unregisterEntity(entity);
         this.redrawEntityOnCanvas(entity, canvas, false);
+    }
+
+    getCollisions(collidable){
+        return Object.keys(collidable.cells).reduce((accumlulator, key)=>{
+            const collisions = collidable.cells[key];
+            return accumlulator.concat(collisions);
+        }, []);
     }
 
     get camera() {

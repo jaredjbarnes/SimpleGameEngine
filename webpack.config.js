@@ -56,5 +56,22 @@ const line = {
     }
 }
 
+const zIndex = {
+    entry: "./src/examples/basic/zIndex/index.js",
+    output: {
+        filename: "index.js",
+        path: path.resolve(__dirname, 'src/examples/basic/zIndex/dist')
+    }
+}
 
-module.exports = [logicBox, render, sprite, follower, rigidbody, animation, line];
+
+module.exports = [
+    logicBox,
+    render,
+    sprite,
+    follower,
+    rigidbody,
+    animation,
+    line,
+    zIndex
+];

@@ -16,8 +16,8 @@ export default class ColorStateManager extends StateManagerSystem {
             var _collidable = collidable;
             var isOn = false;
 
-            for (let key in _collidable.activeCollisions) {
-                var collision = _collidable.activeCollisions[key];
+            for (let key in _collidable.collisions) {
+                var collision = _collidable.collisions[key];
                 var entity = _world.getEntityById(collision.entityId);
 
                 if (collision.endTimestamp == null && entity.hasComponents(["solid-body"])) {

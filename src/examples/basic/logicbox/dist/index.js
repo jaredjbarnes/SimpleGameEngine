@@ -195,7 +195,7 @@ class Entity {
         this.type = "collidable";
         this.name = null;
         this.isEnabled = true;
-        this.activeCollisions = {};
+        this.cells = {};
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
@@ -535,7 +535,7 @@ window.world = world;
         var self = this;
         var systems = this._systems;
 
-        this.notifySystems("update");
+        this.notifySystems("update", [this.getTime()]);
     }
 
     play() {
@@ -1017,18 +1017,6 @@ class RenderSystem {
         });
     }
 
-    getCollisions(collidable) {
-        let _collidable = collidable;
-        let collisions = [];
-        let activeCollisions = _collidable.activeCollisions;
-
-        for (let key in activeCollisions) {
-            collisions.push(activeCollisions[key]);
-        }
-
-        return collisions;
-    }
-
     drawEntityOnCamera(entity, canvas) {
         if (canvas == null) {
             return;
@@ -1209,6 +1197,13 @@ class RenderSystem {
         this.redrawEntityOnCanvas(entity, canvas, false);
     }
 
+    getCollisions(collidable){
+        return Object.keys(collidable.cells).reduce((accumlulator, key)=>{
+            const collisions = collidable.cells[key];
+            return accumlulator.concat(collisions);
+        }, []);
+    }
+
     get camera() {
         return this._camera;
     }
@@ -1292,140 +1287,6 @@ class CompositeCanvas {
         });
     }
 
-    _setPropertyOnCells(property, value) {
-        this._cells.forEach((cell) => {
-            cell[property] = value;
-        });
-    }
-
-    set fillStyle(value) {
-        this._setPropertyOnCells("fillStyle", value);
-    }
-
-    get fillStyle() {
-        return this._cells[0].fillStyle;
-    }
-
-    set font(value) {
-        this._setPropertyOnCells("font", value);
-    }
-
-    get font() {
-        return this._cells[0].font;
-    }
-
-    set globalAlpha(value) {
-        this._setPropertyOnCells("globalAlpha", value);
-    }
-
-    get globalAlpha() {
-        return this._cells[0].globalAlpha;
-    }
-
-    set globalCompositeOperation(value) {
-        this._setPropertyOnCells("globalCompositeOperation", value);
-    }
-
-    get globalCompositeOperation() {
-        return this._cells[0].globalAlpha;
-    }
-
-    set lineCap(value) {
-        this._setPropertyOnCells("lineCap", value);
-    }
-
-    get lineCap() {
-        return this._cells[0].lineCap;
-    }
-
-    set lineDashOffset(value) {
-        this._setPropertyOnCells("lineDashOffset", value);
-    }
-
-    get lineDashOffset() {
-        return this._cells[0].lineDashOffset;
-    }
-
-    set lineJoin(value) {
-        this._setPropertyOnCells("lineJoin", value);
-    }
-
-    get lineJoin() {
-        return this._cells[0].lineJoin;
-    }
-
-    set lineWidth(value) {
-        this._setPropertyOnCells("lineWidth", value);
-    }
-
-    get lineWidth() {
-        return this._cells[0].lineWidth;
-    }
-
-    set miterLimit(value) {
-        this._setPropertyOnCells("miterLimit", value);
-    }
-
-    get miterLimit() {
-        return this._cells[0].miterLimit;
-    }
-
-    set shadowBlur(value) {
-        this._setPropertyOnCells("shadowBlur", value);
-    }
-
-    get shadowBlur() {
-        return this._cells[0].shadowBlur;
-    }
-
-    set shadowColor(value) {
-        this._setPropertyOnCells("shadowColor", value);
-    }
-
-    get shadowColor() {
-        return this._cells[0].shadowColor;
-    }
-
-    set shadowOffsetX(value) {
-        this._setPropertyOnCells("shadowOffsetX", value);
-    }
-
-    get shadowOffsetX() {
-        return this._cells[0].shadowOffsetX;
-    }
-
-    set shadowOffsetY(value) {
-        this._setPropertyOnCells("shadowOffsetY", value);
-    }
-
-    get shadowOffsetY() {
-        return this._cells[0].shadowOffsetY;
-    }
-
-    set strokeStyle(value) {
-        this._setPropertyOnCells("strokeStyle", value);
-    }
-
-    get strokeStyle() {
-        return this._cells[0].strokeStyle;
-    }
-
-    set textAlign(value) {
-        this._setPropertyOnCells("textAlign", value);
-    }
-
-    get textAlign() {
-        return this._cells[0].textAlign;
-    }
-
-    set textBaseline(value) {
-        this._setPropertyOnCells("textBaseline", value);
-    }
-
-    get textBaseline() {
-        return this._cells[0].textBaseline;
-    }
-
     drawImage(sourceCanvas,
         sourceX,
         sourceY,
@@ -1457,72 +1318,12 @@ class CompositeCanvas {
         });
     }
 
-    arc() {
-        this._invokeOnCells("arc", arguments);
-    }
-
-    arcTo() {
-        this._invokeOnCells("arcTo", arguments);
-    }
-
-    beginPath() {
-        this._invokeOnCells("beginPath", arguments);
-    }
-
-    bezierCurveTo() {
-        this._invokeOnCells("bezierCurveTo", arguments);
-    }
-
     clearRect() {
         this._invokeOnCells("clearRect", arguments);
     }
 
-    closePath() {
-        this._invokeOnCells("closePath", arguments);
-    }
-
-    clip() {
-        this._invokeOnCells("clip", arguments);
-    }
-
-    fill() {
-        this._invokeOnCells("fill", arguments);
-    }
-
-    fillRect() {
-        this._invokeOnCells("fillRect", arguments);
-    }
-
-    fillText() {
-        this._invokeOnCells("fillText", arguments);
-    }
-
     getContext() {
         return this;
-    }
-
-    lineTo() {
-        this._invokeOnCells("lineTo", arguments);
-    }
-
-    moveTo() {
-        this._invokeOnCells("moveTo", arguments);
-    }
-
-    rect() {
-        this._invokeOnCells("rect", arguments);
-    }
-
-    restore() {
-        this._invokeOnCells("restore", arguments);
-    }
-
-    save() {
-        this._invokeOnCells("save", arguments);
-    }
-
-    stroke() {
-        this._invokeOnCells("stroke", arguments);
     }
 
 }
@@ -1545,134 +1346,6 @@ class CompositeCanvasCell {
         this.canvas.height = size;
         this.context = this.canvas.getContext("2d");
         this.canvas.getContext("2d").clearRect(0, 0, size, size);
-    }
-
-    set fillStyle(value) {
-        this.context.fillStyle = value;
-    }
-
-    get fillStyle() {
-        return this.context.fillStyle;
-    }
-
-    set font(value) {
-        this.context.font = value;
-    }
-
-    get font() {
-        return this.context.font;
-    }
-
-    set globalAlpha(value) {
-        this.context.globalAlpha = value;
-    }
-
-    get globalAlpha() {
-        return this.context.globalAlpha;
-    }
-
-    set globalCompositeOperation(value) {
-        this.context.globalCompositeOperation = value;
-    }
-
-    get globalCompositeOperation() {
-        return this.context.globalCompositeOperation;
-    }
-
-    set lineCap(value) {
-        this.context.lineCap = value;
-    }
-
-    get lineCap() {
-        return this.context.lineCap;
-    }
-
-    set lineDashOffset(value) {
-        this.context.lineDashOffset = value;
-    }
-
-    get lineDashOffset() {
-        return this.context.lineDashOffset;
-    }
-
-    set lineJoin(value) {
-        this.context.lineJoin = value;
-    }
-
-    get lineJoin() {
-        return this.context.lineJoin;
-    }
-
-    set lineWidth(value) {
-        this.context.lineWidth = value;
-    }
-
-    get lineWidth() {
-        return this.context.lineWidth;
-    }
-
-    set miterLimit(value) {
-        this.context.miterLimit = value;
-    }
-
-    get miterLimit() {
-        return this.context.miterLimit;
-    }
-
-    set shadowBlur(value) {
-        this.context.shadowBlur = value;
-    }
-
-    get shadowBlur() {
-        return this.context.shadowBlur;
-    }
-
-    set shadowColor(value) {
-        this.context.shadowColor = value;
-    }
-
-    get shadowColor() {
-        return this.context.ShadowColor;
-    }
-
-    set shadowOffsetX(value) {
-        this.context.shadowOffsetX = value;
-    }
-
-    get shadowOffsetX() {
-        return this.context.shadowOffsetX;
-    }
-
-    set shadowOffsetY(value) {
-        this.context.shadowOffsetY = value;
-    }
-
-    get shadowOffsetY() {
-        return this.context.shadowOffsetY;
-    }
-
-    set strokeStyle(value) {
-        this.context.strokeStyle = value;
-    }
-
-    get strokeStyle() {
-        return this.context.strokeStyle;
-    }
-
-    set textAlign(value) {
-        this.context.textAlign = value;
-    }
-
-    get textAlign() {
-        return this.context.textAlign;
-    }
-
-    set textBaseline(value) {
-        this.context.textBaseline = value;
-    }
-
-    get textBaseline() {
-        return this.context.textBaseline;
     }
 
     drawImage(sourceCanvas,
@@ -1763,40 +1436,6 @@ class CompositeCanvasCell {
 
     }
 
-    arc(x, y, radius, startAngle, endAngle, anticlockwise) {
-        x = + this.offset.x;
-        y = + this.offset.y;
-
-        this.context.arc(x, y, radius, startAngle, endAngle, anticlockwise);
-    }
-
-    arcTo(x1, y1, x2, y2, radius) {
-        x1 += this.offset.x;
-        x2 += this.offset.x;
-
-        y1 += this.offset.y;
-        y2 += this.offset.y;
-
-        this.context.arcTo(x1, y1, x2, y2, radius);
-    }
-
-    beginPath() {
-        this.context.beginPath();
-    }
-
-    bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
-        cp1x += this.offset.x;
-        cp2x += this.offset.x;
-
-        cp1y += this.offset.y;
-        cp2y += this.offset.y;
-
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
-    }
-
     clearRect(x, y, width, height) {
         x = Math.max(x, this.offset.x);
         y = Math.max(y, this.offset.y);
@@ -1810,67 +1449,8 @@ class CompositeCanvasCell {
         this.context.clearRect(x, y, width, height);
     }
 
-    closePath() {
-        this.context.closePath();
-    }
-
-    clip() {
-        this.context.clip();
-    }
-
-    fill() {
-        this.context.fill.apply(this.context, arguments);
-    }
-
-    fillRect(x, y, width, height) {
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.context.fillRect(x, y, width, height);
-    }
-
-    fillText(text, x, y, maxWidth) {
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.context.fillText(text, x, y, maxWidth);
-    }
-
     getContext() {
         return this;
-    }
-
-    lineTo(x, y) {
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.context.lineTo(x, y);
-    }
-
-    moveTo(x, y) {
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.context.lineTo(x, y);
-    }
-
-    rect(x, y, width, height) {
-        x += this.offset.x;
-        y += this.offset.y;
-
-        this.context.rect(x, y, width, height);
-    }
-
-    restore() {
-        this.context.restore();
-    }
-
-    save() {
-        this.context.save();
-    }
-
-    stroke() {
-        this.context.stroke();
     }
 
 }
@@ -2343,350 +1923,303 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿const DEPENDENCIES = ["position", "size", "collidable"];
-
-class BroadPhaseEntity {
-    constructor(entity) {
-        this.id = null;
-        this.position = entity.getComponent("position");
-        this.size = entity.getComponent("size");
-        this.collidable = entity.getComponent("collidable");
-        this.id = entity.id;
+﻿class CellPosition {
+    constructor(columnIndex, rowIndex) {
+        this.rowIndex = rowIndex;
+        this.columnIndex = columnIndex;
     }
 }
 
 class Collision {
-    constructor() {
-        this.timestamp = null;
-        this.startTimestamp = null;
-        this.endTimestamp = null;
-        this.entityId = null;
-        this.isStatic = false;
+    constructor(entityId) {
+        this.entityId = entityId;
+        this.timestamp = 0;
     }
 }
 
-class BroadPhaseBroadPhaseCollisionSystem {
-    constructor(cellSize) {
-        this._world = null;
-        this._cellSize = cellSize || 200;
-        this._currentTimestamp = 0;
-        this._detectionAreaPosition = null;
-        this._detectionAreaSize = null;
-        this._gridWidth = 0;
-        this._gridHeight = 0;
-        this._grid = [[]];
-        this._lastRegions = new Map();
-        this._entities = new Map();
+class CollidableEntity {
+    constructor(entityId) {
+        this.id = entityId;
+        this.size = null;
+        this.position = null;
+        this.collidable = null;
+    }
+}
+
+class BroadPhaseCollisionSystem {
+    constructor(cellSize = 200) {
+        this.cellSize = cellSize;
+        this.collidableEntities = new Map();
+        this.cellPositionsOfEntitiesById = new Map();
+        this.world = null;
+        this.currentTime = 0;
+        this.grid = new Map();
+        this.dirtyCellPositions = [];
+        this.dependencies = ["position", "size", "collidable"];
+        this.name = "Broad Phase Collision System"
     }
 
-    _createGrid() {
-        this._gridWidth = Math.floor((this._world.size.width) / this._cellSize);
-        this._gridHeight = Math.floor((this._world.size.height) / this._cellSize);
+    addEntityToCellPosition(_collidableEntity, _cellPosition) {
+        const collidableEntity = _collidableEntity;
+        const cellPosition = _cellPosition;
+        const cell = this.getCell(cellPosition);
 
-        this._grid = new Array(this._gridWidth);
-
-        for (let x = 0; x < this._gridWidth; x++) {
-            this._grid[x] = new Array(this._gridHeight);
-            for (let y = 0; y < this._gridHeight; y++) {
-                this._grid[x][y] = [];
-            }
-        }
+        cell.push(collidableEntity);
     }
 
-    _removeLastRegionsFromGrid(entity, regions) {
-        if (regions == null) {
-            return;
-        }
+    addCellPositionsToDirtyCellPositions(_cellPositions) {
+        const cellPositions = _cellPositions;
 
-        let grid = this._grid;
-        regions.forEach((region) => {
-            let bucket = grid[region[0]][region[1]];
-            let index = -1;
-
-            bucket.some((broadPhaseEntity, x) => {
-                if (broadPhaseEntity.id == entity.id) {
-                    index = x;
-                    return true;
-                };
-                return false;
+        let filteredCellPositions = cellPositions.filter((cellPosition) => {
+            return this.dirtyCellPositions.findIndex(dirtyCell => {
+                return dirtyCell.columnIndex === cellPosition.columnIndex && dirtyCell.rowIndex === cellPosition.rowIndex
             });
+        });
 
-            if (index > -1) {
-                bucket.splice(index, 1);
+        this.dirtyCellPositions = this.dirtyCellPositions.concat(filteredCellPositions);
+    }
+
+    doEntitiesIntersect({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
+        const top = Math.max(positionA.y, positionB.y);
+        const bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
+        const left = Math.max(positionA.x, positionB.x);
+        const right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
+
+        return top < bottom && left < right;
+    }
+
+    findDirtyCells() {
+        const dirtyEntities = [];
+        const collidableEntities = this.collidableEntities;
+
+        for (let x = 0; x < collidableEntities; x++) {
+            const collidableEntity = collidableEntities[x];
+            const size = collidableEntity.size;
+            const position = collidableEntity.position;
+
+            if (position.isDirty || size.isDirty) {
+                dirtyEntities.push(collidableEntity);
             }
-        });
+        }
 
-    }
+        for (let x = 0; x < dirtyEntities.length; x++) {
+            const dirtyEntity = dirtyEntities[x];
+            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id];
+            let newCellPositions = this.getCellPositions(dirtyEntity);
 
-    activated(world) {
-        let self = this;
-        this._world = world;
+            if (lastCellPositions != null) {
+                this.addCellPositionsToDirtyCellPositions(lastCellPositions);
+            }
 
-        this._createGrid();
+            this.addCellPositionsToDirtyCellPositions(newCellPositions);
 
-        world.getEntities().forEach(function (entity) {
-            self.entityAdded(entity);
-        });
-    }
-
-    deactivated() {
-        this._world = null;
-    }
-
-    entityAdded(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            let broadPhaseEntity = new BroadPhaseEntity(entity);
-            broadPhaseEntity.position.isDirty = true;
-
-            this._entities.set(entity.id, broadPhaseEntity);
+            this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }
     }
 
-    entityRemoved(entity) {
-        let broadPhaseEntity = this._entities.get(entity.id);
-        let grid = this._grid;
+    areCellsEqual(cellA, cellB) {
+        return cellA.rowIndex === cellB.rowIndex && cellA.columnIndex === cellB.columnIndex;
+    }
 
-        if (broadPhaseEntity != null) {
+    getCell({ rowIndex, columnIndex }) {
+        let column = this.grid.get(columnIndex);
+        if (column == null) {
+            column = new Map();
+            this.grid.set(columnIndex, column);
+        }
 
-            this._removeLastRegionsFromGrid(broadPhaseEntity, this._lastRegions.get(entity.id));
-            this._lastRegions.delete(entity.id);
-            this._entities.delete(entity.id);
+        let cell = column.get(rowIndex);
+        if (cell == null) {
+            cell = [];
+            column.set(rowIndex, cell);
+        }
+
+        return cell;
+    }
+
+    getCellId({ rowIndex, columnIndex }) {
+        return `${columnIndex}_${rowIndex}`;
+    }
+
+    getCellPositions({ position, size }) {
+        const top = position.y;
+        const left = position.x;
+        const right = left + size.width;
+        const bottom = top + size.height;
+        const cellSize = this.cellSize;
+
+        const topCell = Math.floor(top / cellSize);
+        const bottomCell = Math.floor(bottom / cellSize);
+        const leftCell = Math.floor(left / cellSize);
+        const rightCell = Math.floor(right / cellSize);
+
+        let row = topCell;
+        let column = leftCell;
+
+        let cellPositions = [];
+
+        while (row <= bottomCell) {
+            while (column <= rightCell) {
+                cellPositions.push(new CellPosition(column, row));
+                column += 1;
+            }
+            column = leftCell;
+            row += 1;
+        }
+
+        return cellPositions;
+    }
+
+    getCollisionByEntityId(collisions, id) {
+        return collisions.find((collision) => collision.entityId === id);
+    }
+
+    removeCollision(collisions, entityId) {
+        const index = collisions.findIndex((collision) => collision.entityId === entityId);
+
+        if (index > -1) {
+            collisions.splice(index, 1);
         }
     }
 
-    componentAdded(entity, component) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.entityAdded(entity);
+    removeEntitiesCellPositions(_collidableEntity, _cellPositions) {
+        const collidableEntity = _collidableEntity;
+        const cellPositions = _cellPositions;
+
+        this.addCellPositionsToDirtyCellPositions(cellPositions);
+
+        for (let x = 0; x < cellPositions.length; x++) {
+            const cellPosition = cellPositions[x];
+            const cell = this.getCell(cellPosition);
+
+            if (cell != null) {
+                const index = cell.findIndex((e) => { e === collidableEntity });
+
+                if (index > -1) {
+                    cell.splice(index, 1);
+                }
+            }
+        }
+
+    }
+
+    updateGridCells(_cellPositions) {
+        const cellPositions = _cellPositions;
+
+        for (let index = 0; index < cellPositions.length; index++) {
+            const cellPosition = cellPositions[index];
+            const cell = this.getCell(cellPosition);
+
+            // Remove all collision data from the entities.
+            for (let x = 0; x < cell.length; x++) {
+                const collidable = cell[x].collidable;
+                collidable.cells[this.getCellId(cellPosition)] = [];
+            }
+
+            // Add collision data to the entities.
+            for (let y = 0; y < cell.length; y++) {
+                const collidableEntity = cell[y];
+                const collisions = collidableEntity.collidable.cells[this.getCellId(cellPosition)];
+                const index = y;
+
+                for (let x = index + 1; x < cell.length; x++) {
+                    const otherCollidableEntity = cell[x];
+                    const otherCollisions = otherCollidableEntity.collidable.cells[this.getCellId(cellPosition)];
+
+                    if (this.doEntitiesIntersect(collidableEntity, otherCollidableEntity)) {
+
+                        const collision = new Collision(collidableEntity.id);
+                        collision.cellPosition = cellPosition;
+                        collision.timestamp = this.currentTime;
+                        otherCollisions.push(collision);
+
+                        const otherCollision = new Collision(otherCollidableEntity.id);
+                        otherCollision.cellPosition = cellPosition;
+                        otherCollision.timestamp = this.currentTime;
+                        collisions.push(otherCollision);
+
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    activated(_world) {
+        const world = _world;
+        this.world = world
+
+        world.getEntities().forEach((_entity) => {
+            const entity = _entity;
+            this.entityAdded(entity)
+        });
+    }
+
+    entityAdded(_entity) {
+        const entity = _entity;
+        if (entity.hasComponents(this.dependencies) && !this.collidableEntities.has(entity.id)) {
+            const collidableEntity = new CollidableEntity(entity.id);
+            collidableEntity.position = entity.getComponent("position");
+            collidableEntity.size = entity.getComponent("size");
+            collidableEntity.collidable = entity.getComponent("collidable");
+
+            this.collidableEntities.set(collidableEntity.id, collidableEntity);
+
+            let cellPositions = this.getCellPositions(collidableEntity);
+            this.addCellPositionsToDirtyCellPositions(cellPositions);
+            this.cellPositionsOfEntitiesById.set(collidableEntity.id, cellPositions);
+
+            for (let x = 0; x < cellPositions.length; x++) {
+                const cellPosition = cellPositions[x];
+                this.addEntityToCellPosition(collidableEntity, cellPosition);
+            }
+        }
+    }
+
+    componentAdded(_entity, _component) {
+        const entity = _entity;
+        this.entityAdded(entity);
+    }
+
+    deactivated(_world) {
+        const world = _world;
+        this.world = null;
+        this.collidableEntities = new Map();
+        this.cellPositionsOfEntitiesById = new Map();
+        this.currentTime = 0;
+        this.grid = new Map();
+    }
+
+    entityRemoved(_entity) {
+        const entity = _entity;
+        const collidableEntity = this.collidableEntities.get(entity.id);
+        if (collidableEntity != null) {
+            let cellPositions = this.cellPositionsOfEntitiesById.get(collidableEntity.id);
+
+            if (cellPositions != null) {
+                this.removeEntitiesCellPositions(collidableEntity, cellPositions);
+            }
+
+            this.collidableEntities.delete(collidableEntity.id);
+            this.cellPositionsOfEntitiesById.delete(collidableEntity.id);
         }
     }
 
     componentRemoved(entity, component) {
-        this.entityRemoved(entity);
-    }
-
-    update() {
-        this._currentTimestamp = this._world.getTime();
-
-        let dirtyRegions = {};
-        let entities = [];
-        let grid = this._grid;
-
-        this._entities.forEach((entity) => {
-            let _entity = entity;
-            if (_entity.position.isDirty || _entity.size.isDirty) {
-
-                let regions = this.getRegions(_entity);
-                let lastRegions = this._lastRegions.get(_entity.id);
-
-                this._removeLastRegionsFromGrid(_entity, lastRegions);
-
-                regions.forEach((region) => {
-                    dirtyRegions[region[0] + "|" + region[1]] = true;
-                    grid[region[0]][region[1]].push(_entity);
-                });
-
-                this._lastRegions.set(_entity.id, regions);
-            }
-
-        });
-
-        Object.keys(dirtyRegions).forEach((key) => {
-            let _key = key;
-            let region = _key.split("|");
-            let entities = grid[region[0]][region[1]];
-            let pairs = this.queryForCollisions(entities);
-
-            this.assignTimestamps(pairs);
-            this.cleanCollisions(entities);
-
-            entities.forEach((entity) => {
-                entity.position.isDirty = false;
-                entity.size.isDirty = false;
-            });
-        })
-
-
-    }
-
-    cleanCollisions(entities) {
-        let currentTimestamp = this._currentTimestamp;
-        // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
-        let _entities = entities;
-
-        _entities.forEach((entity) => {
-            let _entity = entity;
-            let collisions = _entity.collidable.activeCollisions;
-
-            for (let key in collisions) {
-                let collision = collisions[key];
-
-                if (collision.timestamp !== currentTimestamp) {
-
-                    // We know the collision ended if the timestamp didn't update to our current timestamp.
-                    collision.endTimestamp = currentTimestamp;
-
-                    // Allow for some time to pass, before removing, because its likely they'll hit again.
-                    if (!collision.isStatic && currentTimestamp - collision.timestamp > 3000) {
-                        delete collisions[key];
-                    }
-                }
-            }
-
-        });
-    }
-
-    assignTimestamps(pairs) {
-        let currentTimestamp = this._currentTimestamp;
-
-        // All browser can't optimize arguments because of their nature. So we aliases it. Which allows optimizations.
-        let _pairs = pairs;
-
-        _pairs.forEach(function (pair, index) {
-            let _pair = pair;
-            let _index = index;
-            let entityA = _pair[0];
-            let entityB = _pair[1];
-            let collidableA = entityA.collidable;
-            let collidableB = entityB.collidable;
-            let collisionDataA = collidableA.activeCollisions[entityB.id];
-            let collisionDataB = collidableB.activeCollisions[entityA.id];
-
-            if (collisionDataA == null) {
-
-                collisionDataA = new Collision();
-                collisionDataA.startTimestamp = currentTimestamp;
-                collisionDataA.timestamp = currentTimestamp;
-                collisionDataA.endTimestamp = null;
-                collisionDataA.entityId = entityB.id
-
-                if (collidableA.isStatic && collidableB.isStatic) {
-                    collisionDataA.isStatic = true;
-                }
-
-                collidableA.activeCollisions[entityB.id] = collisionDataA;
-            } else {
-                collisionDataA.timestamp = currentTimestamp;
-                collisionDataA.endTimestamp = null;
-            }
-
-            if (collisionDataB == null) {
-                collisionDataB = new Collision();
-                collisionDataB.startTimestamp = currentTimestamp;
-                collisionDataB.timestamp = currentTimestamp;
-                collisionDataB.endTimestamp = null;
-                collisionDataB.entityId = entityA.id;
-
-                if (collidableA.isStatic && collidableB.isStatic) {
-                    collisionDataB.isStatic = true;
-                }
-
-                collidableB.activeCollisions[entityA.id] = collisionDataB;
-
-            } else {
-                collisionDataB.timestamp = currentTimestamp;
-                collisionDataB.endTimestamp = null;
-            }
-
-        });
-    }
-
-    queryForCollisions(entities) {
-        let pairs = [];
-        let _entities = entities;
-        let entityA = _entities[0];
-        let entityB;
-        let collidableA;
-        let collidableB;
-        let positionA;
-        let sizeA;
-        let positionB;
-        let sizeB;
-        let top;
-        let right;
-        let bottom;
-        let left;
-        let length = _entities.length;
-
-        for (let index = 0; index < length; index++) {
-            entityA = _entities[index];
-
-            for (let x = index + 1; x < length; x++) {
-                entityB = _entities[x];
-
-                collidableA = entityA.collidable;
-                collidableB = entityB.collidable;
-
-                // We don't need to check disabled objects.
-                if (!collidableA.isEnabled || !collidableB.isEnabled) {
-                    continue;
-                }
-
-                positionA = entityA.position;
-                sizeA = entityA.size;
-
-                positionB = entityB.position;
-                sizeB = entityB.size;
-
-                top = Math.max(positionA.y, positionB.y);
-                bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
-                left = Math.max(positionA.x, positionB.x);
-                right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
-
-                if (top < bottom && left < right) {
-                    pairs.push([entityA, entityB]);
-                }
-
-            }
+        if (this.dependencies.indexOf(component.type) > -1) {
+            this.entityRemoved(entity);
         }
-
-        return pairs;
     }
 
-    getRegions(entity) {
-        let _entity = entity;
-        let indexes = [];
-        let gridWidth = Math.floor((this._world.size.width) / this._cellSize);
-        let gridHeight = Math.floor((this._world.size.height) / this._cellSize);
-        let boundsTop = 0;
-        let boundsBottom = this._world.size.height;
-        let boundsLeft = 0;
-        let boundsRight = this._world.size.width;
-        let cellSize = this._cellSize;
-        let position = _entity.position;
-        let size = _entity.size;
-
-        // If entity is outside the detection region, then ignore it.
-        if (position.x + size.width < boundsLeft ||
-            position.x > boundsRight ||
-            position.y + size.height < boundsTop ||
-            position.y > boundsBottom) {
-            return [];
-        }
-
-        // Find the cells that the entity overlaps.
-        let left = Math.floor((position.x - boundsLeft) / cellSize);
-        let right = Math.floor((position.x + size.width - boundsLeft) / cellSize);
-        let top = Math.floor((position.y - boundsTop) / cellSize);
-        let bottom = Math.floor((position.y + size.height - boundsTop) / cellSize);
-
-        for (let x = left; x <= right; x++) {
-            for (let y = top; y <= bottom; y++) {
-                if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
-                    indexes.push([x, y]);
-                }
-            }
-        }
-
-        return indexes;
+    update(currentTime) {
+        this.currentTime = currentTime;
+        this.findDirtyCells()
+        this.updateGridCells(this.dirtyCellPositions)
+        this.dirtyCellPositions = [];
     }
-
-    setDetectionArea(position, size) {
-        this._detectionAreaPosition = position;
-        this._detectionAreaSize = size;
-    }
-
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseBroadPhaseCollisionSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionSystem;
 
 
 /***/ }),
@@ -2891,7 +2424,7 @@ class SolidBodySystem {
     }
 
     updateEntity(entity) {
-        let activeCollisions = entity.getComponent("narrow-phase-collidable").activeCollisions;
+        let activeCollisions = entity.getComponent("narrow-phase-collidable").collisions;
         let movable = entity.getComponent("movable");
         let solidBody = entity.getComponent("solid-body");
 
@@ -3316,8 +2849,8 @@ class NarrowPhaseCollisionSystem {
                 let projectionB = this.projectionB;
                 let verticesA = partA.worldPoints;
                 let verticesB = partB.worldPoints;
-                let collisionA = narrowPhaseCollisionA.activeCollisions[entityB.id];
-                let collisionB = narrowPhaseCollisionB.activeCollisions[entityA.id];
+                let collisionA = narrowPhaseCollisionA.collisions[entityB.id];
+                let collisionB = narrowPhaseCollisionB.collisions[entityA.id];
                 let penetration;
                 let minOverlap;
                 let normal;
@@ -3429,8 +2962,8 @@ class NarrowPhaseCollisionSystem {
 
                 }
 
-                narrowPhaseCollisionA.activeCollisions[entityB.id] = collisionA;
-                narrowPhaseCollisionB.activeCollisions[entityA.id] = collisionB;
+                narrowPhaseCollisionA.collisions[entityB.id] = collisionA;
+                narrowPhaseCollisionB.collisions[entityA.id] = collisionB;
 
             }
 
@@ -3442,7 +2975,7 @@ class NarrowPhaseCollisionSystem {
         let _entity = entity;
         let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
         let collidable = _entity.getComponent("collidable");
-        let activeCollisions = narrowPhaseCollision.activeCollisions;
+        let activeCollisions = narrowPhaseCollision.collisions;
         let timestamp = this.timestamp;
 
         for (let key in activeCollisions) {
@@ -3454,12 +2987,18 @@ class NarrowPhaseCollisionSystem {
                 delete activeCollisions[key];
             }
 
+            const broadphaseCollision = this.getCollisionByEntityId(collidable.collisions, collidableKey);
+
             // Checking the status of the broadphase collision.
-            if (_collision.endTimestamp == null && collidable.activeCollisions[collidableKey] != null && collidable.activeCollisions[collidableKey].endTimestamp != null) {
-                _collision.endTimestamp = collidable.activeCollisions[collidableKey].endTimestamp;
+            if (_collision.endTimestamp == null && broadphaseCollision != null && broadphaseCollision.endTimestamp != null) {
+                _collision.endTimestamp = broadphaseCollision.endTimestamp;
             }
         }
 
+    }
+
+    getCollisionByEntityId(collisions, id) {
+        return collisions.find(({ entityId }) => entityId === id);
     }
 
     isStaticAndInitialized(entityA, entityB) {
@@ -3489,19 +3028,16 @@ class NarrowPhaseCollisionSystem {
         }
 
         if (collidable != null) {
-            let activeCollisions = collidable.activeCollisions;
-
-            for (let key in activeCollisions) {
-                let collision = activeCollisions[key];
+            collidable.collisions.forEach((collision)=>{
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
                 if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
-                    continue;
+                    return;
                 }
 
                 this.intersects(_entity, otherEntity);
-            }
+            });
 
             this.cleanCollisions(_entity);
         }
@@ -3698,8 +3234,8 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
             var _collidable = collidable;
             var isOn = false;
 
-            for (let key in _collidable.activeCollisions) {
-                var collision = _collidable.activeCollisions[key];
+            for (let key in _collidable.collisions) {
+                var collision = _collidable.collisions[key];
                 var entity = _world.getEntityById(collision.entityId);
 
                 if (collision.endTimestamp == null && entity.hasComponents(["solid-body"])) {
@@ -4144,7 +3680,7 @@ class NarrowPhaseCollidable {
         this.name = null;
         this.isInitialized = false;
         this.isEnabled = true;
-        this.activeCollisions = {};
+        this.collisions = {};
         this.parts = [];
     }
 

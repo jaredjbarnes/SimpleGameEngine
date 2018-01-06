@@ -128,7 +128,7 @@
         var self = this;
         var systems = this._systems;
 
-        this.notifySystems("update");
+        this.notifySystems("update", [this.getTime()]);
     }
 
     play() {

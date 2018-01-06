@@ -16,7 +16,7 @@ export class NarrowPhaseCollidable {
         this.name = null;
         this.isInitialized = false;
         this.isEnabled = true;
-        this.activeCollisions = {};
+        this.collisions = {};
         this.parts = [];
     }
 

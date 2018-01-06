@@ -1,7 +1,8 @@
-export default class RasterizeManager {
+export default class ImageManager {
     constructor() {
         this.rasterizers = {};
         this.images = {};
+        this.imageTypes = [];
     }
 
     _validateRasterizer(rasterizer) {
@@ -21,6 +22,7 @@ export default class RasterizeManager {
     addRasterizer(rasterizer) {
         this._validateRasterizer(rasterizer);
         this.rasterizers[rasterizer.type] = rasterizer;
+        this.imageTypes =  Object.keys(this.rasterizers);
     }
 
     saveImage(identifier, image) {
@@ -31,13 +33,9 @@ export default class RasterizeManager {
         return this.images[identifier] || null;
     }
 
-    getRasterizerTypes() {
-        return Object.keys(this.rasterizers);
-    }
-
     entityAdded(_entity) {
         const entity = _entity;
-        this.getRasterizerTypes().forEach((type) => {
+        this.imageTypes.forEach((type) => {
             const component = entity.getComponent(type);
             const rasterizer = this.rasterizers[component.type];
 

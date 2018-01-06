@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["sprite", "image-texture"];
+const DEPENDENCIES = ["sprite", "image"];
 
 export default class SpriteSystem {
     constructor() {
@@ -16,21 +16,21 @@ export default class SpriteSystem {
 
         this.entities.forEach((entity) => {
             var sprite = entity.getComponent("sprite");
-            var imageTexture = entity.getComponent("image-texture");
+            var imageTexture = entity.getComponent("image");
             var position = entity.getComponent("position");
 
             var index = Math.floor(sprite.index);
-            var newImageTexture = sprite.imageTextures[index];
+            var newImage = sprite.imageTextures[index];
 
-            if (newImageTexture == null) {
+            if (newImage == null) {
                 return;
             }
 
-            Object.keys(newImageTexture).forEach(function (key) {
+            Object.keys(newImage).forEach(function (key) {
                 if (key === "type") {
                     return;
                 }
-                imageTexture[key] = newImageTexture[key];
+                imageTexture[key] = newImage[key];
             });
 
             imageTexture.isDirty = true;

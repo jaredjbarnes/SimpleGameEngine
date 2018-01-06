@@ -17,5 +17,6 @@ export default class Line {
             y: 0
         }
         this.isDirty = false;
+        this.opacity = 1;
     }
 }

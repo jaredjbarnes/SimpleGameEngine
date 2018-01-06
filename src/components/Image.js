@@ -1,6 +1,6 @@
-﻿export default class ImageTexture {
+﻿export default class Image {
     constructor() {
-        this.type = "image-texture";
+        this.type = "image";
         this.path = null;
         this.position = {
             x: 0,
@@ -16,6 +16,7 @@
             bottom: 0,
             left: 0
         };
+        this.opacity = 1;
         this.isDirty = true;
     }
 }

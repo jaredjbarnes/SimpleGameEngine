@@ -23,5 +23,6 @@ export default class TextTexture {
         this.height = 0;
         this.lineHeight = 0;
         this.isDirty = false;
+        this.opacity = 1;
     }
 }

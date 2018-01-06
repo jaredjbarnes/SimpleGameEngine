@@ -21,6 +21,7 @@
 
         this.points = [];
         this.path = null;
+        this.opacity = 1;
         this.isDirty = false;
 
     }

@@ -1,6 +1,6 @@
 ﻿export default class ImageRenderer {
     constructor(doc, assetRoot) {
-        this.type = "image-texture";
+        this.type = "image";
         this.document = doc || document;
         this.cachedCanvases = {};
         this.loadingImages = {};
@@ -86,7 +86,7 @@
             return;
         }
 
-        var imageTexture = entity.getComponent("image-texture");
+        var imageTexture = entity.getComponent("image");
         var imagePosition = imageTexture.position;
         var entityCanvas = this.getCanvas(imageTexture);
         var path = this.getPath(imageTexture.path);

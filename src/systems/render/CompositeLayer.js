@@ -13,17 +13,20 @@ export default class CompositeLayer {
         this.entities = [];
         this.size = size;
         this.rasterizeManager = rasterizeManager;
+        this.imageTypes = Object.keys(this.rasterizeManager.rasterizers);
         this.dirtyCells = [];
     }
 
-    entityAdded(entity) {
-        const imagesTypes = Object.keys(this.rasterizeManager.rasterizers);
+    addEntity(entity) {
+        const imagesTypes = this.imageTypes;
         const renderableEntity = new RenderableEntity();
+
         renderableEntity.id = entity.id;
         renderableEntity.size = entity.getComponent("size");
         renderableEntity.position = entity.getComponent("position");
         renderableEntity.collidable = entity.getComponent("collidable");
-        renderableEntity.images =  imagesTypes.reduce((images, imageType) => {
+
+        renderableEntity.images = imagesTypes.reduce((images, imageType) => {
             const component = entity.getComponent(imageType);
             if (component != null) {
                 images.push(component);

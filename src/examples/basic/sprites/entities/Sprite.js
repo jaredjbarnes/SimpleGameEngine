@@ -3,7 +3,7 @@ import Sprite from "./../../../../components/Sprite";
 import Position from "./../../../../components/Position";
 import Size from "./../../../../components/Size";
 import Collidable from "./../../../../components/Collidable";
-import ImageTexture from "./../../../../components/ImageTexture";
+import Image from "./../../../../components/Image";
 
 export default class extends Entity {
     constructor() {
@@ -12,14 +12,14 @@ export default class extends Entity {
         let position = new Position();
         let size = new Size();
         let sprite = new Sprite();
-        let imageTexture = new ImageTexture();
+        let imageTexture = new Image();
         let collidable = new Collidable();
 
         size.width = 85;
         size.height = 85;
 
         for (let x = 0; x < 8; x++) {
-            let frame = new ImageTexture();
+            let frame = new Image();
             frame.path = "./assets/hero_spritesheet.png";
             frame.position.x = 80 * x;
             frame.size.width = 80;

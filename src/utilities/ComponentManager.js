@@ -3,7 +3,7 @@ import SolidBody from "./../components/SolidBody";
 import Collidable from "./../components/Collidable";
 import FixedPosition from "./../components/FixedPosition";
 import Force from "./../components/Force";
-import ImageTexture from "./../components/ImageTexture";
+import Image from "./../components/Image";
 import KeyboardController from "./../components/KeyboardController";
 import KeyboardInput from "./../components/KeyboardInput";
 import Movable from "./../components/Movable";
@@ -26,7 +26,7 @@ export default class ComponentManager {
             "collidable": Collidable,
             "fixed-position": FixedPosition,
             "force": Force,
-            "image-texture": ImageTexture,
+            "image": Image,
             "keyboard-controller": Camera,
             "keyboard-input": KeyboardInput,
             "movable": Movable,

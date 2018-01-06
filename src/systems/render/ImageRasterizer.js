@@ -6,19 +6,20 @@
     }
 
     getIdentifier(entity) {
-        const imageTexture = entity.getComponent("image");
-        return `image=${JSON.stringify(imageTexture)}`;
+        const imageComponent = entity.getComponent("image");
+        return `image=${JSON.stringify(imageComponent)}`;
     }
 
-    rasterize(imageTexture) {
+    rasterize(entity) {
+        const imageComponent = entity.getComponent("image");
         const image = new Image();
         const document = this.document;
-        const path = this.getPath(imageTexture.path);
+        const path = this.getPath(imageComponent.path);
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
-        const size = imageTexture.size;
-        const padding = imageTexture.padding;
-        const position = imageTexture.position;
+        const size = imageComponent.size;
+        const padding = imageComponent.padding;
+        const position = imageComponent.position;
         const width = size.width + padding.left + padding.right;
         const height = size.height + padding.top + padding.bottom;
 
@@ -26,7 +27,7 @@
         canvas.height = height;
 
         image.onload = () => {
-            context.globalAlpha = imageTexture.opacity;
+            context.globalAlpha = imageComponent.opacity;
             context.drawImage(
                 image,
                 position.x,

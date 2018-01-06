@@ -1,6 +1,6 @@
-export default class TextTexture {
+export default class Text {
     constructor() {
-        this.type = "text-texture";
+        this.type = "text";
         this.font = {
             size: 12,
             style: "normal",

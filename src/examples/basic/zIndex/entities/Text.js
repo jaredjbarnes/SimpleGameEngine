@@ -1,7 +1,7 @@
 import Entity from "./../../../../Entity";
 import Size from "./../../../../components/Size";
 import Position from "./../../../../components/Position";
-import TextTexture from "./../../../../components/TextTexture";
+import Text from "./../../../../components/Text";
 import Collidable from "./../../../../components/Collidable";
 import KeyboardController from "./../../../../components/KeyboardController";
 import KeyboardInput from "./../../../../components/KeyboardInput";
@@ -17,7 +17,7 @@ export default class Text extends Entity {
         super();
         var size = new Size();
         var position = new Position();
-        var textTexture = new TextTexture();
+        var textTexture = new Text();
         var collidable = new Collidable();
         var keyboardController = new KeyboardController();
         var keyboardInput = new KeyboardInput();

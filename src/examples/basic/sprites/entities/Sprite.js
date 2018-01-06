@@ -25,7 +25,7 @@ export default class extends Entity {
             frame.size.width = 80;
             frame.size.height = 85;
 
-            sprite.imageTextures.push(frame);
+            sprite.images.push(frame);
         }
 
         sprite.timeScale = 0.25;

@@ -1,6 +1,6 @@
 ﻿export default class TextRenderer {
     constructor(doc) {
-        this.type = "text-texture";
+        this.type = "text";
         this.fontCache = {};
         this.document = doc || document;
     }
@@ -26,7 +26,7 @@
         var canvas = this.document.createElement("canvas");
 
         var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");
 
@@ -73,7 +73,7 @@
 
     getCanvas(entity) {
         var canvas = this.fontCache[entity.id];
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         if (canvas == null || textTexture.isDirty) {
             canvas = this.createCachedVersion(entity);

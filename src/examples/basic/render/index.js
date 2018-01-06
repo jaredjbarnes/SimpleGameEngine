@@ -39,7 +39,7 @@ for (let x = 0; x < 1000; x++) {
     let staticText = new StaticText(x + "entity");
 
     let position = staticText.getComponent("position");
-    let textTexture = staticText.getComponent("text-texture");
+    let textTexture = staticText.getComponent("text");
 
     position.x = parseInt(Math.random() * 1000);
     position.y = parseInt(Math.random() * 1000);

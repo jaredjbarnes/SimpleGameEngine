@@ -5,7 +5,7 @@ export default class Sprite {
         this.name = null;
         this.index = 0;
         this.timeScale = 1;
-        this.imageTextures = [];
+        this.images = [];
         this.isDirty = false;
     }
 }

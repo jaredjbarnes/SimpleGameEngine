@@ -20,7 +20,7 @@ export default class SpriteSystem {
             var position = entity.getComponent("position");
 
             var index = Math.floor(sprite.index);
-            var newImage = sprite.imageTextures[index];
+            var newImage = sprite.images[index];
 
             if (newImage == null) {
                 return;
@@ -36,7 +36,7 @@ export default class SpriteSystem {
             imageTexture.isDirty = true;
 
             sprite.index += (sprite.timeScale * 1);
-            sprite.index = sprite.index >= sprite.imageTextures.length ? 0 : sprite.index;
+            sprite.index = sprite.index >= sprite.images.length ? 0 : sprite.index;
 
         });
 

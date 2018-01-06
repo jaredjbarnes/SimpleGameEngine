@@ -15,7 +15,7 @@ import Shape from "./../components/Shape";
 import Size from "./../components/Size";
 import Sprite from "./../components/Sprite";
 import State from "./../components/State";
-import TextTexture from "./../components/TextTexture";
+import Text from "./../components/Text";
 import ZIndex from "./../components/ZIndex";
 
 export default class ComponentManager {
@@ -37,7 +37,7 @@ export default class ComponentManager {
             "size": Size,
             "sprite": Sprite,
             "state": State,
-            "text-texture": TextTexture,
+            "text": Text,
             "z-index": ZIndex,
         };
     }

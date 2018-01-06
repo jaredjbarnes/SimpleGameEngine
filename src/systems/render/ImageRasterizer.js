@@ -7,7 +7,7 @@
 
     getIdentifier(entity) {
         const imageTexture = entity.getComponent("image");
-        return `${JSON.stringify(imageTexture)}`;
+        return `image=${JSON.stringify(imageTexture)}`;
     }
 
     rasterize(imageTexture) {

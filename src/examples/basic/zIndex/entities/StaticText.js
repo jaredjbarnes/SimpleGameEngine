@@ -1,7 +1,7 @@
 import Entity from "./../../../../Entity";
 import Size from "./../../../../components/Size";
 import Position from "./../../../../components/Position";
-import TextTexture from "./../../../../components/TextTexture";
+import Text from "./../../../../components/Text";
 import Collidable from "./../../../../components/Collidable";
 import ZIndex from "./../../../../components/ZIndex";
 import Shape from "./../../../../components/Shape";
@@ -13,7 +13,7 @@ export default class StaticText extends Entity {
 
         var size = new Size();
         var position = new Position();
-        var textTexture = new TextTexture();
+        var textTexture = new Text();
         var collidable = new Collidable();
         var shape = new Shape();
         var zIndex = new ZIndex();

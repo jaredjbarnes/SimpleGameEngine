@@ -1,6 +1,6 @@
 ﻿export default class TextRenderer {
     constructor(doc) {
-        this.type = "text-texture";
+        this.type = "text";
         this.fontCache = {};
         this.document = doc || document;
     }
@@ -16,16 +16,16 @@
 
     getIdentity(entity) {
         const size = entity.getComponent("size");
-        const textTexture = entity.getComponent("text-texture");
+        const textTexture = entity.getComponent("text");
 
-        return `size=${JSON.stringify(size)},text-texture=${JSON.stringify(textTexture)}`;
+        return `size=${JSON.stringify(size)},text=${JSON.stringify(textTexture)}`;
     }
 
     rasterize(entity) {
         var canvas = this.document.createElement("canvas");
 
         var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");
 

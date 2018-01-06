@@ -1,3 +1,5 @@
+const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
+
 export default class ImageManager {
     constructor() {
         this.rasterizers = {};
@@ -22,7 +24,7 @@ export default class ImageManager {
     addRasterizer(rasterizer) {
         this._validateRasterizer(rasterizer);
         this.rasterizers[rasterizer.type] = rasterizer;
-        this.imageTypes =  Object.keys(this.rasterizers);
+        this.imageTypes = Object.keys(this.rasterizers);
     }
 
     saveImage(identifier, image) {
@@ -31,6 +33,24 @@ export default class ImageManager {
 
     getImage(identifier) {
         return this.images[identifier] || null;
+    }
+
+    getEntityImages(entity) {
+        return this.imageTypes
+            .map((type) => {
+                const rasterizer = this.rasterizers[type];
+                const imageId = rasterizers.getIdentity(entity);
+                const image = this.getImage(imageId); 
+                
+                return image;
+            })
+            .reduce((accumulator, image) => {
+                if (image != null) {
+                    accumulator.push(image);
+                }
+                return accumulator;
+            }, [])
+            .sort(sortByZIndex);
     }
 
     entityAdded(_entity) {

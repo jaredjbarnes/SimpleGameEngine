@@ -157,9 +157,9 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class ImageTexture {
+﻿class Image {
     constructor() {
-        this.type = "image-texture";
+        this.type = "image";
         this.path = null;
         this.position = {
             x: 0,
@@ -175,10 +175,11 @@ class Entity {
             bottom: 0,
             left: 0
         };
+        this.opacity = 1;
         this.isDirty = true;
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageTexture;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Image;
 
 
 /***/ }),
@@ -1397,7 +1398,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class ImageRenderer {
     constructor(doc, assetRoot) {
-        this.type = "image-texture";
+        this.type = "image";
         this.document = doc || document;
         this.cachedCanvases = {};
         this.loadingImages = {};
@@ -1483,7 +1484,7 @@ class CompositeCanvasCell {
             return;
         }
 
-        var imageTexture = entity.getComponent("image-texture");
+        var imageTexture = entity.getComponent("image");
         var imagePosition = imageTexture.position;
         var entityCanvas = this.getCanvas(imageTexture);
         var path = this.getPath(imageTexture.path);
@@ -1528,7 +1529,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class TextRenderer {
     constructor(doc) {
-        this.type = "text-texture";
+        this.type = "text";
         this.fontCache = {};
         this.document = doc || document;
     }
@@ -1554,7 +1555,7 @@ class CompositeCanvasCell {
         var canvas = this.document.createElement("canvas");
 
         var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");
 
@@ -1601,7 +1602,7 @@ class CompositeCanvasCell {
 
     getCanvas(entity) {
         var canvas = this.fontCache[entity.id];
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         if (canvas == null || textTexture.isDirty) {
             canvas = this.createCachedVersion(entity);
@@ -1907,6 +1908,28 @@ class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
+    except(cellPositionsA, cellPositionsB){
+        const first = cellPositionsA.filter((cellPosition)=>{
+            const index = cellPositionsB.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        const second = cellPositionsB.filter((cellPosition)=>{
+            const index = cellPositionsA.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        return first.concat(second);
+    }
+
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
@@ -1923,14 +1946,11 @@ class BroadPhaseCollisionSystem {
 
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
-            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id];
+            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            if (lastCellPositions != null) {
-                this.addCellPositionsToDirtyCellPositions(lastCellPositions);
-            }
-
-            this.addCellPositionsToDirtyCellPositions(newCellPositions);
+            const dirtyCellPositions = this.except(newCellPositions, lastCellPositions);
+            this.addCellPositionsToDirtyCellPositions(dirtyCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }
@@ -2559,7 +2579,7 @@ class LogicSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const DEPENDENCIES = ["sprite", "image-texture"];
+const DEPENDENCIES = ["sprite", "image"];
 
 class SpriteSystem {
     constructor() {
@@ -2577,27 +2597,27 @@ class SpriteSystem {
 
         this.entities.forEach((entity) => {
             var sprite = entity.getComponent("sprite");
-            var imageTexture = entity.getComponent("image-texture");
+            var imageTexture = entity.getComponent("image");
             var position = entity.getComponent("position");
 
             var index = Math.floor(sprite.index);
-            var newImageTexture = sprite.imageTextures[index];
+            var newImage = sprite.images[index];
 
-            if (newImageTexture == null) {
+            if (newImage == null) {
                 return;
             }
 
-            Object.keys(newImageTexture).forEach(function (key) {
+            Object.keys(newImage).forEach(function (key) {
                 if (key === "type") {
                     return;
                 }
-                imageTexture[key] = newImageTexture[key];
+                imageTexture[key] = newImage[key];
             });
 
             imageTexture.isDirty = true;
 
             sprite.index += (sprite.timeScale * 1);
-            sprite.index = sprite.index >= sprite.imageTextures.length ? 0 : sprite.index;
+            sprite.index = sprite.index >= sprite.images.length ? 0 : sprite.index;
 
         });
 
@@ -3306,7 +3326,7 @@ class FollowEntityCameraSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Image__ = __webpack_require__(1);
 
 
 
@@ -3321,20 +3341,20 @@ class FollowEntityCameraSystem {
         let position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
         let size = new __WEBPACK_IMPORTED_MODULE_3__components_Size__["a" /* default */]();
         let sprite = new __WEBPACK_IMPORTED_MODULE_1__components_Sprite__["a" /* default */]();
-        let imageTexture = new __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__["a" /* default */]();
+        let imageTexture = new __WEBPACK_IMPORTED_MODULE_5__components_Image__["a" /* default */]();
         let collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
 
         size.width = 85;
         size.height = 85;
 
         for (let x = 0; x < 8; x++) {
-            let frame = new __WEBPACK_IMPORTED_MODULE_5__components_ImageTexture__["a" /* default */]();
+            let frame = new __WEBPACK_IMPORTED_MODULE_5__components_Image__["a" /* default */]();
             frame.path = "./assets/hero_spritesheet.png";
             frame.position.x = 80 * x;
             frame.size.width = 80;
             frame.size.height = 85;
 
-            sprite.imageTextures.push(frame);
+            sprite.images.push(frame);
         }
 
         sprite.timeScale = 0.25;
@@ -3382,7 +3402,7 @@ function invokeMethod(obj, methodName, args){
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ImageTexture__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Image__ = __webpack_require__(1);
 
 class Sprite {
     constructor(){
@@ -3390,7 +3410,7 @@ class Sprite {
         this.name = null;
         this.index = 0;
         this.timeScale = 1;
-        this.imageTextures = [];
+        this.images = [];
         this.isDirty = false;
     }
 }

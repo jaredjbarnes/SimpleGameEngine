@@ -11,7 +11,7 @@ import State from "./../../../../components/State";
 import { Part, NarrowPhaseCollidable } from "./../../../../components/NarrowPhaseCollidable";
 import SolidBody from "./../../../../components/SolidBody";
 
-export default class Text extends Entity {
+export default class extends Entity {
     constructor(text) {
         super();
         var size = new Size();

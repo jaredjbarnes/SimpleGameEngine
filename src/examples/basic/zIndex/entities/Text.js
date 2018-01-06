@@ -12,7 +12,7 @@ import { Part, NarrowPhaseCollidable } from "./../../../../components/NarrowPhas
 import SolidBody from "./../../../../components/SolidBody";
 import ZIndex from "./../../../../components/ZIndex";
 
-export default class Text extends Entity {
+export default class extends Entity {
     constructor(text, zIndexValue) {
         super();
         var size = new Size();

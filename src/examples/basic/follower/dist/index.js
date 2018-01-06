@@ -354,6 +354,7 @@ class Movable {
 
         this.points = [];
         this.path = null;
+        this.opacity = 1;
         this.isDirty = false;
 
     }
@@ -1578,7 +1579,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class ImageRenderer {
     constructor(doc, assetRoot) {
-        this.type = "image-texture";
+        this.type = "image";
         this.document = doc || document;
         this.cachedCanvases = {};
         this.loadingImages = {};
@@ -1664,7 +1665,7 @@ class CompositeCanvasCell {
             return;
         }
 
-        var imageTexture = entity.getComponent("image-texture");
+        var imageTexture = entity.getComponent("image");
         var imagePosition = imageTexture.position;
         var entityCanvas = this.getCanvas(imageTexture);
         var path = this.getPath(imageTexture.path);
@@ -1709,7 +1710,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class TextRenderer {
     constructor(doc) {
-        this.type = "text-texture";
+        this.type = "text";
         this.fontCache = {};
         this.document = doc || document;
     }
@@ -1735,7 +1736,7 @@ class CompositeCanvasCell {
         var canvas = this.document.createElement("canvas");
 
         var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");
 
@@ -1782,7 +1783,7 @@ class CompositeCanvasCell {
 
     getCanvas(entity) {
         var canvas = this.fontCache[entity.id];
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         if (canvas == null || textTexture.isDirty) {
             canvas = this.createCachedVersion(entity);
@@ -2088,6 +2089,28 @@ class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
+    except(cellPositionsA, cellPositionsB){
+        const first = cellPositionsA.filter((cellPosition)=>{
+            const index = cellPositionsB.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        const second = cellPositionsB.filter((cellPosition)=>{
+            const index = cellPositionsA.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        return first.concat(second);
+    }
+
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
@@ -2104,14 +2127,11 @@ class BroadPhaseCollisionSystem {
 
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
-            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id];
+            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            if (lastCellPositions != null) {
-                this.addCellPositionsToDirtyCellPositions(lastCellPositions);
-            }
-
-            this.addCellPositionsToDirtyCellPositions(newCellPositions);
+            const dirtyCellPositions = this.except(newCellPositions, lastCellPositions);
+            this.addCellPositionsToDirtyCellPositions(dirtyCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }

@@ -63,6 +63,28 @@ export default class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
+    except(cellPositionsA, cellPositionsB){
+        const first = cellPositionsA.filter((cellPosition)=>{
+            const index = cellPositionsB.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        const second = cellPositionsB.filter((cellPosition)=>{
+            const index = cellPositionsA.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        return first.concat(second);
+    }
+
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
@@ -79,14 +101,11 @@ export default class BroadPhaseCollisionSystem {
 
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
-            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id];
+            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            if (lastCellPositions != null) {
-                this.addCellPositionsToDirtyCellPositions(lastCellPositions);
-            }
-
-            this.addCellPositionsToDirtyCellPositions(newCellPositions);
+            const dirtyCellPositions = this.except(newCellPositions, lastCellPositions);
+            this.addCellPositionsToDirtyCellPositions(dirtyCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }

@@ -220,9 +220,9 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class TextTexture {
+class Text {
     constructor() {
-        this.type = "text-texture";
+        this.type = "text";
         this.font = {
             size: 12,
             style: "normal",
@@ -245,9 +245,10 @@ class TextTexture {
         this.height = 0;
         this.lineHeight = 0;
         this.isDirty = false;
+        this.opacity = 1;
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = TextTexture;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Text;
 
 
 /***/ }),
@@ -278,6 +279,7 @@ class TextTexture {
 
         this.points = [];
         this.path = null;
+        this.opacity = 1;
         this.isDirty = false;
 
     }
@@ -1424,7 +1426,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class ImageRenderer {
     constructor(doc, assetRoot) {
-        this.type = "image-texture";
+        this.type = "image";
         this.document = doc || document;
         this.cachedCanvases = {};
         this.loadingImages = {};
@@ -1510,7 +1512,7 @@ class CompositeCanvasCell {
             return;
         }
 
-        var imageTexture = entity.getComponent("image-texture");
+        var imageTexture = entity.getComponent("image");
         var imagePosition = imageTexture.position;
         var entityCanvas = this.getCanvas(imageTexture);
         var path = this.getPath(imageTexture.path);
@@ -1555,7 +1557,7 @@ class CompositeCanvasCell {
 "use strict";
 ﻿class TextRenderer {
     constructor(doc) {
-        this.type = "text-texture";
+        this.type = "text";
         this.fontCache = {};
         this.document = doc || document;
     }
@@ -1581,7 +1583,7 @@ class CompositeCanvasCell {
         var canvas = this.document.createElement("canvas");
 
         var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");
 
@@ -1628,7 +1630,7 @@ class CompositeCanvasCell {
 
     getCanvas(entity) {
         var canvas = this.fontCache[entity.id];
-        var textTexture = entity.getComponent("text-texture");
+        var textTexture = entity.getComponent("text");
 
         if (canvas == null || textTexture.isDirty) {
             canvas = this.createCachedVersion(entity);
@@ -1934,6 +1936,28 @@ class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
+    except(cellPositionsA, cellPositionsB){
+        const first = cellPositionsA.filter((cellPosition)=>{
+            const index = cellPositionsB.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        const second = cellPositionsB.filter((cellPosition)=>{
+            const index = cellPositionsA.findIndex((c)=>{
+                return c.rowIndex === cellPosition.rowIndex &&
+                    c.columnIndex === cellPosition.columnIndex
+            });
+
+            return index === -1;
+        });
+
+        return first.concat(second);
+    }
+
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
@@ -1950,14 +1974,11 @@ class BroadPhaseCollisionSystem {
 
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
-            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id];
+            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            if (lastCellPositions != null) {
-                this.addCellPositionsToDirtyCellPositions(lastCellPositions);
-            }
-
-            this.addCellPositionsToDirtyCellPositions(newCellPositions);
+            const dirtyCellPositions = this.except(newCellPositions, lastCellPositions);
+            this.addCellPositionsToDirtyCellPositions(dirtyCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }
@@ -2402,7 +2423,7 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(24);
@@ -2426,12 +2447,12 @@ class MovementSystem {
 
 
 
-class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
     constructor(text, zIndexValue) {
         super();
         var size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
-        var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__["a" /* default */]();
+        var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_Text__["a" /* default */]();
         var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
         var keyboardController = new __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__["a" /* default */]();
         var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
@@ -2486,9 +2507,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(solidBody);
         this.addComponent(zIndex);
     }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Text;
-
+});
 
 /***/ }),
 /* 22 */
@@ -2638,7 +2657,7 @@ class SolidBody {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ZIndex__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(6);
@@ -2657,7 +2676,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 
         var size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
         var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
-        var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_TextTexture__["a" /* default */]();
+        var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_Text__["a" /* default */]();
         var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
         var shape = new __WEBPACK_IMPORTED_MODULE_6__components_Shape__["a" /* default */]();
         var zIndex = new __WEBPACK_IMPORTED_MODULE_5__components_ZIndex__["a" /* default */]();

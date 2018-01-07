@@ -22,7 +22,8 @@ export default class Text {
         this.width = 0;
         this.height = 0;
         this.lineHeight = 0;
-        this.isDirty = false;
         this.opacity = 1;
+        this.zIndex = 0;
+        this.isDirty = false;
     }
 }

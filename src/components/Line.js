@@ -16,7 +16,8 @@ export default class Line {
             x: 0,
             y: 0
         }
-        this.isDirty = false;
+        this.zIndex = 0;
         this.opacity = 1;
+        this.isDirty = false;
     }
 }

@@ -17,6 +17,7 @@
             left: 0
         };
         this.opacity = 1;
+        this.zIndex = 0;
         this.isDirty = true;
     }
 }

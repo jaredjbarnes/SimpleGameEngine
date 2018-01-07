@@ -38,8 +38,21 @@ export default class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPosition = _cellPosition;
         const cell = this.getCell(cellPosition);
+        const index = cell.indexOf(collidableEntity);
 
-        cell.push(collidableEntity);
+        if (index === -1) {
+            cell.push(collidableEntity);
+        }
+    }
+
+    addEntityToCellPositions(_collidableEntity, _cellPositions) {
+        const collidableEntity = _collidableEntity;
+        const cellPositions = _cellPositions;
+
+        for (let x = 0; x < cellPositions.length; x++) {
+            const cellPosition = cellPositions[x];
+            this.addEntityToCellPosition(collidableEntity, cellPosition);
+        }
     }
 
     addCellPositionsToDirtyCellPositions(_cellPositions) {
@@ -63,9 +76,9 @@ export default class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
-    except(cellPositionsA, cellPositionsB){
-        const first = cellPositionsA.filter((cellPosition)=>{
-            const index = cellPositionsB.findIndex((c)=>{
+    except(cellPositionsA, cellPositionsB) {
+        const first = cellPositionsA.filter((cellPosition) => {
+            const index = cellPositionsB.findIndex((c) => {
                 return c.rowIndex === cellPosition.rowIndex &&
                     c.columnIndex === cellPosition.columnIndex
             });
@@ -73,8 +86,8 @@ export default class BroadPhaseCollisionSystem {
             return index === -1;
         });
 
-        const second = cellPositionsB.filter((cellPosition)=>{
-            const index = cellPositionsA.findIndex((c)=>{
+        const second = cellPositionsB.filter((cellPosition) => {
+            const index = cellPositionsA.findIndex((c) => {
                 return c.rowIndex === cellPosition.rowIndex &&
                     c.columnIndex === cellPosition.columnIndex
             });
@@ -176,7 +189,7 @@ export default class BroadPhaseCollisionSystem {
         }
     }
 
-    removeEntitiesCellPositions(_collidableEntity, _cellPositions) {
+    removeEntityFromCellPositions(_collidableEntity, _cellPositions) {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
@@ -202,7 +215,11 @@ export default class BroadPhaseCollisionSystem {
 
         for (let index = 0; index < cellPositions.length; index++) {
             const cellPosition = cellPositions[index];
-            const cell = this.getCell(cellPosition);
+            const originalCell = this.getCell(cellPosition);
+            const cell = originalCell.slice(0);
+
+            // Remove all entities.
+            originalCell.length = 0;
 
             // Remove all collision data from the entities.
             for (let x = 0; x < cell.length; x++) {
@@ -232,6 +249,8 @@ export default class BroadPhaseCollisionSystem {
                         otherCollision.timestamp = this.currentTime;
                         collisions.push(otherCollision);
 
+                        this.addEntityToCellPosition(collidableEntity, cellPosition);
+                        this.addEntityToCellPosition(otherCollidableEntity, cellPosition);
                     }
                 }
 
@@ -264,10 +283,7 @@ export default class BroadPhaseCollisionSystem {
             this.addCellPositionsToDirtyCellPositions(cellPositions);
             this.cellPositionsOfEntitiesById.set(collidableEntity.id, cellPositions);
 
-            for (let x = 0; x < cellPositions.length; x++) {
-                const cellPosition = cellPositions[x];
-                this.addEntityToCellPosition(collidableEntity, cellPosition);
-            }
+            this.addEntityToCellPositions(collidableEntity, cellPositions);
         }
     }
 
@@ -292,7 +308,7 @@ export default class BroadPhaseCollisionSystem {
             let cellPositions = this.cellPositionsOfEntitiesById.get(collidableEntity.id);
 
             if (cellPositions != null) {
-                this.removeEntitiesCellPositions(collidableEntity, cellPositions);
+                this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             }
 
             this.collidableEntities.delete(collidableEntity.id);

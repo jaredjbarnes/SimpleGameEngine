@@ -1,3 +1,6 @@
+import EntityCompositor from "./EntityCompositer";
+import CompositeCanvas from "./CompositeCanvas";
+
 class RenderableEntity {
     constructor() {
         this.id = null;
@@ -9,50 +12,103 @@ class RenderableEntity {
 }
 
 export default class CompositeLayer {
-    constructor({ size, rasterizeManager }) {
+    constructor({ document, size, imageManager, identity = null, sort = () => 0 }) {
+        this.identity = identity;
         this.entities = [];
+        this.dirtyEntities = [];
+        this.entitiesById = {};
         this.size = size;
-        this.rasterizeManager = rasterizeManager;
-        this.imageTypes = Object.keys(this.rasterizeManager.rasterizers);
-        this.dirtyCells = [];
+        this.imageManager = imageManager;
+        this.imageTypes = Object.keys(this.imageManager.rasterizers);
+        this.compositeImage = null;
+        this.entityCompositer = new EntityCompositer({ document, imageManager });
+        this.sort = (entityA, entityB) => {
+            let value = 0;
+
+            if (sort != null) {
+                value = sort(entityA, entityB);
+            }
+
+            if (value === 0) {
+                return entityA.id - entityB.id;
+            }
+
+            return value;
+        };
     }
 
     addEntity(entity) {
-        const imagesTypes = this.imageTypes;
-        const renderableEntity = new RenderableEntity();
+        this.entities.push(entity);
+        this.entitiesById[entity.id] = entity;
+    }
 
-        renderableEntity.id = entity.id;
-        renderableEntity.size = entity.getComponent("size");
-        renderableEntity.position = entity.getComponent("position");
-        renderableEntity.collidable = entity.getComponent("collidable");
+    createComposite() {
+        this.compositeImage = new CompositeCanvas(size.width, size.height);
+        this.compositeImage.clearRect(0, 0, size.width, size.height);
 
-        renderableEntity.images = imagesTypes.reduce((images, imageType) => {
-            const component = entity.getComponent(imageType);
-            if (component != null) {
-                images.push(component);
+        const entities = this.entities;
+
+        for (let x = 0; x < entities.length; x++) {
+            const entity = entiites[x];
+            const entityImage = this.entityCompositer.rasterize(entity);
+
+            this.drawImage();
+        }
+    }
+
+    updatedComposite(){
+
+    }
+
+    isDirty(_entity) {
+        const entity = _entity;
+        const size = entity.getComponent("size");
+        const position = entity.getComponent("position");
+        const imageTypes = this.imageTypes;
+        const areImagesDirty = false;
+
+        for (let x = 0; x < imageTypes.length; x++) {
+            const image = entity.getComponent(imageTypes[x]);
+
+            if (image && image.isDirty) {
+                areImagesDirty = true;
+                break;
             }
-            return images;
-        }, []);
+        }
 
-        this.entities.push(renderableEntity);
+        return size.isDirty || positions.isDirty || areImagesDirty;
     }
 
-    isDirty({ size, position, images }) {
-        return size.isDirty || positions.isDirty || images.some(i => i.isDirty);
-    }
+    findDirtyEntities() {
+        const entities = this.entities;
+        const dirtyEntities = [];
 
-    findDirtyCells() {
-        this.entities.forEach((_entity) => {
-            const entity = _entity;
+        for (let x = 0; x < entities.length; x++) {
+            const entity = entities[x];
             const isDirty = this.isDirty(entity);
 
             if (isDirty) {
-                const collidable = entity.collidable;
-                collidable.activeCollisions.forEach((collision) => {
-                    this.dirtyCells.push(collision.cellPosition);
-                });
+                dirtyEntities.push(entity);
             }
-        });
+        }
+        this.dirtyEntities = dirtyEntities;
+    }
+
+    getCollisions({ cells }) {
+        return Object.keys(cells).reduce((accumulator, collisions) => {
+            return accumulator.concat(collisions.filter((collision) => {
+                return this.entitiesById[collision.entityId] != null;
+            }));
+        }, []).sort(this.sort);
+    }
+
+    removeEntity(entity) {
+        const index = this.entities.indexOf(entity);
+        if (index > -1) {
+            this.entities.splice(index, 1);
+        }
+
+        this.entitiesById[entity.id] = null;
     }
 
     transferImage(destinationCanvas,
@@ -65,6 +121,10 @@ export default class CompositeLayer {
         sourceWidth,
         sourceHeight
     ) {
+        this.findDirtyEntities();
 
+        if (this.dirtyEntities.length > 0) {
+
+        }
     }
 }

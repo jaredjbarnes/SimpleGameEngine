@@ -1,4 +1,4 @@
-export default class CompositeEntity {
+export default class EntityCompositer {
     constructor({ document, imageManager }) {
         this.imageManager = imageManager;
         this.document = document;

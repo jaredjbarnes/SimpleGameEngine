@@ -14,6 +14,8 @@ import SolidBody from "./../../../../components/SolidBody";
 export default class extends Entity {
     constructor(text) {
         super();
+        this.id = "player"
+
         var size = new Size();
         var position = new Position();
         var textTexture = new Text();
@@ -42,6 +44,8 @@ export default class extends Entity {
 
         size.width = 100;
         size.height = 30;
+
+        position.isDirty = true;
 
         shape.border.thickness = 1;
         shape.fillColor.blue = 255;

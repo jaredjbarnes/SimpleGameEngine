@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(16);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -195,7 +195,7 @@ class Entity {
         this.type = "collidable";
         this.name = null;
         this.isEnabled = true;
-        this.cells = {};
+        this.collisions = {};
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
@@ -210,17 +210,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Line__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__logicbox_entities_Text__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_Camera__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Line__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__logicbox_entities_Text__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_Camera__ = __webpack_require__(38);
 
 
 
@@ -657,7 +657,7 @@ class RenderSystem {
         this._world = world;
 
         world.getEntities().forEach(function (entity) {
-            self.registerEntity(entity);
+            self.entityAdded(entity);
         });
 
         Object.keys(this._entitiesByZIndex).forEach(function (key) {
@@ -1100,10 +1100,9 @@ class RenderSystem {
     }
 
     getCollisions(collidable){
-        return Object.keys(collidable.cells).reduce((accumlulator, key)=>{
-            const collisions = collidable.cells[key];
-            return accumlulator.concat(collisions);
-        }, []);
+        return Object.keys(collidable.collisions).map((key)=>{
+            return collidable.collisions[key];
+        });
     }
 
     get camera() {
@@ -1825,7 +1824,14 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class CellPosition {
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__ = __webpack_require__(17);
+﻿
+
+
+//TODO: remove the cells structure from the collidable component and just have the collisions. 
+
+class CellPosition {
     constructor(columnIndex, rowIndex) {
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;
@@ -1851,14 +1857,21 @@ class CollidableEntity {
 class BroadPhaseCollisionSystem {
     constructor(cellSize = 200) {
         this.cellSize = cellSize;
-        this.collidableEntities = new Map();
+        this.collidableEntities = [];
         this.cellPositionsOfEntitiesById = new Map();
         this.world = null;
         this.currentTime = 0;
         this.grid = new Map();
         this.dirtyCellPositions = [];
         this.dependencies = ["position", "size", "collidable"];
-        this.name = "Broad Phase Collision System"
+        this.name = "Broad Phase Collision System";
+
+        this.broadPhaseCollisionDataEntity = new __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */]();
+        this.broadPhaseCollisionDataComponent = new __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__["a" /* default */]();
+        this.broadPhaseCollisionDataComponent.cellSize = cellSize;
+        this.broadPhaseCollisionDataComponent.grid = this.grid;
+        this.broadPhaseCollisionDataEntity.addComponent(this.broadPhaseCollisionDataComponent);
+
     }
 
     addEntityToCellPosition(_collidableEntity, _cellPosition) {
@@ -1884,14 +1897,23 @@ class BroadPhaseCollisionSystem {
 
     addCellPositionsToDirtyCellPositions(_cellPositions) {
         const cellPositions = _cellPositions;
+        const dirtyCellPositions = this.dirtyCellPositions;
 
-        let filteredCellPositions = cellPositions.filter((cellPosition) => {
-            return this.dirtyCellPositions.findIndex(dirtyCell => {
-                return dirtyCell.columnIndex === cellPosition.columnIndex && dirtyCell.rowIndex === cellPosition.rowIndex
-            });
-        });
+        for (let x = 0; x < cellPositions.length; x++) {
+            let isIn = false;
+            for (let y = 0; y < dirtyCellPositions.length; y++) {
+                if (cellPositions[x].rowIndex === dirtyCellPositions[y].rowIndex &&
+                    cellPositions[x].columnIndex === dirtyCellPositions[y].columnIndex) {
+                    isIn = true;
+                    break;
+                }
+            }
 
-        this.dirtyCellPositions = this.dirtyCellPositions.concat(filteredCellPositions);
+            if (!isIn) {
+                dirtyCellPositions.push(cellPositions[x]);
+            }
+        }
+
     }
 
     doEntitiesIntersect({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
@@ -1903,33 +1925,11 @@ class BroadPhaseCollisionSystem {
         return top < bottom && left < right;
     }
 
-    except(cellPositionsA, cellPositionsB) {
-        const first = cellPositionsA.filter((cellPosition) => {
-            const index = cellPositionsB.findIndex((c) => {
-                return c.rowIndex === cellPosition.rowIndex &&
-                    c.columnIndex === cellPosition.columnIndex
-            });
-
-            return index === -1;
-        });
-
-        const second = cellPositionsB.filter((cellPosition) => {
-            const index = cellPositionsA.findIndex((c) => {
-                return c.rowIndex === cellPosition.rowIndex &&
-                    c.columnIndex === cellPosition.columnIndex
-            });
-
-            return index === -1;
-        });
-
-        return first.concat(second);
-    }
-
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
 
-        for (let x = 0; x < collidableEntities; x++) {
+        for (let x = 0; x < collidableEntities.length; x++) {
             const collidableEntity = collidableEntities[x];
             const size = collidableEntity.size;
             const position = collidableEntity.position;
@@ -1944,8 +1944,8 @@ class BroadPhaseCollisionSystem {
             let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            const dirtyCellPositions = this.except(newCellPositions, lastCellPositions);
-            this.addCellPositionsToDirtyCellPositions(dirtyCellPositions);
+            this.addCellPositionsToDirtyCellPositions(newCellPositions);
+            this.addCellPositionsToDirtyCellPositions(lastCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }
@@ -2008,6 +2008,12 @@ class BroadPhaseCollisionSystem {
         return collisions.find((collision) => collision.entityId === id);
     }
 
+    removeCell({ columnIndex, rowIndex }) {
+        if (this.grid.has(columnIndex) && this.grid.get(columnIndex).has(rowIndex)) {
+            this.grid.get(columnIndex).delete(rowIndex);
+        }
+    }
+
     removeCollision(collisions, entityId) {
         const index = collisions.findIndex((collision) => collision.entityId === entityId);
 
@@ -2031,6 +2037,9 @@ class BroadPhaseCollisionSystem {
 
                 if (index > -1) {
                     cell.splice(index, 1);
+                    if (cell.length === 0) {
+                        this.removeCell(cellPosition);
+                    }
                 }
             }
         }
@@ -2048,38 +2057,56 @@ class BroadPhaseCollisionSystem {
             // Remove all entities.
             originalCell.length = 0;
 
-            // Remove all collision data from the entities.
-            for (let x = 0; x < cell.length; x++) {
-                const collidable = cell[x].collidable;
-                collidable.cells[this.getCellId(cellPosition)] = [];
-            }
-
             // Add collision data to the entities.
             for (let y = 0; y < cell.length; y++) {
                 const collidableEntity = cell[y];
-                const collisions = collidableEntity.collidable.cells[this.getCellId(cellPosition)];
+                const collisions = collidableEntity.collidable.collisions;
                 const index = y;
+
+                this.addEntityToCellPosition(collidableEntity, cellPosition);
 
                 for (let x = index + 1; x < cell.length; x++) {
                     const otherCollidableEntity = cell[x];
-                    const otherCollisions = otherCollidableEntity.collidable.cells[this.getCellId(cellPosition)];
+                    const otherCollisions = otherCollidableEntity.collidable.collisions;
+
+                    if ((!otherCollidableEntity.position.isDirty && !otherCollidableEntity.size.isDirty &&
+                        !collidableEntity.position.isDirty && !collidableEntity.size.isDirty) ||
+                        (otherCollisions[collidableEntity.id] &&
+                            otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
+                        continue;
+                    }
 
                     if (this.doEntitiesIntersect(collidableEntity, otherCollidableEntity)) {
+                        let collision = otherCollisions[collidableEntity.id];
+                        let otherCollision = collisions[otherCollidableEntity.id];
 
-                        const collision = new Collision(collidableEntity.id);
-                        collision.cellPosition = cellPosition;
+                        if (collision == null) {
+                            collision = new Collision(collidableEntity.id);
+                            otherCollisions[collidableEntity.id] = collision;
+                        }
+
+                        if (otherCollision == null) {
+                            otherCollision = new Collision(otherCollidableEntity.id);
+                            collisions[otherCollidableEntity.id] = otherCollision;
+                        }
+
                         collision.timestamp = this.currentTime;
-                        otherCollisions.push(collision);
-
-                        const otherCollision = new Collision(otherCollidableEntity.id);
-                        otherCollision.cellPosition = cellPosition;
                         otherCollision.timestamp = this.currentTime;
-                        collisions.push(otherCollision);
 
-                        this.addEntityToCellPosition(collidableEntity, cellPosition);
-                        this.addEntityToCellPosition(otherCollidableEntity, cellPosition);
+                    } else {
+                        if (otherCollisions[collidableEntity.id]) {
+                            otherCollisions[collidableEntity.id].timestamp = null;
+                        }
+
+                        if (collisions[otherCollidableEntity.id]) {
+                            collisions[otherCollidableEntity.id].timestamp = null;
+                        }
                     }
+
                 }
+
+                collidableEntity.position.isDirty = false;
+                collidableEntity.size.isDirty = false;
 
             }
         }
@@ -2094,17 +2121,19 @@ class BroadPhaseCollisionSystem {
             const entity = _entity;
             this.entityAdded(entity)
         });
+
+        world.addEntity(this.broadPhaseCollisionDataEntity);
     }
 
     entityAdded(_entity) {
         const entity = _entity;
-        if (entity.hasComponents(this.dependencies) && !this.collidableEntities.has(entity.id)) {
+        if (entity.hasComponents(this.dependencies) && this.collidableEntities.findIndex(e => e.id === entity.id) === -1) {
             const collidableEntity = new CollidableEntity(entity.id);
             collidableEntity.position = entity.getComponent("position");
             collidableEntity.size = entity.getComponent("size");
             collidableEntity.collidable = entity.getComponent("collidable");
 
-            this.collidableEntities.set(collidableEntity.id, collidableEntity);
+            this.collidableEntities.push(collidableEntity);
 
             let cellPositions = this.getCellPositions(collidableEntity);
             this.addCellPositionsToDirtyCellPositions(cellPositions);
@@ -2122,7 +2151,7 @@ class BroadPhaseCollisionSystem {
     deactivated(_world) {
         const world = _world;
         this.world = null;
-        this.collidableEntities = new Map();
+        this.collidableEntities = [];
         this.cellPositionsOfEntitiesById = new Map();
         this.currentTime = 0;
         this.grid = new Map();
@@ -2130,15 +2159,16 @@ class BroadPhaseCollisionSystem {
 
     entityRemoved(_entity) {
         const entity = _entity;
-        const collidableEntity = this.collidableEntities.get(entity.id);
-        if (collidableEntity != null) {
+        const index = this.collidableEntities.findIndex(e => e.id === entity.id);
+        if (index > -1) {
+            const collidableEntity = this.collidableEntities[index];
             let cellPositions = this.cellPositionsOfEntitiesById.get(collidableEntity.id);
 
             if (cellPositions != null) {
                 this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             }
 
-            this.collidableEntities.delete(collidableEntity.id);
+            this.collidableEntities.splice(index, 1);
             this.cellPositionsOfEntitiesById.delete(collidableEntity.id);
         }
     }
@@ -2151,8 +2181,9 @@ class BroadPhaseCollisionSystem {
 
     update(currentTime) {
         this.currentTime = currentTime;
-        this.findDirtyCells()
-        this.updateGridCells(this.dirtyCellPositions)
+        this.findDirtyCells();
+        this.updateGridCells(this.dirtyCellPositions);
+        this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
         this.dirtyCellPositions = [];
     }
 }
@@ -2161,6 +2192,52 @@ class BroadPhaseCollisionSystem {
 
 /***/ }),
 /* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = createGuid;
+/* unused harmony export invokeMethod */
+var S4 = function () {
+    return Math.floor(
+        Math.random() * 0x10000 /* 65536 */
+    ).toString(16);
+};
+
+function createGuid() {
+    return (
+        S4() + S4() + "-" +
+        S4() + "-" +
+        S4() + "-" +
+        S4() + "-" +
+        S4() + S4() + S4()
+    );
+};
+
+function invokeMethod(obj, methodName, args){
+     args = Array.isArray(args)? args: [];
+    if (obj != null && typeof obj[methodName] === "function"){
+        return obj[methodName].apply(obj, args);
+    }
+}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class BroadPhaseCollisionData {
+    constructor(){
+        this.type = "broad-phase-collision-data";
+        this.dirtyCellPositions = [];
+        this.grid = {};
+        this.cellSize = 0;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionData;
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2226,7 +2303,7 @@ class BroadPhaseCollisionSystem {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2310,7 +2387,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2381,7 +2458,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2457,7 +2534,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2573,7 +2650,7 @@ class LogicSystem {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2662,11 +2739,11 @@ class SpriteSystem {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(25);
 
 
 const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position", "size"];
@@ -3005,8 +3082,7 @@ class NarrowPhaseCollisionSystem {
         let timestamp = this.timestamp;
 
         for (let key in activeCollisions) {
-            let _key = key;
-            let _collision = activeCollisions[_key];
+            let _collision = activeCollisions[key];
             let collidableKey = _collision.otherEntity.id;
 
             if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
@@ -3054,7 +3130,8 @@ class NarrowPhaseCollisionSystem {
         }
 
         if (collidable != null) {
-            collidable.collisions.forEach((collision)=>{
+            for (let key in collidable.collisions){
+                let collision = collidable.collisions[key];
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
@@ -3063,7 +3140,7 @@ class NarrowPhaseCollisionSystem {
                 }
 
                 this.intersects(_entity, otherEntity);
-            });
+            }
 
             this.cleanCollisions(_entity);
         }
@@ -3127,7 +3204,7 @@ class NarrowPhaseCollisionSystem {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3237,7 +3314,7 @@ class Vector {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3315,7 +3392,7 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3323,7 +3400,7 @@ class FollowEntityCameraSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Position__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Line__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Line__ = __webpack_require__(28);
 
 
 
@@ -3378,37 +3455,7 @@ class FollowEntityCameraSystem {
 });
 
 /***/ }),
-/* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = createGuid;
-/* unused harmony export invokeMethod */
-var S4 = function () {
-    return Math.floor(
-        Math.random() * 0x10000 /* 65536 */
-    ).toString(16);
-};
-
-function createGuid() {
-    return (
-        S4() + S4() + "-" +
-        S4() + "-" +
-        S4() + "-" +
-        S4() + "-" +
-        S4() + S4() + S4()
-    );
-};
-
-function invokeMethod(obj, methodName, args){
-     args = Array.isArray(args)? args: [];
-    if (obj != null && typeof obj[methodName] === "function"){
-        return obj[methodName].apply(obj, args);
-    }
-}
-
-/***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3439,22 +3486,22 @@ class Line {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(37);
 
 
 
@@ -3527,7 +3574,7 @@ class Line {
 });
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3564,7 +3611,7 @@ class Text {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3577,7 +3624,7 @@ class Text {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3591,7 +3638,7 @@ class Text {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3606,7 +3653,7 @@ class Movable {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3643,7 +3690,7 @@ class Movable {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3665,7 +3712,7 @@ class Movable {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3698,7 +3745,7 @@ class NarrowPhaseCollidable {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3711,12 +3758,12 @@ class SolidBody {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -3748,7 +3795,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -15,6 +15,7 @@ export default class StaticText extends Entity {
         var collidable = new Collidable();
 
         position.isStatic = true;
+        position.isDirty = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;

@@ -33,6 +33,7 @@ export default class ColorPlatform extends Entity {
 
         position.x = x;
         position.y = y;
+        position.isDirty = true;
 
         this.addComponent(position);
         this.addComponent(size);

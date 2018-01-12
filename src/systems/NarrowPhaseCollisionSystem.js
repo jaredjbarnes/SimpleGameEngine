@@ -193,7 +193,6 @@ export default class NarrowPhaseCollisionSystem {
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
 
-
         for (let aPartIndex = 0; aPartIndex < aParts.length; aPartIndex++) {
             let partA = aParts[aPartIndex];
 
@@ -336,8 +335,7 @@ export default class NarrowPhaseCollisionSystem {
         let timestamp = this.timestamp;
 
         for (let key in activeCollisions) {
-            let _key = key;
-            let _collision = activeCollisions[_key];
+            let _collision = activeCollisions[key];
             let collidableKey = _collision.otherEntity.id;
 
             if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
@@ -385,16 +383,17 @@ export default class NarrowPhaseCollisionSystem {
         }
 
         if (collidable != null) {
-            collidable.collisions.forEach((collision)=>{
+            for (let key in collidable.collisions){
+                let collision = collidable.collisions[key];
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
                 if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
-                    return;
+                    continue;
                 }
 
                 this.intersects(_entity, otherEntity);
-            });
+            }
 
             this.cleanCollisions(_entity);
         }

@@ -20,8 +20,8 @@ var getRandomNumber = (max) => {
 }
 
 var world = new World();
-world.size.height = 20000;
-world.size.width = 20000;
+world.size.height = 2000;
+world.size.width = 2000;
 
 var text = new Text("Hello World!");
 var camera = new Camera("main");
@@ -56,9 +56,9 @@ world.addSystem(logicSystem);
 world.addSystem(renderSystem);
 
 
-for (let z = 0; z < 2000; z++) {
-    let x = getRandomNumber(20000);
-    let y = getRandomNumber(20000);
+for (let z = 0; z < 200; z++) {
+    let x = getRandomNumber(2000);
+    let y = getRandomNumber(2000);
 
     // ENTITIES
     let colorPlatform = new ColorPlatform(x, y);

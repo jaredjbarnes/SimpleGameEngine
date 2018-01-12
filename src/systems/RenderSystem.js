@@ -132,7 +132,7 @@ export default class RenderSystem {
         this._world = world;
 
         world.getEntities().forEach(function (entity) {
-            self.registerEntity(entity);
+            self.entityAdded(entity);
         });
 
         Object.keys(this._entitiesByZIndex).forEach(function (key) {
@@ -575,10 +575,9 @@ export default class RenderSystem {
     }
 
     getCollisions(collidable){
-        return Object.keys(collidable.cells).reduce((accumlulator, key)=>{
-            const collisions = collidable.cells[key];
-            return accumlulator.concat(collisions);
-        }, []);
+        return Object.keys(collidable.collisions).map((key)=>{
+            return collidable.collisions[key];
+        });
     }
 
     get camera() {

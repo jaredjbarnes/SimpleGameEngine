@@ -2016,7 +2016,7 @@ class LineRenderer {
 ﻿
 
 
-//TODO: remove the cells structure from the collidable component and just have the collisions. 
+//TODO: correct cells when finding dirty cells, change dirty cell positions to strings... maybe.
 
 class CellPosition {
     constructor(columnIndex, rowIndex) {
@@ -2080,6 +2080,8 @@ class BroadPhaseCollisionSystem {
             const cellPosition = cellPositions[x];
             this.addEntityToCellPosition(collidableEntity, cellPosition);
         }
+
+        this.addCellPositionsToDirtyCellPositions(cellPositions);
     }
 
     addCellPositionsToDirtyCellPositions(_cellPositions) {
@@ -2131,8 +2133,8 @@ class BroadPhaseCollisionSystem {
             let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
-            this.addCellPositionsToDirtyCellPositions(newCellPositions);
-            this.addCellPositionsToDirtyCellPositions(lastCellPositions);
+            this.removeEntityFromCellPositions(dirtyEntity, lastCellPositions);
+            this.addEntityToCellPositions(dirtyEntity, newCellPositions);
 
             this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
         }
@@ -2213,15 +2215,14 @@ class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
-        this.addCellPositionsToDirtyCellPositions(cellPositions);
-
+        
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const cell = this.getCell(cellPosition);
-
+            
             if (cell != null) {
-                const index = cell.findIndex((e) => { e === collidableEntity });
-
+                const index = cell.indexOf(collidableEntity);
+                
                 if (index > -1) {
                     cell.splice(index, 1);
                     if (cell.length === 0) {
@@ -2230,6 +2231,8 @@ class BroadPhaseCollisionSystem {
                 }
             }
         }
+        
+        this.addCellPositionsToDirtyCellPositions(cellPositions);
 
     }
 
@@ -2238,19 +2241,13 @@ class BroadPhaseCollisionSystem {
 
         for (let index = 0; index < cellPositions.length; index++) {
             const cellPosition = cellPositions[index];
-            const originalCell = this.getCell(cellPosition);
-            const cell = originalCell.slice(0);
-
-            // Remove all entities.
-            originalCell.length = 0;
+            const cell = this.getCell(cellPosition);
 
             // Add collision data to the entities.
             for (let y = 0; y < cell.length; y++) {
                 const collidableEntity = cell[y];
                 const collisions = collidableEntity.collidable.collisions;
                 const index = y;
-
-                this.addEntityToCellPosition(collidableEntity, cellPosition);
 
                 for (let x = index + 1; x < cell.length; x++) {
                     const otherCollidableEntity = cell[x];
@@ -3200,7 +3197,6 @@ class NarrowPhaseCollisionSystem {
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
 
-
         for (let aPartIndex = 0; aPartIndex < aParts.length; aPartIndex++) {
             let partA = aParts[aPartIndex];
 
@@ -3397,7 +3393,7 @@ class NarrowPhaseCollisionSystem {
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
                 if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
-                    return;
+                    continue;
                 }
 
                 this.intersects(_entity, otherEntity);

@@ -1956,10 +1956,6 @@ class BroadPhaseCollisionSystem {
         }
     }
 
-    areCellsEqual(cellA, cellB) {
-        return cellA.rowIndex === cellB.rowIndex && cellA.columnIndex === cellB.columnIndex;
-    }
-
     getCell({ rowIndex, columnIndex }) {
         let column = this.grid.get(columnIndex);
         if (column == null) {
@@ -1974,10 +1970,6 @@ class BroadPhaseCollisionSystem {
         }
 
         return cell;
-    }
-
-    getCellId({ rowIndex, columnIndex }) {
-        return `${columnIndex}_${rowIndex}`;
     }
 
     getCellPositions({ position, size }) {
@@ -2009,21 +2001,9 @@ class BroadPhaseCollisionSystem {
         return cellPositions;
     }
 
-    getCollisionByEntityId(collisions, id) {
-        return collisions.find((collision) => collision.entityId === id);
-    }
-
     removeCell({ columnIndex, rowIndex }) {
         if (this.grid.has(columnIndex) && this.grid.get(columnIndex).has(rowIndex)) {
             this.grid.get(columnIndex).delete(rowIndex);
-        }
-    }
-
-    removeCollision(collisions, entityId) {
-        const index = collisions.findIndex((collision) => collision.entityId === entityId);
-
-        if (index > -1) {
-            collisions.splice(index, 1);
         }
     }
 

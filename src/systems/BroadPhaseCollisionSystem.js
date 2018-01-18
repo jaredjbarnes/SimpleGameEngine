@@ -14,6 +14,12 @@ class Collision {
     constructor(entityId) {
         this.entityId = entityId;
         this.timestamp = 0;
+        this.intersection = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
     }
 }
 
@@ -37,9 +43,16 @@ export default class BroadPhaseCollisionSystem {
         this.dirtyCellPositions = [];
         this.dependencies = ["position", "size", "collidable"];
         this.name = "Broad Phase Collision System";
+        this.intersection = {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
 
         this.broadPhaseCollisionDataEntity = new Entity();
         this.broadPhaseCollisionDataComponent = new BroadPhaseCollisionData();
+        this.broadPhaseCollisionDataComponent.cellPositionsOfEntitiesById = this.cellPositionsOfEntitiesById;
         this.broadPhaseCollisionDataComponent.cellSize = cellSize;
         this.broadPhaseCollisionDataComponent.grid = this.grid;
         this.broadPhaseCollisionDataEntity.addComponent(this.broadPhaseCollisionDataComponent);
@@ -90,13 +103,22 @@ export default class BroadPhaseCollisionSystem {
 
     }
 
-    doEntitiesIntersect({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
+    getIntersection({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
         const top = Math.max(positionA.y, positionB.y);
         const bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
         const left = Math.max(positionA.x, positionB.x);
         const right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
 
-        return top < bottom && left < right;
+        if (top < bottom && left < right) {
+            this.intersection.top = top;
+            this.intersection.left = left;
+            this.intersection.right = right;
+            this.intersection.bottom = bottom;
+
+            return this.intersection;
+        }
+
+        return null;
     }
 
     findDirtyCells() {
@@ -180,14 +202,14 @@ export default class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
-        
+
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const cell = this.getCell(cellPosition);
-            
+
             if (cell != null) {
                 const index = cell.indexOf(collidableEntity);
-                
+
                 if (index > -1) {
                     cell.splice(index, 1);
                     if (cell.length === 0) {
@@ -196,7 +218,7 @@ export default class BroadPhaseCollisionSystem {
                 }
             }
         }
-        
+
         this.addCellPositionsToDirtyCellPositions(cellPositions);
 
     }
@@ -225,7 +247,9 @@ export default class BroadPhaseCollisionSystem {
                         continue;
                     }
 
-                    if (this.doEntitiesIntersect(collidableEntity, otherCollidableEntity)) {
+                    const intersection = this.getIntersection(collidableEntity, otherCollidableEntity);
+
+                    if (intersection != null) {
                         let collision = otherCollisions[collidableEntity.id];
                         let otherCollision = collisions[otherCollidableEntity.id];
 
@@ -240,15 +264,24 @@ export default class BroadPhaseCollisionSystem {
                         }
 
                         collision.timestamp = this.currentTime;
+                        collision.intersection.top = intersection.top;
+                        collision.intersection.left = intersection.left;
+                        collision.intersection.right = intersection.right;
+                        collision.intersection.bottom = intersection.bottom;
+
                         otherCollision.timestamp = this.currentTime;
+                        otherCollision.intersection.top = intersection.top;
+                        otherCollision.intersection.left = intersection.left;
+                        otherCollision.intersection.right = intersection.right;
+                        otherCollision.intersection.bottom = intersection.bottom;
 
                     } else {
                         if (otherCollisions[collidableEntity.id]) {
-                            otherCollisions[collidableEntity.id].timestamp = null;
+                            delete otherCollisions[collidableEntity.id];
                         }
 
                         if (collisions[otherCollidableEntity.id]) {
-                            collisions[otherCollidableEntity.id].timestamp = null;
+                            delete collisions[otherCollidableEntity.id];
                         }
                     }
 

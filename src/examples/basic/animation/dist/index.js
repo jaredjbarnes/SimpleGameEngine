@@ -179,7 +179,7 @@ class Entity {
         this.x = 0;
         this.y = 0;
         this.isStatic = false;
-        this.isDirty = false;
+        this.isDirty = true;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Position;
@@ -196,6 +196,7 @@ class Entity {
         this.name = null;
         this.isEnabled = true;
         this.collisions = {};
+        this.cellPositions = [];
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
@@ -310,7 +311,22 @@ window.world = world;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class World {
+﻿// Polyfill for node environments.
+if (typeof performance === "undefined") {
+    var performance = {
+        now: () => {
+            return Date.now();
+        }
+    };
+}
+
+if (typeof requestAnimationFrame === "undefined") {
+   var requestAnimationFrame = (callback) => {
+        setTimeout(callback, 11);
+    };
+}
+
+class World {
     constructor(size) {
         var self = this;
 
@@ -1842,9 +1858,10 @@ class CellPosition {
 }
 
 class Collision {
-    constructor(entityId) {
+    constructor(entityId = null) {
         this.entityId = entityId;
         this.timestamp = 0;
+        this.cellPosition = null;
         this.intersection = {
             top: 0,
             left: 0,
@@ -1863,11 +1880,33 @@ class CollidableEntity {
     }
 }
 
+const availableCollisions = [];
+
+const createCollision = (id) => {
+    if (availableCollisions.length > 0) {
+        let collision = availableCollisions.pop();
+        collision.id = id;
+        collision.timestamp = 0;
+        collision.cellPosition = null;
+        collision.intersection = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+    }
+    return new Collision(id);
+};
+
+const releaseCollision = (collision) => {
+    availableCollisions.push(collision);
+};
+
 class BroadPhaseCollisionSystem {
     constructor(cellSize = 200) {
         this.cellSize = cellSize;
         this.collidableEntities = [];
-        this.cellPositionsOfEntitiesById = new Map();
+        this.collidableEntitiesById = {};
         this.world = null;
         this.currentTime = 0;
         this.grid = new Map();
@@ -1883,7 +1922,6 @@ class BroadPhaseCollisionSystem {
 
         this.broadPhaseCollisionDataEntity = new __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */]();
         this.broadPhaseCollisionDataComponent = new __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__["a" /* default */]();
-        this.broadPhaseCollisionDataComponent.cellPositionsOfEntitiesById = this.cellPositionsOfEntitiesById;
         this.broadPhaseCollisionDataComponent.cellSize = cellSize;
         this.broadPhaseCollisionDataComponent.grid = this.grid;
         this.broadPhaseCollisionDataEntity.addComponent(this.broadPhaseCollisionDataComponent);
@@ -1968,13 +2006,28 @@ class BroadPhaseCollisionSystem {
 
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
-            let lastCellPositions = this.cellPositionsOfEntitiesById[dirtyEntity.id] || [];
+            const collisions = dirtyEntity.collidable.collisions;
+
+            let lastCellPositions = dirtyEntity.collidable.cellPositions;
             let newCellPositions = this.getCellPositions(dirtyEntity);
 
             this.removeEntityFromCellPositions(dirtyEntity, lastCellPositions);
             this.addEntityToCellPositions(dirtyEntity, newCellPositions);
 
-            this.cellPositionsOfEntitiesById[dirtyEntity.id] = newCellPositions;
+            dirtyEntity.collidable.cellPositions = newCellPositions;
+
+            for (let y in collisions) {
+                const collision = collisions[y];
+                const otherCollidableEntity = this.collidableEntitiesById[y];
+
+                releaseCollision(collision);
+                releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
+
+                delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
+
+            }
+
+            dirtyEntity.collidable.collisions = {};
         }
     }
 
@@ -2081,39 +2134,26 @@ class BroadPhaseCollisionSystem {
                     const intersection = this.getIntersection(collidableEntity, otherCollidableEntity);
 
                     if (intersection != null) {
-                        let collision = otherCollisions[collidableEntity.id];
-                        let otherCollision = collisions[otherCollidableEntity.id];
 
-                        if (collision == null) {
-                            collision = new Collision(collidableEntity.id);
-                            otherCollisions[collidableEntity.id] = collision;
-                        }
-
-                        if (otherCollision == null) {
-                            otherCollision = new Collision(otherCollidableEntity.id);
-                            collisions[otherCollidableEntity.id] = otherCollision;
-                        }
-
+                        let collision = createCollision(collidableEntity.id);
                         collision.timestamp = this.currentTime;
                         collision.intersection.top = intersection.top;
                         collision.intersection.left = intersection.left;
                         collision.intersection.right = intersection.right;
                         collision.intersection.bottom = intersection.bottom;
+                        collision.cellPosition = cellPosition;
 
+                        let otherCollision = createCollision(otherCollidableEntity.id);
                         otherCollision.timestamp = this.currentTime;
                         otherCollision.intersection.top = intersection.top;
                         otherCollision.intersection.left = intersection.left;
                         otherCollision.intersection.right = intersection.right;
                         otherCollision.intersection.bottom = intersection.bottom;
+                        otherCollision.cellPosition = cellPosition;
 
-                    } else {
-                        if (otherCollisions[collidableEntity.id]) {
-                            delete otherCollisions[collidableEntity.id];
-                        }
+                        otherCollisions[collidableEntity.id] = collision;
+                        collisions[otherCollidableEntity.id] = otherCollision;
 
-                        if (collisions[otherCollidableEntity.id]) {
-                            delete collisions[otherCollidableEntity.id];
-                        }
                     }
 
                 }
@@ -2147,12 +2187,12 @@ class BroadPhaseCollisionSystem {
             collidableEntity.collidable = entity.getComponent("collidable");
 
             this.collidableEntities.push(collidableEntity);
+            this.collidableEntitiesById[collidableEntity.id] = collidableEntity;
 
             let cellPositions = this.getCellPositions(collidableEntity);
-            this.addCellPositionsToDirtyCellPositions(cellPositions);
-            this.cellPositionsOfEntitiesById.set(collidableEntity.id, cellPositions);
-
             this.addEntityToCellPositions(collidableEntity, cellPositions);
+
+            collidableEntity.collidable.cellPositions = cellPositions;
         }
     }
 
@@ -2165,7 +2205,7 @@ class BroadPhaseCollisionSystem {
         const world = _world;
         this.world = null;
         this.collidableEntities = [];
-        this.cellPositionsOfEntitiesById = new Map();
+        this.collidableEntitiesById = {};
         this.currentTime = 0;
         this.grid = new Map();
     }
@@ -2175,14 +2215,10 @@ class BroadPhaseCollisionSystem {
         const index = this.collidableEntities.findIndex(e => e.id === entity.id);
         if (index > -1) {
             const collidableEntity = this.collidableEntities[index];
-            let cellPositions = this.cellPositionsOfEntitiesById.get(collidableEntity.id);
-
-            if (cellPositions != null) {
-                this.removeEntityFromCellPositions(collidableEntity, cellPositions);
-            }
-
+            let cellPositions = collidableEntity.collidable.cellPositions;
+            this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             this.collidableEntities.splice(index, 1);
-            this.cellPositionsOfEntitiesById.delete(collidableEntity.id);
+            delete this.collidableEntitiesById[collidableEntity.id];
         }
     }
 
@@ -2242,7 +2278,6 @@ class BroadPhaseCollisionData {
     constructor(){
         this.type = "broad-phase-collision-data";
         this.dirtyCellPositions = [];
-        this.cellPositionsOfEntitiesById = null;
         this.grid = null;
         this.cellSize = 0;
     }
@@ -3431,6 +3466,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
         var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
 
+        this.id = `camera_${this.id}`;
         this.addComponent(camera);
         this.addComponent(position);
         this.addComponent(size);

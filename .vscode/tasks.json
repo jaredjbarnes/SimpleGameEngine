@@ -1,0 +1,62 @@
+{
+    "version": "0.1.0",
+    "command": "node",
+    "isShellCommand": true,
+    "args": [],
+    "showOutput": "always",
+    "echoCommand": true,
+    "suppressTaskName": true,
+    "tasks": [
+        {
+            "taskName": "build",
+            "isBuildCommand": true,
+            "isTestCommand": false,
+            "args": [
+                "${workspaceRoot}/.clarity/build.js"
+            ]
+        },
+        {
+            "taskName": "compile",
+            "isBuildCommand": true,
+            "isTestCommand": true,
+            "args": [
+                "${workspaceRoot}/node_modules/babel-cli/bin/babel.js",
+                "src",
+                "--out-dir",
+                "lib",
+                "--source-maps"
+            ]
+        },
+        {
+            "taskName": "coverage",
+            "isBuildCommand": true,
+            "isTestCommand": false,
+            "args": [
+                "${workspaceRoot}/node_modules/istanbul/lib/cli.js",
+                "cover",
+                "${workspaceRoot}/.clarity/test.js"
+            ]
+        },
+        {
+            "taskName": "documentation",
+            "isBuildCommand": true,
+            "isTestCommand": false,
+            "args": [
+                "${workspaceRoot}/node_modules/jsdoc/jsdoc.js",
+                "lib",
+                "--readme",
+                "README.md",
+                "--destination",
+                "docs"
+            ]
+        },
+        {
+            "taskName": "test",
+            "isBuildCommand": true,
+            "isTestCommand": false,
+            "args": [
+                "${workspaceRoot}/.clarity/test.js"
+            ]
+        }
+    ]
+}

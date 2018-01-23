@@ -4,5 +4,6 @@
         this.name = null;
         this.isEnabled = true;
         this.collisions = {};
+        this.cellPositions = [];
     }
 }

@@ -1,42 +1,46 @@
+import OffsetCanvas from "./OffsetCanvas";
+
 export default class RenderingCell {
     constructor({
-        document = window.document,
         offset = { x: 0, y: 0 },
         imageManager = null,
-        collisionData = null,
+        broadPhaseCollisionData = null,
         size = 1000,
-        zIndex = 0
+        canvasCellEntity = null,
+        world = null
         }) {
 
         this.offset = offset;
         this.imageManager = imageManager;
-        this.collisionData = collisionData;
-        this.document = document;
-        this.image = document.createElement("canvas");
+        this.broadPhaseCollisionData = broadPhaseCollisionData;
+        this.offsetCanvas = new OffsetCanvas(size, offset);
         this.size = size;
-        this.image.width = size
-        this.image.height = size;
-        this.zIndex = zIndex;
-        this.intersection = {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
+        this.world = world;
+        this.canvasCellEntity = {
+            position: canvasCellEntity.getComponent("position"),
+            collidable: canvasCellEntity.getComponent("collidable")
         };
     }
 
-    clear() {
-        if (this.hasDependencies()) {
-            this.clearRect(0, 0, this.size.width, this.size.height);
-        }
-    }
+    drawEntity(_entity) {
+        const entity = _entity;
+        const images = this.imageManager.getEntityImages(entity);
+        const position = entity.getComponent("position");
+        const size = entity.getComponent("size");
 
-    getImage() {
-        return this.image;
-    }
-
-    hasDependencies() {
-        return this.imageManager != null && this.collisionData != null;
+        images.forEach((image) => {
+            this.offsetCanvas.drawImage(
+                image,
+                0,
+                0,
+                size.width,
+                size.height,
+                position.x,
+                position.y,
+                size.width,
+                size.height
+            );
+        });
     }
 
     getEntities(cellPosition) {
@@ -47,84 +51,22 @@ export default class RenderingCell {
         return null;
     }
 
-    getIntersection(cellPosition) {
-        if (this.hasDependencies()) {
-            const cellSize = this.collisionData.cellSize;
+    update(cellPositions) {
+        if (this.canvasCellEntity.position.isDirty) {
+            // Clear the whole area and draw every entity that it collides with.
+            this.offsetCanvas.clearRect(this.offset.x, this.offset.y, this.size, this.size);
 
-            const cellTop = cellPosition.rowIndex * cellSize;
-            const cellLeft = cellPosition.columnIndex * cellSize;
-            const cellBottom = cellTop + cellSize;
-            const cellRight = cellLeft + cellSize;
-
-            const renderingTop = this.offset.y * this.size;
-            const renderingLeft = this.offset.x * this.size;
-            const renderingBottom = renderingTop + this.size;
-            const renderingRight = renderingRight + this.size;
-
-            const top = Math.max(cellTop, renderingTop);
-            const left = Math.max(cellLeft, renderingLeft);
-            const right = Math.min(cellRight, renderingRight);
-            const bottom = Math.min(cellBottom, renderingBottom);
-
-            if (top < bottom && left < right) {
-                this.intersection.top = top;
-                this.intersection.left = left;
-                this.intersection.bottom = bottom;
-                this.intersection.right = right;
-
-                return this.intersection;
-            };
-        }
-        return null;
-    }
-
-    draw(cellPositions) {
-        for (let x = 0; x < cellPositions; x++) {
-            const cellPosition = cellPositions[x];
-            const intersection = this.getIntersection(cellPosition);
-
-            if (intersection != null) {
-                const top = intersection.top - this.offset.y;
-                const left = intersection.left - this.offset.x;
-                const right = intersection.right - this.offset.x;
-                const bottom = intersection.bottom - this.offset.y;
-
-                this.image.clearRect(left, top, right - left, bottom - top);
-
-                entities = this.getEntities(cellPosition);
-
-                for (let y = 0; y < entities.length; y++) {
-                    const entity = entities[y];
-                    const position = entity.getComponent("position");
-                    const size = entity.getComponent("size");
-                    const zIndex = entity.getComponent("z-index");
-
-                    if (zIndex === this.zIndex) {
-                        const images = this.imageManager.getEntityImages(entity);
-
-                        const entityTop = Math.max(top, position.y - this.offset.y);
-                        const entityLeft = Math.max(left, position.x - this.offset.x);
-                        const entityRight = Math.min(right, position.x - this.offset.x + size.width);
-                        const entityBottom = Math.min(bottom, position.y - this.offset.y + size.height);
-
-                        if (entityTop < entityBotton && entityLeft < entityRight) {
-
-                            for (let z = 0; z < images.length; z++) {
-                                this.image.drawImage(
-                                    images[x],
-                                    entityLeft,
-                                    entityTop,
-                                    entityRight - entityLeft,
-                                    entityBottom - entityTop
-                                );
-                            }
-
-                        }
-
-                    }
-                }
-            };
+            Object.keys(this.collidable.collisions).forEach((_entityId) => {
+                const entityId = _entityId;
+                const entity = this.world.getEntityById(entityId);
+                this.drawEntity(entity);
+            });
+        } else {
+            // Check if the cell position is in the canvasCellEntity cell positions. 
+            // If so then update the entities in that cell position.
         }
     }
+
+
 
 }

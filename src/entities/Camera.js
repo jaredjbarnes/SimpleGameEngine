@@ -15,6 +15,7 @@ export default class Camera extends Entity {
         var size = new Size();
         var collidable = new Collidable();
 
+        this.id = `camera_${this.id}`;
         this.addComponent(camera);
         this.addComponent(position);
         this.addComponent(size);

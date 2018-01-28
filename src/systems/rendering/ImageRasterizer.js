@@ -1,4 +1,6 @@
-﻿export default class ImageRasterizer {
+﻿import drawImageNotFoundToContext from "./drawImageNotFoundToContext";
+
+export default class ImageRasterizer {
     constructor(doc, assetRoot) {
         this.type = "image";
         this.document = doc || document;
@@ -40,6 +42,11 @@
                 size.height
             );
         };
+
+        image.onerror = () => {
+            context.globalAlpha = imageComponent.opacity;
+            drawImageNotFoundToContext(context, size);
+        }
 
         image.src = path;
         return canvas;

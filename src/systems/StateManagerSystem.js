@@ -19,17 +19,17 @@ export default class StateManagerSystem {
 
     updateState(stateName, entity) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "update", [entity]);
+        invokeMethod(state, "update", [entity, this.world]);
     }
 
     activateState(stateName, entity, options) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "activated", [entity, options]);
+        invokeMethod(state, "activated", [entity, options, this.world]);
     }
 
     deactivateState(stateName, entity) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "deactivated", [entity]);
+        invokeMethod(state, "deactivated", [entity, this.world]);
     }
 
     maintainState(entity) {

@@ -41,15 +41,14 @@ export default class ImageManager {
                 const rasterizer = this.rasterizers[type];
                 const imageId = rasterizers.getIdentity(entity);
                 const image = this.getImage(imageId); 
-                
+
+                if (image == null){
+                    image = rasterizers.rasterize(entity);
+                    this.saveImage(identifier, image);
+                }
+
                 return image;
             })
-            .reduce((accumulator, image) => {
-                if (image != null) {
-                    accumulator.push(image);
-                }
-                return accumulator;
-            }, [])
             .sort(sortByZIndex);
     }
 

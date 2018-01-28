@@ -90,5 +90,6 @@ exports["BroadPhaseCollisionSystem: Collide then seperate."] = function () {
 
     world.update();
 
-    
+    assert.equal(Object.keys(collidableA.collisions).length, 0);
+    assert.equal(Object.keys(collidableB.collisions).length, 0);
 };

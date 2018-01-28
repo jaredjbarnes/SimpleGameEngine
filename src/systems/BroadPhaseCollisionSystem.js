@@ -33,28 +33,6 @@ class CollidableEntity {
     }
 }
 
-const availableCollisions = [];
-
-const createCollision = (id) => {
-    if (availableCollisions.length > 0) {
-        let collision = availableCollisions.pop();
-        collision.id = id;
-        collision.timestamp = 0;
-        collision.cellPosition = null;
-        collision.intersection = {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-        };
-    }
-    return new Collision(id);
-};
-
-const releaseCollision = (collision) => {
-    availableCollisions.push(collision);
-};
-
 export default class BroadPhaseCollisionSystem {
     constructor(cellSize = 200) {
         this.cellSize = cellSize;
@@ -72,7 +50,7 @@ export default class BroadPhaseCollisionSystem {
             bottom: 0,
             left: 0
         };
-
+        this.availableCollisions = [];
         this.broadPhaseCollisionDataEntity = new Entity();
         this.broadPhaseCollisionDataComponent = new BroadPhaseCollisionData();
         this.broadPhaseCollisionDataComponent.cellSize = cellSize;
@@ -125,6 +103,22 @@ export default class BroadPhaseCollisionSystem {
 
     }
 
+    createCollision(id) {
+        if (this.availableCollisions.length > 0) {
+            let collision = this.availableCollisions.pop();
+            collision.id = id;
+            collision.timestamp = 0;
+            collision.cellPosition = null;
+            collision.intersection = {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            };
+        }
+        return new Collision(id);
+    }
+
     getIntersection({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
         const top = Math.max(positionA.y, positionB.y);
         const bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
@@ -173,8 +167,8 @@ export default class BroadPhaseCollisionSystem {
                 const collision = collisions[y];
                 const otherCollidableEntity = this.collidableEntitiesById[y];
 
-                releaseCollision(collision);
-                releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
+                this.releaseCollision(collision);
+                this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
 
                 delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
 
@@ -227,6 +221,10 @@ export default class BroadPhaseCollisionSystem {
         }
 
         return cellPositions;
+    }
+
+    releaseCollision(collision) {
+        this.availableCollisions.push(collision);
     }
 
     removeCell({ columnIndex, rowIndex }) {
@@ -288,7 +286,7 @@ export default class BroadPhaseCollisionSystem {
 
                     if (intersection != null) {
 
-                        let collision = createCollision(collidableEntity.id);
+                        let collision = this.createCollision(collidableEntity.id);
                         collision.timestamp = this.currentTime;
                         collision.intersection.top = intersection.top;
                         collision.intersection.left = intersection.left;
@@ -296,7 +294,7 @@ export default class BroadPhaseCollisionSystem {
                         collision.intersection.bottom = intersection.bottom;
                         collision.cellPosition = cellPosition;
 
-                        let otherCollision = createCollision(otherCollidableEntity.id);
+                        let otherCollision = this.createCollision(otherCollidableEntity.id);
                         otherCollision.timestamp = this.currentTime;
                         otherCollision.intersection.top = intersection.top;
                         otherCollision.intersection.left = intersection.left;

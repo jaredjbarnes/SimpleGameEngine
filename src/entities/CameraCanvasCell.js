@@ -1,13 +1,16 @@
 import Entity from "./../Entity";
+import Position from "./../components/Position";
+import Size from "./../components/Size";
+import Collidable from "./../components/Collidable";
 import CameraCanvasCell from "../components/CameraCanvasCell";
 
 export default class extends Entity {
-    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, size) {
+    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
         super();
 
         const size = new Size();
-        size.width = size;
-        size.height = size;
+        size.width = cellSize;
+        size.height = cellSize;
 
         const position = new Position();
         position.x = x;

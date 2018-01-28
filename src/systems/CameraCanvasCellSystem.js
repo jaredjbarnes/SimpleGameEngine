@@ -1,16 +1,18 @@
 import Entity from "../entities/CameraCanvasCell";
 
 class CameraCanvasCell {
-    constructor() {
-        this.rowIndex = 0;
-        this.columnIndex = 0;
-        this.entity = new Entity();
-        this.position = entity.getComponent("position");
+    constructor({column, row, cellSize}) {
+        this.rowIndex = row;
+        this.columnIndex = column;
+        this.entity = new Entity({ x: column * cellSize, y: row * cellSize }, cellSize);
+        this.position = this.entity.getComponent("position");
+        this.position.x = column * cellSize;
+        this.position.y = row * cellSize;
     }
 }
 
 export default class CameraCanvasCellSystem {
-    constructor({ cellSize, cameraName }) {
+    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
         this.world = null;
         this.cameraName = cameraName;
         this.cameraCanvasCells = [];
@@ -29,16 +31,16 @@ export default class CameraCanvasCellSystem {
                 const index = (y * 3) + x;
 
                 this.cellPositions.push({ columnIndex: column, rowIndex: row });
-                this.cameraCanvasCells.push(new CameraCanvasCell({ x: column * cellSize, y: row * cellSize }, cellSize));
+                this.cameraCanvasCells.push(new CameraCanvasCell({column, row, cellSize}));
             }
         }
 
     }
 
     _addCamera(entity) {
-        this.camera.position = entity.getCompoennt("position");
-        this.camera.size = entity.getCompoennt("size");
-        this.camera.collidable = entity.getCompoennt("collidable");
+        this.camera.position = entity.getComponent("position");
+        this.camera.size = entity.getComponent("size");
+        this.camera.collidable = entity.getComponent("collidable");
     }
 
     _findCellPositionsWithCenter(x, y) {
@@ -124,7 +126,7 @@ export default class CameraCanvasCellSystem {
 
     activated(world) {
         this.world = world;
-        const entities = this.world.getEntites();
+        const entities = this.world.getEntities();
 
         entities.forEach((entity) => {
             this.entityAdded(entity);
@@ -156,7 +158,7 @@ export default class CameraCanvasCellSystem {
 
     entityAdded(entity) {
         if (this._isCamera(entity)) {
-
+            this._addCamera(entity);
         }
     }
 

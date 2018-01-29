@@ -23,11 +23,11 @@ class Camera {
 }
 
 export default class RenderSystem {
-    constructor({ canvas, cameraName, imageManager, document: doc = document }) {
+    constructor({ canvas, cameraName, imageManager, canvasFactory }) {
         this.canvas = canvas;
         this.imageManager = imageManager;
         this.cameraName = cameraName;
-        this.document = doc;
+        this.canvasFactory = canvasFactory;
         this.broadPhaseCollisionData = null;
         this.cells = [];
         this.world = null;
@@ -128,8 +128,8 @@ export default class RenderSystem {
         }
     }
 
-    _updateCells(){
-        for (let x = 0 ; x < this.cells.length; x++){
+    _updateCells() {
+        for (let x = 0; x < this.cells.length; x++) {
             this._updateCell(this.cells[x]);
         }
     }
@@ -163,7 +163,7 @@ export default class RenderSystem {
         if (this._isBroadPhaseCollisionDataEntity(entity)) {
             this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
         } else if (this._isCameraCanvasCellEntity(entity)) {
-            this.cells.push(new CanvasCell(entity, this.document.createElement("canvas")));
+            this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
         } else if (this._isCameraEntity(entity)) {
             this.camera = new Camera(entity);
         }

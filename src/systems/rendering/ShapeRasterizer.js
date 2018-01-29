@@ -1,7 +1,7 @@
 ﻿export default class ShapeRenderer {
-    constructor(doc) {
+    constructor(canvasFactory) {
         this.type = "shape";
-        this.document = doc || document;
+        this.canvasFactory = canvasFactory;
         this.shapeCache = {};
     }
 
@@ -20,8 +20,7 @@
     }
 
     rasterize(entity) {
-        const document = this.document;
-        const canvas = document.createElement("canvas");
+        const canvas = this.canvasFactory.create();
 
         const size = entity.getComponent("size");
         const shape = entity.getComponent("shape");

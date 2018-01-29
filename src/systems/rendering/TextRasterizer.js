@@ -1,8 +1,8 @@
-﻿export default class TextRenderer {
-    constructor(doc) {
+﻿export default class TextRasterizer {
+    constructor(canvasFactory) {
         this.type = "text";
         this.fontCache = {};
-        this.document = doc || document;
+        this.canvasFactory = canvasFactory;
     }
 
     convertToRgba(color) {
@@ -22,7 +22,7 @@
     }
 
     rasterize(entity) {
-        var canvas = this.document.createElement("canvas");
+        var canvas = this.canvasFactory.create();
 
         var size = entity.getComponent("size");
         var textTexture = entity.getComponent("text");

@@ -1,9 +1,9 @@
 ﻿import drawImageNotFoundToContext from "./drawImageNotFoundToContext";
 
 export default class ImageRasterizer {
-    constructor(doc, assetRoot) {
+    constructor(canvasFactory, assetRoot) {
         this.type = "image";
-        this.document = doc || document;
+        this.canvasFactory = canvasFactory;
         this.assetRoot = assetRoot || "";
     }
 
@@ -15,9 +15,8 @@ export default class ImageRasterizer {
     rasterize(entity) {
         const imageComponent = entity.getComponent("image");
         const image = new Image();
-        const document = this.document;
         const path = this.getPath(imageComponent.path);
-        const canvas = document.createElement("canvas");
+        const canvas = this.canvasFactory.create();
         const context = canvas.getContext("2d");
         const size = imageComponent.size;
         const padding = imageComponent.padding;

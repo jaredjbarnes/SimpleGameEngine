@@ -1,11 +1,11 @@
 export default class EntityCompositer {
-    constructor({ document, imageManager }) {
+    constructor({ canvasFactory, imageManager }) {
         this.imageManager = imageManager;
-        this.document = document;
+        this.canvasFactory = canvasFactory;
     }
 
     rasterize(entity) {
-        const canvas = document.createElement("canvas");
+        const canvas = canvasFactory.create();
         const context = canvas.getContext("2d");
         const mask = entity.getComponent("mask");
         const clip = entity.getComponent("clip");

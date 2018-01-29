@@ -1,4 +1,4 @@
-export default class ClassFactory {
+export default class CanvasFactory {
     constructor({ document: doc = document, shouldStoreInstances = false }) {
         this.document = doc;
         this.canvases = [];

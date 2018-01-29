@@ -59,7 +59,7 @@ export default (context, size) => {
     context.textBaseline = "middle";
     context.font = `bold ${Math.round(height * 0.75)}px 'Times New Roman', Times, serif`;
     context.fillStyle = "#333";
-    try {
-        context.fillText("!", padding + width / 2, padding + height / 1.5);
-    } catch (ex) { }
+
+    context.fillText("!", padding + width / 2, padding + height / 1.5);
+
 }

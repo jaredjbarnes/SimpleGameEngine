@@ -17,7 +17,7 @@ export default class ImageManager {
         }
 
         if (typeof rasterizer.getIdentity !== "function") {
-            throw new Error("Rasterizers need to have a identity method.");
+            throw new Error("Rasterizers need to have a getIdentity method.");
         }
     }
 
@@ -37,12 +37,15 @@ export default class ImageManager {
 
     getEntityImages(entity) {
         return this.imageTypes
+            .filter((type) => {
+                return entity.hasComponents([type]);
+            })
             .map((type) => {
                 const rasterizer = this.rasterizers[type];
                 const imageId = rasterizers.getIdentity(entity);
-                const image = this.getImage(imageId); 
+                const image = this.getImage(imageId);
 
-                if (image == null){
+                if (image == null) {
                     image = rasterizers.rasterize(entity);
                     this.saveImage(identifier, image);
                 }

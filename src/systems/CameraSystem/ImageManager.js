@@ -38,7 +38,7 @@ export default class ImageManager {
     getEntityImages(entity) {
         return this.imageTypes
             .filter((type) => {
-                return entity.hasComponents([type]);
+                return entity.hasComponent(type);
             })
             .map((type) => {
                 const rasterizer = this.rasterizers[type];
@@ -53,31 +53,5 @@ export default class ImageManager {
                 return image;
             })
             .sort(sortByZIndex);
-    }
-
-    entityAdded(_entity) {
-        const entity = _entity;
-        this.imageTypes.forEach((type) => {
-            const component = entity.getComponent(type);
-            const rasterizer = this.rasterizers[component.type];
-
-            if (component != null) {
-                const identifier = rasterizer.getIdentity(entity);
-                const image = rasterizer.rasterize(entity);
-
-                this.saveImage(identifier, image);
-            }
-        });
-    }
-
-    componentAdded(entity, component) {
-        const rasterizer = this.rasterizers[component.type];
-
-        if (rasterizer != null) {
-            const identifier = rasterizer.getIdentity(entity);
-            const image = rasterizer.rasterize(entity);
-
-            this.saveImage(identifier, image);
-        }
     }
 }

@@ -1,6 +1,4 @@
-﻿import EntityCompositer from "./rendering/EntityCompositer";
-
-class CanvasCell {
+﻿class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
         this.position = cameraCanvasCellEntity.getComponent("position");
         this.size = cameraCanvasCellEntity.getComponent("size");
@@ -228,7 +226,7 @@ export default class CameraSystem {
     update(currentTime) {
         if (this._hasCamera()) {
             this._updateCells();
-            //updateDirtyImages.
+            this._transferToCanvas();
         }
     }
 }

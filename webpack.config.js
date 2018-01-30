@@ -9,10 +9,10 @@ const logicBox = {
 }
 
 const render = {
-    entry: "./src/examples/basic/render/index.js",
+    entry: "./src/examples/basic/cameraSystem/index.js",
     output: {
         filename: "index.js",
-        path: path.resolve(__dirname, 'src/examples/basic/render/dist')
+        path: path.resolve(__dirname, 'src/examples/basic/cameraSystem/dist')
     }
 }
 

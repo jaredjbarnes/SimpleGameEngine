@@ -69,6 +69,10 @@ export default class Entity {
         });
     }
 
+    hasComponent(type) {
+        return this.getComponent(type) != null;
+    }
+
     hasComponents(componentTypes) {
         var components = this._components;
         return componentTypes.every((type) => {

@@ -22,7 +22,7 @@ class Camera {
     }
 }
 
-export default class RenderSystem {
+export default class CameraSystem {
     constructor({ canvas, cameraName, imageManager, canvasFactory }) {
         this.canvas = canvas;
         this.imageManager = imageManager;
@@ -46,6 +46,10 @@ export default class RenderSystem {
         }
 
         return cell;
+    }
+
+    _hasCamera() {
+        return this.camera != null;
     }
 
     _isCameraCanvasCellEntity(entity) {
@@ -134,6 +138,50 @@ export default class RenderSystem {
         }
     }
 
+    _transferToCanvas() {
+        for (let x = 0; x < this.cells.length; x++) {
+            const cell = this.cells[x];
+            const top = Math.max(cell.position.y, this.camera.position.y);
+            const left = Math.max(cell.position.x, this.camera.position.x);
+            const bottom = Math.max(cell.position.y + cell.size.height, this.camera.position.y + this.camera.size.height);
+            const right = Math.max(cell.position.x + cell.size.width, this.camera.position.y + this.camera.size.height);
+
+            if (top < bottom && left < right) {
+                const destinationX = left - this.camera.position.left;
+                const destinationY = top - this.camera.position.top;
+                const destinationWidth = right - this.camera.position.left - destinationX;
+                const destinationHeight = bottom - this.camera.position.top - destinationY;
+
+                const sourceX = 0;
+                const sourceY = 0;
+                const sourceWidth = destinationWidth;
+                const sourceHeight = destinationHeight;
+
+                if (left !== cell.position.x) {
+                    sourceX = cell.size.width - (right - left);
+                }
+
+                if (top !== cell.position.y) {
+                    sourceY = cell.size.height - (bottom - top);
+                }
+
+                const context = canvas.getContext("2d");
+
+                context.drawImage(
+                    cell.canvas,
+                    sourceX,
+                    sourceY,
+                    sourceWidth,
+                    sourceHeight,
+                    destinationX,
+                    destinationY,
+                    destinationWidth,
+                    destinationHeight
+                );
+            }
+        }
+    }
+
     activated(world) {
         this.world = world;
 
@@ -178,6 +226,9 @@ export default class RenderSystem {
     }
 
     update(currentTime) {
-
+        if (this._hasCamera()) {
+            this._updateCells();
+            //updateDirtyImages.
+        }
     }
 }

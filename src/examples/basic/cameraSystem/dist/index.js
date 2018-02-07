@@ -260,7 +260,7 @@ const movableSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__[
 
 const cameraCanvasCellSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_CameraCanvasCellSystem__["a" /* default */]({
     cameraName: cameraName,
-    cellSize: 100
+    cellSize: 1000
 });
 
 const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCameraSystem__["a" /* default */]({
@@ -1786,10 +1786,13 @@ class CameraSystem {
 
         for (let x = 0; x < dirtyCellPositions.length; x++) {
             const dirtyCellPosition = dirtyCellPositions[x];
-            const top = Math.max(dirtyCellPosition.rowIndex * cellSize, cell.position.y);
-            const left = Math.max(dirtyCellPosition.columnIndex * cellSize, cell.position.x);
-            const bottom = Math.min((dirtyCellPosition.rowIndex * cellSize) + cellSize, cell.position.y + cell.size.height);
-            const right = Math.min((dirtyCellPosition.columnIndex * cellSize) + cellSize, cell.position.x + cell.size.width);
+            const cellY = dirtyCellPosition.rowIndex * cellSize;
+            const cellX = dirtyCellPosition.columnIndex * cellSize;
+
+            const top = Math.max(cellY, cell.position.y);
+            const left = Math.max(cellX, cell.position.x);
+            const bottom = Math.min(cellY + cellSize, cell.position.y + cell.size.height);
+            const right = Math.min(cellX + cellSize, cell.position.x + cell.size.width);
 
             if (top < bottom && left < right) {
                 const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
@@ -1798,6 +1801,12 @@ class CameraSystem {
 
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
+                    const images = this.imageManager.getEntityImages(this.world.getEntityById(collidableEntity.id));
+
+                    // If the image isn't renderable then don't go on.
+                    if (images.length === 0) {
+                        continue;
+                    }
 
                     const intersectedTop = Math.max(top, collidableEntity.position.y);
                     const intersectedLeft = Math.max(left, collidableEntity.position.x);
@@ -1806,26 +1815,23 @@ class CameraSystem {
 
                     let sourceX = 0;
                     let sourceY = 0;
-                    let sourceWidth = intersectedRight - intersectedLeft;
-                    let sourceHeight = intersectedBottom - intersectedTop;
+                    let width = intersectedRight - intersectedLeft;
+                    let height = intersectedBottom - intersectedTop;
                     let destinationX = intersectedLeft - cell.position.x;
                     let destinationY = intersectedTop - cell.position.y;
-                    let destinationWidth = intersectedRight - intersectedLeft;
-                    let destinationHeight = intersectedBottom - intersectedTop;
 
-                    if (destinationWidth === 0 || destinationHeight === 0) {
+                    if (width <= 0 || height <= 0 ) {
                         continue;
                     }
 
-                    if (intersectedLeft !== collidableEntity.position.x) {
-                        sourceX = collidableEntity.size.width - sourceWidth;
+                    if (collidableEntity.position.x < left) {
+                        sourceX = left - collidableEntity.position.x;
                     }
 
-                    if (intersectedTop !== collidableEntity.position.y) {
-                        sourceY = collidableEntity.size.height - sourceHeight;
+                    if (collidableEntity.position.y < top) {
+                        sourceY = top - collidableEntity.position.y;
                     }
 
-                    const images = this.imageManager.getEntityImages(this.world.getEntityById(collidableEntity.id));
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
@@ -1833,12 +1839,12 @@ class CameraSystem {
                             image,
                             sourceX,
                             sourceY,
-                            sourceWidth,
-                            sourceHeight,
+                            width,
+                            height,
                             destinationX,
                             destinationY,
-                            destinationWidth,
-                            destinationHeight
+                            width,
+                            height
                         );
                     }
 
@@ -1867,22 +1873,22 @@ class CameraSystem {
             const right = Math.min(cell.position.x + cell.size.width, this.camera.position.x + this.camera.size.width);
 
             if (top < bottom && left < right) {
-                const destinationX = left - this.camera.position.x;
-                const destinationY = top - this.camera.position.y;
-                const destinationWidth = right - this.camera.position.x - destinationX;
-                const destinationHeight = bottom - this.camera.position.y - destinationY;
 
                 let sourceX = 0;
                 let sourceY = 0;
-                const sourceWidth = destinationWidth;
-                const sourceHeight = destinationHeight;
+                const sourceWidth = right - left;
+                const sourceHeight = bottom - top;
+                const destinationX = left - this.camera.position.x;
+                const destinationY = top - this.camera.position.y;
+                const destinationWidth = right - left;
+                const destinationHeight = bottom - top;
 
-                if (left !== cell.position.x) {
-                    sourceX = cell.size.width - (right - left);
+                if (cell.position.x < this.camera.position.x) {
+                    sourceX = this.camera.position.x - cell.position.x;
                 }
 
-                if (top !== cell.position.y) {
-                    sourceY = cell.size.height - (bottom - top);
+                if (cell.position.y < this.camera.position.y) {
+                    sourceY = this.camera.position.y - cell.position.y;
                 }
 
                 const context = canvas.getContext("2d");

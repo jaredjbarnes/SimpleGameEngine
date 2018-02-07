@@ -25,7 +25,7 @@ const movableSystem = new MovableSystem();
 
 const cameraCanvasCellSystem = new CameraCanvasCellSystem({
     cameraName: cameraName,
-    cellSize: 100
+    cellSize: 1000
 });
 
 const defaultCameraSystem = new DefaultCameraSystem({

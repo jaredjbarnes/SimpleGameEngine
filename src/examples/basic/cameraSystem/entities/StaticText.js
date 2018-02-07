@@ -5,7 +5,7 @@ import Text from "./../../../../components/Text";
 import Collidable from "./../../../../components/Collidable";
 
 export default class StaticText extends Entity {
-    constructor(text) {
+    constructor(text, {x, y}) {
         super();
         this.type = "static-star";
 
@@ -15,13 +15,15 @@ export default class StaticText extends Entity {
         var collidable = new Collidable();
 
         position.isStatic = true;
-        position.isDirty = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;
 
         size.width = 100;
         size.height = 50;
+
+        position.x = x;
+        position.y = y;
 
         this.addComponent(size);
         this.addComponent(position);

@@ -12,11 +12,8 @@
     getIdentity(entity){
         const size = entity.getComponent("size");
         const shape = entity.getComponent("shape");
-        const points = shape.points.reduce((accumulator, point)=>{
-            return accumulator += `(${point.x},${point.y})`;
-        }, "");
 
-        return `(${size.width},${size.height})_${points}`;
+        return `size=${JSON.stringify(size)}, shape=${JSON.stringify(shape)}`;
     }
 
     rasterize(entity) {

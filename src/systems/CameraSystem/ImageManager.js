@@ -36,18 +36,19 @@ export default class ImageManager {
     }
 
     getEntityImages(entity) {
+        const rasterizers = this.rasterizers;
         return this.imageTypes
             .filter((type) => {
                 return entity.hasComponent(type);
             })
             .map((type) => {
-                const rasterizer = this.rasterizers[type];
-                const imageId = rasterizers.getIdentity(entity);
-                const image = this.getImage(imageId);
+                const rasterizer = rasterizers[type];
+                const imageId = rasterizer.getIdentity(entity);
+                let image = this.getImage(imageId);
 
                 if (image == null) {
-                    image = rasterizers.rasterize(entity);
-                    this.saveImage(identifier, image);
+                    image = rasterizer.rasterize(entity);
+                    this.saveImage(imageId, image);
                 }
 
                 return image;

@@ -18,7 +18,7 @@
         const size = entity.getComponent("size");
         const textTexture = entity.getComponent("text");
 
-        return `size=${JSON.stringify(size)},text=${JSON.stringify(textTexture)}`;
+        return `size=${JSON.stringify(size)}, text=${JSON.stringify(textTexture)}`;
     }
 
     rasterize(entity) {

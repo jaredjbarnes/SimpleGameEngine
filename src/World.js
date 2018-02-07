@@ -1,19 +1,4 @@
-﻿// Polyfill for node environments.
-if (typeof performance === "undefined") {
-    var performance = {
-        now: () => {
-            return Date.now();
-        }
-    };
-}
-
-if (typeof requestAnimationFrame === "undefined") {
-   var requestAnimationFrame = (callback) => {
-        setTimeout(callback, 11);
-    };
-}
-
-export default class World {
+﻿export default class World {
     constructor(size) {
         var self = this;
 

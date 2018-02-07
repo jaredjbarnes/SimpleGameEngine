@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(10);
 ﻿
 
 var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
@@ -140,6 +140,10 @@ class Entity {
         });
     }
 
+    hasComponent(type) {
+        return this.getComponent(type) != null;
+    }
+
     hasComponents(componentTypes) {
         var components = this._components;
         return componentTypes.every((type) => {
@@ -178,7 +182,6 @@ class Entity {
         this.type = "position";
         this.x = 0;
         this.y = 0;
-        this.isStatic = false;
         this.isDirty = true;
     }
 }
@@ -194,7 +197,6 @@ class Entity {
     constructor() {
         this.type = "collidable";
         this.name = null;
-        this.isEnabled = true;
         this.collisions = {};
         this.cellPositions = [];
     }
@@ -305,21 +307,21 @@ class Text {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Text__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__entities_StaticText__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(41);
+throw new Error("Cannot find module \"./../../../systems/CompleteRenderSystem\"");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_ColorStateManagerSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Text__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_ColorPlatform__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__entities_ColorLogicBox__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__entities_StaticText__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Camera__ = __webpack_require__(32);
 
 
 
@@ -348,7 +350,7 @@ world.size.width = 2000;
 var text = new __WEBPACK_IMPORTED_MODULE_11__entities_Text__["a" /* default */]("Hello World!");
 var camera = new __WEBPACK_IMPORTED_MODULE_15__entities_Camera__["a" /* default */]("main");
 
-var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem__["a" /* default */]({
+var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem___default.a({
     canvas: document.getElementById("viewport")
 });
 
@@ -612,1338 +614,8 @@ class World {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__RenderSystem__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_LineRenderer__ = __webpack_require__(17);
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__RenderSystem__["a" /* default */] {
-    constructor(options = {}) {
-        super(options.canvas, options.sort);
-
-        this.addRenderer(new __WEBPACK_IMPORTED_MODULE_1__render_ImageRenderer__["a" /* default */](options.document, options.assetRoot));
-        this.addRenderer(new __WEBPACK_IMPORTED_MODULE_3__render_ShapeRenderer__["a" /* default */](options.document));
-        this.addRenderer(new __WEBPACK_IMPORTED_MODULE_2__render_TextRenderer__["a" /* default */](options.document));
-        this.addRenderer(new __WEBPACK_IMPORTED_MODULE_4__render_LineRenderer__["a" /* default */]());
-    }
-});
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__ = __webpack_require__(13);
-﻿
-
-
-var defaultZIndex = new __WEBPACK_IMPORTED_MODULE_1__components_ZIndex__["a" /* default */]();
-var defaultCachePosition = { x: 0, y: 0 };
-
-class RenderSystem {
-    constructor(canvas, sort) {
-        this._renderers = {};
-        this._world = null;
-        this._dependencies = ["position", "size"];
-        this._cameraDependencies = ["camera", "position", "size"];
-        this._camera = null;
-        this._cameraPosition = null;
-        this._cameraSize = null;
-        this._staticCacheByZIndex = {};
-        this._entitiesByZIndex = {};
-        this._entitiesToBeRedrawn = [];
-        this._tempEntitiesToBeRedrawn = []
-        this._sort = sort || null;
-        this._drawDynamicCollision = this._drawDynamicCollision.bind(this);
-
-        var defaultSort = this._defaultSort = function (entityA, entityB) {
-            var value = 0;
-
-            if (sort != null) {
-                value = sort(entityA, entityB);
-            }
-
-            if (value === 0) {
-                if (entityA.id < entityB.id) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-            return value;
-        };
-
-        this._zIndexSort = function (entityA, entityB) {
-            var zIndexA = entityA.getComponent("z-index");
-            var zIndexB = entityB.getComponent("z-index");
-            var value;
-
-            zIndexA = zIndexA || defaultZIndex;
-            zIndexB = zIndexB || defaultZIndex;
-
-            if (zIndexA.value < zIndexB.value) {
-                return -1;
-            } else if (zIndexA.value > zIndexB.value) {
-                return 1;
-            } else {
-                return defaultSort(entityA, entityB);
-            }
-        };
-
-        this.setCanvas(canvas);
-    }
-
-    _drawDynamicCollision(collision) {
-        var _collision = collision;
-        var entity = this._world.getEntityById(_collision.entityId);
-        if (this.isDynamicEntity(entity)) {
-            this.drawEntityOnCamera(entity, this.canvas);
-        }
-    }
-
-
-    _invokeMethod(obj, methodName, args) {
-        args = Array.isArray(args) ? args : [];
-        if (obj && typeof obj[methodName] === "function") {
-            return obj[methodName].apply(obj, args);
-        }
-    }
-
-    _notifyRenderers(methodName, args) {
-        var self = this;
-        var renderers = Object.keys(this._renderers).map(function (type) {
-            return self._renderers[type];
-        });
-
-        renderers.forEach(function (renderer) {
-            self._invokeMethod(renderer, methodName, args);
-        });
-    }
-
-    setCanvas(canvas) {
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-    }
-
-    addRenderer(renderer) {
-        var type = renderer.type;
-
-        if (this._world != null) {
-            throw new Error("Cannot add renderers when activated by a world.");
-        }
-
-        var renderers = this._renderers;
-
-        if (typeof type === "string") {
-            renderers[type] = renderer;
-        }
-    }
-
-    removeRenderer(renderer) {
-        var type = renderer.type;
-
-        if (this._world != null) {
-            throw new Error("Cannot remove renderers when activated by a world.");
-        }
-
-        var renderers = this._renderers;
-        var registeredRenderer = renderers[type];
-        var dependencies = this._dependencies;
-
-        if (registeredRenderer) {
-            delete renderers[type];
-        }
-    }
-
-    supportsEntity(entity) {
-        return Object.keys(this._renderers).some(function (type) {
-            return entity.hasComponents([type]);
-        });
-    }
-
-    // System Strategy Starts
-    activated(world) {
-        var self = this;
-        this._world = world;
-
-        world.getEntities().forEach(function (entity) {
-            self.entityAdded(entity);
-        });
-
-        Object.keys(this._entitiesByZIndex).forEach(function (key) {
-            self.cacheCanvasByZIndex(parseInt(key, 10));
-        });
-    }
-
-    componentAdded(entity, component) {
-        this.entityAdded(entity);
-    }
-
-    componentRemoved(entity, component) {
-        let isRenderable = Object.keys(this.renderers).some((type) => {
-            return component.type === type;
-        });
-
-        if (
-            isRenderable ||
-            (this.supportsEntity(entity) && this._dependencies.indexOf(component.type))
-        ) {
-            this.unregisterEntity(entity);
-        }
-    }
-
-    deactivated() {
-        this._world = null;
-        this.canvas = null;
-        this.context = null;
-    }
-
-    entityAdded(entity) {
-        if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
-            this.registerEntity(entity);
-            this._entitiesToBeRedrawn.push(entity);
-        }
-    }
-
-    entityRemoved(entity) {
-        if (entity.hasComponents(this._dependencies) && this.supportsEntity(entity)) {
-            this.uncacheEntity(entity);
-        }
-    }
-
-    update() {
-        var key;
-        var self = this;
-        var world = this._world;
-        var canvas = this.canvas;
-        var context = this.context;
-        var cameraPosition = this._cameraPosition;
-        var cameraSize = this._cameraSize;
-        var caches = this._staticCacheByZIndex;
-
-        if (cameraPosition == null || world == null) {
-            return;
-        }
-
-        // This is how we optimize rendering. We use the collision system with the camera entity.
-        var activeCollisions = this.getCollisions(this.camera.getComponent("collidable"));
-
-        this.updateCaches();
-        this.context.clearRect(0, 0, canvas.width, canvas.height);
-
-        var cacheKeys = Object.keys(this._staticCacheByZIndex).sort(function (a, b) {
-            return parseInt(a, 10) - parseInt(b, 10);
-        });
-
-        for (var x = 0; x < cacheKeys.length; x++) {
-            key = cacheKeys[x];
-            caches[key].transferImage(
-                canvas,
-                0,
-                0,
-                Math.floor(cameraSize.width),
-                Math.floor(cameraSize.height),
-                Math.floor(cameraPosition.x),
-                Math.floor(cameraPosition.y),
-                Math.floor(cameraSize.width),
-                Math.floor(cameraSize.height),
-            );
-
-        }
-
-        activeCollisions.forEach(this._drawDynamicCollision);
-
-    }
-
-    updateCaches() {
-        var self = this;
-        this._tempEntitiesToBeRedrawn.length = 0;
-
-        this._entitiesToBeRedrawn.sort(this._zIndexSort);
-        this._entitiesToBeRedrawn.forEach((entity) => {
-            this.cacheEntity(entity);
-        });
-
-        this._entitiesToBeRedrawn.length = 0;
-        this._tempEntitiesToBeRedrawn.forEach((entity) => {
-            this._entitiesToBeRedrawn.push(entity);
-        });
-    }
-
-    redrawEntityOnCanvas(entity, canvas, drawEntity = true) {
-        if (canvas == null) {
-            return;
-        }
-
-        var self = this;
-        var world = this._world;
-        var context = canvas.getContext("2d");
-        var renderers = this._renderers;
-        var rendererTypes = Object.keys(renderers);
-
-        var size = entity.getComponent("size");
-        var position = entity.getComponent("position");
-        var zIndex = entity.getComponent("z-index") || defaultZIndex;
-        var collidable = entity.getComponent("collidable");
-        var activeCollisions = this.getCollisions(collidable);
-
-        var top = Math.max(position.y, 0);
-        var left = Math.max(position.x, 0);
-        var bottom = Math.min(position.y + size.height, canvas.height);
-        var right = Math.min(position.x + size.width, canvas.width);
-        var width = right - left;
-        var height = bottom - top;
-        var entities;
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        entities = activeCollisions.filter(function (collision) {
-            return collision.endTimestamp == null;
-        }).map(function (collision) {
-            return world.getEntityById(collision.entityId);
-        }).filter(function (entity) {
-            return entity != null && entity.getComponent("position").isStatic;
-        });
-
-        if (drawEntity) {
-            entities.push(entity);
-        }
-
-        entities.sort(this._zIndexSort);
-        context.clearRect(left, top, width, height);
-
-        entities.forEach((otherEntity) => {
-            var _otherEntity = otherEntity;
-            var otherPosition = _otherEntity.getComponent("position");
-            var otherSize = _otherEntity.getComponent("size");
-
-            var otherTop = Math.max(otherPosition.y, position.y, 0);
-            var otherLeft = Math.max(otherPosition.x, position.x, 0);
-            var otherBottom = Math.min(otherPosition.y + otherSize.height, position.y + size.height, canvas.height);
-            var otherRight = Math.min(otherPosition.x + otherSize.width, position.x + size.width, canvas.width);
-            var otherWidth = otherRight - otherLeft;
-            var otherHeight = otherBottom - otherTop;
-            var offsetX = 0;
-            var offsetY = 0;
-
-            if (otherWidth <= 0 || otherHeight <= 0) {
-                return;
-            }
-
-            if (otherPosition.x <= otherLeft) {
-                offsetX = otherLeft - otherPosition.x;
-            }
-
-            if (otherPosition.y <= otherTop) {
-                offsetY = otherTop - otherPosition.y;
-            }
-
-            rendererTypes.forEach((type) => {
-                var _type = type;
-                var component = otherEntity.getComponent(_type);
-                if (component != null) {
-                    renderers[_type].draw(
-                        otherEntity,
-                        canvas,
-                        {
-                            x: Math.floor(otherLeft),
-                            y: Math.floor(otherTop)
-                        },
-                        {
-                            width: Math.floor(otherWidth),
-                            height: Math.floor(otherHeight)
-                        },
-                        {
-                            x: Math.floor(offsetX),
-                            y: Math.floor(offsetY)
-                        }
-                    );
-
-                    if (component.isDirty) {
-                        this._entitiesToBeRedrawn.push(otherEntity);
-                    }
-                }
-            });
-        });
-    }
-
-    drawEntityOnCanvas(entity, canvas) {
-        if (canvas == null) {
-            return;
-        }
-
-        var self = this;
-        var world = this._world;
-        var context = canvas.getContext("2d");
-        var renderers = this._renderers;
-        var rendererTypes = Object.keys(renderers);
-
-        var size = entity.getComponent("size");
-        var position = entity.getComponent("position");
-        var zIndex = entity.getComponent("z-index") || defaultZIndex;
-
-        var top = Math.max(position.y, 0);
-        var left = Math.max(position.x, 0);
-        var bottom = Math.min(position.y + size.height, canvas.height);
-        var right = Math.min(position.x + size.width, canvas.width);
-        var width = right - left;
-        var height = bottom - top;
-        var offsetX = 0;
-        var offsetY = 0;
-        var entities;
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        if (position.x < 0) {
-            offsetX = -position.x;
-        }
-
-        if (position.y < 0) {
-            offsetY = -position.y;
-        }
-
-        rendererTypes.forEach(function (type) {
-            var component = entity.getComponent(type);
-            if (component != null) {
-                renderers[type].draw(
-                    entity,
-                    canvas,
-                    {
-                        x: Math.floor(left),
-                        y: Math.floor(top)
-                    },
-                    {
-                        width: Math.floor(width),
-                        height: Math.floor(height)
-                    },
-                    {
-                        x: Math.floor(offsetX),
-                        y: Math.floor(offsetY)
-                    }
-                );
-            }
-        });
-    }
-
-    drawEntityOnCamera(entity, canvas) {
-        if (canvas == null) {
-            return;
-        }
-
-        var self = this;
-        var world = this._world;
-        var context = canvas.getContext("2d");
-        var renderers = this._renderers;
-        var rendererTypes = Object.keys(renderers);
-
-        var size = entity.getComponent("size");
-        var position = entity.getComponent("position");
-        var collidable = entity.getComponent("collidable");
-
-        var cameraPosition = this._cameraPosition;
-        var cameraSize = this._cameraSize;
-        var activeCollisions = this.getCollisions(collidable);
-
-        var top = Math.max(position.y, cameraPosition.y);
-        var left = Math.max(position.x, cameraPosition.x);
-        var bottom = Math.min(position.y + size.height, cameraPosition.y + cameraSize.height);
-        var right = Math.min(position.x + size.width, cameraPosition.x + cameraSize.width);
-        var width = right - left;
-        var height = bottom - top;
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        var entities = activeCollisions.filter(function (collision) {
-            return collision.endTimestamp == null;
-        }).map(function (collision) {
-            return world.getEntityById(collision.entityId);
-        }).filter(function (entity) {
-            return entity != null;
-        });
-
-        entities.push(entity);
-        entities.sort(this._zIndexSort);
-
-        context.clearRect(left - cameraPosition.x, top - cameraPosition.y, width, height);
-        entities.forEach(function (otherEntity) {
-            var otherPosition = otherEntity.getComponent("position");
-            var otherSize = otherEntity.getComponent("size");
-
-            var otherTop = Math.max(otherPosition.y, position.y, cameraPosition.y);
-            var otherLeft = Math.max(otherPosition.x, position.x, cameraPosition.x);
-            var otherBottom = Math.min(otherPosition.y + otherSize.height, position.y + size.height, cameraPosition.y + cameraSize.height);
-            var otherRight = Math.min(otherPosition.x + otherSize.width, position.x + size.width, cameraPosition.x + cameraSize.width);
-            var otherWidth = otherRight - otherLeft;
-            var otherHeight = otherBottom - otherTop;
-            var offsetX = 0;
-            var offsetY = 0;
-
-            if (otherWidth <= 0 || otherHeight <= 0) {
-                return;
-            }
-
-            if (otherPosition.x <= otherLeft) {
-                offsetX = otherLeft - otherPosition.x;
-            }
-
-            if (otherPosition.y <= otherTop) {
-                offsetY = otherTop - otherPosition.y;
-            }
-
-            rendererTypes.forEach(function (type) {
-                var component = otherEntity.getComponent(type);
-                if (component != null) {
-                    renderers[type].draw(
-                        otherEntity,
-                        canvas,
-                        {
-                            x: Math.floor(otherLeft - cameraPosition.x),
-                            y: Math.floor(otherTop - cameraPosition.y)
-                        },
-                        {
-                            width: Math.floor(otherWidth),
-                            height: Math.floor(otherHeight)
-                        },
-                        {
-                            x: Math.floor(offsetX),
-                            y: Math.floor(offsetY)
-                        }
-                    );
-                }
-            });
-        });
-    }
-
-    isDynamicEntity(entity) {
-        return entity != null &&
-            entity.hasComponents(this._dependencies) &&
-            this.supportsEntity(entity) &&
-            !entity.getComponent("position").isStatic;
-    }
-
-    getCanvasByZIndex(zIndex) {
-        var canvas = this._staticCacheByZIndex[zIndex];
-
-        if (canvas == null) {
-            canvas = this._staticCacheByZIndex[zIndex] = new __WEBPACK_IMPORTED_MODULE_0__systems_render_CompositeCanvas__["a" /* default */](this._world.size.width, this._world.size.height, 1000)
-        }
-
-        return canvas;
-    }
-
-    cacheCanvasByZIndex(zIndex) {
-        var self = this;
-        var rendererTypes = Object.keys(this._renderers);
-        var renderers = this._renderers;
-        var entities = this._entitiesByZIndex[zIndex];
-        var canvas = this.getCanvasByZIndex(zIndex);
-
-        if (entities == null) {
-            return;
-        }
-
-        canvas.clearRect(0, 0, this._world.size.width, this._world.size.height);
-
-        entities.sort(this._defaultSort);
-        entities.forEach((entity) => {
-            self.drawEntityOnCanvas(entity, canvas);
-        });
-    }
-
-    registerEntity(entity) {
-        var entities;
-        var position = entity.getComponent("position");
-        var zIndex = entity.getComponent("z-index") || defaultZIndex;
-
-        if (position.isStatic) {
-            entities = this._entitiesByZIndex[zIndex.value];
-
-            if (entities == null) {
-                entities = this._entitiesByZIndex[zIndex.value] = [];
-            }
-
-            entities.push(entity);
-        }
-    }
-
-    unregisterEntity(entity) {
-        var entities;
-        var position = entity.getComponent("position");
-        var zIndex = entity.getComponent("z-index") || defaultZIndex;
-        var index;
-
-        if (position.isStatic) {
-            entities = this._entitiesByZIndex[zIndex.value];
-
-            if (entities != null) {
-                index = entities.indexOf(entity);
-
-                if (index > -1) {
-                    entities.splice(index, 1);
-                }
-            }
-        }
-    }
-
-    cacheEntity(entity) {
-        if (!this.isDynamicEntity(entity)) {
-            var zIndex = entity.getComponent("z-index") || defaultZIndex;
-            var canvas = this.getCanvasByZIndex(zIndex.value);
-
-            this.registerEntity(entity);
-            this.redrawEntityOnCanvas(entity, canvas);
-        }
-    }
-
-    uncacheEntity(entity) {
-        var zIndex = entity.getComponent("z-index") || defaultZIndex;
-        var canvas = this.getCanvasByZIndex(zIndex.value);
-
-        this.unregisterEntity(entity);
-        this.redrawEntityOnCanvas(entity, canvas, false);
-    }
-
-    getCollisions(collidable){
-        return Object.keys(collidable.collisions).map((key)=>{
-            return collidable.collisions[key];
-        });
-    }
-
-    get camera() {
-        return this._camera;
-    }
-
-    set camera(entity) {
-        if (entity.hasComponents(this._cameraDependencies)) {
-            this._camera = entity;
-            this._cameraPosition = entity.getComponent("position");
-            this._cameraSize = entity.getComponent("size");
-
-            // Adjust the cameras size to that of the canvas.
-            this._cameraSize.width = this.canvas.width;
-            this._cameraSize.height = this.canvas.height;
-        }
-    }
-
-    setCameraByName(name) {
-        var cameraDependencies = this._cameraDependencies;
-
-        var cameras = this._world.getEntitiesByFilter(function (entity) {
-            var isCamera = entity.hasComponents(cameraDependencies);
-            if (isCamera) {
-                var camera = entity.getComponent("camera");
-                if (camera.name === name) {
-                    return true;
-                }
-            }
-            return false;
-        });
-
-        if (cameras.length > 1) {
-            throw new Error("There multiple cameras with that name.");
-        }
-
-        if (cameras.length === 0) {
-            throw new Error("Unable to find a camera with that name.");
-        }
-
-        this.camera = cameras[0];
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = RenderSystem;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__ = __webpack_require__(12);
-
-
-const MAX_CELL_SIZE = 1000;
-
-class CompositeCanvas {
-    constructor(width, height, cellSize) {
-        this._cells = [];
-        this.width = width;
-        this.height = height;
-        this._cellSize = cellSize == null || cellSize > MAX_CELL_SIZE ? MAX_CELL_SIZE : cellSize;
-        this._buildCanvases();
-    }
-
-    _buildCanvases() {
-        var offset;
-
-        for (var x = 0; x * this._cellSize < this.width; x++) {
-            for (var y = 0; y * this._cellSize < this.height; y++) {
-                offset = {
-                    x: x * this._cellSize,
-                    y: y * this._cellSize
-                };
-                this._cells.push(new __WEBPACK_IMPORTED_MODULE_0__CompositeCanvasCell__["a" /* default */](this._cellSize, offset));
-            }
-        }
-    }
-
-    _invokeOnCells(methodName, args) {
-        this._cells.forEach((cell) => {
-            cell[methodName].apply(cell, args);
-        });
-    }
-
-    drawImage(sourceCanvas,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        destinationX,
-        destinationY,
-        destinationWidth,
-        destinationHeight) {
-
-        this._cells.forEach((canvas) => {
-            canvas.drawImage(sourceCanvas, sourceX, sourceY, sourceWidth, sourceHeight, destinationX, destinationY, destinationWidth, destinationHeight);
-        });
-
-    }
-
-    transferImage(destinationCanvas,
-        destinationX,
-        destinationY,
-        destinationWidth,
-        destinationHeight,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight
-    ) {
-        this._cells.forEach((canvas) => {
-            canvas.transferImage(destinationCanvas, destinationX, destinationY, destinationWidth, destinationHeight, sourceX, sourceY, sourceWidth, sourceHeight);
-        });
-    }
-
-    clearRect() {
-        this._invokeOnCells("clearRect", arguments);
-    }
-
-    getContext() {
-        return this;
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CompositeCanvas;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class CompositeCanvasCell {
-
-    constructor(size, offset) {
-        this.canvas = document.createElement("canvas");
-        this.size = size;
-        this.offset = offset;
-
-        this.canvas.width = size;
-        this.canvas.height = size;
-        this.context = this.canvas.getContext("2d");
-        this.canvas.getContext("2d").clearRect(0, 0, size, size);
-    }
-
-    drawImage(sourceCanvas,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        destinationX,
-        destinationY,
-        destinationWidth,
-        destinationHeight) {
-
-        var context = this.context;
-
-        var top = Math.max(destinationY, this.offset.y);
-        var left = Math.max(destinationX, this.offset.x);
-        var bottom = Math.min(destinationY + destinationHeight, this.offset.y + this.size);
-        var right = Math.min(destinationX + destinationWidth, this.offset.x + this.size);
-        var width = right - left;
-        var height = bottom - top;
-        var dx = left - this.offset.x;
-        var dy = top - this.offset.y;
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        if (left > destinationX) {
-            sourceX += destinationWidth - width;
-        }
-
-        if (top > destinationY) {
-            sourceY += destinationHeight - height;
-        }
-
-        context.drawImage(sourceCanvas,
-            sourceX,
-            sourceY,
-            width,
-            height,
-            dx,
-            dy,
-            width,
-            height);
-
-    }
-
-    transferImage(destinationCanvas,
-        destinationX,
-        destinationY,
-        destinationWidth,
-        destinationHeight,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight
-    ) {
-
-        var context = destinationCanvas.getContext("2d");
-
-        var top = Math.max(this.offset.y, sourceY);
-        var left = Math.max(this.offset.x, sourceX);
-        var bottom = Math.min(this.offset.y + this.size, sourceY + sourceHeight);
-        var right = Math.min(this.offset.x + this.size, sourceX + sourceWidth);
-        var width = right - left;
-        var height = bottom - top;
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        var sx = left - this.offset.x;
-        var sy = top - this.offset.y;
-        var dx = left - sourceX;
-        var dy = top - sourceY;
-
-        context.drawImage(
-            this.canvas,
-            sx,
-            sy,
-            width,
-            height,
-            dx,
-            dy,
-            width,
-            height
-        );
-
-    }
-
-    clearRect(x, y, width, height) {
-        x = Math.max(x, this.offset.x);
-        y = Math.max(y, this.offset.y);
-        width = Math.min(width, this.size);
-        height = Math.min(height, this.size);
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        this.context.clearRect(x, y, width, height);
-    }
-
-    getContext() {
-        return this;
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CompositeCanvasCell;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class ZIndex {
-    constructor() {
-        this.type = "z-index";
-        this.value = 0;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ZIndex;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class ImageRenderer {
-    constructor(doc, assetRoot) {
-        this.type = "image";
-        this.document = doc || document;
-        this.cachedCanvases = {};
-        this.loadingImages = {};
-        this.sourceCanvases = {};
-        this.assetRoot = assetRoot || "";
-    }
-
-    getKey(imageTexture) {
-        var position = imageTexture.position;
-        var size = imageTexture.size;
-        var path = imageTexture.path;
-
-        return path + "|" + position.x + "|" + position.y + "|" + size.width + "|" + size.height;
-    }
-
-    cacheCanvas(image, imageTexture) {
-        var key = this.getKey(imageTexture);
-
-        if (this.cachedCanvases[key]) {
-            return;
-        }
-
-        var document = this.document;
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("2d");
-        var size = imageTexture.size;
-        var padding = imageTexture.padding;
-        var position = imageTexture.position;
-        var width = size.width + padding.left + padding.right;
-        var height = size.height + padding.top + padding.bottom;
-
-        canvas.width = width;
-        canvas.height = height;
-
-        context.drawImage(
-            image,
-            position.x,
-            position.y,
-            size.width,
-            size.height,
-            padding.left,
-            padding.top,
-            size.width,
-            size.height
-        );
-
-        this.cachedCanvases[key] = canvas;
-        return canvas;
-    }
-
-    getPath(path) {
-        return this.assetRoot + "/" + path;
-    }
-
-    getCanvas(imageTexture) {
-        var cachedCanvases = this.cachedCanvases;
-        var key = this.getKey(imageTexture);
-        return cachedCanvases[key] || null;
-    }
-
-    loadImage(imageTexture) {
-        var path = this.getPath(imageTexture.path);
-        var image = this.sourceCanvases[path];
-
-        if (this.loadingImages[path]) {
-            return;
-        }
-
-        image = new Image();
-
-        image.onload = () => {
-            this.loadingImages[path] = false;
-            this.sourceCanvases[path] = image;
-            this.cacheCanvas(image, imageTexture);
-        };
-
-        this.loadingImages[path] = true;
-        image.src = path;
-    }
-
-    draw(entity, canvas, position, size, offset) {
-        if (canvas == null) {
-            return;
-        }
-
-        var imageTexture = entity.getComponent("image");
-        var imagePosition = imageTexture.position;
-        var entityCanvas = this.getCanvas(imageTexture);
-        var path = this.getPath(imageTexture.path);
-        var imageSource = this.sourceCanvases[path];
-
-        // If the image isn't loaded yet then load the image and draw it next call.
-        if (imageSource == null) {
-            this.loadImage(imageTexture);
-            imageTexture.isDirty = true;
-            return;
-        }
-
-        if (entityCanvas == null) {
-            this.cacheCanvas(imageSource, imageTexture);
-            entityCanvas = this.getCanvas(imageTexture);
-        }
-
-        imageTexture.isDirty = false;
-
-        var context = canvas.getContext("2d");
-
-        context.drawImage(entityCanvas,
-            offset.x,
-            offset.y,
-            size.width,
-            size.height,
-            position.x,
-            position.y,
-            size.width,
-            size.height
-        );
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageRenderer;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class TextRenderer {
-    constructor(doc) {
-        this.type = "text";
-        this.fontCache = {};
-        this.document = doc || document;
-    }
-
-    convertToRgba(color) {
-        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
-    }
-
-    entityAdded(entity) {
-        this.createCachedVersion(entity);
-    }
-
-    entityRemoved(entity) {
-        delete this.fontCache[entity.id];
-    }
-
-    createFontString(textTexture) {
-        //font-style variant weight size family
-        return `${textTexture.font.style} ${textTexture.font.variant} ${textTexture.font.weight} ${textTexture.font.size}px ${textTexture.font.family}`;
-    }
-
-    createCachedVersion(entity) {
-        var canvas = this.document.createElement("canvas");
-
-        var size = entity.getComponent("size");
-        var textTexture = entity.getComponent("text");
-
-        var context = canvas.getContext("2d");
-
-        canvas.width = size.width;
-        canvas.height = size.height;
-
-        context.font = this.createFontString(textTexture);
-        context.textBaseline = textTexture.font.baseline;
-        context.textAlign = textTexture.horizontalAlignment;
-
-        // A little trick to get approximate height. 
-        var textHeight = textTexture.font.size;
-        var textWidth = context.measureText(textTexture.text).width;
-
-        var x = 0;
-        var y = 0;
-
-        textTexture.height = textHeight;
-        textTexture.width = textWidth;
-
-        if (textTexture.horizontalAlignment === "center") {
-            x = size.width / 2;
-        } else if (textTexture.horizontalAlignment === "right") {
-            x = size.width;
-        }
-
-        if (textTexture.verticalAlignment === "top") {
-            y = 0;
-        } else if (textTexture.verticalAlignment === "middle") {
-            y = (size.height / 2) - (textHeight / 2);
-        } else if (textTexture.verticalAlignment === "bottom") {
-            y = size.height - textHeight;
-        }
-
-        var color = this.convertToRgba(textTexture.font.color);
-
-        context.fillStyle = color;
-        context.fillText(textTexture.text, parseInt(x, 10), parseInt(y, 10));
-
-        this.fontCache[entity.id] = canvas;
-
-        return canvas;
-    }
-
-    getCanvas(entity) {
-        var canvas = this.fontCache[entity.id];
-        var textTexture = entity.getComponent("text");
-
-        if (canvas == null || textTexture.isDirty) {
-            canvas = this.createCachedVersion(entity);
-        }
-
-        return canvas;
-    }
-
-    draw(entity, canvas, position, size, offset) {
-        if (canvas == null) {
-            return;
-        }
-
-        var entityCanvas = this.getCanvas(entity);
-        var context = canvas.getContext("2d");
-
-        context.drawImage(entityCanvas,
-            offset.x,
-            offset.y,
-            size.width,
-            size.height,
-            position.x,
-            position.y,
-            size.width,
-            size.height
-        );
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TextRenderer;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class ShapeRenderer {
-    constructor(doc) {
-        this.type = "shape";
-        this.document = doc || document;
-        this.shapeCache = {};
-    }
-
-    convertToRgba(color) {
-        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
-    }
-
-    entityAdded(entity) {
-        this.createCachedVersion(entity);
-    }
-
-    entityRemoved(entity) {
-        delete this.shapeCache[entity.id];
-    }
-
-    createCachedVersion(entity) {
-        var document = this.document;
-        var canvas = document.createElement("canvas");
-
-        var size = entity.getComponent("size");
-        var shape = entity.getComponent("shape");
-
-        var context = canvas.getContext("2d");
-
-        canvas.width = size.width;
-        canvas.height = size.height;
-
-        context.beginPath();
-
-        shape.points.forEach(function (point, index) {
-            var x = point.x * size.width;
-            var y = point.y * size.height;
-
-            if (index === 0) {
-                context.moveTo(x, y);
-            } else {
-                context.lineTo(x, y);
-            }
-        });
-
-        context.closePath();
-
-        if (shape.fillColor.alpha > 0) {
-            context.fillStyle = this.convertToRgba(shape.fillColor);
-            context.fill();
-        }
-
-        if (shape.border.thickness > 0) {
-            context.lineWidth = shape.border.thickness;
-            context.strokeStyle = this.convertToRgba(shape.border.color);
-            context.stroke();
-        }
-
-        this.shapeCache[entity.id] = canvas;
-
-        return canvas;
-    }
-
-    getCanvas(entity) {
-        var canvas = this.shapeCache[entity.id];
-        var shapeComponent = entity.getComponent("shape");
-
-        if (canvas == null || shapeComponent.isDirty) {
-            shapeComponent.isDirty = false;
-            canvas = this.createCachedVersion(entity);
-        }
-
-        return canvas;
-    }
-
-    draw(entity, canvas, position, size, offset) {
-        let _entity = entity;
-        let _canvas = canvas;
-        let _position = position;
-        let _size = size;
-        let _offset = offset;
-
-        if (_canvas == null) {
-            return;
-        }
-
-        var entityCanvas = this.getCanvas(_entity);
-        var context = canvas.getContext("2d");
-
-        context.drawImage(entityCanvas,
-            _offset.x,
-            _offset.y,
-            _size.width,
-            _size.height,
-            _position.x,
-            _position.y,
-            _size.width,
-            _size.height
-        );
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ShapeRenderer;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class LineRenderer {
-    constructor(doc) {
-        this.type = "line";
-        this.document = doc || document;
-        this.lineCache = {};
-    }
-
-    convertToRgba(color) {
-        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
-    }
-
-    entityAdded(entity) {
-        this.createCachedVersion(entity);
-    }
-
-    entityRemoved(entity) {
-        delete this.lineCache[entity.id];
-    }
-
-    createCachedVersion(entity) {
-        var document = this.document;
-        var canvas = document.createElement("canvas");
-
-        var size = entity.getComponent("size");
-        var line = entity.getComponent("line");
-        var position = entity.getComponent("position");
-        var context = canvas.getContext("2d");
-
-        canvas.width = size.width;
-        canvas.height = size.height;
-
-        if (line.thickness > 0) {
-            context.beginPath();
-            context.lineCap = "round";
-            context.lineWidth = line.thickness;
-            context.strokeStyle = this.convertToRgba(line.color);
-            context.moveTo(line.from.x, line.from.y);
-            context.lineTo(line.to.x, line.to.y);
-            context.stroke();
-            context.closePath();
-        }
-
-        this.lineCache[entity.id] = canvas;
-
-        return canvas;
-    }
-
-    getCanvas(entity) {
-        var canvas = this.lineCache[entity.id];
-        var lineComponent = entity.getComponent("line");
-
-        if (canvas == null || lineComponent.isDirty) {
-            lineComponent.isDirty = false;
-            canvas = this.createCachedVersion(entity);
-        }
-
-        return canvas;
-    }
-
-    draw(entity, canvas, position, size, offset) {
-        let _entity = entity;
-        let _canvas = canvas;
-        let _position = position;
-        let _size = size;
-        let _offset = offset;
-
-        if (_canvas == null) {
-            return;
-        }
-
-        var entityCanvas = this.getCanvas(_entity);
-        var context = canvas.getContext("2d");
-
-        context.drawImage(entityCanvas,
-            _offset.x,
-            _offset.y,
-            _size.width,
-            _size.height,
-            _position.x,
-            _position.y,
-            _size.width,
-            _size.height
-        );
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = LineRenderer;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__ = __webpack_require__(11);
 ﻿
 
 
@@ -2337,7 +1009,7 @@ class BroadPhaseCollisionSystem {
 
 
 /***/ }),
-/* 19 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2367,7 +1039,7 @@ function invokeMethod(obj, methodName, args){
 }
 
 /***/ }),
-/* 20 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2383,7 +1055,7 @@ class BroadPhaseCollisionData {
 
 
 /***/ }),
-/* 21 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2449,7 +1121,7 @@ class BroadPhaseCollisionData {
 
 
 /***/ }),
-/* 22 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2533,7 +1205,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 23 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2604,7 +1276,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 24 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2680,7 +1352,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 25 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2796,11 +1468,11 @@ class LogicSystem {
 
 
 /***/ }),
-/* 26 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(18);
 
 
 const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position", "size"];
@@ -3260,7 +1932,7 @@ class NarrowPhaseCollisionSystem {
 
 
 /***/ }),
-/* 27 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3370,11 +2042,11 @@ class Vector {
 
 
 /***/ }),
-/* 28 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__systems_StateManagerSystem__ = __webpack_require__(20);
 
 
 
@@ -3455,7 +2127,7 @@ class ColorStateManager extends __WEBPACK_IMPORTED_MODULE_0__systems_StateManage
 
 
 /***/ }),
-/* 29 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3480,17 +2152,17 @@ class StateManagerSystem {
 
     updateState(stateName, entity) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "update", [entity]);
+        invokeMethod(state, "update", [entity, this.world]);
     }
 
     activateState(stateName, entity, options) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "activated", [entity, options]);
+        invokeMethod(state, "activated", [entity, options, this.world]);
     }
 
     deactivateState(stateName, entity) {
         var state = this.states.get(stateName);
-        invokeMethod(state, "deactivated", [entity]);
+        invokeMethod(state, "deactivated", [entity, this.world]);
     }
 
     maintainState(entity) {
@@ -3575,7 +2247,7 @@ class StateManagerSystem {
 
 
 /***/ }),
-/* 30 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3653,7 +2325,7 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 31 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3662,13 +2334,13 @@ class FollowEntityCameraSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(27);
 
 
 
@@ -3741,7 +2413,7 @@ class FollowEntityCameraSystem {
 });
 
 /***/ }),
-/* 32 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3754,7 +2426,7 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 33 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3768,7 +2440,7 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 34 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3783,7 +2455,7 @@ class Movable {
 
 
 /***/ }),
-/* 35 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3816,7 +2488,7 @@ class NarrowPhaseCollidable {
 
 
 /***/ }),
-/* 36 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3829,7 +2501,7 @@ class SolidBody {
 
 
 /***/ }),
-/* 37 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3887,12 +2559,12 @@ class ColorPlatform extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
 
 
 /***/ }),
-/* 38 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Logic__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Logic__ = __webpack_require__(30);
 
 
 
@@ -3924,7 +2596,7 @@ class ColorLogicBox extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default
 
 
 /***/ }),
-/* 39 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3959,7 +2631,7 @@ class Logic {
 
 
 /***/ }),
-/* 40 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4003,12 +2675,12 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 
 
 /***/ }),
-/* 41 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
@@ -4041,7 +2713,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 42 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

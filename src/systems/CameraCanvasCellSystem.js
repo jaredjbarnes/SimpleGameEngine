@@ -44,8 +44,8 @@ export default class CameraCanvasCellSystem {
     }
 
     _findCellPositionsWithCenter(x, y) {
-        const centerColumn = x / this.cellSize;
-        const centerRow = y / this.cellSize;
+        const centerColumn = Math.floor(x / this.cellSize);
+        const centerRow = Math.floor(y / this.cellSize);
 
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {

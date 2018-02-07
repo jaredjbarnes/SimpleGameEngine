@@ -1,5 +1,5 @@
 export default class CanvasFactory {
-    constructor({ document: doc = document, shouldStoreInstances = false }) {
+    constructor({ document: doc = document, shouldStoreInstances = false } = {}) {
         this.document = doc;
         this.canvases = [];
         this.shouldStoreInstances = shouldStoreInstances;

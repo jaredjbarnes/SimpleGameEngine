@@ -8,9 +8,11 @@ export default class ImageRasterizer {
         this.imageFactory = imageFactory;
     }
 
-    getIdentifier(entity) {
-        const imageComponent = entity.getComponent("image");
-        return `image=${JSON.stringify(imageComponent)}`;
+    getIdentity(entity) {
+        const image = entity.getComponent("image");
+        const size = entity.getComponent("size");
+
+        return `size=${size}, image=${JSON.stringify(image)}`;
     }
 
     rasterize(entity) {

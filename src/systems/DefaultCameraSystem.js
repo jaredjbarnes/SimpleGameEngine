@@ -1,14 +1,14 @@
 import ImageManager from "./CameraSystem/ImageManager";
 import CanvasFactory from "./CameraSystem/CanvasFactory";
-import ImageFactory from "./systems/CameraSystem/ImageFactory";
+import ImageFactory from "./CameraSystem/ImageFactory";
 import ImageRasterizer from "./CameraSystem/ImageRasterizer";
 import LineRasterizer from "./CameraSystem/LineRasterizer";
 import ShapeRasterizer from "./CameraSystem/ShapeRasterizer";
-import TextRasterizer from "./systems/CameraSystem/TextRasterizer";
-import CameraSystem from "./systems/CameraSystem";
+import TextRasterizer from "./CameraSystem/TextRasterizer";
+import CameraSystem from "./CameraSystem";
 
 export default class DefaultCameraSystem extends CameraSystem {
-    constructor({ cameraName, canvas, assetRoot }) {
+    constructor({canvas, cameraName, assetRoot }) {
         const imageManager = new ImageManager();
         const canvasFactory = new CanvasFactory();
         const imageFactory = new ImageFactory();

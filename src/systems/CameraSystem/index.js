@@ -6,6 +6,8 @@
         this.entity = cameraCanvasCellEntity;
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
+        this.canvas.width = this.size.width;
+        this.canvas.height = this.size.height;
     }
 }
 
@@ -75,30 +77,30 @@ export default class CameraSystem {
             const right = Math.min((dirtyCellPosition.columnIndex * cellSize) + cellSize, cell.position.x + cell.size.width);
 
             if (top < bottom && left < right) {
-                const normalizedTop = top - cell.position.y;
-                const normalizedLeft = left - cell.position.x;
-                const normaizedBottom = bottom - cell.position.y;
-                const normalizedRight = right - cell.position.x;
                 const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
 
-                cell.context.clearRect(left, top, right - left, bottom - top);
+                cell.context.clearRect(left - cell.position.x, top - cell.position.y, right - left, bottom - top);
 
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
 
-                    const intersectedTop = Math.max(normalizedTop, collidableEntity.position.top);
-                    const intersectedLeft = Math.max(normalizedLeft, collidableEntity.position.left);
-                    const intersectedBottom = Math.min(normalizedBottom, collidableEntity.position.top + collidableEntity.size.height);
-                    const intersectedRight = Math.min(normalizedRight, collidableEntity.position.left + collidable.size.width);
+                    const intersectedTop = Math.max(top, collidableEntity.position.y);
+                    const intersectedLeft = Math.max(left, collidableEntity.position.x);
+                    const intersectedBottom = Math.min(bottom, collidableEntity.position.y + collidableEntity.size.height);
+                    const intersectedRight = Math.min(right, collidableEntity.position.x + collidableEntity.size.width);
 
                     let sourceX = 0;
                     let sourceY = 0;
                     let sourceWidth = intersectedRight - intersectedLeft;
                     let sourceHeight = intersectedBottom - intersectedTop;
-                    let destinationX = intersectedLeft;
-                    let destinationY = intersectedTop;
+                    let destinationX = intersectedLeft - cell.position.x;
+                    let destinationY = intersectedTop - cell.position.y;
                     let destinationWidth = intersectedRight - intersectedLeft;
                     let destinationHeight = intersectedBottom - intersectedTop;
+
+                    if (destinationWidth === 0 || destinationHeight === 0) {
+                        continue;
+                    }
 
                     if (intersectedLeft !== collidableEntity.position.x) {
                         sourceX = collidableEntity.size.width - sourceWidth;
@@ -137,21 +139,26 @@ export default class CameraSystem {
     }
 
     _transferToCanvas() {
+        const canvas = this.canvas;
+
+        canvas.width = this.camera.size.width;
+        canvas.height = this.camera.size.height;
+
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
             const top = Math.max(cell.position.y, this.camera.position.y);
             const left = Math.max(cell.position.x, this.camera.position.x);
-            const bottom = Math.max(cell.position.y + cell.size.height, this.camera.position.y + this.camera.size.height);
-            const right = Math.max(cell.position.x + cell.size.width, this.camera.position.y + this.camera.size.height);
+            const bottom = Math.min(cell.position.y + cell.size.height, this.camera.position.y + this.camera.size.height);
+            const right = Math.min(cell.position.x + cell.size.width, this.camera.position.x + this.camera.size.width);
 
             if (top < bottom && left < right) {
-                const destinationX = left - this.camera.position.left;
-                const destinationY = top - this.camera.position.top;
-                const destinationWidth = right - this.camera.position.left - destinationX;
-                const destinationHeight = bottom - this.camera.position.top - destinationY;
+                const destinationX = left - this.camera.position.x;
+                const destinationY = top - this.camera.position.y;
+                const destinationWidth = right - this.camera.position.x - destinationX;
+                const destinationHeight = bottom - this.camera.position.y - destinationY;
 
-                const sourceX = 0;
-                const sourceY = 0;
+                let sourceX = 0;
+                let sourceY = 0;
                 const sourceWidth = destinationWidth;
                 const sourceHeight = destinationHeight;
 
@@ -211,7 +218,7 @@ export default class CameraSystem {
         } else if (this._isCameraCanvasCellEntity(entity)) {
             this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
         } else if (this._isCameraEntity(entity)) {
-            this.camera = new Camera(entity);
+            this.camera = new Camera(entity, this.canvasFactory.create());
         }
     }
 

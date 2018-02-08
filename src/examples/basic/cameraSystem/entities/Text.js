@@ -32,8 +32,7 @@ export default class extends Entity {
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
-            { x: 0, y: 30 },
-            { x: 0, y: 0 }
+            { x: 0, y: 30 }
         );
 
         narrowPhaseCollision.parts.push(part);

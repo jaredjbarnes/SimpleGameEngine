@@ -14,7 +14,6 @@ export class NarrowPhaseCollidable {
     constructor() {
         this.type = "narrow-phase-collidable";
         this.name = null;
-        this.isInitialized = false;
         this.isPrepared = false;
         this.isEnabled = true;
         this.collisions = {};

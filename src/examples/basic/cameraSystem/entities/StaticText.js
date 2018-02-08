@@ -39,11 +39,8 @@ export default class StaticText extends Entity {
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
-            { x: 0, y: 30 },
-            { x: 0, y: 0 }
+            { x: 0, y: 30 }
         );
-
-        position.isStatic = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;

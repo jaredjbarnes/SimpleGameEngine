@@ -327,7 +327,6 @@ class NarrowPhaseCollidable {
     constructor() {
         this.type = "narrow-phase-collidable";
         this.name = null;
-        this.isInitialized = false;
         this.isPrepared = false;
         this.isEnabled = true;
         this.collisions = {};
@@ -906,6 +905,8 @@ class BroadPhaseCollisionSystem {
 
             dirtyEntity.collidable.collisions = {};
         }
+
+        this.dirtyEntities = dirtyEntities;
     }
 
     getCell({ rowIndex, columnIndex }) {
@@ -1005,10 +1006,7 @@ class BroadPhaseCollisionSystem {
                     const otherCollidableEntity = cell[x];
                     const otherCollisions = otherCollidableEntity.collidable.collisions;
 
-                    if ((!otherCollidableEntity.position.isDirty && !otherCollidableEntity.size.isDirty &&
-                        !collidableEntity.position.isDirty && !collidableEntity.size.isDirty) ||
-                        (otherCollisions[collidableEntity.id] &&
-                            otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
+                    if ((otherCollisions[collidableEntity.id] && otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
                         continue;
                     }
 
@@ -1115,6 +1113,7 @@ class BroadPhaseCollisionSystem {
         this.findDirtyCells();
         this.updateGridCells(this.dirtyCellPositions);
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
+        this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
         this.dirtyCellPositions = [];
     }
 }
@@ -2404,8 +2403,7 @@ class MovementSystem {
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
-            { x: 0, y: 30 },
-            { x: 0, y: 0 }
+            { x: 0, y: 30 }
         );
 
         narrowPhaseCollision.parts.push(part);
@@ -2550,11 +2548,8 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
-            { x: 0, y: 30 },
-            { x: 0, y: 0 }
+            { x: 0, y: 30 }
         );
-
-        position.isStatic = true;
 
         textTexture.text = text;
         textTexture.font.size = 17;
@@ -2992,7 +2987,7 @@ class NarrowPhaseCollisionSystem {
             let narrowCollision = narrowPhaseCollisions[key];
             let broadPhaseCollision = broadPhaseCollisions[key];
 
-            if (broadPhaseCollision == null) {
+            if (broadPhaseCollision == null || narrowCollision.endTimestamp != null) {
                 delete narrowPhaseCollisions[key];
             }
         }
@@ -3003,30 +2998,12 @@ class NarrowPhaseCollisionSystem {
         return collisions[id];
     }
 
-    isStaticAndInitialized(entityA, entityB) {
-        let narrowPhaseCollidableA = entityA.getComponent("narrow-phase-collidable");
-        let narrowPhaseCollidableB = entityB.getComponent("narrow-phase-collidable");
-        let positionA = entityA.getComponent("position");
-        let positionB = entityB.getComponent("position");
-
-        if (!positionA.isStatic || !positionB.isStatic) {
-            return false;
-        }
-
-        if (!narrowPhaseCollidableA.isInitialized || !narrowPhaseCollidableB.isInitialized) {
-            return false;
-        }
-
-        return true;
-    }
-
     handleCollisions(entity) {
         let _entity = entity;
         let collidable = _entity.getComponent("collidable");
         let narrowPhaseCollidable = _entity.getComponent("narrow-phase-collidable");
 
         this.prepareNarrowPhaseCollidable(narrowPhaseCollidable);
-        this.updateWorldPoints(entity);
 
         if (!narrowPhaseCollidable.isEnabled) {
             return;
@@ -3038,13 +3015,11 @@ class NarrowPhaseCollisionSystem {
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
-                if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
+                if (otherEntity == null || otherNarrowPhaseCollidable == null) {
                     continue;
                 }
 
                 this.prepareNarrowPhaseCollidable(otherNarrowPhaseCollidable);
-                this.updateWorldPoints(otherEntity);
-
                 this.intersects(_entity, otherEntity);
             }
 
@@ -3060,33 +3035,26 @@ class NarrowPhaseCollisionSystem {
         });
     }
 
-    update() {
-        this.timestamp = this.world.getTime();
+    update(time) {
+        this.timestamp = time;
 
         if (this.broadPhaseCollisionData != null) {
-            this.broadPhaseCollisionData.dirtyCellPositions.forEach((cellPosition) => {
-                const column = this.broadPhaseCollisionData.grid.get(cellPosition.columnIndex);
-                if (column != null) {
-                    const collidableEntities = column.get(cellPosition.rowIndex);
-                    const entities = collidableEntities.map(({ id }) => {
-                        return this.world.getEntityById(id);
-                    }).filter((entity) => {
-                        return entity.hasComponent("narrow-phase-collidable");
-                    });
+            const entities = this.broadPhaseCollisionData.dirtyEntities.map(({ id }) => {
+                return this.world.getEntityById(id);
+            }).filter((entity) => {
+                return entity.hasComponent("narrow-phase-collidable");
+            });
 
-                    entities.forEach((entity) => {
-                        const collidable = entity.getComponent("narrow-phase-collidable");
-                        this.prepareNarrowPhaseCollidable(collidable);
-                        this.updateWorldPoints(entity);
-                    })
+            entities.forEach((entity) => {
+                const collidable = entity.getComponent("narrow-phase-collidable");
+                this.prepareNarrowPhaseCollidable(collidable);
+                this.updateWorldPoints(entity);
+            })
 
-                    entities.forEach((entity) => {
-                        this.handleCollisions(entity);
-                    });
-                }
+            entities.forEach((entity) => {
+                this.handleCollisions(entity);
             });
         }
-
     }
 
     deactivated() {

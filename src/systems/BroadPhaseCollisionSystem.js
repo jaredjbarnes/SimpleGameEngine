@@ -176,6 +176,8 @@ export default class BroadPhaseCollisionSystem {
 
             dirtyEntity.collidable.collisions = {};
         }
+
+        this.dirtyEntities = dirtyEntities;
     }
 
     getCell({ rowIndex, columnIndex }) {
@@ -275,10 +277,7 @@ export default class BroadPhaseCollisionSystem {
                     const otherCollidableEntity = cell[x];
                     const otherCollisions = otherCollidableEntity.collidable.collisions;
 
-                    if ((!otherCollidableEntity.position.isDirty && !otherCollidableEntity.size.isDirty &&
-                        !collidableEntity.position.isDirty && !collidableEntity.size.isDirty) ||
-                        (otherCollisions[collidableEntity.id] &&
-                            otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
+                    if ((otherCollisions[collidableEntity.id] && otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
                         continue;
                     }
 
@@ -385,6 +384,7 @@ export default class BroadPhaseCollisionSystem {
         this.findDirtyCells();
         this.updateGridCells(this.dirtyCellPositions);
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
+        this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
         this.dirtyCellPositions = [];
     }
 }

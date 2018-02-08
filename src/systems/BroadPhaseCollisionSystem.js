@@ -364,6 +364,7 @@ export default class BroadPhaseCollisionSystem {
     entityRemoved(_entity) {
         const entity = _entity;
         const index = this.collidableEntities.findIndex(e => e.id === entity.id);
+
         if (index > -1) {
             const collidableEntity = this.collidableEntities[index];
             let cellPositions = collidableEntity.collidable.cellPositions;

@@ -33,7 +33,7 @@ export default class extends Entity {
             { x: 100, y: 0 },
             { x: 100, y: 30 },
             { x: 0, y: 30 },
-            { x: 0, y: 0 },
+            { x: 0, y: 0 }
         );
 
         narrowPhaseCollision.parts.push(part);
@@ -54,9 +54,9 @@ export default class extends Entity {
         shape.fillColor.red = 100;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 0.9, y: 0 },
-            { x: 0.9, y: 0.9 },
-            { x: 0, y: 0.9 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
+            { x: 0, y: 30 },
             { x: 0, y: 0 }
         );
 

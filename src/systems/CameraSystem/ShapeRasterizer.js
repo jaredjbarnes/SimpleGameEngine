@@ -1,4 +1,4 @@
-﻿export default class ShapeRenderer {
+﻿export default class ShapeRasterizer {
     constructor(canvasFactory) {
         this.type = "shape";
         this.canvasFactory = canvasFactory;
@@ -31,8 +31,8 @@
         context.beginPath();
 
         shape.points.forEach(function (point, index) {
-            const x = point.x * size.width;
-            const y = point.y * size.height;
+            const x = point.x;
+            const y = point.y;
 
             if (index === 0) {
                 context.moveTo(x, y);

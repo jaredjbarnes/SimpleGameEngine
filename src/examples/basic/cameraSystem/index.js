@@ -10,12 +10,24 @@ import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
 import KeyboardController from "../../../components/KeyboardController";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
+import NarrowPhaseCollisionSystem from "./../../../systems/NarrowPhaseCollisionSystem";
+import SolidBodySystem from "./../../../systems/SolidBodySystem";
+import SolidBody from "../../../components/SolidBody";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
     const value = Math.random() * range;
 
     return parseInt(value + min, 10);
+}
+
+const getRandomRgba = () => {
+    return {
+        red: getRandomNumber(0, 255),
+        green: getRandomNumber(0, 255),
+        blue: getRandomNumber(0, 255),
+        alpha: 1
+    };
 }
 
 const cameraName = "main";
@@ -32,6 +44,8 @@ const keyboardInputSystem = new KeyboardInputSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const movableSystem = new MovableSystem();
 const followEntityCameraSystem = new FollowEntityCameraSystem();
+const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
+const solidBodySystem = new SolidBodySystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -48,22 +62,24 @@ const defaultCameraSystem = new DefaultCameraSystem({
 
 // Set up world
 world.addSystem(broadPhaseCollisionSystem);
+world.addSystem(narrowPhaseCollisionSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(cameraCanvasCellSystem);
-world.addSystem(defaultCameraSystem);
 world.addSystem(controllerSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
+world.addSystem(defaultCameraSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 10000; x++) {
+for (let x = 0; x < 2000; x++) {
     const entity = new StaticText(x, {
-        x: getRandomNumber(-10000, 10000),
-        y: getRandomNumber(-10000, 10000)
-    });
+        x: getRandomNumber(-5000, 5000),
+        y: getRandomNumber(-5000, 5000)
+    }, getRandomRgba());
 
     world.addEntity(entity);
 }

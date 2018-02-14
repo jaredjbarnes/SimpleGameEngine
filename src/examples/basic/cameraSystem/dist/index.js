@@ -426,8 +426,8 @@ world.addSystem(cameraCanvasCellSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
-world.addSystem(followEntityCameraSystem);
 world.addSystem(movableSystem);
+world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
@@ -436,10 +436,10 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 10000; x++) {
+for (let x = 0; x < 20000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__["a" /* default */](x, {
-        x: getRandomNumber(-5000, 5000),
-        y: getRandomNumber(-5000, 5000)
+        x: getRandomNumber(-15000, 15000),
+        y: getRandomNumber(-15000, 15000)
     }, getRandomRgba());
 
     world.addEntity(entity);

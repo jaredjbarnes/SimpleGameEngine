@@ -23,7 +23,7 @@
         this.path = null;
         this.opacity = 1;
         this.zIndex = 0;
-        this.isDirty = false;
+        this.isDirty = true;
 
     }
 }

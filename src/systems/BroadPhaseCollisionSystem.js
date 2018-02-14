@@ -1,8 +1,6 @@
 ﻿import Entity from "../Entity";
 import BroadPhaseCollisionData from "../components/BroadPhaseCollisionData";
 
-//TODO: correct cells when finding dirty cells, change dirty cell positions to strings... maybe.
-
 class CellPosition {
     constructor(columnIndex, rowIndex) {
         this.rowIndex = rowIndex;
@@ -40,7 +38,7 @@ export default class BroadPhaseCollisionSystem {
         this.collidableEntitiesById = {};
         this.world = null;
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
         this.dirtyCellPositions = [];
         this.dependencies = ["position", "size", "collidable"];
         this.name = "Broad Phase Collision System";
@@ -162,6 +160,7 @@ export default class BroadPhaseCollisionSystem {
             this.addEntityToCellPositions(dirtyEntity, newCellPositions);
 
             dirtyEntity.collidable.cellPositions = newCellPositions;
+            dirtyEntity.collidable.lastCellPositions = lastCellPositions;
 
             for (let y in collisions) {
                 const collision = collisions[y];
@@ -181,16 +180,11 @@ export default class BroadPhaseCollisionSystem {
     }
 
     getCell({ rowIndex, columnIndex }) {
-        let column = this.grid.get(columnIndex);
-        if (column == null) {
-            column = new Map();
-            this.grid.set(columnIndex, column);
-        }
+        const key = `${columnIndex}_${rowIndex}`;
+        let cell = this.grid[key];
 
-        let cell = column.get(rowIndex);
         if (cell == null) {
-            cell = [];
-            column.set(rowIndex, cell);
+            cell = this.grid[key] = [];
         }
 
         return cell;
@@ -230,8 +224,8 @@ export default class BroadPhaseCollisionSystem {
     }
 
     removeCell({ columnIndex, rowIndex }) {
-        if (this.grid.has(columnIndex) && this.grid.get(columnIndex).has(rowIndex)) {
-            this.grid.get(columnIndex).delete(rowIndex);
+        if (this.grid[`${columnIndex}_${rowIndex}`]) {
+            delete this.grid[`${columnIndex}_${rowIndex}`];
         }
     }
 
@@ -308,9 +302,6 @@ export default class BroadPhaseCollisionSystem {
 
                 }
 
-                collidableEntity.position.isDirty = false;
-                collidableEntity.size.isDirty = false;
-
             }
         }
 
@@ -330,7 +321,7 @@ export default class BroadPhaseCollisionSystem {
 
     entityAdded(_entity) {
         const entity = _entity;
-        if (entity.hasComponents(this.dependencies) && this.collidableEntities.findIndex(e => e.id === entity.id) === -1) {
+        if (entity.hasComponents(this.dependencies) && this.collidableEntitiesById[entity.id] == null) {
             const collidableEntity = new CollidableEntity(entity.id);
             collidableEntity.position = entity.getComponent("position");
             collidableEntity.size = entity.getComponent("size");
@@ -357,7 +348,7 @@ export default class BroadPhaseCollisionSystem {
         this.collidableEntities = [];
         this.collidableEntitiesById = {};
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
     }
 
     entityRemoved(_entity) {
@@ -386,5 +377,12 @@ export default class BroadPhaseCollisionSystem {
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
         this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
         this.dirtyCellPositions = [];
+    }
+
+    afterUpdate(currentTime){
+       for (let x = 0;  x  < this.dirtyEntities.length; x++){
+           this.dirtyEntities[x].size.isDirty = false;
+           this.dirtyEntities[x].position.isDirty = false;
+       }
     }
 }

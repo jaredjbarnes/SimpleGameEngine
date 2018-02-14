@@ -4,6 +4,7 @@ import Size from "./../components/Size";
 import Collidable from "./../components/Collidable";
 import CameraCanvasCell from "../components/CameraCanvasCell";
 
+
 export default class extends Entity {
     constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
         super();
@@ -24,5 +25,7 @@ export default class extends Entity {
         this.addComponent(position);
         this.addComponent(collidable);
         this.addComponent(cameraCanvasCell);
+
+
     }
 }

@@ -4,5 +4,6 @@
         this.name = null;
         this.collisions = {};
         this.cellPositions = [];
+        this.lastCellPositions = [];
     }
 }

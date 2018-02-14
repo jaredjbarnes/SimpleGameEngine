@@ -128,7 +128,10 @@
         var self = this;
         var systems = this._systems;
 
+        this.notifySystems("beforeUpdate", [this.getTime()]);
         this.notifySystems("update", [this.getTime()]);
+        this.notifySystems("afterUpdate", [this.getTime()]);
+        
     }
 
     play() {

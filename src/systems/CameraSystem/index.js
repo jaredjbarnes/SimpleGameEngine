@@ -8,6 +8,7 @@
         this.context = canvas.getContext("2d");
         this.canvas.width = this.size.width;
         this.canvas.height = this.size.height;
+        this.isDirty = false;
     }
 }
 
@@ -32,19 +33,14 @@ export default class CameraSystem {
         this.cells = [];
         this.world = null;
         this.camera = null;
+        this.drawImageCount = 0;
     }
 
     _getBroadPhaseCollisionCell({ rowIndex, columnIndex }) {
-        let column = this.broadPhaseCollisionData.grid.get(columnIndex);
-        if (column == null) {
+        let cell = this.broadPhaseCollisionData.grid[`${columnIndex}_${rowIndex}`];
+        if (cell == null) {
             return [];
         }
-
-        let cell = column.get(rowIndex);
-        if (cell == null) {
-            return []
-        }
-
         return cell;
     }
 
@@ -64,9 +60,82 @@ export default class CameraSystem {
         return entity.hasComponents(["camera", "position", "size", "collidable"]) && entity.getComponent("camera").name === this.cameraName;
     }
 
-    _updateCell(_cell) {
+    _isCell(entity) {
+        return this.cells.some(cell => {
+            return cell.id === entity.id;
+        });
+    }
+
+    _renderFullCell(cell) {
+        const collidable = cell.collidable;
+
+        cell.canvas.width = cell.size.width;
+        cell.canvas.height = cell.size.height;
+
+        for (let entityId in collidable.collisions) {
+            const entity = this.world.getEntityById(entityId);
+            const images = this.imageManager.getEntityImages(entity);
+
+            // If the image isn't renderable then don't go on.
+            if (images.length === 0) {
+                continue;
+            }
+
+            const collidablePosition = entity.getComponent("position");
+            const collidableSize = entity.getComponent("size");
+
+            const top = cell.position.y;
+            const left = cell.position.x;
+            const bottom = cell.position.y + cell.size.height;
+            const right = cell.position.x + cell.size.width;
+
+            const intersectedTop = Math.max(top, collidablePosition.y);
+            const intersectedLeft = Math.max(left, collidablePosition.x);
+            const intersectedBottom = Math.min(bottom, collidablePosition.y + collidableSize.height);
+            const intersectedRight = Math.min(right, collidablePosition.x + collidableSize.width);
+
+            let sourceX = 0;
+            let sourceY = 0;
+            let width = intersectedRight - intersectedLeft;
+            let height = intersectedBottom - intersectedTop;
+            let destinationX = intersectedLeft - cell.position.x;
+            let destinationY = intersectedTop - cell.position.y;
+
+            if (width <= 0 || height <= 0) {
+                continue;
+            }
+
+            if (collidablePosition.x < left) {
+                sourceX = left - collidablePosition.x;
+            }
+
+            if (collidablePosition.y < top) {
+                sourceY = top - collidablePosition.y;
+            }
+
+            for (let z = 0; z < images.length; z++) {
+                const image = images[z];
+
+                this.drawImageCount++;
+                cell.context.drawImage(
+                    image,
+                    sourceX,
+                    sourceY,
+                    width,
+                    height,
+                    destinationX,
+                    destinationY,
+                    width,
+                    height
+                );
+            }
+        }
+
+    }
+
+    _updateCell(_cell, _dirtyCellPositions) {
         const cell = _cell;
-        const dirtyCellPositions = this.broadPhaseCollisionData.dirtyCellPositions;
+        const dirtyCellPositions = _dirtyCellPositions;
         const cellSize = this.broadPhaseCollisionData.cellSize;
 
         for (let x = 0; x < dirtyCellPositions.length; x++) {
@@ -105,7 +174,7 @@ export default class CameraSystem {
                     let destinationX = intersectedLeft - cell.position.x;
                     let destinationY = intersectedTop - cell.position.y;
 
-                    if (width <= 0 || height <= 0 ) {
+                    if (width <= 0 || height <= 0) {
                         continue;
                     }
 
@@ -120,6 +189,7 @@ export default class CameraSystem {
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
+                        this.drawImageCount++;
                         cell.context.drawImage(
                             image,
                             sourceX,
@@ -139,8 +209,67 @@ export default class CameraSystem {
     }
 
     _updateCells() {
+        let dirtyCellPositions = this.broadPhaseCollisionData.dirtyCellPositions.slice();
+        const renderableCells = {};
+        let fullCellRenderCount = 0;
+
+        dirtyCellPositions.forEach((cellPosition) => {
+            return this._getBroadPhaseCollisionCell(cellPosition).some(({ id, collidable }) => {
+                const entity = this.world.getEntityById(id);
+                const size = entity.getComponent("size");
+                const position = entity.getComponent("position");
+
+                if (this.imageManager.isRenderable(entity) && (size.isDirty || position.isDirty)) {
+                    collidable.cellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                    collidable.lastCellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                }
+            });
+        });
+
+
         for (let x = 0; x < this.cells.length; x++) {
-            this._updateCell(this.cells[x]);
+            const cell = this.cells[x];
+            const collisions = cell.collidable.collisions;
+
+            if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
+                //console.log(`cell ${x}`);
+
+                if (fullCellRenderCount === 0) {
+                    fullCellRenderCount++;
+                    cell.isDirty = false;
+                    cell.collidable.cellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                } else {
+                    cell.isDirty = true;
+                }
+
+                //continue;
+            }
+
+            for (let y in collisions) {
+                const entity = this.world.getEntityById(y);
+                const isDirty = this.imageManager.isEntityDirty(entity);
+                if (isDirty) {
+                    const cellPositions = entity.getComponent("collidable").cellPositions;
+                    for (let z = 0; z < cellPositions; z++) {
+                        const cellPosition = cellPositions[z];
+                        const index = dirtyCellPositions.findIndex(c => c.rowIndex === cellPosition.rowIndex && c.columnIndex === cellPosition.columnIndex);
+
+                        if (index === -1) {
+                            dirtyCellPositions.push(cellPositions[z]);
+                        }
+                    }
+                }
+            }
+
+            dirtyCellPositions = Object.keys(renderableCells).map(key => renderableCells[key]);
+
+            this._updateCell(this.cells[x], dirtyCellPositions);
         }
     }
 
@@ -178,6 +307,7 @@ export default class CameraSystem {
 
                 const context = canvas.getContext("2d");
 
+                this.drawImageCount++;
                 context.drawImage(
                     cell.canvas,
                     sourceX,
@@ -237,9 +367,11 @@ export default class CameraSystem {
     }
 
     update(currentTime) {
+        this.drawImageCount = 0;
         if (this._hasCamera()) {
             this._updateCells();
             this._transferToCanvas();
         }
+        //console.log(this.drawImageCount);
     }
 }

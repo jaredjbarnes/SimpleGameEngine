@@ -199,6 +199,7 @@ class Entity {
         this.name = null;
         this.collisions = {};
         this.cellPositions = [];
+        this.lastCellPositions = [];
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
@@ -297,7 +298,7 @@ class Text {
         this.path = null;
         this.opacity = 1;
         this.zIndex = 0;
-        this.isDirty = false;
+        this.isDirty = true;
 
     }
 }
@@ -401,18 +402,18 @@ const player = new __WEBPACK_IMPORTED_MODULE_8__entities_Text__["a" /* default *
 // Systems
 const controllerSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_ControllerSystem__["a" /* default */]();
 const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_KeyboardInputSystem__["a" /* default */]();
-const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
 const movableSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__["a" /* default */]();
 const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_11__systems_FollowEntityCameraSystem__["a" /* default */]();
-const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
 const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__["a" /* default */]();
+const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
+const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
 
 const cameraCanvasCellSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_CameraCanvasCellSystem__["a" /* default */]({
     cameraName: cameraName,
-    cellSize: 1000
+    cellSize: 300
 });
 
 const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCameraSystem__["a" /* default */]({
@@ -421,21 +422,21 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCame
 });
 
 // Set up world
+world.addSystem(cameraCanvasCellSystem);
+world.addSystem(solidBodySystem);
+world.addSystem(keyboardInputSystem);
+world.addSystem(controllerSystem);
+world.addSystem(followEntityCameraSystem);
+world.addSystem(movableSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
-world.addSystem(solidBodySystem);
-world.addSystem(cameraCanvasCellSystem);
-world.addSystem(controllerSystem);
-world.addSystem(keyboardInputSystem);
-world.addSystem(movableSystem);
-world.addSystem(followEntityCameraSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 2000; x++) {
+for (let x = 0; x < 10000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__["a" /* default */](x, {
         x: getRandomNumber(-5000, 5000),
         y: getRandomNumber(-5000, 5000)
@@ -582,7 +583,10 @@ world.play();
         var self = this;
         var systems = this._systems;
 
+        this.notifySystems("beforeUpdate", [this.getTime()]);
         this.notifySystems("update", [this.getTime()]);
+        this.notifySystems("afterUpdate", [this.getTime()]);
+        
     }
 
     play() {
@@ -730,8 +734,6 @@ function invokeMethod(obj, methodName, args){
 ﻿
 
 
-//TODO: correct cells when finding dirty cells, change dirty cell positions to strings... maybe.
-
 class CellPosition {
     constructor(columnIndex, rowIndex) {
         this.rowIndex = rowIndex;
@@ -769,7 +771,7 @@ class BroadPhaseCollisionSystem {
         this.collidableEntitiesById = {};
         this.world = null;
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
         this.dirtyCellPositions = [];
         this.dependencies = ["position", "size", "collidable"];
         this.name = "Broad Phase Collision System";
@@ -891,6 +893,7 @@ class BroadPhaseCollisionSystem {
             this.addEntityToCellPositions(dirtyEntity, newCellPositions);
 
             dirtyEntity.collidable.cellPositions = newCellPositions;
+            dirtyEntity.collidable.lastCellPositions = lastCellPositions;
 
             for (let y in collisions) {
                 const collision = collisions[y];
@@ -910,16 +913,11 @@ class BroadPhaseCollisionSystem {
     }
 
     getCell({ rowIndex, columnIndex }) {
-        let column = this.grid.get(columnIndex);
-        if (column == null) {
-            column = new Map();
-            this.grid.set(columnIndex, column);
-        }
+        const key = `${columnIndex}_${rowIndex}`;
+        let cell = this.grid[key];
 
-        let cell = column.get(rowIndex);
         if (cell == null) {
-            cell = [];
-            column.set(rowIndex, cell);
+            cell = this.grid[key] = [];
         }
 
         return cell;
@@ -959,8 +957,8 @@ class BroadPhaseCollisionSystem {
     }
 
     removeCell({ columnIndex, rowIndex }) {
-        if (this.grid.has(columnIndex) && this.grid.get(columnIndex).has(rowIndex)) {
-            this.grid.get(columnIndex).delete(rowIndex);
+        if (this.grid[`${columnIndex}_${rowIndex}`]) {
+            delete this.grid[`${columnIndex}_${rowIndex}`];
         }
     }
 
@@ -1037,9 +1035,6 @@ class BroadPhaseCollisionSystem {
 
                 }
 
-                collidableEntity.position.isDirty = false;
-                collidableEntity.size.isDirty = false;
-
             }
         }
 
@@ -1059,7 +1054,7 @@ class BroadPhaseCollisionSystem {
 
     entityAdded(_entity) {
         const entity = _entity;
-        if (entity.hasComponents(this.dependencies) && this.collidableEntities.findIndex(e => e.id === entity.id) === -1) {
+        if (entity.hasComponents(this.dependencies) && this.collidableEntitiesById[entity.id] == null) {
             const collidableEntity = new CollidableEntity(entity.id);
             collidableEntity.position = entity.getComponent("position");
             collidableEntity.size = entity.getComponent("size");
@@ -1086,7 +1081,7 @@ class BroadPhaseCollisionSystem {
         this.collidableEntities = [];
         this.collidableEntitiesById = {};
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
     }
 
     entityRemoved(_entity) {
@@ -1116,6 +1111,13 @@ class BroadPhaseCollisionSystem {
         this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
         this.dirtyCellPositions = [];
     }
+
+    afterUpdate(currentTime){
+       for (let x = 0;  x  < this.dirtyEntities.length; x++){
+           this.dirtyEntities[x].size.isDirty = false;
+           this.dirtyEntities[x].position.isDirty = false;
+       }
+    }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionSystem;
 
@@ -1126,11 +1128,13 @@ class BroadPhaseCollisionSystem {
 
 "use strict";
 class BroadPhaseCollisionData {
-    constructor(){
+    constructor() {
         this.type = "broad-phase-collision-data";
+        this.collidableEntitiesById = {};
         this.dirtyCellPositions = [];
         this.grid = null;
         this.cellSize = 0;
+        this.dirtyEntities = [];
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionData;
@@ -1337,6 +1341,7 @@ class CameraCanvasCellSystem {
 
 
 
+
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
     constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
         super();
@@ -1357,6 +1362,8 @@ class CameraCanvasCellSystem {
         this.addComponent(position);
         this.addComponent(collidable);
         this.addComponent(cameraCanvasCell);
+
+
     }
 });
 
@@ -1464,13 +1471,40 @@ class ImageManager {
         return this.images[identifier] || null;
     }
 
-    getEntityImages(entity) {
+    isRenderable(_entity){
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isEntityDirty(_entity) {
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component && component.isDirty) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getEntityImages(_entity) {
+        const entity = _entity;
         const rasterizers = this.rasterizers;
-        return this.imageTypes
-            .filter((type) => {
-                return entity.hasComponent(type);
-            })
-            .map((type) => {
+        const images = [];
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
                 const rasterizer = rasterizers[type];
                 const imageId = rasterizer.getIdentity(entity);
                 let image = this.getImage(imageId);
@@ -1480,9 +1514,15 @@ class ImageManager {
                     this.saveImage(imageId, image);
                 }
 
-                return image;
-            })
-            .sort(sortByZIndex);
+                component.isDirty = false;
+                images.push(image);
+            }
+        }
+
+        images.sort(sortByZIndex);
+
+        return images;
+
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ImageManager;
@@ -1888,6 +1928,7 @@ class LineRenderer {
         this.context = canvas.getContext("2d");
         this.canvas.width = this.size.width;
         this.canvas.height = this.size.height;
+        this.isDirty = false;
     }
 }
 
@@ -1912,19 +1953,14 @@ class CameraSystem {
         this.cells = [];
         this.world = null;
         this.camera = null;
+        this.drawImageCount = 0;
     }
 
     _getBroadPhaseCollisionCell({ rowIndex, columnIndex }) {
-        let column = this.broadPhaseCollisionData.grid.get(columnIndex);
-        if (column == null) {
+        let cell = this.broadPhaseCollisionData.grid[`${columnIndex}_${rowIndex}`];
+        if (cell == null) {
             return [];
         }
-
-        let cell = column.get(rowIndex);
-        if (cell == null) {
-            return []
-        }
-
         return cell;
     }
 
@@ -1944,9 +1980,82 @@ class CameraSystem {
         return entity.hasComponents(["camera", "position", "size", "collidable"]) && entity.getComponent("camera").name === this.cameraName;
     }
 
-    _updateCell(_cell) {
+    _isCell(entity) {
+        return this.cells.some(cell => {
+            return cell.id === entity.id;
+        });
+    }
+
+    _renderFullCell(cell) {
+        const collidable = cell.collidable;
+
+        cell.canvas.width = cell.size.width;
+        cell.canvas.height = cell.size.height;
+
+        for (let entityId in collidable.collisions) {
+            const entity = this.world.getEntityById(entityId);
+            const images = this.imageManager.getEntityImages(entity);
+
+            // If the image isn't renderable then don't go on.
+            if (images.length === 0) {
+                continue;
+            }
+
+            const collidablePosition = entity.getComponent("position");
+            const collidableSize = entity.getComponent("size");
+
+            const top = cell.position.y;
+            const left = cell.position.x;
+            const bottom = cell.position.y + cell.size.height;
+            const right = cell.position.x + cell.size.width;
+
+            const intersectedTop = Math.max(top, collidablePosition.y);
+            const intersectedLeft = Math.max(left, collidablePosition.x);
+            const intersectedBottom = Math.min(bottom, collidablePosition.y + collidableSize.height);
+            const intersectedRight = Math.min(right, collidablePosition.x + collidableSize.width);
+
+            let sourceX = 0;
+            let sourceY = 0;
+            let width = intersectedRight - intersectedLeft;
+            let height = intersectedBottom - intersectedTop;
+            let destinationX = intersectedLeft - cell.position.x;
+            let destinationY = intersectedTop - cell.position.y;
+
+            if (width <= 0 || height <= 0) {
+                continue;
+            }
+
+            if (collidablePosition.x < left) {
+                sourceX = left - collidablePosition.x;
+            }
+
+            if (collidablePosition.y < top) {
+                sourceY = top - collidablePosition.y;
+            }
+
+            for (let z = 0; z < images.length; z++) {
+                const image = images[z];
+
+                this.drawImageCount++;
+                cell.context.drawImage(
+                    image,
+                    sourceX,
+                    sourceY,
+                    width,
+                    height,
+                    destinationX,
+                    destinationY,
+                    width,
+                    height
+                );
+            }
+        }
+
+    }
+
+    _updateCell(_cell, _dirtyCellPositions) {
         const cell = _cell;
-        const dirtyCellPositions = this.broadPhaseCollisionData.dirtyCellPositions;
+        const dirtyCellPositions = _dirtyCellPositions;
         const cellSize = this.broadPhaseCollisionData.cellSize;
 
         for (let x = 0; x < dirtyCellPositions.length; x++) {
@@ -1985,7 +2094,7 @@ class CameraSystem {
                     let destinationX = intersectedLeft - cell.position.x;
                     let destinationY = intersectedTop - cell.position.y;
 
-                    if (width <= 0 || height <= 0 ) {
+                    if (width <= 0 || height <= 0) {
                         continue;
                     }
 
@@ -2000,6 +2109,7 @@ class CameraSystem {
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
+                        this.drawImageCount++;
                         cell.context.drawImage(
                             image,
                             sourceX,
@@ -2019,8 +2129,67 @@ class CameraSystem {
     }
 
     _updateCells() {
+        let dirtyCellPositions = this.broadPhaseCollisionData.dirtyCellPositions.slice();
+        const renderableCells = {};
+        let fullCellRenderCount = 0;
+
+        dirtyCellPositions.forEach((cellPosition) => {
+            return this._getBroadPhaseCollisionCell(cellPosition).some(({ id, collidable }) => {
+                const entity = this.world.getEntityById(id);
+                const size = entity.getComponent("size");
+                const position = entity.getComponent("position");
+
+                if (this.imageManager.isRenderable(entity) && (size.isDirty || position.isDirty)) {
+                    collidable.cellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                    collidable.lastCellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                }
+            });
+        });
+
+
         for (let x = 0; x < this.cells.length; x++) {
-            this._updateCell(this.cells[x]);
+            const cell = this.cells[x];
+            const collisions = cell.collidable.collisions;
+
+            if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
+                //console.log(`cell ${x}`);
+
+                if (fullCellRenderCount === 0) {
+                    fullCellRenderCount++;
+                    cell.isDirty = false;
+                    cell.collidable.cellPositions.forEach((cellPosition) => {
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    });
+                } else {
+                    cell.isDirty = true;
+                }
+
+                //continue;
+            }
+
+            for (let y in collisions) {
+                const entity = this.world.getEntityById(y);
+                const isDirty = this.imageManager.isEntityDirty(entity);
+                if (isDirty) {
+                    const cellPositions = entity.getComponent("collidable").cellPositions;
+                    for (let z = 0; z < cellPositions; z++) {
+                        const cellPosition = cellPositions[z];
+                        const index = dirtyCellPositions.findIndex(c => c.rowIndex === cellPosition.rowIndex && c.columnIndex === cellPosition.columnIndex);
+
+                        if (index === -1) {
+                            dirtyCellPositions.push(cellPositions[z]);
+                        }
+                    }
+                }
+            }
+
+            dirtyCellPositions = Object.keys(renderableCells).map(key => renderableCells[key]);
+
+            this._updateCell(this.cells[x], dirtyCellPositions);
         }
     }
 
@@ -2058,6 +2227,7 @@ class CameraSystem {
 
                 const context = canvas.getContext("2d");
 
+                this.drawImageCount++;
                 context.drawImage(
                     cell.canvas,
                     sourceX,
@@ -2117,10 +2287,12 @@ class CameraSystem {
     }
 
     update(currentTime) {
+        this.drawImageCount = 0;
         if (this._hasCamera()) {
             this._updateCells();
             this._transferToCanvas();
         }
+        //console.log(this.drawImageCount);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;

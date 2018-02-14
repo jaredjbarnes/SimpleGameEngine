@@ -41,18 +41,18 @@ const player = new Text("player");
 // Systems
 const controllerSystem = new ControllerSystem();
 const keyboardInputSystem = new KeyboardInputSystem();
-const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const movableSystem = new MovableSystem();
 const followEntityCameraSystem = new FollowEntityCameraSystem();
-const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 const solidBodySystem = new SolidBodySystem();
+const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
+const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
 
 const cameraCanvasCellSystem = new CameraCanvasCellSystem({
     cameraName: cameraName,
-    cellSize: 1000
+    cellSize: 300
 });
 
 const defaultCameraSystem = new DefaultCameraSystem({
@@ -61,21 +61,21 @@ const defaultCameraSystem = new DefaultCameraSystem({
 });
 
 // Set up world
+world.addSystem(cameraCanvasCellSystem);
+world.addSystem(solidBodySystem);
+world.addSystem(keyboardInputSystem);
+world.addSystem(controllerSystem);
+world.addSystem(followEntityCameraSystem);
+world.addSystem(movableSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
-world.addSystem(solidBodySystem);
-world.addSystem(cameraCanvasCellSystem);
-world.addSystem(controllerSystem);
-world.addSystem(keyboardInputSystem);
-world.addSystem(movableSystem);
-world.addSystem(followEntityCameraSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 2000; x++) {
+for (let x = 0; x < 10000; x++) {
     const entity = new StaticText(x, {
         x: getRandomNumber(-5000, 5000),
         y: getRandomNumber(-5000, 5000)

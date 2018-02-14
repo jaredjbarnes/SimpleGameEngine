@@ -35,13 +35,40 @@ export default class ImageManager {
         return this.images[identifier] || null;
     }
 
-    getEntityImages(entity) {
+    isRenderable(_entity){
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isEntityDirty(_entity) {
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component && component.isDirty) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getEntityImages(_entity) {
+        const entity = _entity;
         const rasterizers = this.rasterizers;
-        return this.imageTypes
-            .filter((type) => {
-                return entity.hasComponent(type);
-            })
-            .map((type) => {
+        const images = [];
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
                 const rasterizer = rasterizers[type];
                 const imageId = rasterizer.getIdentity(entity);
                 let image = this.getImage(imageId);
@@ -51,8 +78,14 @@ export default class ImageManager {
                     this.saveImage(imageId, image);
                 }
 
-                return image;
-            })
-            .sort(sortByZIndex);
+                component.isDirty = false;
+                images.push(image);
+            }
+        }
+
+        images.sort(sortByZIndex);
+
+        return images;
+
     }
 }

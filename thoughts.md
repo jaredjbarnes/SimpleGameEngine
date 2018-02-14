@@ -11,3 +11,11 @@ This is also an idea that we could use with in the dyamic camera which uses enti
 * Do we want to allow for systems to change eachothers data?
 * Do we use getter and setters to protect against systems changing data they shouldn't?
 * Does immutable data fix this?
+
+BroadphaseCollision should be done on the main thread because the camera needs to know about that data any way. But we should use web workers for NarrowPhaseCollisions and other intense computation like world building.
+
+* Change the CameraCanvasCellSystem to actually be DynamicLoadingSystem, then we could use that functionality with multiple other systems. Like dynamically generating terrain.
+
+* What if we made all systems async so that web workers are used with in every system? All lifecycle events would be async.
+
+* What if we made it possible to have systems that are sync and others that are async.

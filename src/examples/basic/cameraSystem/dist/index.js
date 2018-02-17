@@ -347,7 +347,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entities_Camera__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_CameraCanvasCellSystem__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_DynamicLoadingSystem__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCameraSystem__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_ControllerSystem__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_KeyboardInputSystem__ = __webpack_require__(30);
@@ -411,7 +411,7 @@ const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_Nar
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
 
-const cameraCanvasCellSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_CameraCanvasCellSystem__["a" /* default */]({
+const dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_DynamicLoadingSystem__["a" /* default */]({
     cameraName: cameraName,
     cellSize: 300
 });
@@ -422,7 +422,7 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCame
 });
 
 // Set up world
-world.addSystem(cameraCanvasCellSystem);
+world.addSystem(dynamicLoadingSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
@@ -436,10 +436,10 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 20000; x++) {
+for (let x = 0; x < 7000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__["a" /* default */](x, {
-        x: getRandomNumber(-15000, 15000),
-        y: getRandomNumber(-15000, 15000)
+        x: getRandomNumber(-4000, 4000),
+        y: getRandomNumber(-4000, 4000)
     }, getRandomRgba());
 
     world.addEntity(entity);
@@ -1145,25 +1145,25 @@ class BroadPhaseCollisionData {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_CameraCanvasCell__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(17);
 
 
-class CameraCanvasCell {
+class Cell {
     constructor({column, row, cellSize}) {
         this.rowIndex = row;
         this.columnIndex = column;
-        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_CameraCanvasCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
+        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
         this.position = this.entity.getComponent("position");
         this.position.x = column * cellSize;
         this.position.y = row * cellSize;
     }
 }
 
-class CameraCanvasCellSystem {
+class DynamicLoadingSystem {
     constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
         this.world = null;
         this.cameraName = cameraName;
-        this.cameraCanvasCells = [];
+        this.cells = [];
         this.cellPositions = [];
         this.cellSize = cellSize;
         this.camera = {
@@ -1179,7 +1179,7 @@ class CameraCanvasCellSystem {
                 const index = (y * 3) + x;
 
                 this.cellPositions.push({ columnIndex: column, rowIndex: row });
-                this.cameraCanvasCells.push(new CameraCanvasCell({column, row, cellSize}));
+                this.cells.push(new Cell({column, row, cellSize}));
             }
         }
 
@@ -1231,7 +1231,7 @@ class CameraCanvasCellSystem {
         this._removeCamera();
     }
 
-    _updateCameraCanvasCells() {
+    _updateCells() {
         const cameraCenterX = this.camera.position.x + (this.camera.size.width / 2);
         const cameraCenterY = this.camera.position.y + (this.camera.size.height / 2);
 
@@ -1239,35 +1239,35 @@ class CameraCanvasCellSystem {
 
         const availableCanvasCells = [];
 
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            let cameraCanvasCell = this.cameraCanvasCells[x];
+        for (let x = 0; x < this.cells.length; x++) {
+            let cell = this.cells[x];
 
             let index = this.cellPositions.findIndex((cellPosition) => {
-                return cameraCanvasCell.columnIndex === cellPosition.columnIndex &&
-                    cameraCanvasCell.rowIndex === cellPosition.rowIndex;
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
             });
 
             if (index === -1) {
-                availableCanvasCells.push(cameraCanvasCell);
+                availableCanvasCells.push(cell);
             }
         }
 
         for (let x = 0; x < this.cellPositions.length; x++) {
             const cellPosition = this.cellPositions[x];
 
-            let index = this.cameraCanvasCells.findIndex((cameraCanvasCell) => {
-                return cameraCanvasCell.columnIndex === cellPosition.columnIndex &&
-                    cameraCanvasCell.rowIndex === cellPosition.rowIndex;
+            let index = this.cells.findIndex((cell) => {
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
             });
 
             if (index === -1) {
-                const cameraCanvasCell = availableCanvasCells.pop();
-                cameraCanvasCell.rowIndex = cellPosition.rowIndex;
-                cameraCanvasCell.columnIndex = cellPosition.columnIndex;
+                const cell = availableCanvasCells.pop();
+                cell.rowIndex = cellPosition.rowIndex;
+                cell.columnIndex = cellPosition.columnIndex;
 
-                cameraCanvasCell.position.x = cellPosition.columnIndex * this.cellSize;
-                cameraCanvasCell.position.y = cellPosition.rowIndex * this.cellSize;
-                cameraCanvasCell.position.isDirty = true;
+                cell.position.x = cellPosition.columnIndex * this.cellSize;
+                cell.position.y = cellPosition.rowIndex * this.cellSize;
+                cell.position.isDirty = true;
             }
         }
     }
@@ -1280,8 +1280,8 @@ class CameraCanvasCellSystem {
             this.entityAdded(entity);
         });
 
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            this.world.addEntity(this.cameraCanvasCells[x].entity);
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.addEntity(this.cells[x].entity);
         }
     }
 
@@ -1299,8 +1299,8 @@ class CameraCanvasCellSystem {
 
     deactivated() {
         this._reset();
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            this.world.removeEntity(this.cameraCanvasCells[x].entity);
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.removeEntity(this.cells[x].entity);
         }
     }
 
@@ -1318,11 +1318,11 @@ class CameraCanvasCellSystem {
 
     update(currentTime) {
         if (this._hasCamera()) {
-            this._updateCameraCanvasCells();
+            this._updateCells();
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CameraCanvasCellSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingSystem;
 
 
 /***/ }),
@@ -1334,8 +1334,7 @@ class CameraCanvasCellSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Position__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_CameraCanvasCell__ = __webpack_require__(18);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(18);
 
 
 
@@ -1356,13 +1355,12 @@ class CameraCanvasCellSystem {
         position.isDirty = true;
 
         const collidable = new __WEBPACK_IMPORTED_MODULE_3__components_Collidable__["a" /* default */]();
-        const cameraCanvasCell = new __WEBPACK_IMPORTED_MODULE_4__components_CameraCanvasCell__["a" /* default */]();
+        const dynamicLoadingCell = new __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__["a" /* default */]();
 
         this.addComponent(size);
         this.addComponent(position);
         this.addComponent(collidable);
-        this.addComponent(cameraCanvasCell);
-
+        this.addComponent(dynamicLoadingCell);
 
     }
 });
@@ -1372,12 +1370,12 @@ class CameraCanvasCellSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class CameraCanvasCell {
+class DynamicLoadingCell {
     constructor(){
-        this.type = "camera-canvas-cell"
+        this.type = "dynamic-loading-cell";
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CameraCanvasCell;
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingCell;
 
 
 /***/ }),
@@ -1968,8 +1966,8 @@ class CameraSystem {
         return this.camera != null;
     }
 
-    _isCameraCanvasCellEntity(entity) {
-        return entity.hasComponents(["camera-canvas-cell", "position", "size", "collidable"])
+    _isDynamicLoadingCellEntity(entity) {
+        return entity.hasComponents(["dynamic-loading-cell", "position", "size", "collidable"])
     }
 
     _isBroadPhaseCollisionDataEntity(entity) {
@@ -2271,7 +2269,7 @@ class CameraSystem {
     entityAdded(entity) {
         if (this._isBroadPhaseCollisionDataEntity(entity)) {
             this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
-        } else if (this._isCameraCanvasCellEntity(entity)) {
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
             this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
         } else if (this._isCameraEntity(entity)) {
             this.camera = new Camera(entity, this.canvasFactory.create());
@@ -2281,8 +2279,8 @@ class CameraSystem {
     entityRemoved(entity) {
         if (this._isBroadPhaseCollisionDataEntity(entity)) {
             this.broadPhaseCollisionData = null;
-        } else if (this._isCameraCanvasCellEntity(entity)) {
-
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
+            throw new Error("The Camera cannot run without dynamic loading cells.");
         }
     }
 

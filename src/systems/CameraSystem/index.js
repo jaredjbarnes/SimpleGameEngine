@@ -48,8 +48,8 @@ export default class CameraSystem {
         return this.camera != null;
     }
 
-    _isCameraCanvasCellEntity(entity) {
-        return entity.hasComponents(["camera-canvas-cell", "position", "size", "collidable"])
+    _isDynamicLoadingCellEntity(entity) {
+        return entity.hasComponents(["dynamic-loading-cell", "position", "size", "collidable"])
     }
 
     _isBroadPhaseCollisionDataEntity(entity) {
@@ -351,7 +351,7 @@ export default class CameraSystem {
     entityAdded(entity) {
         if (this._isBroadPhaseCollisionDataEntity(entity)) {
             this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
-        } else if (this._isCameraCanvasCellEntity(entity)) {
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
             this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
         } else if (this._isCameraEntity(entity)) {
             this.camera = new Camera(entity, this.canvasFactory.create());
@@ -361,8 +361,8 @@ export default class CameraSystem {
     entityRemoved(entity) {
         if (this._isBroadPhaseCollisionDataEntity(entity)) {
             this.broadPhaseCollisionData = null;
-        } else if (this._isCameraCanvasCellEntity(entity)) {
-
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
+            throw new Error("The Camera cannot run without dynamic loading cells.");
         }
     }
 

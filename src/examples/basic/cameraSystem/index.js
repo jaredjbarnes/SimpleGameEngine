@@ -1,7 +1,7 @@
 import World from "./../../../World";
 import Camera from "./../../../entities/Camera";
 import BroadPhaseCollisionSystem from "./../../../systems/BroadPhaseCollisionSystem";
-import CameraCanvasCellSystem from "./../../../systems/CameraCanvasCellSystem";
+import DynamicLoadingSystem from "./../../../systems/DynamicLoadingSystem";
 import DefaultCameraSystem from "./../../../systems/DefaultCameraSystem";
 import ControllerSystem from "./../../../systems/ControllerSystem";
 import KeyboardInputSystem from "./../../../systems/KeyboardInputSystem";
@@ -50,7 +50,7 @@ const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
 
-const cameraCanvasCellSystem = new CameraCanvasCellSystem({
+const dynamicLoadingSystem = new DynamicLoadingSystem({
     cameraName: cameraName,
     cellSize: 300
 });
@@ -61,7 +61,7 @@ const defaultCameraSystem = new DefaultCameraSystem({
 });
 
 // Set up world
-world.addSystem(cameraCanvasCellSystem);
+world.addSystem(dynamicLoadingSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
@@ -75,10 +75,10 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 20000; x++) {
+for (let x = 0; x < 7000; x++) {
     const entity = new StaticText(x, {
-        x: getRandomNumber(-15000, 15000),
-        y: getRandomNumber(-15000, 15000)
+        x: getRandomNumber(-4000, 4000),
+        y: getRandomNumber(-4000, 4000)
     }, getRandomRgba());
 
     world.addEntity(entity);

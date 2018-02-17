@@ -1,6 +1,6 @@
-import Entity from "../entities/CameraCanvasCell";
+import Entity from "../entities/DynamicLoadingCell";
 
-class CameraCanvasCell {
+class Cell {
     constructor({column, row, cellSize}) {
         this.rowIndex = row;
         this.columnIndex = column;
@@ -11,11 +11,11 @@ class CameraCanvasCell {
     }
 }
 
-export default class CameraCanvasCellSystem {
+export default class DynamicLoadingSystem {
     constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
         this.world = null;
         this.cameraName = cameraName;
-        this.cameraCanvasCells = [];
+        this.cells = [];
         this.cellPositions = [];
         this.cellSize = cellSize;
         this.camera = {
@@ -31,7 +31,7 @@ export default class CameraCanvasCellSystem {
                 const index = (y * 3) + x;
 
                 this.cellPositions.push({ columnIndex: column, rowIndex: row });
-                this.cameraCanvasCells.push(new CameraCanvasCell({column, row, cellSize}));
+                this.cells.push(new Cell({column, row, cellSize}));
             }
         }
 
@@ -83,7 +83,7 @@ export default class CameraCanvasCellSystem {
         this._removeCamera();
     }
 
-    _updateCameraCanvasCells() {
+    _updateCells() {
         const cameraCenterX = this.camera.position.x + (this.camera.size.width / 2);
         const cameraCenterY = this.camera.position.y + (this.camera.size.height / 2);
 
@@ -91,35 +91,35 @@ export default class CameraCanvasCellSystem {
 
         const availableCanvasCells = [];
 
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            let cameraCanvasCell = this.cameraCanvasCells[x];
+        for (let x = 0; x < this.cells.length; x++) {
+            let cell = this.cells[x];
 
             let index = this.cellPositions.findIndex((cellPosition) => {
-                return cameraCanvasCell.columnIndex === cellPosition.columnIndex &&
-                    cameraCanvasCell.rowIndex === cellPosition.rowIndex;
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
             });
 
             if (index === -1) {
-                availableCanvasCells.push(cameraCanvasCell);
+                availableCanvasCells.push(cell);
             }
         }
 
         for (let x = 0; x < this.cellPositions.length; x++) {
             const cellPosition = this.cellPositions[x];
 
-            let index = this.cameraCanvasCells.findIndex((cameraCanvasCell) => {
-                return cameraCanvasCell.columnIndex === cellPosition.columnIndex &&
-                    cameraCanvasCell.rowIndex === cellPosition.rowIndex;
+            let index = this.cells.findIndex((cell) => {
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
             });
 
             if (index === -1) {
-                const cameraCanvasCell = availableCanvasCells.pop();
-                cameraCanvasCell.rowIndex = cellPosition.rowIndex;
-                cameraCanvasCell.columnIndex = cellPosition.columnIndex;
+                const cell = availableCanvasCells.pop();
+                cell.rowIndex = cellPosition.rowIndex;
+                cell.columnIndex = cellPosition.columnIndex;
 
-                cameraCanvasCell.position.x = cellPosition.columnIndex * this.cellSize;
-                cameraCanvasCell.position.y = cellPosition.rowIndex * this.cellSize;
-                cameraCanvasCell.position.isDirty = true;
+                cell.position.x = cellPosition.columnIndex * this.cellSize;
+                cell.position.y = cellPosition.rowIndex * this.cellSize;
+                cell.position.isDirty = true;
             }
         }
     }
@@ -132,8 +132,8 @@ export default class CameraCanvasCellSystem {
             this.entityAdded(entity);
         });
 
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            this.world.addEntity(this.cameraCanvasCells[x].entity);
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.addEntity(this.cells[x].entity);
         }
     }
 
@@ -151,8 +151,8 @@ export default class CameraCanvasCellSystem {
 
     deactivated() {
         this._reset();
-        for (let x = 0; x < this.cameraCanvasCells.length; x++) {
-            this.world.removeEntity(this.cameraCanvasCells[x].entity);
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.removeEntity(this.cells[x].entity);
         }
     }
 
@@ -170,7 +170,7 @@ export default class CameraCanvasCellSystem {
 
     update(currentTime) {
         if (this._hasCamera()) {
-            this._updateCameraCanvasCells();
+            this._updateCells();
         }
     }
 }

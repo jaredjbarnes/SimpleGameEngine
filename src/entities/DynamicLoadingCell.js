@@ -2,8 +2,7 @@ import Entity from "./../Entity";
 import Position from "./../components/Position";
 import Size from "./../components/Size";
 import Collidable from "./../components/Collidable";
-import CameraCanvasCell from "../components/CameraCanvasCell";
-
+import DynamicLoadingCell from "../components/DynamicLoadingCell";
 
 export default class extends Entity {
     constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
@@ -19,13 +18,12 @@ export default class extends Entity {
         position.isDirty = true;
 
         const collidable = new Collidable();
-        const cameraCanvasCell = new CameraCanvasCell();
+        const dynamicLoadingCell = new DynamicLoadingCell();
 
         this.addComponent(size);
         this.addComponent(position);
         this.addComponent(collidable);
-        this.addComponent(cameraCanvasCell);
-
+        this.addComponent(dynamicLoadingCell);
 
     }
 }

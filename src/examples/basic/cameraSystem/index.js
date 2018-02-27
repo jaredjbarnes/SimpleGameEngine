@@ -13,6 +13,7 @@ import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSyste
 import NarrowPhaseCollisionSystem from "./../../../systems/NarrowPhaseCollisionSystem";
 import SolidBodySystem from "./../../../systems/SolidBodySystem";
 import SolidBody from "../../../components/SolidBody";
+import TerrainSystem from "./../../../systems/TerrainSystem";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
@@ -36,7 +37,7 @@ const world = new World();
 
 // Entities
 const camera = new Camera(cameraName);
-const player = new Text("player");
+const player = new Text("P");
 
 // Systems
 const controllerSystem = new ControllerSystem();
@@ -46,6 +47,7 @@ const followEntityCameraSystem = new FollowEntityCameraSystem();
 const solidBodySystem = new SolidBodySystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
+const terrainSystem = new TerrainSystem({ blockSize: 30, seed: 434333 });
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -70,18 +72,21 @@ world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
+world.addSystem(terrainSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 7000; x++) {
+for (let x = 0; x < 0; x++) {
     const entity = new StaticText(x, {
-        x: getRandomNumber(-4000, 4000),
-        y: getRandomNumber(-4000, 4000)
+        x: getRandomNumber(-3000, 3000),
+        y: getRandomNumber(-3000, 3000)
     }, getRandomRgba());
 
     world.addEntity(entity);
 }
 
 world.play();
+
+window.world = world;

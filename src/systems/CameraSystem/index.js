@@ -66,73 +66,6 @@ export default class CameraSystem {
         });
     }
 
-    _renderFullCell(cell) {
-        const collidable = cell.collidable;
-
-        cell.canvas.width = cell.size.width;
-        cell.canvas.height = cell.size.height;
-
-        for (let entityId in collidable.collisions) {
-            const entity = this.world.getEntityById(entityId);
-            const images = this.imageManager.getEntityImages(entity);
-
-            // If the image isn't renderable then don't go on.
-            if (images.length === 0) {
-                continue;
-            }
-
-            const collidablePosition = entity.getComponent("position");
-            const collidableSize = entity.getComponent("size");
-
-            const top = cell.position.y;
-            const left = cell.position.x;
-            const bottom = cell.position.y + cell.size.height;
-            const right = cell.position.x + cell.size.width;
-
-            const intersectedTop = Math.max(top, collidablePosition.y);
-            const intersectedLeft = Math.max(left, collidablePosition.x);
-            const intersectedBottom = Math.min(bottom, collidablePosition.y + collidableSize.height);
-            const intersectedRight = Math.min(right, collidablePosition.x + collidableSize.width);
-
-            let sourceX = 0;
-            let sourceY = 0;
-            let width = intersectedRight - intersectedLeft;
-            let height = intersectedBottom - intersectedTop;
-            let destinationX = intersectedLeft - cell.position.x;
-            let destinationY = intersectedTop - cell.position.y;
-
-            if (width <= 0 || height <= 0) {
-                continue;
-            }
-
-            if (collidablePosition.x < left) {
-                sourceX = left - collidablePosition.x;
-            }
-
-            if (collidablePosition.y < top) {
-                sourceY = top - collidablePosition.y;
-            }
-
-            for (let z = 0; z < images.length; z++) {
-                const image = images[z];
-
-                this.drawImageCount++;
-                cell.context.drawImage(
-                    image,
-                    sourceX,
-                    sourceY,
-                    width,
-                    height,
-                    destinationX,
-                    destinationY,
-                    width,
-                    height
-                );
-            }
-        }
-
-    }
-
     _updateCell(_cell, _dirtyCellPositions) {
         const cell = _cell;
         const dirtyCellPositions = _dirtyCellPositions;
@@ -155,7 +88,13 @@ export default class CameraSystem {
 
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
-                    const images = this.imageManager.getEntityImages(this.world.getEntityById(collidableEntity.id));
+                    const entity = this.world.getEntityById(collidableEntity.id);
+
+                    if (entity === null) {
+                        continue;
+                    }
+
+                    const images = this.imageManager.getEntityImages(entity);
 
                     // If the image isn't renderable then don't go on.
                     if (images.length === 0) {
@@ -214,8 +153,12 @@ export default class CameraSystem {
         let fullCellRenderCount = 0;
 
         dirtyCellPositions.forEach((cellPosition) => {
-            return this._getBroadPhaseCollisionCell(cellPosition).some(({ id, collidable }) => {
+            return this._getBroadPhaseCollisionCell(cellPosition).forEach(({ id, collidable }) => {
                 const entity = this.world.getEntityById(id);
+                if (entity == null){
+                    return;
+                }
+
                 const size = entity.getComponent("size");
                 const position = entity.getComponent("position");
 
@@ -253,6 +196,11 @@ export default class CameraSystem {
 
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
+
+                if (entity == null){
+                    continue;
+                }
+
                 const isDirty = this.imageManager.isEntityDirty(entity);
                 if (isDirty) {
                     const cellPositions = entity.getComponent("collidable").cellPositions;

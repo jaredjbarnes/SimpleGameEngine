@@ -1,11 +1,6 @@
+import invokeMethod from "../utilities/invokeMethod";
 
 const DEPENDENCIES = ["state"];
-
-var invokeMethod = function (obj, methodName, args) {
-    if (obj != null && typeof obj[methodName] === "function") {
-        return obj[methodName].apply(obj, args);
-    }
-};
 
 export default class StateManagerSystem {
     constructor() {

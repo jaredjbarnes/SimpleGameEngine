@@ -167,9 +167,12 @@ export default class BroadPhaseCollisionSystem {
                 const otherCollidableEntity = this.collidableEntitiesById[y];
 
                 this.releaseCollision(collision);
-                this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
 
-                delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
+                if (otherCollidableEntity) {
+                    this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
+                    delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
+                }
+
 
             }
 
@@ -220,7 +223,9 @@ export default class BroadPhaseCollisionSystem {
     }
 
     releaseCollision(collision) {
-        this.availableCollisions.push(collision);
+        if (collision != null){
+            this.availableCollisions.push(collision);
+        }
     }
 
     removeCell({ columnIndex, rowIndex }) {
@@ -233,7 +238,7 @@ export default class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
-
+ 
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const cell = this.getCell(cellPosition);
@@ -353,10 +358,13 @@ export default class BroadPhaseCollisionSystem {
 
     entityRemoved(_entity) {
         const entity = _entity;
-        const index = this.collidableEntities.findIndex(e => e.id === entity.id);
+        const collidableEntity = this.collidableEntitiesById[entity.id];
 
-        if (index > -1) {
-            const collidableEntity = this.collidableEntities[index];
+        if (collidableEntity != null) {
+            const index = this.collidableEntities.findIndex(e => e.id === entity.id);
+            for (let key in collidableEntity.collidable.collisions){
+                this.releaseCollision(collidableEntity.collidable.collisions[key]);
+            }
             let cellPositions = collidableEntity.collidable.cellPositions;
             this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             this.collidableEntities.splice(index, 1);
@@ -376,13 +384,13 @@ export default class BroadPhaseCollisionSystem {
         this.updateGridCells(this.dirtyCellPositions);
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
         this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
-        this.dirtyCellPositions = [];
     }
-
-    afterUpdate(currentTime){
-       for (let x = 0;  x  < this.dirtyEntities.length; x++){
-           this.dirtyEntities[x].size.isDirty = false;
-           this.dirtyEntities[x].position.isDirty = false;
-       }
+    
+    afterUpdate(currentTime) {
+        for (let x = 0; x < this.dirtyEntities.length; x++) {
+            this.dirtyEntities[x].size.isDirty = false;
+            this.dirtyEntities[x].position.isDirty = false;
+        }
+        this.dirtyCellPositions = [];
     }
 }

@@ -1,4 +1,6 @@
-﻿export default class ShapeRasterizer {
+﻿import stringify from "../../utilities/stringify";
+
+export default class ShapeRasterizer {
     constructor(canvasFactory) {
         this.type = "shape";
         this.canvasFactory = canvasFactory;
@@ -9,11 +11,12 @@
         return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
     }
 
-    getIdentity(entity){
+    getIdentity(entity) {
         const size = entity.getComponent("size");
         const shape = entity.getComponent("shape");
 
-        return `size=${JSON.stringify(size)}, shape=${JSON.stringify(shape)}`;
+        //return `${stringify(size)}|${stringify(shape)}`;
+        return this.convertToRgba(shape.fillColor);
     }
 
     rasterize(entity) {

@@ -1,4 +1,6 @@
-﻿export default class World {
+﻿import invokeMethod from "./utilities/invokeMethod";
+
+export default class World {
     constructor(size) {
         var self = this;
 
@@ -33,13 +35,6 @@
 
     }
 
-    _invokeMethod(obj, methodName, args) {
-        args = Array.isArray(args) ? args : [];
-        if (obj && typeof obj[methodName] === "function") {
-            return obj[methodName].apply(obj, args);
-        }
-    }
-
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
@@ -52,7 +47,7 @@
         var systems = this._systems;
 
         systems.forEach(function (system) {
-            self._invokeMethod(system, methodName, args);
+            invokeMethod(system, methodName, args);
         });
     }
 
@@ -62,8 +57,8 @@
 
         if (index === -1) {
             systems.push(system);
-            this._invokeMethod(system, "activated", [this]);
-            this._invokeMethod(system, "systemAdded", [system]);
+            invokeMethod(system, "activated", [this]);
+            invokeMethod(system, "systemAdded", [system]);
         }
     }
 
@@ -89,8 +84,8 @@
 
         if (index > -1) {
             systems.splice(index, 1);
-            this._invokeMethod(system, "deactivated", [this]);
-            this._invokeMethod(system, "systemRemoved", [system]);
+            invokeMethod(system, "deactivated", [this]);
+            invokeMethod(system, "systemRemoved", [system]);
 
         }
     }

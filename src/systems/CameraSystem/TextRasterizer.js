@@ -1,4 +1,6 @@
-﻿export default class TextRasterizer {
+﻿import stringify from "../../utilities/stringify";
+
+export default class TextRasterizer {
     constructor(canvasFactory) {
         this.type = "text";
         this.fontCache = {};

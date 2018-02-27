@@ -30,8 +30,8 @@ export default class extends Entity {
 
         part.points.push(
             { x: 0, y: 0 },
-            { x: 100, y: 0 },
-            { x: 100, y: 30 },
+            { x: 30, y: 0 },
+            { x: 30, y: 30 },
             { x: 0, y: 30 }
         );
 
@@ -42,7 +42,7 @@ export default class extends Entity {
         textTexture.verticalAlignment = "middle";
         textTexture.horizontalAlignment = "center"
 
-        size.width = 100;
+        size.width = 30;
         size.height = 30;
 
         position.isDirty = true;
@@ -53,8 +53,8 @@ export default class extends Entity {
         shape.fillColor.red = 100;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 100, y: 0 },
-            { x: 100, y: 30 },
+            { x: 30, y: 0 },
+            { x: 30, y: 30 },
             { x: 0, y: 30 },
             { x: 0, y: 0 }
         );

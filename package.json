@@ -18,7 +18,10 @@
     "copy-webpack-plugin": "^4.0.1",
     "webpack": "^3.5.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "noisejs": "^2.1.0",
+    "proc-noise": "0.0.1"
+  },
   "author": "Jared J Barnes",
   "license": "MIT"
 }

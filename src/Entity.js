@@ -1,6 +1,5 @@
-﻿import * as util from "./util";
-
-var createGuid = util.createGuid;
+﻿import createGuid from "./utilities/createGuid";
+import invokeMethod from "./utilities/invokeMethod";
 
 export default class Entity {
     constructor() {
@@ -8,13 +7,6 @@ export default class Entity {
         this._components = {};
         this.id = createGuid();
         this.type = null;
-    }
-
-    _invokeMethod(obj, methodName, args) {
-        args = Array.isArray(args) ? args : [];
-        if (obj && typeof obj[methodName] === "function") {
-            return obj[methodName].apply(obj, args);
-        }
     }
 
     setDelegate(delegate) {
@@ -33,7 +25,7 @@ export default class Entity {
         components[type] = component;
 
         if (delegate != null) {
-            this._invokeMethod(delegate, "componentAdded", [this, component]);
+            invokeMethod(delegate, "componentAdded", [this, component]);
         }
     }
 
@@ -51,7 +43,7 @@ export default class Entity {
             components[component.type] = null;
 
             if (delegate != null) {
-                this._invokeMethod(delegate, "componentRemoved", [this, component]);
+                invokeMethod(delegate, "componentRemoved", [this, component]);
             }
         }
 

@@ -49,6 +49,14 @@ export default class Entity {
 
     }
 
+    removeComponentByType(type) {
+        const component = components[type];
+
+        if (component != null) {
+            this.removeComponent(component);
+        }
+    }
+
     getComponent(type) {
         return this._components[type] || null;
     }

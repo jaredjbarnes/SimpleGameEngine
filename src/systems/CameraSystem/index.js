@@ -89,6 +89,7 @@ export default class CameraSystem {
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
                     const entity = this.world.getEntityById(collidableEntity.id);
+                    const transform = entity.getComponent("transform");
 
                     if (entity === null) {
                         continue;
@@ -125,6 +126,13 @@ export default class CameraSystem {
                         sourceY = top - collidableEntity.position.y;
                     }
 
+                    if (transform != null) {
+                        cell.context.scale(transform.scale.x, transform.scale.y);
+                        cell.context.translate(transform.translate.x, transform.translate.y);
+                        cell.context.globalAlpha = transform.opacity;
+                        cell.context.rotate(transform.rotate * Math.PI / 180);
+                    }
+
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
@@ -142,6 +150,12 @@ export default class CameraSystem {
                         );
                     }
 
+                    if (transform != null) {
+                        // Set transform back.
+                        cell.context.globalAlpha = 1;
+                        cell.context.setTransform(1, 0, 0, 1, 0, 0);
+                    }
+
                 }
             }
         }
@@ -155,7 +169,7 @@ export default class CameraSystem {
         dirtyCellPositions.forEach((cellPosition) => {
             return this._getBroadPhaseCollisionCell(cellPosition).forEach(({ id, collidable }) => {
                 const entity = this.world.getEntityById(id);
-                if (entity == null){
+                if (entity == null) {
                     return;
                 }
 
@@ -197,7 +211,7 @@ export default class CameraSystem {
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
 
-                if (entity == null){
+                if (entity == null) {
                     continue;
                 }
 

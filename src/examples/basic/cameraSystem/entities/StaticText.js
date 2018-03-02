@@ -6,6 +6,7 @@ import Collidable from "./../../../../components/Collidable";
 import { NarrowPhaseCollidable, Part } from "./../../../../components/NarrowPhaseCollidable";
 import Shape from "./../../../../components/Shape";
 import SolidBody from "./../../../../components/SolidBody";
+import Transform from "../../../../components/Transform";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {

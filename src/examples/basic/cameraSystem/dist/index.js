@@ -69,7 +69,7 @@
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(5);
 ﻿
 
 
@@ -119,6 +119,14 @@ class Entity {
             }
         }
 
+    }
+
+    removeComponentByType(type) {
+        const component = components[type];
+
+        if (component != null) {
+            this.removeComponent(component);
+        }
     }
 
     getComponent(type) {
@@ -203,6 +211,53 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class SolidBody {
+    constructor() {
+        this.type = "solid-body";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
+    args = Array.isArray(args)? args: [];
+   if (obj != null && typeof obj[methodName] === "function"){
+       return obj[methodName].apply(obj, args);
+   }
+});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const stringify = (obj) => {
+    if (typeof obj === "object" && obj != null) {
+        let result = "";
+        for (let x in obj) {
+            if (typeof obj[x] === "object" && obj[x] != null) {
+                result += `{${stringify(obj[x])}}`;
+            } else {
+                result += `${x}:${obj[x]},`;
+            }
+        }
+        return result;
+    }
+    return null;
+};
+
+/* unused harmony default export */ var _unused_webpack_default_export = (stringify);
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 class Text {
     constructor() {
         this.type = "text";
@@ -236,7 +291,20 @@ class Text {
 
 
 /***/ }),
-/* 5 */
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class KeyboardController {
+    constructor() {
+        this.type = "keyboard-controller";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -270,66 +338,6 @@ class Text {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class SolidBody {
-    constructor() {
-        this.type = "solid-body";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
-    args = Array.isArray(args)? args: [];
-   if (obj != null && typeof obj[methodName] === "function"){
-       return obj[methodName].apply(obj, args);
-   }
-});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const stringify = (obj) => {
-    if (typeof obj === "object" && obj != null) {
-        let result = "";
-        for (let x in obj) {
-            if (typeof obj[x] === "object" && obj[x] != null) {
-                result += `{${stringify(obj[x])}}`;
-            } else {
-                result += `${x}:${obj[x]},`;
-            }
-        }
-        return result;
-    }
-    return null;
-};
-
-/* unused harmony default export */ var _unused_webpack_default_export = (stringify);
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class KeyboardController {
-    constructor() {
-        this.type = "keyboard-controller";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
 
 
 /***/ }),
@@ -381,13 +389,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Text__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_FollowEntityCameraSystem__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_SolidBody__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__systems_TerrainSystem__ = __webpack_require__(43);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_SolidBody__ = __webpack_require__(4);
 
 
 
@@ -436,7 +442,6 @@ const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_11__systems_Follo
 const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
 const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
-const terrainSystem = new __WEBPACK_IMPORTED_MODULE_15__systems_TerrainSystem__["a" /* default */]({ blockSize: 30, seed: 434333 });
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -461,13 +466,12 @@ world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
-world.addSystem(terrainSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 0; x++) {
+for (let x = 0; x < 3000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__["a" /* default */](x, {
         x: getRandomNumber(-3000, 3000),
         y: getRandomNumber(-3000, 3000)
@@ -486,7 +490,7 @@ window.world = world;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
 ﻿
 
 class World {
@@ -1801,7 +1805,7 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(6);
 ﻿
 
 class ShapeRasterizer {
@@ -1872,7 +1876,7 @@ class ShapeRasterizer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(6);
 ﻿
 
 class TextRasterizer {
@@ -2045,6 +2049,7 @@ class CameraSystem {
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
                     const entity = this.world.getEntityById(collidableEntity.id);
+                    const transform = entity.getComponent("transform");
 
                     if (entity === null) {
                         continue;
@@ -2081,6 +2086,13 @@ class CameraSystem {
                         sourceY = top - collidableEntity.position.y;
                     }
 
+                    if (transform != null) {
+                        cell.context.scale(transform.scale.x, transform.scale.y);
+                        cell.context.translate(transform.translate.x, transform.translate.y);
+                        cell.context.globalAlpha = transform.opacity;
+                        cell.context.rotate(transform.rotate * Math.PI / 180);
+                    }
+
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
@@ -2098,6 +2110,12 @@ class CameraSystem {
                         );
                     }
 
+                    if (transform != null) {
+                        // Set transform back.
+                        cell.context.globalAlpha = 1;
+                        cell.context.setTransform(1, 0, 0, 1, 0, 0);
+                    }
+
                 }
             }
         }
@@ -2111,7 +2129,7 @@ class CameraSystem {
         dirtyCellPositions.forEach((cellPosition) => {
             return this._getBroadPhaseCollisionCell(cellPosition).forEach(({ id, collidable }) => {
                 const entity = this.world.getEntityById(id);
-                if (entity == null){
+                if (entity == null) {
                     return;
                 }
 
@@ -2153,7 +2171,7 @@ class CameraSystem {
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
 
-                if (entity == null){
+                if (entity == null) {
                     continue;
                 }
 
@@ -2516,15 +2534,15 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(4);
 
 
 
@@ -2658,11 +2676,11 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(4);
 
 
 
@@ -3422,417 +3440,6 @@ class SolidBodySystem {
 
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SolidBodySystem;
-
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Terrain__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Shape__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Text__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Noise__ = __webpack_require__(45);
-
-
-
-
-
-
-
-
-
-class TerrainEntity extends __WEBPACK_IMPORTED_MODULE_6__Entity__["a" /* default */] {
-    constructor() {
-        super();
-
-        const position = new __WEBPACK_IMPORTED_MODULE_3__components_Position__["a" /* default */]();
-        const size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
-        const collidable = new __WEBPACK_IMPORTED_MODULE_1__components_Collidable__["a" /* default */]();
-        const terrain = new __WEBPACK_IMPORTED_MODULE_0__components_Terrain__["a" /* default */]();
-        const shape = new __WEBPACK_IMPORTED_MODULE_4__components_Shape__["a" /* default */]();
-
-        this.addComponent(position);
-        this.addComponent(size);
-        this.addComponent(collidable);
-        this.addComponent(terrain);
-        this.addComponent(shape);
-    }
-
-    initialize({ x, y }, { terrainHeight, blockSize }) {
-        const position = this.getComponent("position");
-        const size = this.getComponent("size");
-        const shape = this.getComponent("shape");
-        const terrain = this.getComponent("terrain");
-
-        position.x = x;
-        position.y = y;
-        position.isDirty = true;
-
-        size.width = blockSize;
-        size.height = blockSize;
-
-        if (terrainHeight < 0.2) {
-
-            let red = Math.floor(terrainHeight * 7 * 91);
-            let green = Math.floor(terrainHeight * 7 * 132);
-            let blue = Math.floor(terrainHeight * 7 * 198);
-
-            red = red < 91 ? 91 : red;
-            green = green < 132 ? 132 : green;
-            blue = blue < 198 ? 198 : blue;
-
-            shape.fillColor.red = red;
-            shape.fillColor.green = green;
-            shape.fillColor.blue = blue;
-        } else if (terrainHeight >= 0.2 && terrainHeight < 0.25) {
-            let red = Math.floor(terrainHeight * 4 * 246);
-            let green = Math.floor(terrainHeight * 4 * 216);
-            let blue = Math.floor(terrainHeight * 4 * 176);
-
-            red = red > 246 ? 246 : red;
-            green = green > 216 ? 216 : green;
-            blue = blue > 176 ? 176 : blue;
-
-            shape.fillColor.red = red;
-            shape.fillColor.green = green;
-            shape.fillColor.blue = blue;
-
-        } else if (terrainHeight >= 0.25) {
-            shape.fillColor.red = Math.floor(terrainHeight * 73);
-            shape.fillColor.green = Math.floor(terrainHeight * 156);
-            shape.fillColor.blue = Math.floor(terrainHeight * 74);
-
-            let red = Math.floor(terrainHeight * 2 * 73);
-            let green = Math.floor(terrainHeight * 2 * 156);
-            let blue = Math.floor(terrainHeight * 2 * 74);
-
-            red = red > 73 ? 73 : red;
-            green = green > 156 ? 156 : green;
-            blue = blue > 74 ? 74 : blue;
-
-            shape.fillColor.red = red;
-            shape.fillColor.green = green;
-            shape.fillColor.blue = blue;
-        }
-
-        terrain.height = terrainHeight;
-
-        // shape.fillColor.red = Math.floor(terrainHeight * 255);
-        // shape.fillColor.green = Math.floor(terrainHeight * 255);
-        // shape.fillColor.blue = Math.floor(terrainHeight * 255);
-        //shape.isDirty = true;
-
-        shape.points.push(
-            { x: 0, y: 0 },
-            { x: blockSize, y: 0 },
-            { x: blockSize, y: blockSize },
-            { x: 0, y: blockSize },
-            { x: 0, y: 0 },
-        )
-
-    }
-}
-
-class TerrainSystem {
-    constructor({ blockSize = 30, seed = 0 }) {
-        this.world = null;
-        this.dynamicLoadingCells = [];
-        this.terrainCells = [];
-        this.availableTerrain = [];
-        this.broadPhaseCollisitionData = null;
-        this.noise = new __WEBPACK_IMPORTED_MODULE_7__Noise__["a" /* default */]();
-        this.blockSize = blockSize;
-    }
-
-    addTerrain(dynamicLoadingCell) {
-        const size = dynamicLoadingCell.getComponent("size");
-        const position = dynamicLoadingCell.getComponent("position");
-        const width = size.width / this.blockSize;
-        const height = size.height / this.blockSize;
-        const offsetX = position.x / this.blockSize;
-        const offsetY = position.y / this.blockSize;
-        const index = this.dynamicLoadingCells.indexOf(dynamicLoadingCell);
-
-        for (let row = 0; row < height; row++) {
-            for (let column = 0; column < width; column++) {
-
-                let x = (offsetX + column);
-                let y = (offsetY + row);
-
-                const terrainHeight = Math.abs(this.noise.perlin(x / 30, y / 30));
-
-                const entity = this.createTerrain(
-                    {
-                        x: x * this.blockSize,
-                        y: y * this.blockSize
-                    },
-                    {
-                        terrainHeight: terrainHeight,
-                        blockSize: this.blockSize
-                    }
-                );
-
-
-                if (!Array.isArray(this.terrainCells[index])) {
-                    this.terrainCells[index] = [];
-                }
-
-                this.world.addEntity(entity);
-                this.terrainCells[index].push(entity);
-            }
-        }
-    }
-
-    activated(world) {
-        this.world = world;
-        this.world.getEntities().forEach((entity) => {
-            this.entityAdded(entity);
-        });
-    }
-
-    componentAdded(entity, component) {
-        this.entityAdded(entity);
-    }
-
-    componentRemoved(entity, component) {
-        this.entityRemoved(entity);
-    }
-
-    createTerrain(newPosition, terrianData) {
-        let entity;
-        if (this.availableTerrain.length > 0) {
-            entity = this.availableTerrain.pop();
-        } else {
-            entity = new TerrainEntity(newPosition, terrianData);
-        }
-
-        entity.initialize(newPosition, terrianData);
-        return entity;
-    }
-
-    deactivated(world) {
-        this.world = null;
-        this.dynamicLoadingCells = [];
-        this.broadPhaseCollisitionData = null;
-    }
-
-    entityAdded(entity) {
-        if (this.isDynamicLoadingCellEntity(entity)) {
-            const index = this.dynamicLoadingCells.indexOf(entity);
-
-            if (index === -1) {
-                this.dynamicLoadingCells.push(entity);
-            }
-        } else if (this.isBroadPhaseCollisionDataEntity(entity)) {
-            this.broadPhaseCollisitionData = entity.getComponent("broad-phase-collision-data");
-        }
-    }
-
-    entityRemoved(entity) {
-        if (this.isDynamicLoadingCellEntity(entity)) {
-            const index = this.dynamicLoadingCells.indexOf(entity);
-
-            if (index > -1) {
-                this.dynamicLoadingCells.splice(index, 1);
-            }
-        } else if (this.isBroadPhaseCollisionDataEntity(entity)) {
-            throw new Error("Terrain cannot be build without broadphaseCollisionData.");
-        }
-    }
-
-    getEntitiesInCellPosition(cellPosition) {
-        return this.broadPhaseCollisitionData.grid[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] || [];
-    }
-
-    getLastCellPositions(entity) {
-        return entity.getComponent("collidable").lastCellPositions;
-    }
-
-    isCellDirty(entity) {
-        return entity.getComponent("position").isDirty;
-    }
-
-    isBroadPhaseCollisionDataEntity(entity) {
-        return entity.hasComponents(["broad-phase-collision-data"]);
-    }
-
-    isDynamicLoadingCellEntity(entity) {
-        return entity.hasComponents(["dynamic-loading-cell", "size", "position", "collidable"]);
-    }
-
-    releaseTerrainEntity(entity) {
-        this.world.removeEntity(entity);
-        this.availableTerrain.push(entity);
-    }
-
-    removeTerrain(dynamicLoadingCell) {
-        const index = this.dynamicLoadingCells.indexOf(dynamicLoadingCell);
-
-        if (index > -1 && Array.isArray(this.terrainCells[index])) {
-            this.terrainCells[index].forEach((entity) => {
-                this.releaseTerrainEntity(entity)
-            })
-        }
-    }
-
-    update(currentTime) {
-        if (this.broadPhaseCollisitionData != null) {
-            for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
-                const dynamicLoadingCell = this.dynamicLoadingCells[x];
-
-                if (this.isCellDirty(dynamicLoadingCell)) {
-                    this.removeTerrain(dynamicLoadingCell);
-                    this.addTerrain(dynamicLoadingCell);
-                }
-
-            }
-        }
-    }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TerrainSystem;
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Terrain {
-    constructor(){
-        this.type = "terrain";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Terrain;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/*
- * A speed-improved perlin and simplex noise algorithms for 2D.
- *
- * Based on example code by Stefan Gustavson (stegu@itn.liu.se).
- * Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
- * Better rank ordering method by Stefan Gustavson in 2012.
- * Converted to Javascript by Joseph Gentle.
- *
- * Version 2012-03-09
- *
- * This code was placed in the public domain by its original author,
- * Stefan Gustavson. rowou may use it as you see fit, but
- * attribution is appreciated.
- *
- */
-
-class Vector {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    dot(x, y) {
-        return this.x * x + this.y * y;
-    }
-}
-
-class Noise {
-    constructor(seed) {
-        this.directionalVectors = [new Vector(1, 1), new Vector(-1, 1), new Vector(1, -1), new Vector(-1, -1),
-        new Vector(1, 0), new Vector(-1, 0), new Vector(1, 0), new Vector(-1, 0),
-        new Vector(0, 1), new Vector(0, -1), new Vector(0, 1), new Vector(0, -1)];
-
-        this.whiteNoise = [151, 160, 137, 91, 90, 15,
-            131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
-            190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
-            88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166,
-            77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244,
-            102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196,
-            135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250, 124, 123,
-            5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42,
-            223, 183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9,
-            129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228,
-            251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239, 107,
-            49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254,
-            138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180];
-        // To remove the need for index wrapping, double the permutation table length
-        this.permutation = new Array(512);
-        this.vectorNoise = new Array(512);
-
-        this.seed(seed || 0);
-    }
-
-    seed(seed) {
-        if (seed > 0 && seed < 1) {
-            // Scale the seed out
-            seed *= 65536;
-        }
-
-        seed = Math.floor(seed);
-        if (seed < 256) {
-            seed |= seed << 8;
-        }
-
-        let whiteNoise = this.whiteNoise;
-        for (let i = 0; i < 256; i++) {
-            let value;
-            if (i & 1) {
-                value = whiteNoise[i] ^ (seed & 255);
-            } else {
-                value = whiteNoise[i] ^ ((seed >> 8) & 255);
-            }
-
-            let permutation = this.permutation;
-            let vectorNoise = this.vectorNoise;
-            permutation[i] = permutation[i + 256] = value;
-            vectorNoise[i] = vectorNoise[i + 256] = this.directionalVectors[value % 12];
-        }
-    }
-
-    fade(t) {
-        return t * t * t * (t * (t * 6 - 15) + 10);
-    }
-
-    lerp(a, b, t) {
-        return (1 - t) * a + t * b;
-    }
-
-    perlin(x, y) {
-        // Find unit grid cell containing point
-        let column = Math.floor(x), row = Math.floor(y);
-        // Get relative xy coordinates of point within that cell
-        x = x - column; y = y - row;
-        // Wrap the integer cells at 255 (smaller integer period can be introduced here)
-        column = column & 255; row = row & 255;
-
-        // Calculate noise contributions from each of the four corners
-        let permutation = this.permutation;
-        let vectorNoise = this.vectorNoise;
-        let corner1 = vectorNoise[column + permutation[row]].dot(x, y);
-        let corner2 = vectorNoise[column + permutation[row + 1]].dot(x, y - 1);
-        let corner3 = vectorNoise[column + 1 + permutation[row]].dot(x - 1, y);
-        let corner4 = vectorNoise[column + 1 + permutation[row + 1]].dot(x - 1, y - 1);
-
-        // Compute the fade curve value for x
-        let u = this.fade(x);
-
-        // Interpolate the four results
-        return this.lerp(
-            this.lerp(corner1, corner3, u),
-            this.lerp(corner2, corner4, u),
-            this.fade(y));
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Noise);
 
 
 

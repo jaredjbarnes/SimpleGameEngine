@@ -7,6 +7,7 @@ import Entity from "../../Entity";
 import Noise from "./Noise";
 import Validator from "../../utilities/Validator";
 import WorldGenerationCell from "../../components/WorldGenerationCell";
+import { start } from "repl";
 
 const WORLD_PERLIN_SCALING_FACTOR = 30000;
 const BIOM_PERLIN_SCALING_FACTOR = 100;
@@ -85,7 +86,7 @@ export default class WorldGenerationSystem {
                 this.dynamicLoadingCells.splice(index, 1);
             }
         } else if (this.isBroadPhaseCollisionDataEntity(entity)) {
-            throw new Error("Terrain cannot be build without broadphaseCollisionData.");
+            throw new Error("World generation cannot be built without broadphaseCollisionData.");
         }
     }
 
@@ -142,10 +143,27 @@ export default class WorldGenerationSystem {
                 const worldElevation = this.noise.perlin(x / WORLD_PERLIN_SCALING_FACTOR, y / BIOM_PERLIN_SCALING_FACTOR);
                 const biomElevation = this.noise.perlin(x / BIOM_PERLIN_SCALING_FACTOR, y / WORLD_PERLIN_SCALING_FACTOR);
 
-                this.bioms.filter((biom) => {
+                const biomOpacities = this.bioms.filter((biom) => {
                     return worldElevation >= biom.range.min && worldElevation <= biom.range.max;
-                }).forEach((biom) => {
+                }).map((biom) => {
+                    const span = biom.range.max - biom.range.min;
+                    const center = (span / 2);
+                    const normalizedWorldElevation = worldElevation - biom.range.min;
+                    const opacity = 1 - (Math.abs(center - normalizedWorldElevation) / normalizedWorldElevation);
+
+                    return { biom, opacity };
+                });
+
+                biomOpacities.sort((biomDataA, biomDataB) => {
+                    return biomDataA.opacity - biomDataB.opacity;
+                })
+
+                activeBiomDistances.forEach((biomDistances) => {
+                    const biom = biomDistances.biom;
+                    const opacity = maxDistance / biomDistances.distance;
+
                     if (!worldGenerationCell.loadedGround) {
+
                         const entities = biom.createGroundEntites({
                             elevation: biomElevation,
                             columnIndex: x,

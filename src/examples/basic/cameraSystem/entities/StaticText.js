@@ -6,7 +6,7 @@ import Collidable from "./../../../../components/Collidable";
 import { NarrowPhaseCollidable, Part } from "./../../../../components/NarrowPhaseCollidable";
 import Shape from "./../../../../components/Shape";
 import SolidBody from "./../../../../components/SolidBody";
-import Transform from "../../../../components/Transform";
+import Opacity from "../../../../components/Opacity";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {
@@ -21,6 +21,9 @@ export default class StaticText extends Entity {
         const part = new Part();
         const shape = new Shape();
         const solidBody = new SolidBody();
+        const opacity = new Opacity();
+
+        opacity.value = Math.random();
 
         narrowPhaseCollidable.parts.push(part);
 
@@ -61,5 +64,6 @@ export default class StaticText extends Entity {
         this.addComponent(shape);
         this.addComponent(solidBody);
         this.addComponent(narrowPhaseCollidable);
+        this.addComponent(opacity);
     }
 }

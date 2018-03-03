@@ -390,9 +390,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Text__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_FollowEntityCameraSystem__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_FollowEntityCameraSystem__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_SolidBody__ = __webpack_require__(4);
 
 
@@ -2049,7 +2049,7 @@ class CameraSystem {
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
                     const entity = this.world.getEntityById(collidableEntity.id);
-                    const transform = entity.getComponent("transform");
+                    const opacity = entity.getComponent("opacity");
 
                     if (entity === null) {
                         continue;
@@ -2086,11 +2086,8 @@ class CameraSystem {
                         sourceY = top - collidableEntity.position.y;
                     }
 
-                    if (transform != null) {
-                        cell.context.scale(transform.scale.x, transform.scale.y);
-                        cell.context.translate(transform.translate.x, transform.translate.y);
-                        cell.context.globalAlpha = transform.opacity;
-                        cell.context.rotate(transform.rotate * Math.PI / 180);
+                    if (opacity != null) {
+                        cell.context.globalAlpha = opacity.value;
                     }
 
                     for (let z = 0; z < images.length; z++) {
@@ -2110,10 +2107,8 @@ class CameraSystem {
                         );
                     }
 
-                    if (transform != null) {
-                        // Set transform back.
+                    if (opacity != null) {
                         cell.context.globalAlpha = 1;
-                        cell.context.setTransform(1, 0, 0, 1, 0, 0);
                     }
 
                 }
@@ -2681,6 +2676,8 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Opacity__ = __webpack_require__(39);
+
 
 
 
@@ -2703,6 +2700,9 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         const part = new __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__["b" /* Part */]();
         const shape = new __WEBPACK_IMPORTED_MODULE_6__components_Shape__["a" /* default */]();
         const solidBody = new __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__["a" /* default */]();
+        const opacity = new __WEBPACK_IMPORTED_MODULE_8__components_Opacity__["a" /* default */]();
+
+        opacity.value = Math.random();
 
         narrowPhaseCollidable.parts.push(part);
 
@@ -2743,6 +2743,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
         this.addComponent(shape);
         this.addComponent(solidBody);
         this.addComponent(narrowPhaseCollidable);
+        this.addComponent(opacity);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = StaticText;
@@ -2750,6 +2751,20 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */
 
 /***/ }),
 /* 39 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Opacity {
+    constructor(){
+        this.type = "opacity";
+        this.value = 1;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Opacity;
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2810,11 +2825,11 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(42);
 
 
 const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position", "size"];
@@ -3263,7 +3278,7 @@ class NarrowPhaseCollisionSystem {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3373,7 +3388,7 @@ class Vector {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

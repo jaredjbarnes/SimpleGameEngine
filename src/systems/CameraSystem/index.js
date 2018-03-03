@@ -89,7 +89,7 @@ export default class CameraSystem {
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
                     const entity = this.world.getEntityById(collidableEntity.id);
-                    const transform = entity.getComponent("transform");
+                    const opacity = entity.getComponent("opacity");
 
                     if (entity === null) {
                         continue;
@@ -126,11 +126,8 @@ export default class CameraSystem {
                         sourceY = top - collidableEntity.position.y;
                     }
 
-                    if (transform != null) {
-                        cell.context.scale(transform.scale.x, transform.scale.y);
-                        cell.context.translate(transform.translate.x, transform.translate.y);
-                        cell.context.globalAlpha = transform.opacity;
-                        cell.context.rotate(transform.rotate * Math.PI / 180);
+                    if (opacity != null) {
+                        cell.context.globalAlpha = opacity.value;
                     }
 
                     for (let z = 0; z < images.length; z++) {
@@ -150,10 +147,8 @@ export default class CameraSystem {
                         );
                     }
 
-                    if (transform != null) {
-                        // Set transform back.
+                    if (opacity != null) {
                         cell.context.globalAlpha = 1;
-                        cell.context.setTransform(1, 0, 0, 1, 0, 0);
                     }
 
                 }

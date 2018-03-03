@@ -143,7 +143,7 @@ export default class WorldGenerationSystem {
                 const worldElevation = this.noise.perlin(x / WORLD_PERLIN_SCALING_FACTOR, y / BIOM_PERLIN_SCALING_FACTOR);
                 const biomElevation = this.noise.perlin(x / BIOM_PERLIN_SCALING_FACTOR, y / WORLD_PERLIN_SCALING_FACTOR);
 
-                const biomOpacities = this.bioms.filter((biom) => {
+                this.bioms.filter((biom) => {
                     return worldElevation >= biom.range.min && worldElevation <= biom.range.max;
                 }).map((biom) => {
                     const span = biom.range.max - biom.range.min;
@@ -152,22 +152,35 @@ export default class WorldGenerationSystem {
                     const opacity = 1 - (Math.abs(center - normalizedWorldElevation) / normalizedWorldElevation);
 
                     return { biom, opacity };
-                });
-
-                biomOpacities.sort((biomDataA, biomDataB) => {
+                }).sort((biomDataA, biomDataB) => {
                     return biomDataA.opacity - biomDataB.opacity;
-                })
-
-                activeBiomDistances.forEach((biomDistances) => {
-                    const biom = biomDistances.biom;
+                }).forEach((biomData, index) => {
+                    const biom = biomData.biom;
                     const opacity = maxDistance / biomDistances.distance;
+
+                    if (index === 0) {
+                        opacity = 1;
+                    }
 
                     if (!worldGenerationCell.loadedGround) {
 
                         const entities = biom.createGroundEntites({
-                            elevation: biomElevation,
                             columnIndex: x,
-                            rowIndex: y
+                            rowIndex: y,
+                            scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
+                            noise: this.noise
+                        });
+
+                        entities.forEach((entity) => {
+                            let opacityComponent = entity.getComponent("opacity");
+                            
+                            if (opacityComponent == null) {
+                                opacityComponent = new Opacity();
+                                entity.addCompnonent(opacityComponent);
+                            }
+
+                            opacityComponent.value = opacity;
+
                         });
 
                         worldGenerationCell.loadedGround = true;

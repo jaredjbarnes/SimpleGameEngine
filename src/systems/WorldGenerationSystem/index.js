@@ -289,6 +289,14 @@ export default class WorldGenerationSystem {
             throw new Error("Bioms need to have a addGroundEntities function.");
         }
 
+        if (!validator.validate("addPropEntities").isFunction()) {
+            throw new Error("Bioms need to have a addPropEntities function.");
+        }
+
+        if (!validator.validate("addCreatureEntities").isFunction()) {
+            throw new Error("Bioms need to have a addCreatureEntities function.");
+        }
+
         if (!validator.validate("removeEntities").isFunction()) {
             throw new Error("Bioms need to have a removeEntities function.");
         }

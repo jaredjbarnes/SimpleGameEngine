@@ -2121,9 +2121,16 @@ class CameraSystem {
         const renderableCells = {};
         let fullCellRenderCount = 0;
 
-        dirtyCellPositions.forEach((cellPosition) => {
-            return this._getBroadPhaseCollisionCell(cellPosition).forEach(({ id, collidable }) => {
+        for (let x = 0; x < dirtyCellPositions.length; x++) {
+            const cellPosition = dirtyCellPositions[x];
+            const collidableEntities = this._getBroadPhaseCollisionCell(cellPosition);
+
+            for (let i = 0; i < collidableEntities.length; i++) {
+                const collidableEntity = collidableEntities[i]
+                const id = collidableEntity.id;
+                const collidable = collidableEntity.collidable;
                 const entity = this.world.getEntityById(id);
+
                 if (entity == null) {
                     return;
                 }
@@ -2139,16 +2146,14 @@ class CameraSystem {
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
                     });
                 }
-            });
-        });
-
+            }
+        }
 
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
             const collisions = cell.collidable.collisions;
 
             if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
-                //console.log(`cell ${x}`);
 
                 if (fullCellRenderCount === 0) {
                     fullCellRenderCount++;
@@ -2160,7 +2165,6 @@ class CameraSystem {
                     cell.isDirty = true;
                 }
 
-                //continue;
             }
 
             for (let y in collisions) {

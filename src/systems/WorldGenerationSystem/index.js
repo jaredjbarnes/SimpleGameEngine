@@ -10,13 +10,16 @@ import WorldGenerationCell from "../../components/WorldGenerationCell";
 import { start } from "repl";
 import invokeMethod from "../../utilities/invokeMethod";
 
-const WORLD_PERLIN_SCALING_FACTOR = 30000;
+const WORLD_PERLIN_SCALING_FACTOR = 5000;
 const BIOM_PERLIN_SCALING_FACTOR = 100;
 
-// NOTES: Have the bioms decide how to add and remove the entities them.
-
 export default class WorldGenerationSystem {
-    constructor({ blockSize = 30, seed = 0 }) {
+    constructor({
+        blockSize = 30,
+        seed = 0,
+        worldPerlinScalingFactor = WORLD_PERLIN_SCALING_FACTOR,
+        biomPerlinScalingFactor = BIOM_PERLIN_SCALING_FACTOR
+    }) {
         this.world = null;
         this.dynamicLoadingCells = [];
         this.dynamicLoadingCellEntities = {};
@@ -25,6 +28,8 @@ export default class WorldGenerationSystem {
         this.blockSize = blockSize;
         this.bioms = [];
         this.biomsByName = {};
+        this.worldPerlinScalingFactor = worldPerlinScalingFactor;
+        this.biomPerlinScalingFactor = biomPerlinScalingFactor;
     }
 
     activated(world) {
@@ -187,8 +192,8 @@ export default class WorldGenerationSystem {
                 const x = offsetX + column;
                 const y = offsetY + row;
 
-                const worldElevation = this.noise.perlin(x / WORLD_PERLIN_SCALING_FACTOR, y / BIOM_PERLIN_SCALING_FACTOR);
-                const biomElevation = this.noise.perlin(x / BIOM_PERLIN_SCALING_FACTOR, y / WORLD_PERLIN_SCALING_FACTOR);
+                const worldElevation = this.noise.perlin(x / this.worldPerlinScalingFactor, y / this.worldPerlinScalingFactor);
+                const biomElevation = this.noise.perlin(x / this.biomPerlinScalingFactor, y / this.biomPerlinScalingFactor);
 
                 const bioms = this.getBiomsInElevation(worldElevation);
                 const biomsIntensities = {};

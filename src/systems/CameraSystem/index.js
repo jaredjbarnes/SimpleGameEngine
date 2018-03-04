@@ -1,4 +1,17 @@
-﻿class CanvasCell {
+﻿const idSort = (_entityA, _entityB) => {
+    const entityA = _entityA;
+    const entityB = _entityB;
+
+    if (entityA.id < entityB.id) {
+        return -1
+    } else if (entityA.id > entityB.id) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
+class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
         this.position = cameraCanvasCellEntity.getComponent("position");
         this.size = cameraCanvasCellEntity.getComponent("size");
@@ -24,7 +37,7 @@ class Camera {
 }
 
 export default class CameraSystem {
-    constructor({ canvas, cameraName, imageManager, canvasFactory }) {
+    constructor({ canvas, cameraName, imageManager, canvasFactory, sort = idSort }) {
         this.canvas = canvas;
         this.imageManager = imageManager;
         this.cameraName = cameraName;
@@ -34,6 +47,23 @@ export default class CameraSystem {
         this.world = null;
         this.camera = null;
         this.drawImageCount = 0;
+
+        this.sort = (_entityA, _entityB) => {
+            const entityA = this.world.getEntityById(_entityA.id);
+            const entityB = this.world.getEntityById(_entityB.id);
+            const zIndexAComponent = entityA.getComponent("z-index");
+            const zIndexBComponent = entityB.getComponent("z-index");
+            const zIndexA = zIndexAComponent != null ? zIndexAComponent.value : 0;
+            const zIndexB = zIndexBComponent != null ? zIndexBComponent.value : 0;
+
+            if (zIndexA < zIndexB) {
+                return -1;
+            } else if (zIndexA > zIndexB) {
+                return 1;
+            } else {
+                return sort(entityA, entityB);
+            }
+        }
     }
 
     _getBroadPhaseCollisionCell({ rowIndex, columnIndex }) {
@@ -83,6 +113,7 @@ export default class CameraSystem {
 
             if (top < bottom && left < right) {
                 const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
+                entities.sort(this.sort);
 
                 cell.context.clearRect(left - cell.position.x, top - cell.position.y, right - left, bottom - top);
 
@@ -170,6 +201,8 @@ export default class CameraSystem {
                 const id = collidableEntity.id;
                 const collidable = collidableEntity.collidable;
                 const entity = this.world.getEntityById(id);
+                const cellPositions = collidable.cellPositions;
+                const lastCellPositions = collidable.lastCellPositions;
 
                 if (entity == null) {
                     return;
@@ -179,12 +212,15 @@ export default class CameraSystem {
                 const position = entity.getComponent("position");
 
                 if (this.imageManager.isRenderable(entity) && (size.isDirty || position.isDirty)) {
-                    collidable.cellPositions.forEach((cellPosition) => {
+                    for (let c = 0; c < cellPositions.length; c++) {
+                        const cellPosition = cellPositions[c];
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
-                    });
-                    collidable.lastCellPositions.forEach((cellPosition) => {
+                    }
+
+                    for (let c = 0; c < lastCellPositions.length; c++) {
+                        const cellPosition = lastCellPositions[c];
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
-                    });
+                    }
                 }
             }
         }
@@ -192,21 +228,26 @@ export default class CameraSystem {
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
             const collisions = cell.collidable.collisions;
+            const cellPositions = cell.collidable.cellPositions;
 
             if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
 
                 if (fullCellRenderCount === 0) {
                     fullCellRenderCount++;
                     cell.isDirty = false;
-                    cell.collidable.cellPositions.forEach((cellPosition) => {
+
+                    for (let c = 0; c < cellPositions.length; c++) {
+                        const cellPosition = cellPositions[c];
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
-                    });
+                    }
+
                 } else {
                     cell.isDirty = true;
                 }
 
             }
 
+            // Find dirty entities with in the loading area that need updating.
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
 
@@ -216,13 +257,13 @@ export default class CameraSystem {
 
                 const isDirty = this.imageManager.isEntityDirty(entity);
                 if (isDirty) {
-                    const cellPositions = entity.getComponent("collidable").cellPositions;
-                    for (let z = 0; z < cellPositions; z++) {
-                        const cellPosition = cellPositions[z];
+                    const entityCellPositions = entity.getComponent("collidable").cellPositions;
+                    for (let z = 0; z < entityCellPositions.length; z++) {
+                        const cellPosition = entityCellPositions[z];
                         const index = dirtyCellPositions.findIndex(c => c.rowIndex === cellPosition.rowIndex && c.columnIndex === cellPosition.columnIndex);
 
                         if (index === -1) {
-                            dirtyCellPositions.push(cellPositions[z]);
+                            dirtyCellPositions.push(cellPosition);
                         }
                     }
                 }

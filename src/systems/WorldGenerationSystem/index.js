@@ -8,19 +8,23 @@ import Noise from "./Noise";
 import Validator from "../../utilities/Validator";
 import WorldGenerationCell from "../../components/WorldGenerationCell";
 import { start } from "repl";
+import invokeMethod from "../../utilities/invokeMethod";
 
 const WORLD_PERLIN_SCALING_FACTOR = 30000;
 const BIOM_PERLIN_SCALING_FACTOR = 100;
+
+// NOTES: Have the bioms decide how to add and remove the entities them.
 
 export default class WorldGenerationSystem {
     constructor({ blockSize = 30, seed = 0 }) {
         this.world = null;
         this.dynamicLoadingCells = [];
-        this.dynamicCellEntities = {};
+        this.dynamicLoadingCellEntities = {};
         this.broadPhaseCollisitionData = null;
         this.noise = new Noise(seed);
         this.blockSize = blockSize;
         this.bioms = [];
+        this.biomsByName = {};
     }
 
     activated(world) {
@@ -31,10 +35,18 @@ export default class WorldGenerationSystem {
     }
 
     addBiom(biom) {
-        const index = this.bioms.indexOf(biom);
-        if (index === -1) {
+        if (this.biomsByName[biom.name] == null) {
             this.bioms.push(biom);
+            this.biomsByName[name] = biom;
         }
+    }
+
+    afterUpdate() {
+        this.notifyBioms("afterUpdate", []);
+    }
+
+    beforeUpdate() {
+        this.notifyBioms("beforeUpdate", []);
     }
 
     componentAdded(entity, component) {
@@ -42,7 +54,13 @@ export default class WorldGenerationSystem {
     }
 
     componentRemoved(entity, component) {
-        this.entityRemoved(entity);
+        if (component.type === "dynamic-loading-cell"
+            && entity.hasComponents(["size", "position", "collidable"])
+        ) {
+            this.removeDynamicCellEntity(entity);
+        } else if (component.type === "broad-phase-collision-data") {
+            throw new Error("World generation cannot be built without broadphaseCollisionData.");
+        }
     }
 
     deactivated(world) {
@@ -53,6 +71,16 @@ export default class WorldGenerationSystem {
 
     despawnCell(dynamicLoadingCell) {
         const worldGenerationCell = dynamicLoadingCell.getComponent("world-generation-cell");
+
+        const entitiesByBiomName = this.dynamicLoadingCellEntities[dynamicLoadingCell];
+
+        for (let name in entitiesByBiomName) {
+            const biom = this.biomsByName[name];
+            const entities = entitiesByBiomName[name];
+
+            biom.removeEntities(entities);
+            entitiesByBiomName[name] = [];
+        }
 
         worldGenerationCell.loadedGround = false;
         worldGenerationCell.loadedProps = false;
@@ -77,25 +105,23 @@ export default class WorldGenerationSystem {
 
     entityRemoved(entity) {
         if (this.isDynamicLoadingCellEntity(entity)) {
-            const index = this.dynamicLoadingCells.indexOf(entity);
-
-            if (index > -1) {
-                this.despawnCell(entity);
-                entity.removeComponentByType("world-generation-cell");
-                delete this.dynamicCellEntities[entity.id];
-                this.dynamicLoadingCells.splice(index, 1);
-            }
+            this.removeDynamicCellEntity(entity);
         } else if (this.isBroadPhaseCollisionDataEntity(entity)) {
             throw new Error("World generation cannot be built without broadphaseCollisionData.");
         }
     }
 
-    getEntitiesInCellPosition(cellPosition) {
-        return this.broadPhaseCollisitionData.grid[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] || [];
-    }
+    getBiomsInElevation(worldElevation) {
+        const bioms = [];
 
-    getLastCellPositions(entity) {
-        return entity.getComponent("collidable").lastCellPositions;
+        for (let x = 0; x < bioms.length; x++) {
+            const biom = bioms[x];
+            if (worldElevation >= biom.range.min && worldElevation <= biom.range.max) {
+                bioms.push(biom);
+            }
+        }
+
+        return bioms;
     }
 
     isCellDirty(entity) {
@@ -118,10 +144,31 @@ export default class WorldGenerationSystem {
         return entity.hasComponents(["dynamic-loading-cell", "size", "position", "collidable"]);
     }
 
+    notifyBioms(methodName, args) {
+        const bioms = this.bioms;
+
+        for (let x = 0; x < bioms.length; x++) {
+            const biom = bioms[x];
+            invokeMethod(biom, methodName, args);
+        }
+    }
+
     removeBiom(biom) {
-        const index = this.bioms.indexOf(biom);
-        if (index > -1) {
+        if (this.biomsByName[biom.name] != null) {
+            const index = this.bioms.indexOf(biom);
             this.bioms.splice(index, 1);
+            delete this.biomsByName[biom.name];
+        }
+    }
+
+    removeDynamicCellEntity(entity) {
+        const index = this.dynamicLoadingCells.indexOf(entity);
+
+        if (index > -1) {
+            this.despawnCell(entity);
+            entity.removeComponentByType("world-generation-cell");
+            delete this.dynamicCellEntities[entity.id];
+            this.dynamicLoadingCells.splice(index, 1);
         }
     }
 
@@ -143,53 +190,71 @@ export default class WorldGenerationSystem {
                 const worldElevation = this.noise.perlin(x / WORLD_PERLIN_SCALING_FACTOR, y / BIOM_PERLIN_SCALING_FACTOR);
                 const biomElevation = this.noise.perlin(x / BIOM_PERLIN_SCALING_FACTOR, y / WORLD_PERLIN_SCALING_FACTOR);
 
-                this.bioms.filter((biom) => {
-                    return worldElevation >= biom.range.min && worldElevation <= biom.range.max;
-                }).map((biom) => {
+                const bioms = this.getBiomsInElevation(worldElevation);
+                const biomsIntensities = {};
+                const dominateBiomName = null;
+
+                for (let x = 0; x < bioms.length; x++) {
+                    const biom = bioms[x];
                     const span = biom.range.max - biom.range.min;
                     const center = (span / 2);
                     const normalizedWorldElevation = worldElevation - biom.range.min;
-                    const opacity = 1 - (Math.abs(center - normalizedWorldElevation) / normalizedWorldElevation);
+                    const intensity = 1 - (Math.abs(center - normalizedWorldElevation) / normalizedWorldElevation);
 
-                    return { biom, opacity };
-                }).sort((biomDataA, biomDataB) => {
-                    return biomDataA.opacity - biomDataB.opacity;
-                }).forEach((biomData, index) => {
-                    const biom = biomData.biom;
-                    const opacity = maxDistance / biomDistances.distance;
+                    biomsIntensities[biom.name] = intensity;
+                }
 
-                    if (index === 0) {
-                        opacity = 1;
+                let highestIntensity = 0;
+                for (let name in biomsIntensities) {
+                    const opacity = biomsIntensities[name];
+
+                    if (opacity > highestIntensity) {
+                        dominateBiomName = name;
+                        highestIntensity = opacity;
                     }
+                }
+
+                if (dominateBiomName != null) {
+                    biomsIntensities[dominateBiomName] = 1;
+                }
+
+                for (let i = 0; i < bioms.length; i++) {
+                    const biom = bioms[i];
+                    const intensity = biomsIntensities[biom.name];
 
                     if (!worldGenerationCell.loadedGround) {
-
-                        const entities = biom.createGroundEntites({
+                        biom.addGroundEntites({
                             columnIndex: x,
                             rowIndex: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
-                            noise: this.noise
-                        });
-
-                        entities.forEach((entity) => {
-                            let opacityComponent = entity.getComponent("opacity");
-                            
-                            if (opacityComponent == null) {
-                                opacityComponent = new Opacity();
-                                entity.addCompnonent(opacityComponent);
-                            }
-
-                            opacityComponent.value = opacity;
-
+                            noise: this.noise,
+                            intensity: intensity
                         });
 
                         worldGenerationCell.loadedGround = true;
                     } else if (!worldGenerationCell.loadedProps) {
+                        biom.addPropEntities({
+                            columnIndex: x,
+                            rowIndex: y,
+                            scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
+                            noise: this.noise,
+                            intensity: intensity
+                        });
+
                         worldGenerationCell.loadedProps = true;
                     } else if (!worldGenerationCell.loadedCreatures) {
+                        biom.addCreatureEntities({
+                            columnIndex: x,
+                            rowIndex: y,
+                            scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
+                            noise: this.noise,
+                            intensity: intensity
+                        });
+
                         worldGenerationCell.loadedCreatures = true;
                     }
-                });
+                }
+
             }
         }
     }
@@ -205,7 +270,6 @@ export default class WorldGenerationSystem {
                 } else if (!this.isCellFinishedSpawning(dynamicLoadingCell)) {
                     this.spawnCell(dynamicLoadingCell);
                 }
-
             }
         }
     }
@@ -221,12 +285,24 @@ export default class WorldGenerationSystem {
             throw new Error("Bioms need a name property.");
         }
 
-        if (!validator.validate("createGroundEntities").isFunction()) {
-            throw new Error("Bioms need to have a createGroundEntities function.");
+        if (!validator.validate("addGroundEntities").isFunction()) {
+            throw new Error("Bioms need to have a addGroundEntities function.");
         }
 
-        if (!validator.validate("releaseEntities").isFunction()) {
-            throw new Error("Bioms need to have a releaseEntities function.");
+        if (!validator.validate("removeEntities").isFunction()) {
+            throw new Error("Bioms need to have a removeEntities function.");
+        }
+
+        if (!validator.validate("initialize").isFunction()) {
+            throw new Error("Bioms need to have a initialize function.");
+        }
+
+        if (!validator.validate("beforeUpdate").isFunction()) {
+            throw new Error("Bioms need to have a beforeUpdate function.");
+        }
+
+        if (!validator.validate("afterUpdate").isFunction()) {
+            throw new Error("Bioms need to have a afterUpdate function.");
         }
     }
 

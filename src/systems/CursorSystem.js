@@ -1,17 +1,17 @@
-import Entity from "./../Entity";
-import Cursor from "./../components/Cursor";
-import Position from "./../components/Position";
-import Size from "./../components/Size";
+import Entity from "../Entity";
+import Cursor from "../components/Cursor";
+import Position from "../components/Position";
+import Size from "../components/Size";
+import Collidable from "../components/Collidable";
 
 const DEPENDENCIES = ["cursor", "position", "size"];
 const CAMERA_DEPENDENCIES = ["camera", "position"];
 
 export default class CursorSystem {
-    constructor(canvas, cameraName) {
+    constructor({ canvas, cameraName, doc = document }) {
         this.world = null;
         this.canvas = canvas;
         this._mousemove = this._mousemove.bind(this);
-        this.entities = [];
         this.camera = null;
         this.cameraName = cameraName;
         this.cameraPosition = null;
@@ -20,10 +20,11 @@ export default class CursorSystem {
             y: 0
         };
         this.cursorEntity = null;
+        this.document = doc;
     }
 
     _addCamera(entity) {
-        var camera = entity.getComponent("camera");
+        let camera = entity.getComponent("camera");
 
         if (camera.name == this.cameraName) {
             this.camera = camera;
@@ -33,24 +34,33 @@ export default class CursorSystem {
     }
 
     _createCursorEntity() {
-        let entity = new Entity();
-
-        let size = new Size();
-        let position = new Position();
-        let cursor = new Cursor();
+        const entity = new Entity();
+        const size = new Size();
+        const position = new Position();
+        const cursor = new Cursor();
+        const collidable = new Collidable();
 
         this.cursorEntity.addComponent(size);
         this.cursorEntity.addComponent(position);
         this.cursorEntity.addComponent(cursor);
+        this.cursorEntity.addComponent(collidable);
 
         return entity;
     }
 
     _mousemove(event) {
-        var rect = this.canvas.getBoundingClientRect();
+        let rect = this.canvas.getBoundingClientRect();
 
         this.cursorPosition.x = event.pageX - rect.left;
         this.cursorPosition.y = event.pageY - rect.top;
+    }
+
+    _mousedown(event) {
+        this.cursorEntity.getComponent("cursor").isLeftButtonDown = true;
+    }
+
+    _mouseup(event) {
+        this.cursorEntity.getComponent("cursor").isLeftButtonDown = false;
     }
 
     _removeCamera() {
@@ -61,7 +71,10 @@ export default class CursorSystem {
     activated(world) {
         this.world = world;
         this.cursorEntity = this._createCursorEntity();
+        this.world.addEntity(this.cursorEntity);
         this.canvas.addEventListener("mousemove", this._mousemove, false);
+        this.document.addEventListener("mousedown", this._mousedown, false);
+        this.document.addEventListener("mouseup", this._mouseup, false);
     }
 
     componentAdded(entity, component) {
@@ -77,9 +90,11 @@ export default class CursorSystem {
     }
 
     deactivated() {
-        this.canvas.removeEventListener("mousemove", this._mousemove, false);
+        this.canvas.removeEventListener("mousemove", this._mousemove);
+        this.document.removeEventListener("mousedown", this._mousedown);
+        this.document.removeEventListener("mouseup", this._mouseup);
+        this.world.removeEntity(this.cursorEntity);
         this.world = null;
-        this.entities = [];
         this.cursorEntity = null;
         this.camera = null;
         this.cameraPosition = null;
@@ -102,21 +117,19 @@ export default class CursorSystem {
             return;
         }
 
-        this.entities.forEach((entity) => {
-            var _entity = entity;
-            var position = entity.getComponent("position");
-            var size = entity.getComponent("size");
+        const entity = this.cursorEntity;
+        let position = entity.getComponent("position");
+        let size = entity.getComponent("size");
 
-            var width = size.width > 0 ? size.width : 1;
-            var height = size.height > 0 ? size.height : 1;
+        let width = size.width > 0 ? size.width : 1;
+        let height = size.height > 0 ? size.height : 1;
 
-            var halfWidth = parseInt(size.width / 2, 10);
-            var halfHeight = parseInt(size.height / 2, 10);
+        let halfWidth = parseInt(size.width / 2, 10);
+        let halfHeight = parseInt(size.height / 2, 10);
 
-            position.x = this.cursorPosition.x + this.cameraPosition.x - halfWidth;
-            position.y = this.cursorPosition.y + this.cameraPosition.y - halfHeight;
+        position.x = this.cursorPosition.x + this.cameraPosition.x - halfWidth;
+        position.y = this.cursorPosition.y + this.cameraPosition.y - halfHeight;
 
-        });
     }
 
 

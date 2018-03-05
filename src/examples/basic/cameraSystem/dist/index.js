@@ -69,7 +69,7 @@
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(6);
 ﻿
 
 
@@ -211,6 +211,43 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+﻿class Shape {
+    constructor() {
+        this.type = "shape";
+
+        this.fillColor = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        };
+
+        this.border = {
+            thickness: 0,
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
+        this.points = [];
+        this.path = null;
+        this.opacity = 1;
+        this.zIndex = 0;
+        this.isDirty = true;
+
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 class SolidBody {
     constructor() {
         this.type = "solid-body";
@@ -220,7 +257,7 @@ class SolidBody {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -232,7 +269,7 @@ class SolidBody {
 });
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -254,7 +291,7 @@ const stringify = (obj) => {
 /* unused harmony default export */ var _unused_webpack_default_export = (stringify);
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -291,7 +328,7 @@ class Text {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -301,43 +338,6 @@ class Text {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class Shape {
-    constructor() {
-        this.type = "shape";
-
-        this.fillColor = {
-            red: 0,
-            green: 0,
-            blue: 0,
-            alpha: 1
-        };
-
-        this.border = {
-            thickness: 0,
-            color: {
-                red: 0,
-                green: 0,
-                blue: 0,
-                alpha: 1
-            }
-        };
-
-        this.points = [];
-        this.path = null;
-        this.opacity = 1;
-        this.zIndex = 0;
-        this.isDirty = true;
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
 
 
 /***/ }),
@@ -389,11 +389,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Text__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_FollowEntityCameraSystem__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_SolidBody__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__systems_CursorEventSystem__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__systems_CursorSystem__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_SolidBody__ = __webpack_require__(5);
+
+
 
 
 
@@ -442,6 +446,8 @@ const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_11__systems_Follo
 const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_13__systems_SolidBodySystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
 const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
+const cursorSystem = new __WEBPACK_IMPORTED_MODULE_15__systems_CursorSystem__["a" /* default */]({canvas, cameraName, document});
+const cursorEventSystem = new __WEBPACK_IMPORTED_MODULE_14__systems_CursorEventSystem__["a" /* default */]();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -457,6 +463,8 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_DefaultCame
 });
 
 // Set up world
+world.addSystem(cursorSystem);
+world.addSystem(cursorEventSystem);
 world.addSystem(dynamicLoadingSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);
@@ -490,7 +498,7 @@ window.world = world;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(6);
 ﻿
 
 class World {
@@ -1805,7 +1813,7 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(7);
 ﻿
 
 class ShapeRasterizer {
@@ -1876,7 +1884,7 @@ class ShapeRasterizer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(7);
 ﻿
 
 class TextRasterizer {
@@ -2574,15 +2582,15 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(5);
 
 
 
@@ -2716,11 +2724,11 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Opacity__ = __webpack_require__(39);
 
 
@@ -3501,6 +3509,371 @@ class SolidBodySystem {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SolidBodySystem;
 
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_CursorEvents__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Entity__ = __webpack_require__(0);
+
+
+
+class CursorEventSystem {
+    constructor() {
+        this.world = null;
+        this.cursorEntity = null;
+        this.cursorEventsEntity = null;
+        this.cursorEvents = null;
+        this.cursor = null;
+        window.cursorEventSystem = this;
+    }
+
+    activated(world) {
+        this.world = world;
+        this.cursorEventsEntity = new __WEBPACK_IMPORTED_MODULE_1__Entity__["a" /* default */]();
+        this.cursorEvents = new __WEBPACK_IMPORTED_MODULE_0__components_CursorEvents__["a" /* default */]();
+        this.cursorEventsEntity.addComponent(this.cursorEvents);
+
+        this.world.addEntity(this.cursorEventsEntity);
+
+        this.world.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    componentAdded(entity, component) {
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (component.type === "cursor") {
+            this.cursorEntity = null;
+        }
+    }
+
+    createMouseDownEvent() {
+        const cursorCollidable = this.cursorEntity.getComponent("collidable");
+        const collisions = cursorCollidable.collisions;
+        const collisionsClone = {};
+
+        for (let id in collisions) {
+            collisionsClone[id] = collisions[id];
+        }
+
+        this.cursorEvents.events.mouseDown = collisions;
+    }
+
+    createMouseUpEvent() {
+        const cursorCollidable = this.cursorEntity.getComponent("collidable");
+        const collisions = cursorCollidable.collisions;
+        const collisionsClone = {};
+
+        for (let id in collisions) {
+            collisionsClone[id] = collisions[id];
+        }
+
+        this.cursorEvents.events.mouseUp = collisions;
+    }
+
+    createMouseOverEvent() {
+        const cursorCollidable = this.cursorEntity.getComponent("collidable");
+        this.cursorEvents.events.mouseOver = cursorCollidable.collisions;
+    }
+
+    createClickEvent() {
+        const collisions = {};
+        const events = this.cursorEvents.events;
+
+        for (let id in events.mouseUp) {
+            if (events.mouseDown[id]) {
+                collisions[id] = events.mouseDown[id]
+            }
+        }
+
+        events.click = collisions;
+        console.log(collisions);
+    }
+
+    deactivated() {
+        this.world.removeEntity(this.cursorEventsEntity);
+        this.world = null;
+        this.cursorEntity = null;
+        this.cursorEventsEntity = null;
+        this.cursor = null;
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponent("cursor")) {
+            this.cursorEntity = entity;
+            this.cursor = this.cursorEntity.getComponent("cursor");
+            this.createMouseOverEvent();
+        }
+    }
+
+    entityRemoved(entity) {
+        if (entity.hasComponent("cursor")) {
+            this.cursorEntity = null;
+        }
+    }
+
+    isMouseDown() {
+        const events = this.cursorEvents.events;
+        const cursor = this.cursor;
+        return events.mouseDown == null && cursor.isLeftButtonDown
+    }
+
+    isMouseUp() {
+        const events = this.cursorEvents.events;
+        const cursor = this.cursor;
+        return events.mouseDown != null && !cursor.isLeftButtonDown;
+    }
+
+    ifFinished(){
+        const events = this.cursorEvents.events;
+        const cursor = this.cursor;
+        return !this.cursor.isLeftButtonDown && this.cursorEvents.events.mouseUp != null;
+    }
+
+    update() {
+        if (this.cursor) {
+            const events = this.cursorEvents.events;
+            const cursor = this.cursor;
+
+            if (this.isMouseDown()) {
+                this.createMouseDownEvent();
+            } else if (this.isMouseUp()) {
+                this.createMouseUpEvent();
+                this.createClickEvent();
+                this.cursorEvents.events.mouseDown = null;
+            } else if (this.ifFinished()){
+                this.cursorEvents.events.mouseUp = null;
+                this.cursorEvents.events.click = null;
+            }
+
+            this.createMouseOverEvent();
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CursorEventSystem;
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class CursorEvents {
+    constructor(){
+        this.type = "cursor-events";
+        this.events = {
+            mouseUp: null,
+            mouseDown: null,
+            mouseOver: null,
+            click: null
+        };
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CursorEvents;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Cursor__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Shape__ = __webpack_require__(4);
+
+
+
+
+
+
+
+const DEPENDENCIES = ["cursor", "position", "size"];
+const CAMERA_DEPENDENCIES = ["camera", "position"];
+
+class CursorSystem {
+    constructor({ canvas, cameraName, document, showCursor = false }) {
+        this.world = null;
+        this.canvas = canvas;
+        this.camera = null;
+        this.cameraName = cameraName;
+        this.cameraPosition = null;
+        this.cursorPosition = {
+            x: 0,
+            y: 0
+        };
+        this.cursorEntity = null;
+        this.document = document;
+        this.canvasRect = this.canvas.getBoundingClientRect();
+        this.scale = {
+            x: 1,
+            y: 1
+        };
+        this.showCursor = showCursor;
+
+        this._mousedown = (event) => {
+            this.cursorEntity.getComponent("cursor").isLeftButtonDown = true;
+        }
+
+        this._mouseup = (event) => {
+            this.cursorEntity.getComponent("cursor").isLeftButtonDown = false;
+        }
+
+        this._mousemove = (event) => {
+            this.canvasRect = this.canvas.getBoundingClientRect();
+            const size = this.camera.getComponent("size");
+
+            this.scale = {
+                x: size.width / this.canvasRect.width,
+                y: size.height / this.canvasRect.height
+            };
+
+            this.cursorPosition.x = (event.pageX - this.canvasRect.left) * this.scale.x;
+            this.cursorPosition.y = (event.pageY - this.canvasRect.top) * this.scale.y;
+        }
+
+    }
+
+    _addCamera(entity) {
+        let camera = entity.getComponent("camera");
+
+        if (camera.name == this.cameraName) {
+            this.camera = entity;
+            this.cameraPosition = this.camera.getComponent("position");
+        }
+
+    }
+
+    _createCursorEntity() {
+        const size = new __WEBPACK_IMPORTED_MODULE_3__components_Size__["a" /* default */]();
+        const position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
+        const cursor = new __WEBPACK_IMPORTED_MODULE_1__components_Cursor__["a" /* default */]();
+        const collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        const shape = new __WEBPACK_IMPORTED_MODULE_5__components_Shape__["a" /* default */]();
+
+        shape.points.push(
+            { x: 0, y: 0 },
+            { x: 5, y: 0 },
+            { x: 5, y: 5 },
+            { x: 0, y: 5 },
+            { x: 0, y: 0 }
+        );
+
+        shape.fillColor.red = 255;
+
+        size.height = 5;
+        size.width = 5;
+
+        this.cursorEntity = new __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */]();
+        this.cursorEntity.addComponent(size);
+        this.cursorEntity.addComponent(position);
+        this.cursorEntity.addComponent(cursor);
+        this.cursorEntity.addComponent(collidable);
+
+        if (this.showCursor) {
+            this.cursorEntity.addComponent(shape);
+        }
+
+    }
+
+    _removeCamera() {
+        this.camera = null;
+        this.cameraPosition = null;
+    }
+
+    activated(world) {
+        this.world = world;
+        this._createCursorEntity();
+        this.world.addEntity(this.cursorEntity);
+        this.canvas.addEventListener("mousemove", this._mousemove, false);
+        this.document.addEventListener("mousedown", this._mousedown, false);
+        this.document.addEventListener("mouseup", this._mouseup, false);
+    }
+
+    componentAdded(entity, component) {
+        if (entity.hasComponents(CAMERA_DEPENDENCIES)) {
+            this._addCamera(entity);
+        }
+    }
+
+    componentRemoved(entity, component) {
+        if (entity === this.camera && CAMERA_DEPENDENCIES.indexOf(component.type) > -1) {
+            this._removeCamera(entity);
+        }
+    }
+
+    deactivated() {
+        this.canvas.removeEventListener("mousemove", this._mousemove);
+        this.document.removeEventListener("mousedown", this._mousedown);
+        this.document.removeEventListener("mouseup", this._mouseup);
+        this.world.removeEntity(this.cursorEntity);
+        this.world = null;
+        this.cursorEntity = null;
+        this.camera = null;
+        this.cameraPosition = null;
+    }
+
+    entityAdded(entity) {
+        if (entity.hasComponents(CAMERA_DEPENDENCIES)) {
+            this._addCamera(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (entity === this.camera && entity.hasComponents(CAMERA_DEPENDENCIES)) {
+            this._removeCamera(entity);
+        }
+    }
+
+    update() {
+        if (this.camera == null) {
+            return;
+        }
+
+        const entity = this.cursorEntity;
+        let position = entity.getComponent("position");
+        let size = entity.getComponent("size");
+
+        let width = size.width > 0 ? size.width : 1;
+        let height = size.height > 0 ? size.height : 1;
+
+        let halfWidth = parseInt(size.width / 2, 10);
+        let halfHeight = parseInt(size.height / 2, 10);
+
+        position.x = this.cursorPosition.x + this.cameraPosition.x - halfWidth;
+        position.y = this.cursorPosition.y + this.cameraPosition.y - halfHeight;
+        position.isDirty = true;
+
+    }
+
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CursorSystem;
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Cursor {
+    constructor() {
+        this.type = "cursor";
+        this.isLeftButtonDown = false;
+        this.isRightButtonDown = false;
+        this.isMiddleButtonDown = false;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Cursor;
 
 
 /***/ })

@@ -12,6 +12,8 @@ import KeyboardController from "../../../components/KeyboardController";
 import FollowEntityCameraSystem from "./../../../systems/FollowEntityCameraSystem";
 import NarrowPhaseCollisionSystem from "./../../../systems/NarrowPhaseCollisionSystem";
 import SolidBodySystem from "./../../../systems/SolidBodySystem";
+import CursorEventSystem from "./../../../systems/CursorEventSystem";
+import CursorSystem from "./../../../systems/CursorSystem";
 import SolidBody from "../../../components/SolidBody";
 
 const getRandomNumber = (min, max) => {
@@ -46,6 +48,8 @@ const followEntityCameraSystem = new FollowEntityCameraSystem();
 const solidBodySystem = new SolidBodySystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
+const cursorSystem = new CursorSystem({canvas, cameraName, document});
+const cursorEventSystem = new CursorEventSystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -61,6 +65,8 @@ const defaultCameraSystem = new DefaultCameraSystem({
 });
 
 // Set up world
+world.addSystem(cursorSystem);
+world.addSystem(cursorEventSystem);
 world.addSystem(dynamicLoadingSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);

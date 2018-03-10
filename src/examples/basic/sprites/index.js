@@ -60,24 +60,24 @@ followEntityCameraSystem.setEntityToFollow(player);
 // ADD SYSTEMS
 world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
-world.addSystem(controllerSystem);
-world.addSystem(followEntityCameraSystem);
-world.addSystem(movementSystem);
-world.addSystem(collisionSystem);
-world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(logicSystem);
 world.addSystem(spriteSystem);
+world.addSystem(controllerSystem);
+world.addSystem(movementSystem);
+world.addSystem(followEntityCameraSystem);
+world.addSystem(collisionSystem);
+world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(renderSystem);
 
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 1000; x++) {
+for (let x = 0; x < 10000; x++) {
 
     let sprite = new Sprite();
-    sprite.getComponent("position").x = getRandomNumber(-2000, 2000);
-    sprite.getComponent("position").y = getRandomNumber(-2000, 2000);
+    sprite.getComponent("position").x = getRandomNumber(-10000, 10000);
+    sprite.getComponent("position").y = getRandomNumber(-10000, 10000);
 
     world.addEntity(sprite);
 }

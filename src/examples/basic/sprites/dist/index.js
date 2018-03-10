@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,24 +68,17 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(5);
 ﻿
 
-var createGuid = __WEBPACK_IMPORTED_MODULE_0__util__["a" /* createGuid */];
 
 class Entity {
     constructor() {
         this._delegate = null;
         this._components = {};
-        this.id = createGuid();
+        this.id = Object(__WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__["a" /* default */])();
         this.type = null;
-    }
-
-    _invokeMethod(obj, methodName, args) {
-        args = Array.isArray(args) ? args : [];
-        if (obj && typeof obj[methodName] === "function") {
-            return obj[methodName].apply(obj, args);
-        }
     }
 
     setDelegate(delegate) {
@@ -104,7 +97,7 @@ class Entity {
         components[type] = component;
 
         if (delegate != null) {
-            this._invokeMethod(delegate, "componentAdded", [this, component]);
+            Object(__WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__["a" /* default */])(delegate, "componentAdded", [this, component]);
         }
     }
 
@@ -122,10 +115,18 @@ class Entity {
             components[component.type] = null;
 
             if (delegate != null) {
-                this._invokeMethod(delegate, "componentRemoved", [this, component]);
+                Object(__WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__["a" /* default */])(delegate, "componentRemoved", [this, component]);
             }
         }
 
+    }
+
+    removeComponentByType(type) {
+        const component = components[type];
+
+        if (component != null) {
+            this.removeComponent(component);
+        }
     }
 
     getComponent(type) {
@@ -161,6 +162,222 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+﻿class Position {
+    constructor() {
+        this.type = "position";
+        this.x = 0;
+        this.y = 0;
+        this.isDirty = true;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Position;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class Size {
+    constructor() {
+        this.type = "size";
+        this.width = 0;
+        this.height = 0;
+        this.isDirty = false;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Size;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class Collidable {
+    constructor() {
+        this.type = "collidable";
+        this.name = null;
+        this.collisions = {};
+        this.cellPositions = [];
+        this.lastCellPositions = [];
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const stringify = (obj) => {
+    if (typeof obj === "object" && obj != null) {
+        let result = "";
+        for (let x in obj) {
+            if (typeof obj[x] === "object" && obj[x] != null) {
+                result += `${stringify(obj[x])}`;
+            } else {
+                result += `${x}:${obj[x]},`;
+            }
+        }
+        return `{${result}}`;
+    }
+    return null;
+};
+
+/* unused harmony default export */ var _unused_webpack_default_export = (stringify);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
+    args = Array.isArray(args)? args: [];
+   if (obj != null && typeof obj[methodName] === "function"){
+       return obj[methodName].apply(obj, args);
+   }
+});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Text {
+    constructor() {
+        this.type = "text";
+        this.font = {
+            size: 12,
+            style: "normal",
+            family: "arial",
+            weight: "normal",
+            baseline: "top",
+            variant: "normal",
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
+        this.text = "";
+        this.verticalAlignment = "top";
+        this.horizontalAlignment = "left";
+        this.width = 0;
+        this.height = 0;
+        this.lineHeight = 0;
+        this.opacity = 1;
+        this.zIndex = 0;
+        this.isDirty = false;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Text;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class KeyboardController {
+    constructor() {
+        this.type = "keyboard-controller";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class Shape {
+    constructor() {
+        this.type = "shape";
+
+        this.fillColor = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        };
+
+        this.border = {
+            thickness: 0,
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
+        this.points = [];
+        this.path = null;
+        this.opacity = 1;
+        this.zIndex = 0;
+        this.isDirty = true;
+
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Part {
+    constructor() {
+        this.points = [];
+        this.vertices = [];
+        this.normals = [];
+        this.worldPoints = [];
+        this.projectionVertices = [];
+        this.origin = { x: 0, y: 0 };
+        this.size = { width: 0, height: 0 };
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = Part;
+
+
+class NarrowPhaseCollidable {
+    constructor() {
+        this.type = "narrow-phase-collidable";
+        this.name = null;
+        this.isPrepared = false;
+        this.isEnabled = true;
+        this.collisions = {};
+        this.parts = [];
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = NarrowPhaseCollidable;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class SolidBody {
+    constructor() {
+        this.type = "solid-body";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 ﻿class Image {
     constructor() {
         this.type = "image";
@@ -188,72 +405,28 @@ class Entity {
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class Position {
-    constructor() {
-        this.type = "position";
-        this.x = 0;
-        this.y = 0;
-        this.isDirty = true;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Position;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class Size {
-    constructor() {
-        this.type = "size";
-        this.width = 0;
-        this.height = 0;
-        this.isDirty = false;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Size;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class Collidable {
-    constructor() {
-        this.type = "collidable";
-        this.name = null;
-        this.collisions = {};
-        this.cellPositions = [];
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Collidable;
-
-
-/***/ }),
-/* 5 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(6);
-throw new Error("Cannot find module \"./../../../systems/CompleteRenderSystem\"");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_Sprite__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__entities_Camera__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__World__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__systems_DefaultCameraSystem__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__systems_DynamicLoadingSystem__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__systems_KeyboardInputSystem__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__systems_ControllerSystem__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__systems_SolidBodySystem__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Text__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_KeyboardController__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_LogicSystem__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__systems_SpriteSystem__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__systems_NarrowPhaseCollisionSystem__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__systems_FollowEntityCameraSystem__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__entities_Sprite__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__entities_Camera__ = __webpack_require__(46);
 
 
 
@@ -268,34 +441,53 @@ throw new Error("Cannot find module \"./../../../systems/CompleteRenderSystem\""
 
 
 
-var getRandomNumber = (max) => {
-    return parseInt(Math.random() * max, 10);
+
+
+
+
+const cameraName = "main";
+
+const getRandomNumber = (min, max) => {
+    const range = max - min;
+    const value = Math.random() * range;
+
+    return parseInt(value + min, 10);
 }
 
-var world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
+// Entities
+
+const world = new __WEBPACK_IMPORTED_MODULE_0__World__["a" /* default */]();
 world.size.height = 2000;
 world.size.width = 2000;
 
-var camera = new __WEBPACK_IMPORTED_MODULE_12__entities_Camera__["a" /* default */]("main");
+const camera = new __WEBPACK_IMPORTED_MODULE_16__entities_Camera__["a" /* default */](cameraName);
+const player = new __WEBPACK_IMPORTED_MODULE_8__entities_Text__["a" /* default */]("P");
 
-var renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_CompleteRenderSystem___default.a({
+const renderSystem = new __WEBPACK_IMPORTED_MODULE_1__systems_DefaultCameraSystem__["a" /* default */]({
     canvas: document.getElementById("viewport"),
-    assetRoot: "/src/examples/basic/sprites"
+    cameraName: cameraName
 });
 
-var logicSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_LogicSystem__["a" /* default */]();
-var collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
-var solidBodySystem = new __WEBPACK_IMPORTED_MODULE_5__systems_SolidBodySystem__["a" /* default */]();
-var keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_KeyboardInputSystem__["a" /* default */](document);
-var controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_ControllerSystem__["a" /* default */](document);
-var movementSystem = new __WEBPACK_IMPORTED_MODULE_6__systems_MovementSystem__["a" /* default */]();
-var followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__systems_FollowEntityCameraSystem__["a" /* default */]();
-var narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_9__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
-var spriteSystem = new __WEBPACK_IMPORTED_MODULE_8__systems_SpriteSystem__["a" /* default */]();
+const logicSystem = new __WEBPACK_IMPORTED_MODULE_11__systems_LogicSystem__["a" /* default */]();
+const collisionSystem = new __WEBPACK_IMPORTED_MODULE_2__systems_BroadPhaseCollisionSystem__["a" /* default */]();
+const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_6__systems_SolidBodySystem__["a" /* default */]();
+const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_4__systems_KeyboardInputSystem__["a" /* default */](document);
+const controllerSystem = new __WEBPACK_IMPORTED_MODULE_5__systems_ControllerSystem__["a" /* default */](document);
+const movementSystem = new __WEBPACK_IMPORTED_MODULE_7__systems_MovementSystem__["a" /* default */]();
+const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_14__systems_FollowEntityCameraSystem__["a" /* default */]();
+const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_13__systems_NarrowPhaseCollisionSystem__["a" /* default */]();
+const spriteSystem = new __WEBPACK_IMPORTED_MODULE_12__systems_SpriteSystem__["a" /* default */]();
+
+const dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_3__systems_DynamicLoadingSystem__["a" /* default */]({
+    cameraName: cameraName,
+    cellSize: 300
+});
 
 followEntityCameraSystem.camera = camera;
+followEntityCameraSystem.setEntityToFollow(player);
 
 // ADD SYSTEMS
+world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(followEntityCameraSystem);
@@ -308,41 +500,28 @@ world.addSystem(spriteSystem);
 world.addSystem(renderSystem);
 
 world.addEntity(camera);
+world.addEntity(player);
 
 for (let x = 0; x < 1000; x++) {
 
-    let sprite = new __WEBPACK_IMPORTED_MODULE_11__entities_Sprite__["a" /* default */]();
-    sprite.getComponent("position").x = getRandomNumber(2000);
-    sprite.getComponent("position").y = getRandomNumber(2000);
+    let sprite = new __WEBPACK_IMPORTED_MODULE_15__entities_Sprite__["a" /* default */]();
+    sprite.getComponent("position").x = getRandomNumber(-2000, 2000);
+    sprite.getComponent("position").y = getRandomNumber(-2000, 2000);
 
     world.addEntity(sprite);
 }
-
-renderSystem.setCameraByName("main");
 
 world.play();
 
 window.world = world;
 
 /***/ }),
-/* 6 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿// Polyfill for node environments.
-if (typeof performance === "undefined") {
-    var performance = {
-        now: () => {
-            return Date.now();
-        }
-    };
-}
-
-if (typeof requestAnimationFrame === "undefined") {
-   var requestAnimationFrame = (callback) => {
-        setTimeout(callback, 11);
-    };
-}
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
+﻿
 
 class World {
     constructor(size) {
@@ -379,13 +558,6 @@ class World {
 
     }
 
-    _invokeMethod(obj, methodName, args) {
-        args = Array.isArray(args) ? args : [];
-        if (obj && typeof obj[methodName] === "function") {
-            return obj[methodName].apply(obj, args);
-        }
-    }
-
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
@@ -398,7 +570,7 @@ class World {
         var systems = this._systems;
 
         systems.forEach(function (system) {
-            self._invokeMethod(system, methodName, args);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(system, methodName, args);
         });
     }
 
@@ -408,8 +580,8 @@ class World {
 
         if (index === -1) {
             systems.push(system);
-            this._invokeMethod(system, "activated", [this]);
-            this._invokeMethod(system, "systemAdded", [system]);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(system, "activated", [this]);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(system, "systemAdded", [system]);
         }
     }
 
@@ -435,8 +607,8 @@ class World {
 
         if (index > -1) {
             systems.splice(index, 1);
-            this._invokeMethod(system, "deactivated", [this]);
-            this._invokeMethod(system, "systemRemoved", [system]);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(system, "deactivated", [this]);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(system, "systemRemoved", [system]);
 
         }
     }
@@ -474,7 +646,10 @@ class World {
         var self = this;
         var systems = this._systems;
 
+        this.notifySystems("beforeUpdate", [this.getTime()]);
         this.notifySystems("update", [this.getTime()]);
+        this.notifySystems("afterUpdate", [this.getTime()]);
+        
     }
 
     play() {
@@ -527,16 +702,900 @@ class World {
 
 
 /***/ }),
-/* 7 */
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_LineRasterizer__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_ShapeRasterizer__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_TextRasterizer__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem__ = __webpack_require__(22);
+
+
+
+
+
+
+
+
+
+class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_7__CameraSystem__["a" /* default */] {
+    constructor({canvas, cameraName, assetRoot }) {
+        const imageManager = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__["a" /* default */]();
+        const canvasFactory = new __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__["a" /* default */]();
+        const imageFactory = new __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__["a" /* default */]();
+
+        const imageRasterizer = new __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__["a" /* default */]({ canvasFactory, imageFactory, assetRoot });
+        const lineRasterizer = new __WEBPACK_IMPORTED_MODULE_4__CameraSystem_LineRasterizer__["a" /* default */](canvasFactory);
+        const shapeRasterizer = new __WEBPACK_IMPORTED_MODULE_5__CameraSystem_ShapeRasterizer__["a" /* default */](canvasFactory);
+        const textRasterizer = new __WEBPACK_IMPORTED_MODULE_6__CameraSystem_TextRasterizer__["a" /* default */](canvasFactory);
+
+        super({
+            canvas,
+            cameraName,
+            imageManager,
+            canvasFactory
+        });
+
+        imageManager.addRasterizer(imageRasterizer);
+        imageManager.addRasterizer(lineRasterizer);
+        imageManager.addRasterizer(shapeRasterizer);
+        imageManager.addRasterizer(textRasterizer);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DefaultCameraSystem;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
+
+window.getIdentityCount = 0;
+
+class ImageManager {
+    constructor() {
+        this.rasterizers = {};
+        this.images = {};
+        this.imageTypes = [];
+    }
+
+    _validateRasterizer(rasterizer) {
+        if (rasterizer.type == undefined) {
+            throw new Error("Rasterizers need to have a type property.");
+        }
+
+        if (typeof rasterizer.rasterize !== "function") {
+            throw new Error("Rasterizers need to have a rasterize method.");
+        }
+
+        if (typeof rasterizer.getIdentity !== "function") {
+            throw new Error("Rasterizers need to have a getIdentity method.");
+        }
+    }
+
+    addRasterizer(rasterizer) {
+        this._validateRasterizer(rasterizer);
+        this.rasterizers[rasterizer.type] = rasterizer;
+        this.imageTypes = Object.keys(this.rasterizers);
+    }
+
+    saveImage(identifier, image) {
+        this.images[identifier] = image;
+    }
+
+    getImage(identifier) {
+        return this.images[identifier] || null;
+    }
+
+    isRenderable(_entity){
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isEntityDirty(_entity) {
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component && component.isDirty) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getEntityImages(_entity) {
+        const entity = _entity;
+        const rasterizers = this.rasterizers;
+        const images = [];
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null) {
+                window.getIdentityCount++;
+                const rasterizer = rasterizers[type];
+                const imageId = rasterizer.getIdentity(entity);
+                let image = this.getImage(imageId);
+
+                if (image == null) {
+                    image = rasterizer.rasterize(entity);
+                    this.saveImage(imageId, image);
+                }
+
+                component.isDirty = false;
+                images.push(image);
+            }
+        }
+
+        images.sort(sortByZIndex);
+
+        return images;
+
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ImageManager;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class CanvasFactory {
+    constructor({ document: doc = document, shouldStoreInstances = false } = {}) {
+        this.document = doc;
+        this.canvases = [];
+        this.shouldStoreInstances = shouldStoreInstances;
+    }
+
+    create() {
+        const canvas = this.document.createElement("canvas");
+        if (this.shouldStoreInstances) {
+            this.canvases.push(canvas);
+        }
+        return canvas;
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CanvasFactory;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class ImageFactory {
+    constructor(shouldStoreInstances = false ) {
+        this.images = [];
+        this.shouldStoreInstances = shouldStoreInstances;
+    }
+
+    create() {
+        const image = new Image();
+        if (this.shouldStoreInstances) {
+            this.images.push(canvas);
+        }
+        return image;
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ImageFactory;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(4);
+﻿
+
+class ImageRasterizer {
+    constructor({ canvasFactory, imageFactory, assetRoot }) {
+        this.type = "image";
+        this.canvasFactory = canvasFactory;
+        this.assetRoot = assetRoot || "";
+        this.imageFactory = imageFactory;
+        this.loadingImages = {};
+    }
+
+    getImageAsync(path) {
+        if (this.loadingImages[path] != null) {
+            return this.loadingImages[path];
+        }
+
+        return this.loadingImages[path] = new Promise((resolve, reject) => {
+            const image = this.imageFactory.create();
+
+            image.onload = () => {
+                resolve(image);
+            };
+
+            image.onerror = reject;
+            image.src = path;
+        });
+    }
+
+    getImagePadding(image) {
+        const { top, right, bottom, left } = image.padding;
+        return `${top}|${right}|${bottom}|${left}|`;
+    }
+
+    getImageSize(image) {
+        const { width, height } = image.size;
+        return `${width}|${height}`;
+    }
+
+    getImagePosition(image) {
+        const { x, y } = image.position;
+        return `${x}|${y}`;
+    }
+
+    getImageIdentity(image) {
+        return `${image.path}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}`;
+    }
+
+    getIdentity(entity) {
+        const image = entity.getComponent("image");
+        return this.getImageIdentity(image);
+    }
+
+    rasterize(entity) {
+        const imageComponent = entity.getComponent("image");
+        const path = this.getPath(imageComponent.path);
+        const canvas = this.canvasFactory.create();
+        const context = canvas.getContext("2d");
+        const size = imageComponent.size;
+        const padding = imageComponent.padding;
+        const position = imageComponent.position;
+        const width = size.width + padding.left + padding.right;
+        const height = size.height + padding.top + padding.bottom;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        this.getImageAsync(path).then((image) => {
+            context.globalAlpha = imageComponent.opacity;
+            context.drawImage(
+                image,
+                position.x,
+                position.y,
+                size.width,
+                size.height,
+                padding.left,
+                padding.top,
+                size.width,
+                size.height
+            );
+        }).catch((error) => {
+            context.globalAlpha = imageComponent.opacity;
+            throw error;
+        })
+
+        return canvas;
+    }
+
+    getPath(path) {
+        return this.assetRoot + path;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ImageRasterizer;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class LineRenderer {
+    constructor(canvasFactory) {
+        this.type = "line";
+        this.canvasFactory = canvasFactory;
+    }
+
+    convertToRgba(color) {
+        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
+    }
+
+    getIdentity(entity) {
+        const size = entity.getComponent("size");
+        const line = entity.getComponent("line");
+
+        return `size=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
+    }
+
+    rasterize(entity) {
+        const canvas = this.canvasFactory.create();
+
+        const size = entity.getComponent("size");
+        const line = entity.getComponent("line");
+        const position = entity.getComponent("position");
+        const context = canvas.getContext("2d");
+
+        canvas.width = size.width;
+        canvas.height = size.height;
+
+        if (line.thickness > 0) {
+            context.globalAlpha = line.opacity;
+            context.beginPath();
+            context.lineCap = "round";
+            context.lineWidth = line.thickness;
+            context.strokeStyle = this.convertToRgba(line.color);
+            context.moveTo(line.from.x, line.from.y);
+            context.lineTo(line.to.x, line.to.y);
+            context.stroke();
+            context.closePath();
+        }
+
+        return canvas;
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LineRenderer;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(4);
+﻿
+
+class ShapeRasterizer {
+    constructor(canvasFactory) {
+        this.type = "shape";
+        this.canvasFactory = canvasFactory;
+        this.shapeCache = {};
+    }
+
+    convertToRgba(color) {
+        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
+    }
+
+    getIdentity(entity) {
+        const size = entity.getComponent("size");
+        const shape = entity.getComponent("shape");
+
+        //return `${stringify(size)}|${stringify(shape)}`;
+        return this.convertToRgba(shape.fillColor);
+    }
+
+    rasterize(entity) {
+        const canvas = this.canvasFactory.create();
+
+        const size = entity.getComponent("size");
+        const shape = entity.getComponent("shape");
+
+        const context = canvas.getContext("2d");
+
+        canvas.width = size.width;
+        canvas.height = size.height;
+
+        context.globalAlpha = shape.opacity;
+        context.beginPath();
+
+        shape.points.forEach(function (point, index) {
+            const x = point.x;
+            const y = point.y;
+
+            if (index === 0) {
+                context.moveTo(x, y);
+            } else {
+                context.lineTo(x, y);
+            }
+        });
+
+        context.closePath();
+
+        if (shape.fillColor.alpha > 0) {
+            context.fillStyle = this.convertToRgba(shape.fillColor);
+            context.fill();
+        }
+
+        if (shape.border.thickness > 0) {
+            context.lineWidth = shape.border.thickness;
+            context.strokeStyle = this.convertToRgba(shape.border.color);
+            context.stroke();
+        }
+
+        return canvas;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ShapeRasterizer;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_stringify__ = __webpack_require__(4);
+﻿
+
+class TextRasterizer {
+    constructor(canvasFactory) {
+        this.type = "text";
+        this.fontCache = {};
+        this.canvasFactory = canvasFactory;
+    }
+
+    convertToRgba(color) {
+        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha + ")";
+    }
+
+    createFontString(textTexture) {
+        //font-style variant weight size family
+        return `${textTexture.font.style} ${textTexture.font.variant} ${textTexture.font.weight} ${textTexture.font.size}px ${textTexture.font.family}`;
+    }
+
+    getIdentity(entity) {
+        const size = entity.getComponent("size");
+        const textTexture = entity.getComponent("text");
+
+        return `size=${JSON.stringify(size)}, text=${JSON.stringify(textTexture)}`;
+    }
+
+    rasterize(entity) {
+        var canvas = this.canvasFactory.create();
+
+        var size = entity.getComponent("size");
+        var textTexture = entity.getComponent("text");
+
+        var context = canvas.getContext("2d");
+
+        canvas.width = size.width;
+        canvas.height = size.height;
+
+        context.globalAlpha = textTexture.opacity;
+        context.font = this.createFontString(textTexture);
+        context.textBaseline = textTexture.font.baseline;
+        context.textAlign = textTexture.horizontalAlignment;
+
+        // A little trick to get approximate height. 
+        var textHeight = textTexture.font.size;
+        var textWidth = context.measureText(textTexture.text).width;
+
+        var x = 0;
+        var y = 0;
+
+        textTexture.height = textHeight;
+        textTexture.width = textWidth;
+
+        if (textTexture.horizontalAlignment === "center") {
+            x = size.width / 2;
+        } else if (textTexture.horizontalAlignment === "right") {
+            x = size.width;
+        }
+
+        if (textTexture.verticalAlignment === "top") {
+            y = 0;
+        } else if (textTexture.verticalAlignment === "middle") {
+            y = (size.height / 2) - (textHeight / 2);
+        } else if (textTexture.verticalAlignment === "bottom") {
+            y = size.height - textHeight;
+        }
+
+        var color = this.convertToRgba(textTexture.font.color);
+
+        context.fillStyle = color;
+        context.fillText(textTexture.text, parseInt(x, 10), parseInt(y, 10));
+
+        return canvas;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TextRasterizer;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿const idSort = (_entityA, _entityB) => {
+    const entityA = _entityA;
+    const entityB = _entityB;
+
+    if (entityA.id < entityB.id) {
+        return -1
+    } else if (entityA.id > entityB.id) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
+class CanvasCell {
+    constructor(cameraCanvasCellEntity, canvas) {
+        this.position = cameraCanvasCellEntity.getComponent("position");
+        this.size = cameraCanvasCellEntity.getComponent("size");
+        this.collidable = cameraCanvasCellEntity.getComponent("collidable");
+        this.entity = cameraCanvasCellEntity;
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
+        this.canvas.width = this.size.width;
+        this.canvas.height = this.size.height;
+        this.isDirty = false;
+    }
+}
+
+class Camera {
+    constructor(cameraEntity, canvas) {
+        this.position = cameraEntity.getComponent("position");
+        this.size = cameraEntity.getComponent("size");
+        this.collidable = cameraEntity.getComponent("collidable");
+        this.entity = cameraEntity;
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
+    }
+}
+
+class CameraSystem {
+    constructor({ canvas, cameraName, imageManager, canvasFactory, sort = idSort }) {
+        this.canvas = canvas;
+        this.imageManager = imageManager;
+        this.cameraName = cameraName;
+        this.canvasFactory = canvasFactory;
+        this.broadPhaseCollisionData = null;
+        this.cells = [];
+        this.world = null;
+        this.camera = null;
+        this.drawImageCount = 0;
+
+        this.sort = (_entityA, _entityB) => {
+            const entityA = this.world.getEntityById(_entityA.id);
+            const entityB = this.world.getEntityById(_entityB.id);
+            const zIndexAComponent = entityA.getComponent("z-index");
+            const zIndexBComponent = entityB.getComponent("z-index");
+            const zIndexA = zIndexAComponent != null ? zIndexAComponent.value : 0;
+            const zIndexB = zIndexBComponent != null ? zIndexBComponent.value : 0;
+
+            if (zIndexA < zIndexB) {
+                return -1;
+            } else if (zIndexA > zIndexB) {
+                return 1;
+            } else {
+                return sort(entityA, entityB);
+            }
+        }
+    }
+
+    _getBroadPhaseCollisionCell({ rowIndex, columnIndex }) {
+        let cell = this.broadPhaseCollisionData.grid[`${columnIndex}_${rowIndex}`];
+        if (cell == null) {
+            return [];
+        }
+        return cell;
+    }
+
+    _hasCamera() {
+        return this.camera != null;
+    }
+
+    _isDynamicLoadingCellEntity(entity) {
+        return entity.hasComponents(["dynamic-loading-cell", "position", "size", "collidable"])
+    }
+
+    _isBroadPhaseCollisionDataEntity(entity) {
+        return entity.hasComponents(["broad-phase-collision-data"]);
+    }
+
+    _isCameraEntity(entity) {
+        return entity.hasComponents(["camera", "position", "size", "collidable"]) && entity.getComponent("camera").name === this.cameraName;
+    }
+
+    _isCell(entity) {
+        return this.cells.some(cell => {
+            return cell.id === entity.id;
+        });
+    }
+
+    _updateCell(_cell, _dirtyCellPositions) {
+        const cell = _cell;
+        const dirtyCellPositions = _dirtyCellPositions;
+        const cellSize = this.broadPhaseCollisionData.cellSize;
+
+        for (let x = 0; x < dirtyCellPositions.length; x++) {
+            const dirtyCellPosition = dirtyCellPositions[x];
+            const cellY = dirtyCellPosition.rowIndex * cellSize;
+            const cellX = dirtyCellPosition.columnIndex * cellSize;
+
+            const top = Math.max(cellY, cell.position.y);
+            const left = Math.max(cellX, cell.position.x);
+            const bottom = Math.min(cellY + cellSize, cell.position.y + cell.size.height);
+            const right = Math.min(cellX + cellSize, cell.position.x + cell.size.width);
+
+            if (top < bottom && left < right) {
+                const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
+                entities.sort(this.sort);
+
+                cell.context.clearRect(left - cell.position.x, top - cell.position.y, right - left, bottom - top);
+
+                for (let y = 0; y < entities.length; y++) {
+                    const collidableEntity = entities[y];
+                    const entity = this.world.getEntityById(collidableEntity.id);
+                    const opacity = entity.getComponent("opacity");
+
+                    if (entity === null) {
+                        continue;
+                    }
+
+                    const images = this.imageManager.getEntityImages(entity);
+
+                    // If the image isn't renderable then don't go on.
+                    if (images.length === 0) {
+                        continue;
+                    }
+
+                    const intersectedTop = Math.max(top, collidableEntity.position.y);
+                    const intersectedLeft = Math.max(left, collidableEntity.position.x);
+                    const intersectedBottom = Math.min(bottom, collidableEntity.position.y + collidableEntity.size.height);
+                    const intersectedRight = Math.min(right, collidableEntity.position.x + collidableEntity.size.width);
+
+                    let sourceX = 0;
+                    let sourceY = 0;
+                    let width = intersectedRight - intersectedLeft;
+                    let height = intersectedBottom - intersectedTop;
+                    let destinationX = intersectedLeft - cell.position.x;
+                    let destinationY = intersectedTop - cell.position.y;
+
+                    if (width <= 0 || height <= 0) {
+                        continue;
+                    }
+
+                    if (collidableEntity.position.x < left) {
+                        sourceX = left - collidableEntity.position.x;
+                    }
+
+                    if (collidableEntity.position.y < top) {
+                        sourceY = top - collidableEntity.position.y;
+                    }
+
+                    if (opacity != null) {
+                        cell.context.globalAlpha = opacity.value;
+                    }
+
+                    for (let z = 0; z < images.length; z++) {
+                        const image = images[z];
+
+                        this.drawImageCount++;
+                        cell.context.drawImage(
+                            image,
+                            sourceX,
+                            sourceY,
+                            width,
+                            height,
+                            destinationX,
+                            destinationY,
+                            width,
+                            height
+                        );
+                    }
+
+                    if (opacity != null) {
+                        cell.context.globalAlpha = 1;
+                    }
+
+                }
+            }
+        }
+    }
+
+    _updateCells() {
+        let dirtyCellPositions = this.broadPhaseCollisionData.dirtyCellPositions.slice();
+        const renderableCells = {};
+        let fullCellRenderCount = 0;
+
+        for (let x = 0; x < dirtyCellPositions.length; x++) {
+            const cellPosition = dirtyCellPositions[x];
+            const collidableEntities = this._getBroadPhaseCollisionCell(cellPosition);
+
+            for (let i = 0; i < collidableEntities.length; i++) {
+                const collidableEntity = collidableEntities[i]
+                const id = collidableEntity.id;
+                const collidable = collidableEntity.collidable;
+                const entity = this.world.getEntityById(id);
+                const cellPositions = collidable.cellPositions;
+                const lastCellPositions = collidable.lastCellPositions;
+
+                if (entity == null) {
+                    return;
+                }
+
+                const size = entity.getComponent("size");
+                const position = entity.getComponent("position");
+
+                if (this.imageManager.isRenderable(entity) && (size.isDirty || position.isDirty)) {
+                    for (let c = 0; c < cellPositions.length; c++) {
+                        const cellPosition = cellPositions[c];
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    }
+
+                    for (let c = 0; c < lastCellPositions.length; c++) {
+                        const cellPosition = lastCellPositions[c];
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    }
+                }
+            }
+        }
+
+        for (let x = 0; x < this.cells.length; x++) {
+            const cell = this.cells[x];
+            const collisions = cell.collidable.collisions;
+            const cellPositions = cell.collidable.cellPositions;
+
+            if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
+
+                if (fullCellRenderCount === 0) {
+                    fullCellRenderCount++;
+                    cell.isDirty = false;
+
+                    for (let c = 0; c < cellPositions.length; c++) {
+                        const cellPosition = cellPositions[c];
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    }
+
+                } else {
+                    cell.isDirty = true;
+                }
+
+            }
+
+            // Find dirty entities with in the loading area that need updating.
+            for (let y in collisions) {
+                const entity = this.world.getEntityById(y);
+
+                if (entity == null) {
+                    continue;
+                }
+
+                const isDirty = this.imageManager.isEntityDirty(entity);
+                if (isDirty) {
+                    const entityCellPositions = entity.getComponent("collidable").cellPositions;
+                    for (let z = 0; z < entityCellPositions.length; z++) {
+                        const cellPosition = entityCellPositions[z];
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                    }
+                }
+            }
+
+            dirtyCellPositions = Object.keys(renderableCells).map(key => renderableCells[key]);
+
+            this._updateCell(this.cells[x], dirtyCellPositions);
+        }
+    }
+
+    _transferToCanvas() {
+        const canvas = this.canvas;
+
+        canvas.width = this.camera.size.width;
+        canvas.height = this.camera.size.height;
+
+        for (let x = 0; x < this.cells.length; x++) {
+            const cell = this.cells[x];
+            const top = Math.max(cell.position.y, this.camera.position.y);
+            const left = Math.max(cell.position.x, this.camera.position.x);
+            const bottom = Math.min(cell.position.y + cell.size.height, this.camera.position.y + this.camera.size.height);
+            const right = Math.min(cell.position.x + cell.size.width, this.camera.position.x + this.camera.size.width);
+
+            if (top < bottom && left < right) {
+
+                let sourceX = 0;
+                let sourceY = 0;
+                const sourceWidth = right - left;
+                const sourceHeight = bottom - top;
+                const destinationX = left - this.camera.position.x;
+                const destinationY = top - this.camera.position.y;
+                const destinationWidth = right - left;
+                const destinationHeight = bottom - top;
+
+                if (cell.position.x < this.camera.position.x) {
+                    sourceX = this.camera.position.x - cell.position.x;
+                }
+
+                if (cell.position.y < this.camera.position.y) {
+                    sourceY = this.camera.position.y - cell.position.y;
+                }
+
+                const context = canvas.getContext("2d");
+
+                this.drawImageCount++;
+                context.drawImage(
+                    cell.canvas,
+                    sourceX,
+                    sourceY,
+                    sourceWidth,
+                    sourceHeight,
+                    destinationX,
+                    destinationY,
+                    destinationWidth,
+                    destinationHeight
+                );
+            }
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+
+        this.world.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    componentAdded(entity, component) {
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (component.type === "broad-phase-collision-data") {
+            this.broadPhaseCollisionData = null;
+        } else if (this.cameraCanvasCellEntities.indexOf(entity) > -1) {
+            const index = this.cameraCanvasCellEntities.indexOf(entity) > -1;
+            this.cameraCanvasCellEntities.splice(index, 1);
+        }
+    }
+
+    deactivated(world) {
+
+    }
+
+    entityAdded(entity) {
+        if (this._isBroadPhaseCollisionDataEntity(entity)) {
+            this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
+            this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
+        } else if (this._isCameraEntity(entity)) {
+            this.camera = new Camera(entity, this.canvasFactory.create());
+        }
+    }
+
+    entityRemoved(entity) {
+        if (this._isBroadPhaseCollisionDataEntity(entity)) {
+            this.broadPhaseCollisionData = null;
+        } else if (this._isDynamicLoadingCellEntity(entity)) {
+            throw new Error("The Camera cannot run without dynamic loading cells.");
+        }
+    }
+
+    update(currentTime) {
+        this.drawImageCount = 0;
+        if (this._hasCamera()) {
+            this._updateCells();
+            this._transferToCanvas();
+        }
+        //console.log(this.drawImageCount);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;
+
+
+/***/ }),
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BroadPhaseCollisionData__ = __webpack_require__(25);
 ﻿
 
-
-//TODO: correct cells when finding dirty cells, change dirty cell positions to strings... maybe.
 
 class CellPosition {
     constructor(columnIndex, rowIndex) {
@@ -575,7 +1634,7 @@ class BroadPhaseCollisionSystem {
         this.collidableEntitiesById = {};
         this.world = null;
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
         this.dirtyCellPositions = [];
         this.dependencies = ["position", "size", "collidable"];
         this.name = "Broad Phase Collision System";
@@ -697,33 +1756,34 @@ class BroadPhaseCollisionSystem {
             this.addEntityToCellPositions(dirtyEntity, newCellPositions);
 
             dirtyEntity.collidable.cellPositions = newCellPositions;
+            dirtyEntity.collidable.lastCellPositions = lastCellPositions;
 
             for (let y in collisions) {
                 const collision = collisions[y];
                 const otherCollidableEntity = this.collidableEntitiesById[y];
 
                 this.releaseCollision(collision);
-                this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
 
-                delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
+                if (otherCollidableEntity) {
+                    this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
+                    delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
+                }
+
 
             }
 
             dirtyEntity.collidable.collisions = {};
         }
+
+        this.dirtyEntities = dirtyEntities;
     }
 
     getCell({ rowIndex, columnIndex }) {
-        let column = this.grid.get(columnIndex);
-        if (column == null) {
-            column = new Map();
-            this.grid.set(columnIndex, column);
-        }
+        const key = `${columnIndex}_${rowIndex}`;
+        let cell = this.grid[key];
 
-        let cell = column.get(rowIndex);
         if (cell == null) {
-            cell = [];
-            column.set(rowIndex, cell);
+            cell = this.grid[key] = [];
         }
 
         return cell;
@@ -759,12 +1819,14 @@ class BroadPhaseCollisionSystem {
     }
 
     releaseCollision(collision) {
-        this.availableCollisions.push(collision);
+        if (collision != null){
+            this.availableCollisions.push(collision);
+        }
     }
 
     removeCell({ columnIndex, rowIndex }) {
-        if (this.grid.has(columnIndex) && this.grid.get(columnIndex).has(rowIndex)) {
-            this.grid.get(columnIndex).delete(rowIndex);
+        if (this.grid[`${columnIndex}_${rowIndex}`]) {
+            delete this.grid[`${columnIndex}_${rowIndex}`];
         }
     }
 
@@ -772,7 +1834,7 @@ class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
-
+ 
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const cell = this.getCell(cellPosition);
@@ -810,10 +1872,7 @@ class BroadPhaseCollisionSystem {
                     const otherCollidableEntity = cell[x];
                     const otherCollisions = otherCollidableEntity.collidable.collisions;
 
-                    if ((!otherCollidableEntity.position.isDirty && !otherCollidableEntity.size.isDirty &&
-                        !collidableEntity.position.isDirty && !collidableEntity.size.isDirty) ||
-                        (otherCollisions[collidableEntity.id] &&
-                            otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
+                    if ((otherCollisions[collidableEntity.id] && otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
                         continue;
                     }
 
@@ -844,9 +1903,6 @@ class BroadPhaseCollisionSystem {
 
                 }
 
-                collidableEntity.position.isDirty = false;
-                collidableEntity.size.isDirty = false;
-
             }
         }
 
@@ -866,7 +1922,7 @@ class BroadPhaseCollisionSystem {
 
     entityAdded(_entity) {
         const entity = _entity;
-        if (entity.hasComponents(this.dependencies) && this.collidableEntities.findIndex(e => e.id === entity.id) === -1) {
+        if (entity.hasComponents(this.dependencies) && this.collidableEntitiesById[entity.id] == null) {
             const collidableEntity = new CollidableEntity(entity.id);
             collidableEntity.position = entity.getComponent("position");
             collidableEntity.size = entity.getComponent("size");
@@ -893,14 +1949,18 @@ class BroadPhaseCollisionSystem {
         this.collidableEntities = [];
         this.collidableEntitiesById = {};
         this.currentTime = 0;
-        this.grid = new Map();
+        this.grid = {};
     }
 
     entityRemoved(_entity) {
         const entity = _entity;
-        const index = this.collidableEntities.findIndex(e => e.id === entity.id);
-        if (index > -1) {
-            const collidableEntity = this.collidableEntities[index];
+        const collidableEntity = this.collidableEntitiesById[entity.id];
+
+        if (collidableEntity != null) {
+            const index = this.collidableEntities.findIndex(e => e.id === entity.id);
+            for (let key in collidableEntity.collidable.collisions){
+                this.releaseCollision(collidableEntity.collidable.collisions[key]);
+            }
             let cellPositions = collidableEntity.collidable.cellPositions;
             this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             this.collidableEntities.splice(index, 1);
@@ -919,6 +1979,14 @@ class BroadPhaseCollisionSystem {
         this.findDirtyCells();
         this.updateGridCells(this.dirtyCellPositions);
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
+        this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
+    }
+    
+    afterUpdate(currentTime) {
+        for (let x = 0; x < this.dirtyEntities.length; x++) {
+            this.dirtyEntities[x].size.isDirty = false;
+            this.dirtyEntities[x].position.isDirty = false;
+        }
         this.dirtyCellPositions = [];
     }
 }
@@ -926,19 +1994,17 @@ class BroadPhaseCollisionSystem {
 
 
 /***/ }),
-/* 8 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = createGuid;
-/* unused harmony export invokeMethod */
 var S4 = function () {
     return Math.floor(
         Math.random() * 0x10000 /* 65536 */
     ).toString(16);
 };
 
-function createGuid() {
+/* harmony default export */ __webpack_exports__["a"] = (() => {
     return (
         S4() + S4() + "-" +
         S4() + "-" +
@@ -946,33 +2012,266 @@ function createGuid() {
         S4() + "-" +
         S4() + S4() + S4()
     );
-};
-
-function invokeMethod(obj, methodName, args){
-     args = Array.isArray(args)? args: [];
-    if (obj != null && typeof obj[methodName] === "function"){
-        return obj[methodName].apply(obj, args);
-    }
-}
+});
 
 /***/ }),
-/* 9 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 class BroadPhaseCollisionData {
-    constructor(){
+    constructor() {
         this.type = "broad-phase-collision-data";
+        this.collidableEntitiesById = {};
         this.dirtyCellPositions = [];
         this.grid = null;
         this.cellSize = 0;
+        this.dirtyEntities = [];
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BroadPhaseCollisionData;
 
 
 /***/ }),
-/* 10 */
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(27);
+
+
+class Cell {
+    constructor({column, row, cellSize}) {
+        this.rowIndex = row;
+        this.columnIndex = column;
+        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
+        this.position = this.entity.getComponent("position");
+        this.position.x = column * cellSize;
+        this.position.y = row * cellSize;
+    }
+}
+
+class DynamicLoadingSystem {
+    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
+        this.world = null;
+        this.cameraName = cameraName;
+        this.cells = [];
+        this.cellPositions = [];
+        this.cellSize = cellSize;
+        this.camera = {
+            position: null,
+            size: null,
+            collidable: null
+        };
+
+        for (let y = 0; y < 3; y++) {
+            for (let x = 0; x < 3; x++) {
+                const row = y - 1;
+                const column = x - 1;
+                const index = (y * 3) + x;
+
+                this.cellPositions.push({ columnIndex: column, rowIndex: row });
+                this.cells.push(new Cell({column, row, cellSize}));
+            }
+        }
+
+    }
+
+    _addCamera(entity) {
+        this.camera.position = entity.getComponent("position");
+        this.camera.size = entity.getComponent("size");
+        this.camera.collidable = entity.getComponent("collidable");
+    }
+
+    _findCellPositionsWithCenter(x, y) {
+        const centerColumn = Math.floor(x / this.cellSize);
+        const centerRow = Math.floor(y / this.cellSize);
+
+        for (let y = 0; y < 3; y++) {
+            for (let x = 0; x < 3; x++) {
+                const row = centerRow + y - 1;
+                const column = centerColumn + x - 1;
+                const index = (y * 3) + x;
+                const cellPosition = this.cellPositions[index];
+
+                cellPosition.rowIndex = row;
+                cellPosition.columnIndex = column;
+            }
+        }
+    }
+
+    _isCamera(entity) {
+        return (
+            entity.hasComponents(["camera", "position", "size", "collidable"]) &&
+            entity.getComponent("camera").name === this.cameraName
+        );
+    }
+
+    _hasCamera() {
+        return this.camera.position != null &&
+            this.camera.size != null &&
+            this.camera.collidable != null;
+    }
+
+    _removeCamera() {
+        this.camera.position = null;
+        this.camera.size = null;
+        this.camera.collidable = null;
+    }
+
+    _reset() {
+        this._removeCamera();
+    }
+
+    _updateCells() {
+        const cameraCenterX = this.camera.position.x + (this.camera.size.width / 2);
+        const cameraCenterY = this.camera.position.y + (this.camera.size.height / 2);
+
+        this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
+
+        const availableCanvasCells = [];
+
+        for (let x = 0; x < this.cells.length; x++) {
+            let cell = this.cells[x];
+
+            let index = this.cellPositions.findIndex((cellPosition) => {
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
+            });
+
+            if (index === -1) {
+                availableCanvasCells.push(cell);
+            }
+        }
+
+        for (let x = 0; x < this.cellPositions.length; x++) {
+            const cellPosition = this.cellPositions[x];
+
+            let index = this.cells.findIndex((cell) => {
+                return cell.columnIndex === cellPosition.columnIndex &&
+                    cell.rowIndex === cellPosition.rowIndex;
+            });
+
+            if (index === -1) {
+                const cell = availableCanvasCells.pop();
+                cell.rowIndex = cellPosition.rowIndex;
+                cell.columnIndex = cellPosition.columnIndex;
+
+                cell.position.x = cellPosition.columnIndex * this.cellSize;
+                cell.position.y = cellPosition.rowIndex * this.cellSize;
+                cell.position.isDirty = true;
+            }
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+        const entities = this.world.getEntities();
+
+        entities.forEach((entity) => {
+            this.entityAdded(entity);
+        });
+
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.addEntity(this.cells[x].entity);
+        }
+    }
+
+    componentAdded(entity, component) {
+        if (this._isCamera(entity)) {
+            this._addCamera(entity);
+        }
+    }
+
+    componentRemoved(entity, component) {
+        if (this._isCamera(entity)) {
+            this._removeCamera();
+        }
+    }
+
+    deactivated() {
+        this._reset();
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.removeEntity(this.cells[x].entity);
+        }
+    }
+
+    entityAdded(entity) {
+        if (this._isCamera(entity)) {
+            this._addCamera(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (this._isCamera(entity)) {
+            this._removeCamera();
+        }
+    }
+
+    update(currentTime) {
+        if (this._hasCamera()) {
+            this._updateCells();
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingSystem;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(28);
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
+        super();
+
+        const size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
+        size.width = cellSize;
+        size.height = cellSize;
+
+        const position = new __WEBPACK_IMPORTED_MODULE_1__components_Position__["a" /* default */]();
+        position.x = x;
+        position.y = y;
+        position.isDirty = true;
+
+        const collidable = new __WEBPACK_IMPORTED_MODULE_3__components_Collidable__["a" /* default */]();
+        const dynamicLoadingCell = new __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__["a" /* default */]();
+
+        this.addComponent(size);
+        this.addComponent(position);
+        this.addComponent(collidable);
+        this.addComponent(dynamicLoadingCell);
+
+    }
+});
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class DynamicLoadingCell {
+    constructor(){
+        this.type = "dynamic-loading-cell";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingCell;
+
+
+/***/ }),
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1038,7 +2337,7 @@ class BroadPhaseCollisionData {
 
 
 /***/ }),
-/* 11 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1122,7 +2421,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 12 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1193,7 +2492,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 13 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1269,7 +2568,249 @@ class MovementSystem {
 
 
 /***/ }),
-/* 14 */
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Movable__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_State__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__ = __webpack_require__(10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor(text) {
+        super();
+        this.id = "player"
+
+        var size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
+        var position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
+        var textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_Text__["a" /* default */]();
+        var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        var keyboardController = new __WEBPACK_IMPORTED_MODULE_5__components_KeyboardController__["a" /* default */]();
+        var keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__components_KeyboardInput__["a" /* default */]();
+        var movable = new __WEBPACK_IMPORTED_MODULE_7__components_Movable__["a" /* default */]();
+        var shape = new __WEBPACK_IMPORTED_MODULE_8__components_Shape__["a" /* default */]();
+        var narrowPhaseCollision = new __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__["a" /* NarrowPhaseCollidable */]();
+        var part = new __WEBPACK_IMPORTED_MODULE_10__components_NarrowPhaseCollidable__["b" /* Part */]();
+        var solidBody = new __WEBPACK_IMPORTED_MODULE_11__components_SolidBody__["a" /* default */]();
+
+        part.points.push(
+            { x: 0, y: 0 },
+            { x: 30, y: 0 },
+            { x: 30, y: 30 },
+            { x: 0, y: 30 }
+        );
+
+        narrowPhaseCollision.parts.push(part);
+
+        textTexture.text = text;
+        textTexture.font.size = 17;
+        textTexture.verticalAlignment = "middle";
+        textTexture.horizontalAlignment = "center"
+
+        size.width = 30;
+        size.height = 30;
+
+        position.isDirty = true;
+
+        shape.border.thickness = 1;
+        shape.fillColor.blue = 255;
+        shape.fillColor.green = 100;
+        shape.fillColor.red = 100;
+        shape.points.push(
+            { x: 0, y: 0 },
+            { x: 30, y: 0 },
+            { x: 30, y: 30 },
+            { x: 0, y: 30 },
+            { x: 0, y: 0 }
+        );
+
+        this.addComponent(size);
+        this.addComponent(position);
+        this.addComponent(textTexture);
+        this.addComponent(collidable);
+        this.addComponent(keyboardController);
+        this.addComponent(keyboardInput);
+        this.addComponent(movable);
+        this.addComponent(shape);
+        this.addComponent(narrowPhaseCollision);
+        this.addComponent(solidBody);
+    }
+});
+
+/***/ }),
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class KeyboardInput {
+   constructor() {
+        this.type = "keyboard-input";
+        this.pressedKeys = {};
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardInput;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Movable {
+    constructor() {
+        this.type = "movable";
+        this.x = 0;
+        this.y = 0;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Movable;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class State {
+    constructor() {
+        this.type = "state";
+        
+        this.activeName = null;
+        this.activeOptions = {};
+        
+        this.name = null;
+        this.options = {};
+        
+        this.stateManagerName = null;
+
+    }
+}
+/* unused harmony export default */
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Opacity__ = __webpack_require__(38);
+
+
+
+
+
+
+
+
+
+
+class StaticText extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {
+        super();
+        this.type = "static-text";
+
+        const size = new __WEBPACK_IMPORTED_MODULE_1__components_Size__["a" /* default */]();
+        const position = new __WEBPACK_IMPORTED_MODULE_2__components_Position__["a" /* default */]();
+        const textTexture = new __WEBPACK_IMPORTED_MODULE_3__components_Text__["a" /* default */]();
+        const collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+        const narrowPhaseCollidable = new __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__["a" /* NarrowPhaseCollidable */]();
+        const part = new __WEBPACK_IMPORTED_MODULE_5__components_NarrowPhaseCollidable__["b" /* Part */]();
+        const shape = new __WEBPACK_IMPORTED_MODULE_6__components_Shape__["a" /* default */]();
+        const solidBody = new __WEBPACK_IMPORTED_MODULE_7__components_SolidBody__["a" /* default */]();
+        const opacity = new __WEBPACK_IMPORTED_MODULE_8__components_Opacity__["a" /* default */]();
+
+        opacity.value = Math.random();
+
+        narrowPhaseCollidable.parts.push(part);
+
+        shape.border.thickness = 1;
+        shape.fillColor.red = red;
+        shape.fillColor.green = green;
+        shape.fillColor.blue = blue;
+        shape.points.push(
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
+            { x: 0, y: 30 },
+            { x: 0, y: 0 }
+        );
+
+        part.points.push(
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
+            { x: 0, y: 30 }
+        );
+
+        textTexture.text = text;
+        textTexture.font.size = 17;
+        textTexture.horizontalAlignment = "center";
+        textTexture.verticalAlignment = "middle";
+
+        size.width = 100;
+        size.height = 30;
+
+        position.x = x;
+        position.y = y;
+
+        this.addComponent(size);
+        this.addComponent(position);
+        this.addComponent(textTexture);
+        this.addComponent(collidable);
+        this.addComponent(shape);
+        this.addComponent(solidBody);
+        this.addComponent(narrowPhaseCollidable);
+        this.addComponent(opacity);
+    }
+}
+/* unused harmony export default */
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Opacity {
+    constructor(){
+        this.type = "opacity";
+        this.value = 1;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Opacity;
+
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1385,7 +2926,7 @@ class LogicSystem {
 
 
 /***/ }),
-/* 15 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1474,11 +3015,11 @@ class SpriteSystem {
 
 
 /***/ }),
-/* 16 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(42);
 
 
 const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "position", "size"];
@@ -1495,11 +3036,17 @@ class NarrowPhaseCollisionSystem {
             max: 0
         };
         this.timestamp = 0;
+        this.broadPhaseCollisionData = null;
     }
 
-    prepareNarrowPhaseCollidable(narrowPhaseCollision) {
+    prepareNarrowPhaseCollidable(narrowPhaseCollidable) {
+        if (narrowPhaseCollidable.isPrepared) {
+            return;
+        }
 
-        narrowPhaseCollision.parts.forEach((part) => {
+        narrowPhaseCollidable.isPrepared = true;
+
+        narrowPhaseCollidable.parts.forEach((part) => {
             let points = part.points;
 
             if (points.length === part.vertices.length &&
@@ -1639,10 +3186,10 @@ class NarrowPhaseCollisionSystem {
     }
 
     updateWorldPoints(entity) {
-        let narrowPhaseCollision = entity.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollidable = entity.getComponent("narrow-phase-collidable");
         let position = entity.getComponent("position");
 
-        narrowPhaseCollision.parts.forEach((part) => {
+        narrowPhaseCollidable.parts.forEach((part) => {
             let worldPoints = part.worldPoints;
 
             part.points.forEach(function (point, index) {
@@ -1662,14 +3209,14 @@ class NarrowPhaseCollisionSystem {
         let vx;
         let normal;
 
-        let narrowPhaseCollisionA = _entityA.getComponent("narrow-phase-collidable");
-        let narrowPhaseCollisionB = _entityB.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollidableA = _entityA.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollidableB = _entityB.getComponent("narrow-phase-collidable");
         let positionA = _entityA.getComponent("position");
         let positionB = _entityB.getComponent("position");
         let collidableA = _entityA.getComponent("collidable");
         let collidableB = _entityB.getComponent("collidable");
-        let aParts = narrowPhaseCollisionA.parts;
-        let bParts = narrowPhaseCollisionB.parts;
+        let aParts = narrowPhaseCollidableA.parts;
+        let bParts = narrowPhaseCollidableB.parts;
 
         this.updateWorldPoints(entityA);
         this.updateWorldPoints(entityB);
@@ -1686,8 +3233,8 @@ class NarrowPhaseCollisionSystem {
                 let projectionB = this.projectionB;
                 let verticesA = partA.worldPoints;
                 let verticesB = partB.worldPoints;
-                let collisionA = narrowPhaseCollisionA.collisions[entityB.id];
-                let collisionB = narrowPhaseCollisionB.collisions[entityA.id];
+                let collisionA = narrowPhaseCollidableA.collisions[entityB.id];
+                let collisionB = narrowPhaseCollidableB.collisions[entityA.id];
                 let penetration;
                 let minOverlap;
                 let normal;
@@ -1695,8 +3242,8 @@ class NarrowPhaseCollisionSystem {
                 let originA = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionA, partA.origin);
                 let originB = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(positionB, partB.origin);
 
-                narrowPhaseCollisionA.isInitialized = true;
-                narrowPhaseCollisionB.isInitialized = true;
+                narrowPhaseCollidableA.isInitialized = true;
+                narrowPhaseCollidableB.isInitialized = true;
 
                 // If the collision was already handled from the other side then stop detection.
                 if (collisionA != null && collisionA.timestamp === this.timestamp) {
@@ -1799,8 +3346,8 @@ class NarrowPhaseCollisionSystem {
 
                 }
 
-                narrowPhaseCollisionA.collisions[entityB.id] = collisionA;
-                narrowPhaseCollisionB.collisions[entityA.id] = collisionB;
+                narrowPhaseCollidableA.collisions[entityB.id] = collisionA;
+                narrowPhaseCollidableB.collisions[entityA.id] = collisionB;
 
             }
 
@@ -1810,69 +3357,48 @@ class NarrowPhaseCollisionSystem {
 
     cleanCollisions(entity) {
         let _entity = entity;
-        let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollidable = _entity.getComponent("narrow-phase-collidable");
         let collidable = _entity.getComponent("collidable");
-        let activeCollisions = narrowPhaseCollision.collisions;
-        let timestamp = this.timestamp;
+        let narrowPhaseCollisions = narrowPhaseCollidable.collisions;
+        let broadPhaseCollisions = collidable.collisions;
 
-        for (let key in activeCollisions) {
-            let _collision = activeCollisions[key];
-            let collidableKey = _collision.otherEntity.id;
+        for (let key in narrowPhaseCollisions) {
+            let narrowCollision = narrowPhaseCollisions[key];
+            let broadPhaseCollision = broadPhaseCollisions[key];
 
-            if (_collision.endTimestamp != null && timestamp - _collision.endTimestamp > 3000) {
-                delete activeCollisions[key];
-            }
-
-            const broadphaseCollision = this.getCollisionByEntityId(collidable.collisions, collidableKey);
-
-            // Checking the status of the broadphase collision.
-            if (_collision.endTimestamp == null && broadphaseCollision != null && broadphaseCollision.endTimestamp != null) {
-                _collision.endTimestamp = broadphaseCollision.endTimestamp;
+            if (broadPhaseCollision == null || narrowCollision.endTimestamp != null) {
+                delete narrowPhaseCollisions[key];
             }
         }
 
     }
 
     getCollisionByEntityId(collisions, id) {
-        return collisions.find(({ entityId }) => entityId === id);
-    }
-
-    isStaticAndInitialized(entityA, entityB) {
-        let narrowPhaseCollisionA = entityA.getComponent("narrow-phase-collidable");
-        let narrowPhaseCollisionB = entityB.getComponent("narrow-phase-collidable");
-        let positionA = entityA.getComponent("position");
-        let positionB = entityB.getComponent("position");
-
-        if (!positionA.isStatic || !positionB.isStatic) {
-            return false;
-        }
-
-        if (!narrowPhaseCollisionA.isInitialized || !narrowPhaseCollisionB.isInitialized) {
-            return false;
-        }
-
-        return true;
+        return collisions[id];
     }
 
     handleCollisions(entity) {
         let _entity = entity;
         let collidable = _entity.getComponent("collidable");
-        let narrowPhaseCollision = _entity.getComponent("narrow-phase-collidable");
+        let narrowPhaseCollidable = _entity.getComponent("narrow-phase-collidable");
 
-        if (!narrowPhaseCollision.isEnabled) {
+        this.prepareNarrowPhaseCollidable(narrowPhaseCollidable);
+
+        if (!narrowPhaseCollidable.isEnabled) {
             return;
         }
 
         if (collidable != null) {
-            for (let key in collidable.collisions){
+            for (let key in collidable.collisions) {
                 let collision = collidable.collisions[key];
                 let otherEntity = this.world.getEntityById(collision.entityId);
                 let otherNarrowPhaseCollidable = otherEntity.getComponent("narrow-phase-collidable");
 
-                if (otherEntity == null || otherNarrowPhaseCollidable == null || this.isStaticAndInitialized(_entity, otherEntity) || !otherNarrowPhaseCollidable.isEnabled) {
+                if (otherEntity == null || otherNarrowPhaseCollidable == null) {
                     continue;
                 }
 
+                this.prepareNarrowPhaseCollidable(otherNarrowPhaseCollidable);
                 this.intersects(_entity, otherEntity);
             }
 
@@ -1888,15 +3414,26 @@ class NarrowPhaseCollisionSystem {
         });
     }
 
-    update() {
-        let entity;
-        let entities = this.entities;
-        this.timestamp = this.world.getTime();
+    update(time) {
+        this.timestamp = time;
 
-        entities.forEach((entity) => {
-            let _entity = entity;
-            this.handleCollisions(_entity);
-        });
+        if (this.broadPhaseCollisionData != null) {
+            const entities = this.broadPhaseCollisionData.dirtyEntities.map(({ id }) => {
+                return this.world.getEntityById(id);
+            }).filter((entity) => {
+                return entity.hasComponent("narrow-phase-collidable");
+            });
+
+            entities.forEach((entity) => {
+                const collidable = entity.getComponent("narrow-phase-collidable");
+                this.prepareNarrowPhaseCollidable(collidable);
+                this.updateWorldPoints(entity);
+            })
+
+            entities.forEach((entity) => {
+                this.handleCollisions(entity);
+            });
+        }
     }
 
     deactivated() {
@@ -1904,27 +3441,20 @@ class NarrowPhaseCollisionSystem {
     }
 
     entityAdded(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.prepareNarrowPhaseCollidable(entity.getComponent("narrow-phase-collidable"));
-            if (!entity.getComponent("position").isStatic) {
-                this.entities.push(entity);
-            }
+        if (entity.hasComponent("broad-phase-collision-data")) {
+            this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
         }
     };
 
     entityRemoved(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            let index = this.entities.indexOf(entity);
-
-            if (index > -1) {
-                this.entities.splice(index, 1);
-            }
+        if (entity.hasComponent("broad-phase-collision-data")) {
+            this.broadPhaseCollisionData = null;
         }
     }
 
     componentRemoved(entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1) {
-            this.entityRemoved(entity);
+        if (component.type === "broad-phase-collision-data") {
+            this.broadPhaseCollisionData = null;
         }
     }
 
@@ -1938,7 +3468,7 @@ class NarrowPhaseCollisionSystem {
 
 
 /***/ }),
-/* 17 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2048,7 +3578,7 @@ class Vector {
 
 
 /***/ }),
-/* 18 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2089,23 +3619,6 @@ class FollowEntityCameraSystem {
         if (this._entityToFollow != null && this._camera != null) {
             var x = this._entityPosition.x - (this._cameraSize.width / 2) + (this._entitySize.width / 2);
             var y = this._entityPosition.y - (this._cameraSize.height / 2) + (this._entitySize.height / 2);
-
-            if (x < 0) {
-                x = 0;
-            }
-
-            if (y < 0) {
-                y = 0;
-            }
-
-            if (x + this._cameraSize.width > this._worldSize.width) {
-                x = this._worldSize.width - this._cameraSize.width;
-            }
-
-            if (y + this._cameraSize.height > this._worldSize.height) {
-                y = this._worldSize.height - this._cameraSize.height;
-            }
-
             this._cameraPosition.x = Math.floor(x);
             this._cameraPosition.y = Math.floor(y);
         }
@@ -2126,16 +3639,16 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 19 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Sprite__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Image__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Sprite__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Image__ = __webpack_require__(11);
 
 
 
@@ -2177,11 +3690,11 @@ class FollowEntityCameraSystem {
 });
 
 /***/ }),
-/* 20 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Image__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Image__ = __webpack_require__(11);
 
 class Sprite {
     constructor(){
@@ -2197,15 +3710,15 @@ class Sprite {
 
 
 /***/ }),
-/* 21 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Size__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Position__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Collidable__ = __webpack_require__(3);
 ﻿
 
 
@@ -2213,7 +3726,7 @@ class Sprite {
 
 
 class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor(name) {
+    constructor(name, { width = 300, height = 300 } = {}) {
         super();
 
         var camera = new __WEBPACK_IMPORTED_MODULE_1__components_Camera__["a" /* default */]();
@@ -2222,6 +3735,9 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         var position = new __WEBPACK_IMPORTED_MODULE_3__components_Position__["a" /* default */]();
         var size = new __WEBPACK_IMPORTED_MODULE_2__components_Size__["a" /* default */]();
         var collidable = new __WEBPACK_IMPORTED_MODULE_4__components_Collidable__["a" /* default */]();
+
+        size.width = width;
+        size.height = height;
 
         this.id = `camera_${this.id}`;
         this.addComponent(camera);
@@ -2235,7 +3751,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 22 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

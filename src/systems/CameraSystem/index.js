@@ -260,11 +260,7 @@ export default class CameraSystem {
                     const entityCellPositions = entity.getComponent("collidable").cellPositions;
                     for (let z = 0; z < entityCellPositions.length; z++) {
                         const cellPosition = entityCellPositions[z];
-                        const index = dirtyCellPositions.findIndex(c => c.rowIndex === cellPosition.rowIndex && c.columnIndex === cellPosition.columnIndex);
-
-                        if (index === -1) {
-                            dirtyCellPositions.push(cellPosition);
-                        }
+                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
                     }
                 }
             }

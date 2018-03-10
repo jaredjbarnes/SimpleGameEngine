@@ -233,7 +233,8 @@ export default class WorldGenerationSystem {
                             rowIndex: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
-                            intensity: intensity
+                            intensity: intensity,
+                            blockSize: this.blockSize
                         });
 
                         worldGenerationCell.loadedGround = true;
@@ -243,7 +244,8 @@ export default class WorldGenerationSystem {
                             rowIndex: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
-                            intensity: intensity
+                            intensity: intensity,
+                            blockSize: this.blockSize
                         });
 
                         worldGenerationCell.loadedProps = true;
@@ -253,7 +255,8 @@ export default class WorldGenerationSystem {
                             rowIndex: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
-                            intensity: intensity
+                            intensity: intensity,
+                            blockSize: this.blockSize
                         });
 
                         worldGenerationCell.loadedCreatures = true;

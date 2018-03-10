@@ -1,23 +1,57 @@
-﻿import drawImageNotFoundToContext from "./drawImageNotFoundToContext";
+﻿import stringify from "../../utilities/stringify";
 
 export default class ImageRasterizer {
-    constructor(canvasFactory, imageFactory, assetRoot) {
+    constructor({ canvasFactory, imageFactory, assetRoot }) {
         this.type = "image";
         this.canvasFactory = canvasFactory;
         this.assetRoot = assetRoot || "";
         this.imageFactory = imageFactory;
+        this.loadingImages = {};
+    }
+
+    getImageAsync(path) {
+        if (this.loadingImages[path] != null) {
+            return this.loadingImages[path];
+        }
+
+        return this.loadingImages[path] = new Promise((resolve, reject) => {
+            const image = this.imageFactory.create();
+
+            image.onload = () => {
+                resolve(image);
+            };
+
+            image.onerror = reject;
+            image.src = path;
+        });
+    }
+
+    getImagePadding(image) {
+        const { top, right, bottom, left } = image.padding;
+        return `${top}|${right}|${bottom}|${left}|`;
+    }
+
+    getImageSize(image) {
+        const { width, height } = image.size;
+        return `${width}|${height}`;
+    }
+
+    getImagePosition(image) {
+        const { x, y } = image.position;
+        return `${x}|${y}`;
+    }
+
+    getImageIdentity(image) {
+        return `${image.path}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}`;
     }
 
     getIdentity(entity) {
         const image = entity.getComponent("image");
-        const size = entity.getComponent("size");
-
-        return `size=${size}, image=${JSON.stringify(image)}`;
+        return this.getImageIdentity(image);
     }
 
     rasterize(entity) {
         const imageComponent = entity.getComponent("image");
-        const image = this.imageFactory.create();
         const path = this.getPath(imageComponent.path);
         const canvas = this.canvasFactory.create();
         const context = canvas.getContext("2d");
@@ -30,7 +64,7 @@ export default class ImageRasterizer {
         canvas.width = width;
         canvas.height = height;
 
-        image.onload = () => {
+        this.getImageAsync(path).then((image) => {
             context.globalAlpha = imageComponent.opacity;
             context.drawImage(
                 image,
@@ -43,18 +77,15 @@ export default class ImageRasterizer {
                 size.width,
                 size.height
             );
-        };
-
-        image.onerror = () => {
+        }).catch((error) => {
             context.globalAlpha = imageComponent.opacity;
-            drawImageNotFoundToContext(context, size);
-        }
+            throw error;
+        })
 
-        image.src = path;
         return canvas;
     }
 
     getPath(path) {
-        return this.assetRoot + "/" + path;
+        return this.assetRoot + path;
     }
 }

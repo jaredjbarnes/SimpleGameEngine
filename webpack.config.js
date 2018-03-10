@@ -9,18 +9,18 @@ const path = require('path');
 // }
 
 const render = {
-    entry: "./src/examples/basic/cameraSystem/index.js",
+    entry: "./docs/examples/basic/cameraSystem/index.js",
     output: {
         filename: "index.js",
-        path: path.resolve(__dirname, 'src/examples/basic/cameraSystem/dist')
+        path: path.resolve(__dirname, 'docs/examples/basic/cameraSystem/dist')
     }
 }
 
 const sprite = {
-    entry: "./src/examples/basic/sprites/index.js",
+    entry: "./docs/examples/basic/sprites/index.js",
     output: {
         filename: "index.js",
-        path: path.resolve(__dirname, 'src/examples/basic/sprites/dist')
+        path: path.resolve(__dirname, 'docs/examples/basic/sprites/dist')
     }
 }
 

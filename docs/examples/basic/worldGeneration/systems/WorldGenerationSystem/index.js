@@ -7,7 +7,6 @@ import Entity from "../../Entity";
 import Noise from "./Noise";
 import Validator from "../../utilities/Validator";
 import WorldGenerationCell from "../../components/WorldGenerationCell";
-import { start } from "repl";
 import invokeMethod from "../../utilities/invokeMethod";
 
 const WORLD_PERLIN_SCALING_FACTOR = 5000;

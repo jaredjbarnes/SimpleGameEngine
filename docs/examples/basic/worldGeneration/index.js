@@ -8,13 +8,13 @@ import KeyboardInputSystem from "./../../../../src/systems/KeyboardInputSystem";
 import MovableSystem from "./../../../../src/systems/MovementSystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
-import KeyboardController from "../../../components/KeyboardController";
+import KeyboardController from "./../../../../src/components/KeyboardController";
 import FollowEntityCameraSystem from "./../../../../src/systems/FollowEntityCameraSystem";
 import NarrowPhaseCollisionSystem from "./../../../../src/systems/NarrowPhaseCollisionSystem";
 import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
 import CursorEventSystem from "./../../../../src/systems/CursorEventSystem";
 import CursorSystem from "./../../../../src/systems/CursorSystem";
-import SolidBody from "../../../components/SolidBody";
+import SolidBody from "./../../../../src/components/SolidBody";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;

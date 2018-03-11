@@ -47,6 +47,7 @@ export default class CameraSystem {
         this.world = null;
         this.camera = null;
         this.drawImageCount = 0;
+        this.renderableEntities = {};
 
         this.sort = (_entityA, _entityB) => {
             const entityA = this.world.getEntityById(_entityA.id);
@@ -63,6 +64,16 @@ export default class CameraSystem {
             } else {
                 return sort(entityA, entityB);
             }
+        }
+    }
+
+    _cleanEntities() {
+        const renderableEntities = this.renderableEntities;
+        const imageManager = this.imageManager;
+
+        for (let id in renderableEntities) {
+            const entity = renderableEntities[id];
+            imageManager.cleanEntity(entity);
         }
     }
 
@@ -132,6 +143,8 @@ export default class CameraSystem {
                     if (images.length === 0) {
                         continue;
                     }
+
+                    this.renderableEntities[entity.id] = entity;
 
                     const intersectedTop = Math.max(top, collidableEntity.position.y);
                     const intersectedLeft = Math.max(left, collidableEntity.position.x);
@@ -367,8 +380,11 @@ export default class CameraSystem {
     update(currentTime) {
         this.drawImageCount = 0;
         if (this._hasCamera()) {
+            this.renderableEntities = {};
+            
             this._updateCells();
             this._transferToCanvas();
+            this._cleanEntities();
         }
         //console.log(this.drawImageCount);
     }

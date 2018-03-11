@@ -1503,6 +1503,17 @@ class ImageManager {
         this.imageTypes = Object.keys(this.rasterizers);
     }
 
+    cleanEntity(_entity){
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null){
+                component.isDirty = false;
+            }
+        }
+    }
+
     saveImage(identifier, image) {
         this.images[identifier] = image;
     }
@@ -1555,7 +1566,6 @@ class ImageManager {
                     this.saveImage(imageId, image);
                 }
 
-                component.isDirty = false;
                 images.push(image);
             }
         }
@@ -1975,6 +1985,7 @@ class CameraSystem {
         this.world = null;
         this.camera = null;
         this.drawImageCount = 0;
+        this.renderableEntities = {};
 
         this.sort = (_entityA, _entityB) => {
             const entityA = this.world.getEntityById(_entityA.id);
@@ -1991,6 +2002,16 @@ class CameraSystem {
             } else {
                 return sort(entityA, entityB);
             }
+        }
+    }
+
+    _cleanEntities() {
+        const renderableEntities = this.renderableEntities;
+        const imageManager = this.imageManager;
+
+        for (let id in renderableEntities) {
+            const entity = renderableEntities[id];
+            imageManager.cleanEntity(entity);
         }
     }
 
@@ -2060,6 +2081,8 @@ class CameraSystem {
                     if (images.length === 0) {
                         continue;
                     }
+
+                    this.renderableEntities[entity.id] = entity;
 
                     const intersectedTop = Math.max(top, collidableEntity.position.y);
                     const intersectedLeft = Math.max(left, collidableEntity.position.x);
@@ -2295,8 +2318,11 @@ class CameraSystem {
     update(currentTime) {
         this.drawImageCount = 0;
         if (this._hasCamera()) {
+            this.renderableEntities = {};
+            
             this._updateCells();
             this._transferToCanvas();
+            this._cleanEntities();
         }
         //console.log(this.drawImageCount);
     }

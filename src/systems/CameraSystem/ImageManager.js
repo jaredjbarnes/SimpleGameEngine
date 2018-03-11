@@ -29,6 +29,17 @@ export default class ImageManager {
         this.imageTypes = Object.keys(this.rasterizers);
     }
 
+    cleanEntity(_entity){
+        const entity = _entity;
+
+        for (let type in this.rasterizers) {
+            const component = entity.getComponent(type);
+            if (component != null){
+                component.isDirty = false;
+            }
+        }
+    }
+
     saveImage(identifier, image) {
         this.images[identifier] = image;
     }
@@ -81,7 +92,6 @@ export default class ImageManager {
                     this.saveImage(imageId, image);
                 }
 
-                component.isDirty = false;
                 images.push(image);
             }
         }

@@ -1,5 +1,6 @@
 ﻿import Entity from "../Entity";
 import BroadPhaseCollisionData from "../components/BroadPhaseCollisionData";
+import Vector from "../Vector";
 
 class CellPosition {
     constructor(columnIndex, rowIndex) {
@@ -25,8 +26,7 @@ class Collision {
 class CollidableEntity {
     constructor(entityId) {
         this.id = entityId;
-        this.size = null;
-        this.position = null;
+        this.transform = null;
         this.collidable = null;
     }
 }
@@ -40,7 +40,7 @@ export default class BroadPhaseCollisionSystem {
         this.currentTime = 0;
         this.grid = {};
         this.dirtyCellPositions = [];
-        this.dependencies = ["position", "size", "collidable"];
+        this.dependencies = ["transform", "collidable"];
         this.name = "Broad Phase Collision System";
         this.intersection = {
             top: 0,
@@ -54,6 +54,12 @@ export default class BroadPhaseCollisionSystem {
         this.broadPhaseCollisionDataComponent.cellSize = cellSize;
         this.broadPhaseCollisionDataComponent.grid = this.grid;
         this.broadPhaseCollisionDataEntity.addComponent(this.broadPhaseCollisionDataComponent);
+
+        // We use and reuse these objects to help prevent too much GC.
+        this.cornerOne = { x: 0, y: 0 };
+        this.cornerTwo = { x: 0, y: 0 };
+        this.cornerThree = { x: 0, y: 0 };
+        this.cornerFour = { x: 0, y: 0 };
 
     }
 
@@ -117,34 +123,15 @@ export default class BroadPhaseCollisionSystem {
         return new Collision(id);
     }
 
-    getIntersection({ position: positionA, size: sizeA }, { position: positionB, size: sizeB }) {
-        const top = Math.max(positionA.y, positionB.y);
-        const bottom = Math.min(positionA.y + sizeA.height, positionB.y + sizeB.height);
-        const left = Math.max(positionA.x, positionB.x);
-        const right = Math.min(positionA.x + sizeA.width, positionB.x + sizeB.width);
-
-        if (top < bottom && left < right) {
-            this.intersection.top = top;
-            this.intersection.left = left;
-            this.intersection.right = right;
-            this.intersection.bottom = bottom;
-
-            return this.intersection;
-        }
-
-        return null;
-    }
-
     findDirtyCells() {
         const dirtyEntities = [];
         const collidableEntities = this.collidableEntities;
 
         for (let x = 0; x < collidableEntities.length; x++) {
             const collidableEntity = collidableEntities[x];
-            const size = collidableEntity.size;
-            const position = collidableEntity.position;
+            const transform = collidableEntity.transform;
 
-            if (position.isDirty || size.isDirty) {
+            if (transform.isDirty) {
                 dirtyEntities.push(collidableEntity);
             }
         }
@@ -152,6 +139,8 @@ export default class BroadPhaseCollisionSystem {
         for (let x = 0; x < dirtyEntities.length; x++) {
             const dirtyEntity = dirtyEntities[x];
             const collisions = dirtyEntity.collidable.collisions;
+
+            this.updateBoundingRect(dirtyEntity.transform);
 
             let lastCellPositions = dirtyEntity.collidable.cellPositions;
             let newCellPositions = this.getCellPositions(dirtyEntity);
@@ -193,11 +182,11 @@ export default class BroadPhaseCollisionSystem {
         return cell;
     }
 
-    getCellPositions({ position, size }) {
-        const top = position.y;
-        const left = position.x;
-        const right = left + size.width;
-        const bottom = top + size.height;
+    getCellPositions({ transform: { boundingRect } }) {
+        const top = boundingRect.top;
+        const left = boundingRect.left;
+        const right = boundingRect.right;
+        const bottom = boundingRect.bottom;
         const cellSize = this.cellSize;
 
         const topCell = Math.floor(top / cellSize);
@@ -222,8 +211,26 @@ export default class BroadPhaseCollisionSystem {
         return cellPositions;
     }
 
+    getIntersection({ transform: { boundingRect: boundingRectA } }, { transform: { boundingRect: boundingRectB } }) {
+        const top = Math.max(boundingRectA.top, boundingRectB.top);
+        const bottom = Math.min(boundingRectA.bottom, boundingRectB.bottom);
+        const left = Math.max(boundingRectA.left, boundingRectB.left);
+        const right = Math.min(boundingRectA.right, boundingRectB.right);
+
+        if (top < bottom && left < right) {
+            this.intersection.top = top;
+            this.intersection.left = left;
+            this.intersection.right = right;
+            this.intersection.bottom = bottom;
+
+            return this.intersection;
+        }
+
+        return null;
+    }
+
     releaseCollision(collision) {
-        if (collision != null){
+        if (collision != null) {
             this.availableCollisions.push(collision);
         }
     }
@@ -238,7 +245,7 @@ export default class BroadPhaseCollisionSystem {
         const collidableEntity = _collidableEntity;
         const cellPositions = _cellPositions;
 
- 
+
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const cell = this.getCell(cellPosition);
@@ -312,6 +319,38 @@ export default class BroadPhaseCollisionSystem {
 
     }
 
+    updateBoundingRect({ size, position, origin, rotation, boundingRect }) {
+        const rotationVector = this.rotationVector;
+        const { cornerOne, cornerTwo, cornerThree, cornerFour } = this;
+
+        cornerOne.x = position.x - origin.x;
+        cornerOne.y = position.y - origin.y;
+
+        cornerTwo.x = position.x + size.width - origin.x;
+        cornerTwo.y = position.y + origin.y;
+
+        cornerThree.x = position.x + size.width - origin.x;
+        cornerThree.y = position.y + size.height - origin.y;
+
+        cornerFour.x = position.x - origin.x;
+        cornerFour.y = position.y + size.height - origin.y;
+
+        Vector.rotate(cornerOne, rotation, cornerOne);
+        Vector.rotate(cornerTwo, rotation, cornerTwo);
+        Vector.rotate(cornerThree, rotation, cornerThree);
+        Vector.rotate(cornerFour, rotation, cornerFour);
+
+        boundingRect.top = Math.min(cornerOne.y, cornerTwo.y, cornerThree.y, cornerFour.y);
+        boundingRect.bottom = Math.max(cornerOne.y, cornerTwo.y, cornerThree.y, cornerFour.y);
+
+        boundingRect.left = Math.min(cornerOne.x, cornerTwo.x, cornerThree.x, cornerFour.x);
+        boundingRect.right = Math.max(cornerOne.x, cornerTwo.x, cornerThree.x, cornerFour.x);
+    }
+
+    /******************************************************************/
+    /*                    System Life Cycle Hooks                     */
+    /******************************************************************/
+
     activated(_world) {
         const world = _world;
         this.world = world
@@ -324,12 +363,38 @@ export default class BroadPhaseCollisionSystem {
         world.addEntity(this.broadPhaseCollisionDataEntity);
     }
 
+    afterUpdate(currentTime) {
+        for (let x = 0; x < this.dirtyEntities.length; x++) {
+            this.dirtyEntities[x].transform.isDirty = false;
+        }
+        this.dirtyCellPositions = [];
+    }
+
+    componentAdded(_entity, _component) {
+        const entity = _entity;
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (this.dependencies.indexOf(component.type) > -1) {
+            this.entityRemoved(entity);
+        }
+    }
+
+    deactivated(_world) {
+        const world = _world;
+        this.world = null;
+        this.collidableEntities = [];
+        this.collidableEntitiesById = {};
+        this.currentTime = 0;
+        this.grid = {};
+    }
+
     entityAdded(_entity) {
         const entity = _entity;
         if (entity.hasComponents(this.dependencies) && this.collidableEntitiesById[entity.id] == null) {
             const collidableEntity = new CollidableEntity(entity.id);
-            collidableEntity.position = entity.getComponent("position");
-            collidableEntity.size = entity.getComponent("size");
+            collidableEntity.transform = entity.getComponent("transform");
             collidableEntity.collidable = entity.getComponent("collidable");
 
             this.collidableEntities.push(collidableEntity);
@@ -342,39 +407,19 @@ export default class BroadPhaseCollisionSystem {
         }
     }
 
-    componentAdded(_entity, _component) {
-        const entity = _entity;
-        this.entityAdded(entity);
-    }
-
-    deactivated(_world) {
-        const world = _world;
-        this.world = null;
-        this.collidableEntities = [];
-        this.collidableEntitiesById = {};
-        this.currentTime = 0;
-        this.grid = {};
-    }
-
     entityRemoved(_entity) {
         const entity = _entity;
         const collidableEntity = this.collidableEntitiesById[entity.id];
 
         if (collidableEntity != null) {
             const index = this.collidableEntities.findIndex(e => e.id === entity.id);
-            for (let key in collidableEntity.collidable.collisions){
+            for (let key in collidableEntity.collidable.collisions) {
                 this.releaseCollision(collidableEntity.collidable.collisions[key]);
             }
             let cellPositions = collidableEntity.collidable.cellPositions;
             this.removeEntityFromCellPositions(collidableEntity, cellPositions);
             this.collidableEntities.splice(index, 1);
             delete this.collidableEntitiesById[collidableEntity.id];
-        }
-    }
-
-    componentRemoved(entity, component) {
-        if (this.dependencies.indexOf(component.type) > -1) {
-            this.entityRemoved(entity);
         }
     }
 
@@ -385,12 +430,6 @@ export default class BroadPhaseCollisionSystem {
         this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
         this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
     }
-    
-    afterUpdate(currentTime) {
-        for (let x = 0; x < this.dirtyEntities.length; x++) {
-            this.dirtyEntities[x].size.isDirty = false;
-            this.dirtyEntities[x].position.isDirty = false;
-        }
-        this.dirtyCellPositions = [];
-    }
+
+
 }

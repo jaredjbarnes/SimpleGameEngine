@@ -1,4 +1,8 @@
+// These are just static method helpers to help reduce GC. When 
+// we used it as a class it caused lots of churn.
+
 export default class Vector {
+
     static add(vectorA, vectorB, optionalVector) {
         optionalVector = optionalVector || {};
         optionalVector.x = vectorA.x + vectorB.x;
@@ -82,6 +86,18 @@ export default class Vector {
 
     static negate(vector) {
         return { x: -vector.x, y: -vector.y };
+    }
+
+    static rotate(vector, angle, optionalVector = {}) {
+        const radians = -angle * Math.PI / 180;
+        const sin = Math.sin(radians);
+        const cos = Math.cos(radians);
+
+        // The multiplying and dividing is to limit the floating point.
+        optionalVector.x = Math.round(1000*(vector.x * cos - vector.y * sin))/1000;
+        optionalVector.y = Math.round(1000*(vector.x * sin + vector.y * cos))/1000;
+
+        return optionalVector;
     }
 
     static normalize(vector, optionalVector) {

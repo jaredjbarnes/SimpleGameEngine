@@ -13,23 +13,21 @@
 
 class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
-        this.position = cameraCanvasCellEntity.getComponent("position");
-        this.size = cameraCanvasCellEntity.getComponent("size");
-        this.collidable = cameraCanvasCellEntity.getComponent("collidable");
+        this.transform = cameraCanvasCellEntity.getComponent("transform");
+        this.rectangleCollider = cameraCanvasCellEntity.getComponent("rectangle-collider");
         this.entity = cameraCanvasCellEntity;
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
-        this.canvas.width = this.size.width;
-        this.canvas.height = this.size.height;
+        this.canvas.width = this.transform.size.width;
+        this.canvas.height = this.transform.size.height;
         this.isDirty = false;
     }
 }
 
 class Camera {
     constructor(cameraEntity, canvas) {
-        this.position = cameraEntity.getComponent("position");
-        this.size = cameraEntity.getComponent("size");
-        this.collidable = cameraEntity.getComponent("collidable");
+        this.transform = cameraEntity.getComponent("transform");
+        this.rectangleCollider = cameraEntity.getComponent("rectangle-collider");
         this.entity = cameraEntity;
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
@@ -90,7 +88,7 @@ export default class CameraSystem {
     }
 
     _isDynamicLoadingCellEntity(entity) {
-        return entity.hasComponents(["dynamic-loading-cell", "position", "size", "collidable"])
+        return entity.hasComponents(["dynamic-loading-cell", "transform", "rectangle-collider"])
     }
 
     _isBroadPhaseCollisionDataEntity(entity) {
@@ -98,7 +96,7 @@ export default class CameraSystem {
     }
 
     _isCameraEntity(entity) {
-        return entity.hasComponents(["camera", "position", "size", "collidable"]) && entity.getComponent("camera").name === this.cameraName;
+        return entity.hasComponents(["camera", "transform", "rectangle-collider"]) && entity.getComponent("camera").name === this.cameraName;
     }
 
     _isCell(entity) {
@@ -117,22 +115,22 @@ export default class CameraSystem {
             const cellY = dirtyCellPosition.rowIndex * cellSize;
             const cellX = dirtyCellPosition.columnIndex * cellSize;
 
-            const top = Math.max(cellY, cell.position.y);
-            const left = Math.max(cellX, cell.position.x);
-            const bottom = Math.min(cellY + cellSize, cell.position.y + cell.size.height);
-            const right = Math.min(cellX + cellSize, cell.position.x + cell.size.width);
+            const top = Math.max(cellY, cell.transform.boundingRect.top);
+            const left = Math.max(cellX, cell.transform.boundingRect.left);
+            const bottom = Math.min(cellY + cellSize, cell.transform.boundingRect.bottom);
+            const right = Math.min(cellX + cellSize, cell.transform.boundingRect.right);
 
             if (top < bottom && left < right) {
                 const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
                 entities.sort(this.sort);
 
-                cell.context.clearRect(left - cell.position.x, top - cell.position.y, right - left, bottom - top);
+                cell.context.clearRect(left - cell.transform.boundingRect.left, top - cell.transform.boundingRect.top, right - left, bottom - top);
 
                 for (let y = 0; y < entities.length; y++) {
                     const collidableEntity = entities[y];
                     const entity = this.world.getEntityById(collidableEntity.id);
                     const opacity = entity.getComponent("opacity");
-                    const rotation = entity.getComponent("rotation");
+                    const rotation = collidableEntity.transform.rotation;
 
                     if (entity === null) {
                         continue;
@@ -140,44 +138,39 @@ export default class CameraSystem {
 
                     const images = this.imageManager.getEntityImages(entity);
 
-                    // If the image isn't renderable then don't go on.
+                    // If the entity isn't renderable then don't go on.
                     if (images.length === 0) {
                         continue;
                     }
 
                     this.renderableEntities[entity.id] = entity;
 
-                    const intersectedTop = Math.max(top, collidableEntity.position.y);
-                    const intersectedLeft = Math.max(left, collidableEntity.position.x);
-                    const intersectedBottom = Math.min(bottom, collidableEntity.position.y + collidableEntity.size.height);
-                    const intersectedRight = Math.min(right, collidableEntity.position.x + collidableEntity.size.width);
+                    const intersectedTop = Math.max(top, collidableEntity.transform.boundingRect.top);
+                    const intersectedLeft = Math.max(left, collidableEntity.transform.boundingRect.left);
+                    const intersectedBottom = Math.min(bottom, collidableEntity.transform.boundingRect.bottom);
+                    const intersectedRight = Math.min(right, collidableEntity.transform.boundingRect.right);
 
                     let sourceX = 0;
                     let sourceY = 0;
                     let width = intersectedRight - intersectedLeft;
                     let height = intersectedBottom - intersectedTop;
-                    let destinationX = intersectedLeft - cell.position.x;
-                    let destinationY = intersectedTop - cell.position.y;
+                    let destinationX = intersectedLeft - cell.transform.boundingRect.left;
+                    let destinationY = intersectedTop - cell.transform.boundingRect.top;
 
                     if (width <= 0 || height <= 0) {
                         continue;
                     }
 
-                    if (collidableEntity.position.x < left) {
-                        sourceX = left - collidableEntity.position.x;
+                    if (collidableEntity.transform.boundingRect.left < left) {
+                        sourceX = left - collidableEntity.transform.boundingRect.left;
                     }
 
-                    if (collidableEntity.position.y < top) {
-                        sourceY = top - collidableEntity.position.y;
+                    if (collidableEntity.transform.boundingRect.top < top) {
+                        sourceY = top - collidableEntity.transform.boundingRect.top;
                     }
 
                     if (opacity != null) {
                         cell.context.globalAlpha = opacity.value;
-                    }
-
-                    if (rotation != null) {
-                        context.tranlate(destinationX - rotation.origin.x, destinationY - rotation.origin.y)
-                        context.rotation(rotation.value * Math.PI / 180);
                     }
 
                     for (let z = 0; z < images.length; z++) {
@@ -195,10 +188,6 @@ export default class CameraSystem {
                             width,
                             height
                         );
-                    }
-
-                    if (rotation != null) {
-                        context.setTransform(1, 0, 0, 1, 0, 0);
                     }
 
                     if (opacity != null) {
@@ -222,7 +211,7 @@ export default class CameraSystem {
             for (let i = 0; i < collidableEntities.length; i++) {
                 const collidableEntity = collidableEntities[i]
                 const id = collidableEntity.id;
-                const collidable = collidableEntity.collidable;
+                const rectangleCollider = collidableEntity.collidable;
                 const entity = this.world.getEntityById(id);
                 const cellPositions = collidable.cellPositions;
                 const lastCellPositions = collidable.lastCellPositions;
@@ -231,10 +220,9 @@ export default class CameraSystem {
                     return;
                 }
 
-                const size = entity.getComponent("size");
-                const position = entity.getComponent("position");
+                const transform = entity.getComponent("transform");
 
-                if (this.imageManager.isRenderable(entity) && (size.isDirty || position.isDirty)) {
+                if (this.imageManager.isRenderable(entity) && (transform.isDirty)) {
                     for (let c = 0; c < cellPositions.length; c++) {
                         const cellPosition = cellPositions[c];
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
@@ -253,7 +241,7 @@ export default class CameraSystem {
             const collisions = cell.collidable.collisions;
             const cellPositions = cell.collidable.cellPositions;
 
-            if (cell.position.isDirty || cell.size.isDirty || cell.isDirty) {
+            if (cell.transform.isDirty || cell.isDirty) {
 
                 if (fullCellRenderCount === 0) {
                     fullCellRenderCount++;
@@ -280,7 +268,7 @@ export default class CameraSystem {
 
                 const isDirty = this.imageManager.isEntityDirty(entity);
                 if (isDirty) {
-                    const entityCellPositions = entity.getComponent("collidable").cellPositions;
+                    const entityCellPositions = entity.getComponent("rectangle-collider").cellPositions;
                     for (let z = 0; z < entityCellPositions.length; z++) {
                         const cellPosition = entityCellPositions[z];
                         renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
@@ -297,15 +285,15 @@ export default class CameraSystem {
     _transferToCanvas() {
         const canvas = this.canvas;
 
-        canvas.width = this.camera.size.width;
-        canvas.height = this.camera.size.height;
+        canvas.width = this.camera.transform.size.width;
+        canvas.height = this.camera.transform.size.height;
 
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
-            const top = Math.max(cell.position.y, this.camera.position.y);
-            const left = Math.max(cell.position.x, this.camera.position.x);
-            const bottom = Math.min(cell.position.y + cell.size.height, this.camera.position.y + this.camera.size.height);
-            const right = Math.min(cell.position.x + cell.size.width, this.camera.position.x + this.camera.size.width);
+            const top = Math.max(cell.transform.position.y, this.camera.transform.position.y);
+            const left = Math.max(cell.transform.position.x, this.camera.transform.position.x);
+            const bottom = Math.min(cell.transform.position.y + cell.transform.size.height, this.camera.transform.position.y + this.camera.transform.size.height);
+            const right = Math.min(cell.transform.position.x + cell.transform.size.width, this.camera.transform.position.x + this.camera.transform.size.width);
 
             if (top < bottom && left < right) {
 
@@ -313,17 +301,17 @@ export default class CameraSystem {
                 let sourceY = 0;
                 const sourceWidth = right - left;
                 const sourceHeight = bottom - top;
-                const destinationX = left - this.camera.position.x;
-                const destinationY = top - this.camera.position.y;
+                const destinationX = left - this.camera.transform.position.x;
+                const destinationY = top - this.camera.transform.position.y;
                 const destinationWidth = right - left;
                 const destinationHeight = bottom - top;
 
-                if (cell.position.x < this.camera.position.x) {
-                    sourceX = this.camera.position.x - cell.position.x;
+                if (cell.transform.position.x < this.camera.transform.position.x) {
+                    sourceX = this.camera.transform.position.x - cell.transform.position.x;
                 }
 
-                if (cell.position.y < this.camera.position.y) {
-                    sourceY = this.camera.position.y - cell.position.y;
+                if (cell.transform.position.y < this.camera.transform.position.y) {
+                    sourceY = this.camera.transform.position.y - cell.transform.position.y;
                 }
 
                 const context = canvas.getContext("2d");

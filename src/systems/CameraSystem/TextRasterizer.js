@@ -17,7 +17,7 @@ export default class TextRasterizer {
     }
 
     getIdentity(entity) {
-        const size = entity.getComponent("size");
+        const size = entity.getComponent("transform").size;
         const textTexture = entity.getComponent("text");
 
         return `size=${JSON.stringify(size)}, text=${JSON.stringify(textTexture)}`;
@@ -26,7 +26,7 @@ export default class TextRasterizer {
     rasterize(entity) {
         var canvas = this.canvasFactory.create();
 
-        var size = entity.getComponent("size");
+        var size = entity.getComponent("transform").size;
         var textTexture = entity.getComponent("text");
 
         var context = canvas.getContext("2d");

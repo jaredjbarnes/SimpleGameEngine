@@ -1,4 +1,4 @@
-﻿const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "position", "movable"];
+﻿const DEPENDENCIES = ["keyboard-input", "keyboard-controller", "transform", "movable"];
 
 export default class ControllerSystem {
     constructor() {

@@ -12,7 +12,7 @@ export default class ShapeRasterizer {
     }
 
     getIdentity(entity) {
-        const size = entity.getComponent("size");
+        const size = entity.getComponent("transform").size;
         const shape = entity.getComponent("shape");
 
         //return `${stringify(size)}|${stringify(shape)}`;
@@ -22,7 +22,7 @@ export default class ShapeRasterizer {
     rasterize(entity) {
         const canvas = this.canvasFactory.create();
 
-        const size = entity.getComponent("size");
+        const size = entity.getComponent("transform").size;
         const shape = entity.getComponent("shape");
 
         const context = canvas.getContext("2d");

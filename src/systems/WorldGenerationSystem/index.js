@@ -22,7 +22,6 @@ export default class WorldGenerationSystem {
     }) {
         this.world = null;
         this.dynamicLoadingCells = [];
-        this.dynamicLoadingCellEntities = {};
         this.broadPhaseCollisitionData = null;
         this.noise = new Noise(seed);
         this.blockSize = blockSize;

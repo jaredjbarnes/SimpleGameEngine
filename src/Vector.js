@@ -1,49 +1,45 @@
-// These are just static method helpers to help reduce GC. When 
-// we used it as a class it caused lots of churn.
+// These helper methods are static for optimization purposes. 
+// The optional references allows the developer to choose where the
+// result is saved to. This is huge for GC.
 
 export default class Vector {
 
-    static add(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x + vectorB.x;
-        optionalVector.y = vectorA.y + vectorB.y;
+    static add(vectorA, vectorB, reference = {}) {
+        reference.x = vectorA.x + vectorB.x;
+        reference.y = vectorA.y + vectorB.y;
 
-        return optionalVector;
+        return reference;
     }
 
-    static subtract(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x - vectorB.x;
-        optionalVector.y = vectorA.y - vectorB.y;
+    static subtract(vectorA, vectorB, reference = {}) {
+        reference.x = vectorA.x - vectorB.x;
+        reference.y = vectorA.y - vectorB.y;
 
-        return optionalVector;
+        return reference;
     }
 
-    static multiply(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x * vectorB.x;
-        optionalVector.y = vectorA.y * vectorB.y;
+    static multiply(vectorA, vectorB, reference = {}) {
+        reference.x = vectorA.x * vectorB.x;
+        reference.y = vectorA.y * vectorB.y;
 
-        return optionalVector;
+        return reference;
     }
 
-    static divide(vectorA, vectorB, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = vectorA.x / vectorB.x;
-        optionalVector.y = vectorA.y / vectorB.y;
+    static divide(vectorA, vectorB, reference = {}) {
+        reference.x = vectorA.x / vectorB.x;
+        reference.y = vectorA.y / vectorB.y;
 
-        return optionalVector;
+        return reference;
     }
 
-    static scale(vector, scale, optionalVector) {
-        optionalVector = optionalVector || {};
-        optionalVector.x = scale * vector.x;
-        optionalVector.y = scale * vector.y;
+    static scale(vector, scale, reference = {}) {
+        reference.x = scale * vector.x;
+        reference.y = scale * vector.y;
 
-        return optionalVector;
+        return reference;
     }
 
-    static project(vectorA, vectorB, optionalVector) {
+    static project(vectorA, vectorB, reference = {}) {
         var scale;
 
         var firstDot = Vector.dot(vectorA, vectorB);
@@ -55,25 +51,21 @@ export default class Vector {
             scale = firstDot / secondDot;
         }
 
-        return Vector.scale(vectorB, scale, optionalVector);
+        return Vector.scale(vectorB, scale, reference);
     }
 
-    static getLeftNormal(vector, optionalVector) {
-        optionalVector = optionalVector || {};
+    static getLeftNormal(vector, reference = {}) {
+        reference.x = -vector.y;
+        reference.y = vector.x;
 
-        optionalVector.x = -vector.y;
-        optionalVector.y = vector.x;
-
-        return optionalVector;
+        return reference;
     }
 
-    static getRightNormal(vector, optionalVector) {
-        optionalVector = optionalVector || {};
+    static getRightNormal(vector, reference = {}) {
+        reference.x = vector.y;
+        reference.y = -vector.x;
 
-        optionalVector.x = vector.y;
-        optionalVector.y = -vector.x;
-
-        return optionalVector;
+        return reference;
     }
 
     static magnitude(vector) {
@@ -84,35 +76,40 @@ export default class Vector {
         return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
     }
 
-    static negate(vector) {
-        return { x: -vector.x, y: -vector.y };
+    static negate(vector, reference = {}) {
+        reference.x = -vector.x;
+        refernece.y = -vector.y;
+
+        return reference;
     }
 
-    static rotate(vector, angle, optionalVector = {}) {
-        const radians = -angle * Math.PI / 180;
+    static rotate(vector, angle, reference = {}) {
+        const radians = angle * Math.PI / 180;
         const sin = Math.sin(radians);
         const cos = Math.cos(radians);
 
-        // The multiplying and dividing is to limit the floating point.
-        optionalVector.x = Math.round(1000*(vector.x * cos - vector.y * sin))/1000;
-        optionalVector.y = Math.round(1000*(vector.x * sin + vector.y * cos))/1000;
+        const x = vector.x;
+        const y = vector.y;
 
-        return optionalVector;
+        // The multiplying and dividing is to limit the floating point.
+        reference.x = Math.round(1000 * (x * cos - y * sin)) / 1000;
+        reference.y = Math.round(1000 * (x * sin + y * cos)) / 1000;
+
+        return reference;
     }
 
-    static normalize(vector, optionalVector) {
-        optionalVector = optionalVector || {};
+    static normalize(vector, reference = {}) {
 
         var magnitude = Vector.magnitude(vector);
 
         if (magnitude === 0) {
-            optionalVector.x = 0;
-            optionalVector.y = 0;
+            reference.x = 0;
+            reference.y = 0;
         }
 
-        optionalVector.x = vector.x / magnitude;
-        optionalVector.y = vector.y / magnitude;
+        reference.x = vector.x / magnitude;
+        reference.y = vector.y / magnitude;
 
-        return optionalVector;
+        return reference;
     }
 }

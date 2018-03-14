@@ -1,6 +1,6 @@
 // INCOMPLETE
 
-const DEPENDENCIES = ["position", "fixed-position"];
+const DEPENDENCIES = ["transform", "fixed-position"];
 
 export default class FixedPositionSystem {
     constructor() {
@@ -63,10 +63,10 @@ export default class FixedPositionSystem {
             return;
         }
 
-        var position = this.camera.getComponent("position");
+        var position = this.camera.getComponent("transform").position;
 
         this.entities.forEach((entity) => {
-            var entityPosition = entity.getComponent("position");
+            var entityPosition = entity.getComponent("transform").position;
             var fixedPosition = entity.getComponent("fixed-position");
 
             entityPosition.x = position.x + fixedPosition.x;

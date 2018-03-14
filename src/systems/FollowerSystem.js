@@ -1,6 +1,6 @@
 import Vector from "./../Vector";
 
-const DEPENDENCIES = ["follower", "position", "size", "movable"];
+const DEPENDENCIES = ["follower", "transform", "movable"];
 
 export default class FollowerSystem {
     constructor() {
@@ -18,7 +18,7 @@ export default class FollowerSystem {
     _getEntitysNextPosition(entity) {
         var _entity = entity;
         var movable = _entity.getComponent("movable");
-        var position = _entity.getComponent("position");
+        var position = _entity.getComponent("transform").position;
 
         if (movable == null || position == null) {
             throw new Error("Entity needs to have both movable and position components.");
@@ -35,9 +35,9 @@ export default class FollowerSystem {
         var _follower = follower;
         var followerComponent = _follower.getComponent("follower");
         var distance = followerComponent.distance;
-        var followersSize = _follower.getComponent("size");
+        var followersSize = _follower.getComponent("transform").size;
         var leadersPosition = _leader.getComponent("position");
-        var leadersSize = _leader.getComponent("size");
+        var leadersSize = _leader.getComponent("transform").size;
         var leadersCenter = {
             x: Math.round(leadersSize.width / 2) + leadersPosition.x - Math.round(followersSize.width / 2),
             y: Math.round(leadersSize.height / 2) + leadersPosition.y - Math.round(followersSize.height / 2)

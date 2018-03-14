@@ -18,10 +18,12 @@ export default class LineRenderer {
     rasterize(entity) {
         const canvas = this.canvasFactory.create();
 
-        const size = entity.getComponent("size");
+        const transform= entity.getComponent("transform");
         const line = entity.getComponent("line");
-        const position = entity.getComponent("position");
         const context = canvas.getContext("2d");
+
+        const size = transform.size;
+        const position = transform.position;
 
         canvas.width = size.width;
         canvas.height = size.height;

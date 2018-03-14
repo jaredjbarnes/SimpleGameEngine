@@ -1,12 +1,11 @@
 import Entity from "../Entity";
 import Cursor from "../components/Cursor";
-import Position from "../components/Position";
-import Size from "../components/Size";
+import Transform from "../components/Transform";
 import Collidable from "../components/Collidable";
 import Shape from "../components/Shape";
 
-const DEPENDENCIES = ["cursor", "position", "size"];
-const CAMERA_DEPENDENCIES = ["camera", "position"];
+const DEPENDENCIES = ["cursor", "transform"];
+const CAMERA_DEPENDENCIES = ["camera", "transform"];
 
 export default class CursorSystem {
     constructor({ canvas, cameraName, document, showCursor = false }) {
@@ -56,14 +55,14 @@ export default class CursorSystem {
 
         if (camera.name == this.cameraName) {
             this.camera = entity;
-            this.cameraPosition = this.camera.getComponent("position");
+            this.cameraPosition = this.camera.getComponent("transform").position;
         }
 
     }
 
     _createCursorEntity() {
         const size = new Size();
-        const position = new Position();
+        const transform = new Transform();
         const cursor = new Cursor();
         const collidable = new Collidable();
         const shape = new Shape();

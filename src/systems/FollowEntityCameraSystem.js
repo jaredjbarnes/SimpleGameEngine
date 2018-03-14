@@ -16,18 +16,21 @@ export default class FollowEntityCameraSystem {
     }
 
     set camera(value) {
-        if (value.hasComponents(["camera", "position", "size"])) {
+        if (value.hasComponents(["camera", "transform"])) {
+            const transform = value.getComponent("transform");
             this._camera = value;
-            this._cameraPosition = value.getComponent("position");
-            this._cameraSize = value.getComponent("size");
+            this._cameraPosition = transform.position;
+            this._cameraSize = transform.size;
+            this._cameraTransform = transform;
         }
     }
 
     setEntityToFollow(entity) {
-        if (entity.hasComponents(["position", "size"])) {
+        if (entity.hasComponents(["transform"])) {
+            const transform = entity.getComponent("transform");
             this._entityToFollow = entity;
-            this._entitySize = entity.getComponent("size");
-            this._entityPosition = entity.getComponent("position");
+            this._entitySize = transform.size;
+            this._entityPosition = transform.position;
         }
     }
 
@@ -40,7 +43,7 @@ export default class FollowEntityCameraSystem {
         }
 
         if (this._camera != null) {
-            this._cameraPosition.isDirty = true;
+            this._cameraTransform.isDirty = true;
         }
     }
 

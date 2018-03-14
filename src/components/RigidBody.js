@@ -2,6 +2,7 @@ export default class RigidBody {
     constructor() {
         this.type = "rigid-body";
         this.velocity = { x: 0, y: 0 };
+        this.angularVelocity = { x: 0, y: 0 };
         this.force = { x: 0, y: 0 };
         this.mass = 1;
         this.elasticity = 1;

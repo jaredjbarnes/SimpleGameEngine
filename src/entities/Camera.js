@@ -1,27 +1,24 @@
 ﻿import Entity from "./../Entity";
 import CameraComponent from "./../components/Camera";
-import Size from "./../components/Size";
-import Position from "./../components/Position";
+import Transform from "./../components/Transform";
 import Collidable from "./../components/Collidable";
 
 export default class Camera extends Entity {
     constructor(name, { width = 300, height = 300 } = {}) {
         super();
 
-        var camera = new CameraComponent();
+        const camera = new CameraComponent();
         camera.name = name || null;
 
-        var position = new Position();
-        var size = new Size();
-        var collidable = new Collidable();
+        const transform = new Transform();
+        const collidable = new Collidable();
 
-        size.width = width;
-        size.height = height;
+        transform.size.width = width;
+        transform.size.height = height;
 
         this.id = `camera_${this.id}`;
         this.addComponent(camera);
-        this.addComponent(position);
-        this.addComponent(size);
+        this.addComponent(transform);
         this.addComponent(collidable);
 
     }

@@ -1,9 +1,11 @@
-const DEPENDENCIES = ["movable", "position"];
+const DEPENDENCIES = ["movable", "transform"];
 
 class MovableEntity {
-constructor(entity) {
+    constructor(entity) {
+        const transform = entity.getComponent("transform");
         this.movable = entity.getComponent("movable");
-        this.position = entity.getComponent("position");
+        this.position = transform.position;
+        this.transform = transform;
     }
 }
 
@@ -22,7 +24,7 @@ export default class MovementSystem {
             position.y += movable.y;
 
             if (movable.x != 0 || movable.y != 0) {
-                position.isDirty = true;
+                entity.transform.isDirty = true;
             }
 
             movable.x = 0;

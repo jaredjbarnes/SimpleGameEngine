@@ -1,13 +1,15 @@
 import Entity from "../entities/DynamicLoadingCell";
 
 class Cell {
-    constructor({column, row, cellSize}) {
+    constructor({ column, row, cellSize }) {
         this.rowIndex = row;
         this.columnIndex = column;
         this.entity = new Entity({ x: column * cellSize, y: row * cellSize }, cellSize);
-        this.position = this.entity.getComponent("position");
-        this.position.x = column * cellSize;
-        this.position.y = row * cellSize;
+        this.transform = this.entity.getComponent("transform");
+        this.transform.position.x = column * cellSize;
+        this.transform.position.y = row * cellSize;
+        this.position = this.transform.position;
+        this.size = this.transform.size;
     }
 }
 
@@ -31,15 +33,16 @@ export default class DynamicLoadingSystem {
                 const index = (y * 3) + x;
 
                 this.cellPositions.push({ columnIndex: column, rowIndex: row });
-                this.cells.push(new Cell({column, row, cellSize}));
+                this.cells.push(new Cell({ column, row, cellSize }));
             }
         }
 
     }
 
     _addCamera(entity) {
-        this.camera.position = entity.getComponent("position");
-        this.camera.size = entity.getComponent("size");
+        const transform = entity.getComponent("transform");
+        this.camera.position = transform.position;
+        this.camera.size = transform.size;
         this.camera.collidable = entity.getComponent("collidable");
     }
 
@@ -62,7 +65,7 @@ export default class DynamicLoadingSystem {
 
     _isCamera(entity) {
         return (
-            entity.hasComponents(["camera", "position", "size", "collidable"]) &&
+            entity.hasComponents(["camera", "transform", "collidable"]) &&
             entity.getComponent("camera").name === this.cameraName
         );
     }
@@ -119,7 +122,7 @@ export default class DynamicLoadingSystem {
 
                 cell.position.x = cellPosition.columnIndex * this.cellSize;
                 cell.position.y = cellPosition.rowIndex * this.cellSize;
-                cell.position.isDirty = true;
+                cell.transform.isDirty = true;
             }
         }
     }

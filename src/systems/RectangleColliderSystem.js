@@ -1,5 +1,5 @@
 ﻿import Entity from "../Entity";
-import BroadPhaseCollisionData from "../components/BroadPhaseCollisionData";
+import RectangleCollisionData from "../components/RectangleCollisionData";
 import Vector from "../Vector";
 
 class CellPosition {
@@ -37,11 +37,11 @@ export default class BroadPhaseCollisionSystem {
         this.collidableEntities = [];
         this.collidableEntitiesById = {};
         this.world = null;
-        this.currentTime = 0;
+        this.currentTimestamp = 0;
         this.grid = {};
         this.dirtyCellPositions = [];
         this.dependencies = ["transform", "rectangle-collider"];
-        this.name = "Broad Phase Collision System";
+        this.name = "Rectangle Collider System";
         this.intersection = {
             top: 0,
             right: 0,
@@ -49,11 +49,11 @@ export default class BroadPhaseCollisionSystem {
             left: 0
         };
         this.availableCollisions = [];
-        this.broadPhaseCollisionDataEntity = new Entity();
-        this.broadPhaseCollisionDataComponent = new BroadPhaseCollisionData();
-        this.broadPhaseCollisionDataComponent.cellSize = cellSize;
-        this.broadPhaseCollisionDataComponent.grid = this.grid;
-        this.broadPhaseCollisionDataEntity.addComponent(this.broadPhaseCollisionDataComponent);
+        this.rectangleCollisionDataEntity = new Entity();
+        this.rectangleCollisionDataComponent = new RectangleCollisionData();
+        this.rectangleCollisionDataComponent.cellSize = cellSize;
+        this.rectangleCollisionDataComponent.grid = this.grid;
+        this.rectangleCollisionDataEntity.addComponent(this.rectangleCollisionDataComponent);
 
     }
 
@@ -155,7 +155,6 @@ export default class BroadPhaseCollisionSystem {
                     this.releaseCollision(otherCollidableEntity.collidable.collisions[dirtyEntity.id]);
                     delete otherCollidableEntity.collidable.collisions[dirtyEntity.id];
                 }
-
 
             }
 
@@ -277,7 +276,7 @@ export default class BroadPhaseCollisionSystem {
                     const otherCollidableEntity = cell[x];
                     const otherCollisions = otherCollidableEntity.collidable.collisions;
 
-                    if ((otherCollisions[collidableEntity.id] && otherCollisions[collidableEntity.id].timestamp === this.currentTime)) {
+                    if ((otherCollisions[collidableEntity.id] && otherCollisions[collidableEntity.id].timestamp === this.currentTimestamp)) {
                         continue;
                     }
 
@@ -286,7 +285,7 @@ export default class BroadPhaseCollisionSystem {
                     if (intersection != null) {
 
                         let collision = this.createCollision(collidableEntity.id);
-                        collision.timestamp = this.currentTime;
+                        collision.timestamp = this.currentTimestamp;
                         collision.intersection.top = intersection.top;
                         collision.intersection.left = intersection.left;
                         collision.intersection.right = intersection.right;
@@ -294,7 +293,7 @@ export default class BroadPhaseCollisionSystem {
                         collision.cellPosition = cellPosition;
 
                         let otherCollision = this.createCollision(otherCollidableEntity.id);
-                        otherCollision.timestamp = this.currentTime;
+                        otherCollision.timestamp = this.currentTimestamp;
                         otherCollision.intersection.top = intersection.top;
                         otherCollision.intersection.left = intersection.left;
                         otherCollision.intersection.right = intersection.right;
@@ -343,10 +342,10 @@ export default class BroadPhaseCollisionSystem {
             this.entityAdded(entity)
         });
 
-        world.addEntity(this.broadPhaseCollisionDataEntity);
+        world.addEntity(this.rectangleCollisionDataEntity);
     }
 
-    afterUpdate(currentTime) {
+    afterUpdate(currentTimestamp) {
         for (let x = 0; x < this.dirtyEntities.length; x++) {
             this.dirtyEntities[x].transform.isDirty = false;
         }
@@ -369,7 +368,7 @@ export default class BroadPhaseCollisionSystem {
         this.world = null;
         this.collidableEntities = [];
         this.collidableEntitiesById = {};
-        this.currentTime = 0;
+        this.currentTimestamp = 0;
         this.grid = {};
     }
 
@@ -406,12 +405,12 @@ export default class BroadPhaseCollisionSystem {
         }
     }
 
-    update(currentTime) {
-        this.currentTime = currentTime;
+    update(currentTimestamp) {
+        this.currentTimestamp = currentTimestamp;
         this.findDirtyCells();
         this.updateGridCells(this.dirtyCellPositions);
-        this.broadPhaseCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
-        this.broadPhaseCollisionDataComponent.dirtyEntities = this.dirtyEntities;
+        this.rectangleCollisionDataComponent.dirtyCellPositions = this.dirtyCellPositions;
+        this.rectangleCollisionDataComponent.dirtyEntities = this.dirtyEntities;
     }
 
 

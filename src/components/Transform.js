@@ -9,21 +9,10 @@ export default class Transform {
             y: 0
         };
 
-        this.size = {
-            width: 0,
-            height: 0
-        }
-
         this.origin = {
             x: 0,
             y: 0
         };
-
-        this.boundingRect = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        };
+        
     }
 }

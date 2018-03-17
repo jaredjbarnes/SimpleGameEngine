@@ -6,7 +6,10 @@ export default class PolygonUpdater {
         this.entity = null;
         this.transform = null;
         this.polygon = null;
-        this.narrowPhaseCollidable = null;
+        this.transformedPoint = {
+            x: 0,
+            y: 0
+        };
     }
 
     ensureClosedPolygon() {
@@ -70,7 +73,6 @@ export default class PolygonUpdater {
     setEntity(entity) {
         this.entity = entity;
         this.transform = entity.getComponent("transform");
-        this.narrowPhaseCollidable = entity.getComponent("narrow-phase-collidable");
     }
 
     setPolygon(polygon) {
@@ -101,20 +103,24 @@ export default class PolygonUpdater {
     updateRotatedPoints() {
         this.prepareRotatedPoints();
         const transform = this.transform;
-        const narrowPhaseCollidable = this.narrowPhaseCollidable;
+        const polygon = this.polygon;
 
-        if (transform.rotation !== narrowPhaseCollidable.lastRotation) {
-            narrowPhaseCollidable.lastRotation = transform.rotation;
+        if (transform.rotation !== polygon.rotation) {
+            polygon.rotation = transform.rotation;
 
-            const points = this.polygon.points;
-            const rotatedPoints = this.polygon.rotatedPoints;
-            const angle = this.transform.rotation;
+            const points = polygon.points;
+            const rotatedPoints = polygon.rotatedPoints;
+            const angle = transform.rotation;
+            const origin = transform.origin;
 
             for (let x = 0; x < points; x++) {
                 const point = points[x];
+                this.transformedPoint.x = point.x - origin.x;
+                this.transformedPoint.y = point.y - origin.y;
+
                 const rotatedPoint = rotatedPoints[x];
 
-                Vector.rotate(point, angle, rotatedPoint);
+                Vector.rotate(this.transformedPoint, angle, rotatedPoint);
             }
         }
     }
@@ -144,8 +150,8 @@ export default class PolygonUpdater {
         polygon.size.width = width;
         polygon.size.height = height;
 
-        polygon.center.x = (width / 2) + left + this.transform.boundingRect.left;
-        polygon.center.y = (height / 2) + top + this.transform.boundingRect.top;
+        polygon.center.x = (width / 2) + left + this.transform.position.x - this.transform.origin.x;
+        polygon.center.y = (height / 2) + top + this.transform.position.y - this.transform.origin.y;
     }
 
     updateVertices() {

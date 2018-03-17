@@ -19,3 +19,8 @@ BroadphaseCollision should be done on the main thread because the camera needs t
 * What if we made all systems async so that web workers are used with in every system? All lifecycle events would be async.
 
 * What if we made it possible to have systems that are sync and others that are async.
+
+
+## Work Environment
+
+* Create an enviroment to debug in. 

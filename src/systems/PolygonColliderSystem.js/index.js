@@ -18,34 +18,6 @@ export default class NarrowPhaseCollisionSystem {
         this.narrowPhaseCollidableEntityUpdater = new NarrowPhaseCollidableEntityUpdater();
     }
 
-    setSize(part) {
-        let points = part.points;
-
-        let width;
-        let height;
-        let length = points.length;
-        let top = points[0].y;
-        let left = points[0].x;
-        let bottom = points[0].y;
-        let right = points[0].x;
-
-        for (let x = 1; x < length; x++) {
-            top = Math.min(top, points[x].y);
-            left = Math.min(left, points[x].x);
-            bottom = Math.max(bottom, points[x].y);
-            right = Math.max(right, points[x].x);
-        }
-
-        width = right - left;
-        height = bottom - top;
-
-        part.size.width = width;
-        part.size.height = height;
-
-        part.origin.x = (width / 2) + left;
-        part.origin.y = (height / 2) + top;
-    }
-
     projectToAxis(vertices, axis, projection) {
         let min = Vector.dot(vertices[0], axis);
         let max = min;

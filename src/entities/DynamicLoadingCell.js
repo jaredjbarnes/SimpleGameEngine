@@ -1,5 +1,6 @@
 import Entity from "./../Entity";
 import Transform from "./../components/Transform";
+import Size from "./../components/Size";
 import Collidable from "./../components/Collidable";
 import DynamicLoadingCell from "../components/DynamicLoadingCell";
 
@@ -10,14 +11,17 @@ export default class extends Entity {
         const transform = new Transform();
         transform.position.x = x;
         transform.position.y = y;
-        transform.size.width = cellSize;
-        transform.size.height = cellSize;
         transform.isDirty = true;
+
+        const size = new Size();
+        size.width = cellSize;
+        size.height = cellSize;
 
         const collidable = new Collidable();
         const dynamicLoadingCell = new DynamicLoadingCell();
 
         this.addComponent(transform);
+        this.addComponent(size);
         this.addComponent(collidable);
         this.addComponent(dynamicLoadingCell);
 

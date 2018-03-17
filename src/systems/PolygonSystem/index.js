@@ -11,6 +11,8 @@ export default class PolygonSystem {
         this.polygonEntities = {};
         this.polygonBodyEntities = {};
         this.rectangleCollisionData = null;
+        this.rectangleCollisionDataEntity = null;
+        this.polygonCollisionDataEntity = null;
         this.polygonCollisionData = null;
         this.polygonUpdater = new PolygonUpdater();
         this.createPolygonCollisionDataEntity();
@@ -25,9 +27,9 @@ export default class PolygonSystem {
     }
 
     createPolygonCollisionDataEntity() {
-        this.polygonCollisionData = new Entity();
-        const polygonCollisionData = new PolygonCollisionData();
-        this.polygonCollisionData.addComponent(polygonCollisionData);
+        this.polygonCollisionDataEntity = new Entity();
+        this.polygonCollisionData = new PolygonCollisionData();
+        this.polygonCollisionDataEntity.addComponent(this.polygonCollisionData);
     }
 
     isPolygonEntity(entity) {
@@ -38,7 +40,7 @@ export default class PolygonSystem {
         return entity.hasComponents(POLYGON_BODY_DEPENDENCIES);
     }
 
-    isRectangeCollisionData(entity) {
+    isRectangeCollisionDataEntity(entity) {
         return entity.hasComponent("rectangle-collision-data");
     }
 
@@ -69,6 +71,8 @@ export default class PolygonSystem {
         for (let x = 0; x < entities.length; x++) {
             this.entityAdded(entities[x]);
         }
+
+        this.world.addEntity(this.polygonCollisionDataEntity);
     }
 
     componentAdded(entity, component) {
@@ -88,6 +92,9 @@ export default class PolygonSystem {
             this.addPolygonBodyEntity(entity);
         } else if (this.isPolygonEntity(entity)) {
             this.addPolygonEntity(entity);
+        } else if (this.isRectangeCollisionDataEntity(entity)){
+            this.rectangleCollisionDataEntity = entity;
+            this.rectangleCollisionData = entity.getComponent("rectangle-collision-data");
         }
     }
 
@@ -100,6 +107,8 @@ export default class PolygonSystem {
     }
 
     deactivated() {
+        this.world.removeEntity(this.polygonCollisionDataEntity);
+
         this.world = null;
         this.polygonEntities = {};
         this.polygonBodyEntities = {};

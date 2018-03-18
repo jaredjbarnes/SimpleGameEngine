@@ -18,11 +18,13 @@ export default class PolygonSystem {
         this.createPolygonCollisionDataEntity();
     }
 
-    addPolygonBodyEntity(entity) {
+    addPolygonBodyEntity(_entity) {
+        const entity = _entity;
         this.polygonBodyEntities[entity.id] = entity;
     }
 
-    addPolygonEntity(entity) {
+    addPolygonEntity(_entity) {
+        const entity = _entity;
         this.polygonEntities[entity.id] = entity;
     }
 
@@ -32,38 +34,50 @@ export default class PolygonSystem {
         this.polygonCollisionDataEntity.addComponent(this.polygonCollisionData);
     }
 
-    isPolygonEntity(entity) {
+    isPolygonEntity(_entity) {
+        const entity = _entity;
         return entity.hasComponents(POLYGON_DEPENDENCIES);
     }
 
-    isPolygonBodyEntity(entity) {
+    isPolygonBodyEntity(_entity) {
+        const entity = _entity;
         return entity.hasComponents(POLYGON_BODY_DEPENDENCIES);
     }
 
-    isRectangeCollisionDataEntity(entity) {
+    isRectangeCollisionDataEntity(_entity) {
+        const entity = _entity;
         return entity.hasComponent("rectangle-collision-data");
     }
 
-    removePolygonBodyEntity(entity) {
+    removePolygonBodyEntity(_entity) {
+        const entity = _entity;
         delete this.polygonBodyEntities[entity.id];
     }
 
-    removePolygonEntity(entity) {
+    removePolygonEntity(_entity) {
+        const entity = _entity;
         delete this.polygonEntities[entity.id];
     }
 
-    wasPolygonBodyEntity(entity, component) {
+    wasPolygonBodyEntity(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
+
         return this.polygonBodyEntities[entity.id] &&
             POLYGON_BODY_DEPENDENCIES.indexOf(component.type) > -1
     }
 
-    wasPolygonEntity(entity, component) {
+    wasPolygonEntity(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
+
         return this.polygonEntities[entity.id] &&
             POLYGON_DEPENDENCIES.indexOf(component.type) > -1
     }
 
     // Life cycle methods.
-    activated(world) {
+    activated(_world) {
+        const world = _world;
         const entities = world.getEntities();
 
         this.world = world;
@@ -75,11 +89,15 @@ export default class PolygonSystem {
         this.world.addEntity(this.polygonCollisionDataEntity);
     }
 
-    componentAdded(entity, component) {
+    componentAdded(_entity, _component) {
+        const entity = _entity;
         this.entityAdded(entity);
     }
 
-    componentRemoved(entity, component) {
+    componentRemoved(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
+
         if (this.wasPolygonBodyEntity(entity, component)) {
             this.removePolygonBodyEntity(entity);
         } else if (this.wasPolygonEntity(entity, component)) {
@@ -87,7 +105,9 @@ export default class PolygonSystem {
         }
     }
 
-    entityAdded(entity) {
+    entityAdded(_entity) {
+        const entity = _entity;
+
         if (this.isPolygonBodyEntity(entity)) {
             this.addPolygonBodyEntity(entity);
         } else if (this.isPolygonEntity(entity)) {
@@ -98,7 +118,9 @@ export default class PolygonSystem {
         }
     }
 
-    entityRemoved(entity) {
+    entityRemoved(_entity) {
+        const entity = _entity;
+
         if (this.isPolygonBodyEntity(entity)) {
             this.removePolygonBodyEntity(entity);
         } else if (this.isPolygonEntity(entity)) {
@@ -134,7 +156,8 @@ export default class PolygonSystem {
         }
     }
 
-    updatePolygonEntity(entity) {
+    updatePolygonEntity(_entity) {
+        const entity = _entity;
         const polygon = entity.getComponent("polygon");
         this.polygonUpdater.setEntity(entity);
         this.polygonUpdater.setPolygon(polygon);
@@ -142,7 +165,8 @@ export default class PolygonSystem {
         polygon.isDirty = false;
     }
 
-    updatePolygonBodyEntity(entity) {
+    updatePolygonBodyEntity(_entity) {
+        const entity = _entity;
         const polygonBody = entity.getComponent("polygon-body");
         const polygons = polygonBody.polygons;
 

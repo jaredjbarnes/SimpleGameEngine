@@ -9,24 +9,30 @@ export default class LineRenderer {
     }
 
     getIdentity(entity) {
-        const size = entity.getComponent("size");
+        const rectangle = entity.getComponent("rectangle");
         const line = entity.getComponent("line");
 
-        return `size=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
+        return `rectangle=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
     }
 
     rasterize(entity) {
         const canvas = this.canvasFactory.create();
 
-        const transform= entity.getComponent("transform");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
         const line = entity.getComponent("line");
         const context = canvas.getContext("2d");
 
-        const size = transform.size;
+        const angle = transform.rotatioon;
         const position = transform.position;
+        const width = rectangle.right - rectangle.left;
+        const height = rectangle.bottom - rectangle.top;
 
-        canvas.width = size.width;
-        canvas.height = size.height;
+        canvas.width = width;
+        canvas.height = height;
+
+        context.translate(width / 2, height / 2);
+        context.rotate(angle * Math.PI / 180);
 
         if (line.thickness > 0) {
             context.globalAlpha = line.opacity;
@@ -34,8 +40,8 @@ export default class LineRenderer {
             context.lineCap = "round";
             context.lineWidth = line.thickness;
             context.strokeStyle = this.convertToRgba(line.color);
-            context.moveTo(line.from.x, line.from.y);
-            context.lineTo(line.to.x, line.to.y);
+            context.moveTo(-line.from.x - (transform.origin.x), -line.from.y - (transform.origin.y));
+            context.lineTo(-line.to.x - (transform.origin.x), -line.to.y - (transform.origin.y));
             context.stroke();
             context.closePath();
         }

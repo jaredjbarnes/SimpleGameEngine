@@ -13,7 +13,8 @@ export default class RectangleSystem {
         this.rectangleUpdater = new RectangleUpdater();
     }
 
-    addRectangleEntity(entity) {
+    addRectangleEntity(_entity) {
+        const _entity = entity;
         this.rectangleEntities[entity.id] = entity;
     }
 
@@ -23,44 +24,54 @@ export default class RectangleSystem {
         this.rectangleCollisionDataEntity.addComponent(this.rectangleCollisionData);
     }
 
-    isRectangleEntity(entity) {
+    isRectangleEntity(_entity) {
+        const entity = _entity;
         return entity.hasComnponents(RECTANGLE_ENTITIES_DEPENDENCIES);
     }
 
-    isDirty(entity) {
+    isDirty(_entity) {
+        const entity = _entity;
         return entity.getComponent("rectangle").isDirty || entity.getComponent("transform").isDirty;
     }
 
-    removeRectangleEntity(entity) {
+    removeRectangleEntity(_entity) {
+        const entity = _entity;
         delete this.rectangleEntities[entity.id];
     }
 
-    wasRectangleEntity(entity, component) {
+    wasRectangleEntity(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
         return this.rectangleEntities[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
     }
 
     // Life cycle methods
-    activated(world) {
-        this.world = world;
+    activated(_world) {
+        this.world = _world;
     }
 
-    componentAdded(entity, component) {
+    componentAdded(_entity, _component) {
+        const entity = _entity;
         this.entityAdded(entity);
     }
 
-    componentRemoved(entity, component) {
+    componentRemoved(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
         if (this.wasRectangle(entity, component)) {
             this.removeRectangleEntity(entity);
         }
     }
 
-    entityAdded(entity) {
+    entityAdded(_entity) {
+        const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.addRectangleEntity(entity);
         }
     }
 
-    entityRemoved(entity) {
+    entityRemoved(_entity) {
+        const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.removeRectangleEntity(entity);
         }
@@ -76,7 +87,7 @@ export default class RectangleSystem {
 
         for (let id in this.rectangleEntities) {
             const entity = this.rectangleEntities[id];
-            
+
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
                 this.rectangleUpdater.update();

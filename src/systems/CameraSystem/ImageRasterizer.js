@@ -1,6 +1,4 @@
-﻿import stringify from "../../utilities/stringify";
-
-export default class ImageRasterizer {
+﻿export default class ImageRasterizer {
     constructor({ canvasFactory, imageFactory, assetRoot }) {
         this.type = "image";
         this.canvasFactory = canvasFactory;
@@ -47,22 +45,30 @@ export default class ImageRasterizer {
 
     getIdentity(entity) {
         const image = entity.getComponent("image");
-        return this.getImageIdentity(image);
+        const transform = entity.getComponent("transform");
+
+        return `${this.getImageIdentity(image)}|${transform.rotation}`;
     }
 
     rasterize(entity) {
-        const imageComponent = entity.getComponent("image");
-        const path = this.getPath(imageComponent.path);
         const canvas = this.canvasFactory.create();
         const context = canvas.getContext("2d");
-        const size = imageComponent.size;
+        const imageComponent = entity.getComponent("image");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
+        const angle = transform.rotation;
+        const path = this.getPath(imageComponent.path);
         const padding = imageComponent.padding;
         const position = imageComponent.position;
-        const width = size.width + padding.left + padding.right;
-        const height = size.height + padding.top + padding.bottom;
+        const size = imageComponent.size;
+        const width = rectangle.right - rectangle.left + padding.left + padding.right;
+        const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
 
         canvas.width = width;
         canvas.height = height;
+
+        context.translate(width / 2, height / 2);
+        context.rotate(angle * Math.PI / 180);
 
         this.getImageAsync(path).then((image) => {
             context.globalAlpha = imageComponent.opacity;
@@ -72,10 +78,10 @@ export default class ImageRasterizer {
                 position.y,
                 size.width,
                 size.height,
-                padding.left,
-                padding.top,
-                size.width,
-                size.height
+                -transform.origin.x,
+                -transform.origin.y,
+                rectangle.width,
+                rectangle.height
             );
         }).catch((error) => {
             context.globalAlpha = imageComponent.opacity;

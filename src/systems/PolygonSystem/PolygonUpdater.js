@@ -128,10 +128,8 @@ export default class PolygonUpdater {
     updateSize() {
         const polygon = this.polygon;
         const points = polygon.points;
+        const length = points.length;
 
-        let width;
-        let height;
-        let length = points.length;
         let top = points[0].y;
         let left = points[0].x;
         let bottom = points[0].y;
@@ -144,14 +142,14 @@ export default class PolygonUpdater {
             right = Math.max(right, points[x].x);
         }
 
-        width = right - left;
-        height = bottom - top;
+        const width = right - left;
+        const height = bottom - top;
 
         polygon.size.width = width;
         polygon.size.height = height;
 
-        polygon.center.x = (width / 2) + left + this.transform.position.x - this.transform.origin.x;
-        polygon.center.y = (height / 2) + top + this.transform.position.y - this.transform.origin.y;
+        polygon.center.x = left + this.transform.position.x + (width / 2);
+        polygon.center.y = top + this.transform.position.y + (height / 2);
     }
 
     updateVertices() {

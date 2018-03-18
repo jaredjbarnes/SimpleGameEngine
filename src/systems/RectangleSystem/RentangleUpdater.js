@@ -39,13 +39,14 @@ export default class RectangleUpdater {
         };
     }
 
-    setEntity(entity) {
-        this.entity = entity;
-        this.rectangle = entity.getComponent("rectangle");
-        this.transform = entity.getComponent("transform");
+    setEntity(_entity) {
+        this.entity = _entity;
+        this.rectangle = this.entity.getComponent("rectangle");
+        this.transform = this.entity.getComponent("transform");
     }
 
     update() {
+        this.updateOrigin();
         this.updateCorners();
         this.updateBoundingRectangle();
     }
@@ -67,26 +68,31 @@ export default class RectangleUpdater {
     updateBoundingRectangle() {
         const corners = this.corners;
         const angle = this.transform.rotation;
-        const rotatedPoint = his.rotatedPoint;
+        const rotatedPoint = this.rotatedPoint;
+        const origin = this.transform.origin;
+        const transformedPoint = this.transformedPoint;
         const min = this.min;
         const max = this.max;
 
         for (let x = 0; x < corners.length; x++) {
-            Vector.rotate(corners[x], angle, rotatedPoint);
-            
-            if (rotatedPoint.x > max.x){
+            transformedPoint.x = corners[x].x -= origin.x;
+            transformedPoint.y = corners[x].x -= origin.y;
+
+            Vector.rotate(transformedPoint, angle, rotatedPoint);
+
+            if (rotatedPoint.x > max.x) {
                 max.x = rotatedPoint.x;
             }
 
-            if (rotatedPoint.x < min.x){
+            if (rotatedPoint.x < min.x) {
                 min.x = rotatedPoint.x;
             }
 
-            if (rotatedPoint.y > max.y){
+            if (rotatedPoint.y > max.y) {
                 max.y = rotatedPoint.y;
             }
 
-            if (rotatedPoint.y < min.y){
+            if (rotatedPoint.y < min.y) {
                 min.y = rotatedPoint.y;
             }
         }
@@ -97,5 +103,10 @@ export default class RectangleUpdater {
         this.rectangle.right = max.x;
         this.rectangle.isDirty = false;
         this.transform.isDirty = false;
+    }
+
+    updateOrigin() {
+        this.transform.origin.x = this.rectangle.width / 2;
+        this.transform.origin.y = this.rectangle.height / 2;
     }
 }

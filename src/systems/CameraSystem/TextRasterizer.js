@@ -1,6 +1,4 @@
-﻿import stringify from "../../utilities/stringify";
-
-export default class TextRasterizer {
+﻿export default class TextRasterizer {
     constructor(canvasFactory) {
         this.type = "text";
         this.fontCache = {};
@@ -17,22 +15,30 @@ export default class TextRasterizer {
     }
 
     getIdentity(entity) {
-        const size = entity.getComponent("transform").size;
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
         const textTexture = entity.getComponent("text");
 
-        return `size=${JSON.stringify(size)}, text=${JSON.stringify(textTexture)}`;
+        return `transform=${JSON.stringify(transform)}|text=${JSON.stringify(textTexture)}|${JSON.stringify(rectangle)}`;
     }
 
     rasterize(entity) {
-        var canvas = this.canvasFactory.create();
+        const canvas = this.canvasFactory.create();
 
-        var size = entity.getComponent("transform").size;
-        var textTexture = entity.getComponent("text");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
+        const textTexture = entity.getComponent("text");
+        const context = canvas.getContext("2d");
 
-        var context = canvas.getContext("2d");
+        const angle = transform.rotation;
+        const width = rectangle.right - rectangle.left;
+        const height = rectangle.bottom - rectangle.top;
 
-        canvas.width = size.width;
-        canvas.height = size.height;
+        canvas.width = width;
+        canvas.height = height;
+
+        context.translate(width / 2, height / 2);
+        context.rotate(angle * Math.PI / 180);
 
         context.globalAlpha = textTexture.opacity;
         context.font = this.createFontString(textTexture);
@@ -50,23 +56,23 @@ export default class TextRasterizer {
         textTexture.width = textWidth;
 
         if (textTexture.horizontalAlignment === "center") {
-            x = size.width / 2;
+            x = width / 2;
         } else if (textTexture.horizontalAlignment === "right") {
-            x = size.width;
+            x = width;
         }
 
         if (textTexture.verticalAlignment === "top") {
             y = 0;
         } else if (textTexture.verticalAlignment === "middle") {
-            y = (size.height / 2) - (textHeight / 2);
+            y = (height / 2) - (textHeight / 2);
         } else if (textTexture.verticalAlignment === "bottom") {
-            y = size.height - textHeight;
+            y = height - textHeight;
         }
 
         var color = this.convertToRgba(textTexture.font.color);
 
         context.fillStyle = color;
-        context.fillText(textTexture.text, parseInt(x, 10), parseInt(y, 10));
+        context.fillText(textTexture.text, parseInt(-x - transform.origin.x, 10), parseInt(-y - transform.origin.y, 10));
 
         return canvas;
     }

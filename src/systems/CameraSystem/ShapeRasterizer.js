@@ -1,6 +1,4 @@
-﻿import stringify from "../../utilities/stringify";
-
-export default class ShapeRasterizer {
+﻿export default class ShapeRasterizer {
     constructor(canvasFactory) {
         this.type = "shape";
         this.canvasFactory = canvasFactory;
@@ -12,24 +10,29 @@ export default class ShapeRasterizer {
     }
 
     getIdentity(entity) {
-        const size = entity.getComponent("transform").size;
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
         const shape = entity.getComponent("shape");
 
-        //return `${stringify(size)}|${stringify(shape)}`;
-        return this.convertToRgba(shape.fillColor);
+        return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
     }
 
     rasterize(entity) {
         const canvas = this.canvasFactory.create();
-
-        const size = entity.getComponent("transform").size;
-        const shape = entity.getComponent("shape");
-
         const context = canvas.getContext("2d");
 
-        canvas.width = size.width;
-        canvas.height = size.height;
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
+        const shape = entity.getComponent("shape");
+        const angle = transform.rotation;
+        const width = rectangle.right - rectangle.left;
+        const height = rectangle.bottom - rectangle.top;
 
+        canvas.width = width;
+        canvas.height = height;
+
+        context.translate(width / 2, height / 2);
+        context.rotate(angle * Math.PI / 180);
         context.globalAlpha = shape.opacity;
         context.beginPath();
 
@@ -38,9 +41,9 @@ export default class ShapeRasterizer {
             const y = point.y;
 
             if (index === 0) {
-                context.moveTo(x, y);
+                context.moveTo(-x - transform.origin.x, -y - transform.origin.y);
             } else {
-                context.lineTo(x, y);
+                context.lineTo(-x - transform.origin.x, -y - transform.origin.y);
             }
         });
 

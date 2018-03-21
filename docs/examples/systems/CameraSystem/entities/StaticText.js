@@ -1,8 +1,10 @@
 import Entity from "./../../../../../src/Entity";
 import Transform from "./../../../../../src/components/Transform";
 import Text from "./../../../../../src/components/Text";
-import Collidable from "./../../../../../src/components/Collidable";
-import { NarrowPhaseCollidable, Part } from "./../../../../../src/components/NarrowPhaseCollidable";
+import Rectangle from "./../../../../../src/components/Rectangle";
+import RectangleCollider from "./../../../../../src/components/RectangleCollider";
+import Polygon from "./../../../../../src/components/Polygon";
+import PolygonCollider from "./../../../../../src/components/PolygonCollider";
 import Shape from "./../../../../../src/components/Shape";
 import SolidBody from "./../../../../../src/components/SolidBody";
 import Opacity from "../../../../../src/components/Opacity";
@@ -14,16 +16,15 @@ export default class StaticText extends Entity {
 
         const transform = new Transform();
         const textTexture = new Text();
-        const collidable = new Collidable();
-        const narrowPhaseCollidable = new NarrowPhaseCollidable();
-        const part = new Part();
+        const rectangle = new Rectangle();
+        const rectangleCollider = new RectangleCollider();
+        const polygon = new Polygon();
+        const polygonCollider = new PolygonCollider();
         const shape = new Shape();
         const solidBody = new SolidBody();
         const opacity = new Opacity();
 
         opacity.value = Math.random();
-
-        narrowPhaseCollidable.parts.push(part);
 
         shape.border.thickness = 1;
         shape.fillColor.red = red;
@@ -37,7 +38,7 @@ export default class StaticText extends Entity {
             { x: 0, y: 0 }
         );
 
-        part.points.push(
+        polygon.points.push(
             { x: 0, y: 0 },
             { x: 100, y: 0 },
             { x: 100, y: 30 },
@@ -57,10 +58,11 @@ export default class StaticText extends Entity {
 
         this.addComponent(transform);
         this.addComponent(textTexture);
-        this.addComponent(collidable);
+        this.addComponent(rectangle);
+        this.addComponent(rectangleCollider);
+        this.addComponent(polygon);
+        this.addComponent(polygonCollider);
         this.addComponent(shape);
-        this.addComponent(solidBody);
-        this.addComponent(narrowPhaseCollidable);
         this.addComponent(opacity);
     }
 }

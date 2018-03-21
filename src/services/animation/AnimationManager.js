@@ -100,8 +100,8 @@ export default class AnimationManager {
 
     }
 
-    update() {
-        this.currentTime = this.world.getTime();
+    update(currentTime) {
+        this.currentTime = currentTime;
         this.updateAnimations();
         this.cleanAnimations();
     }

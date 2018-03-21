@@ -1,8 +1,8 @@
 import EntityUpdater from "./EntityUpdater";
 
-const DEPENDENCIES = ["collidable", "narrow-phase-collidable", "transform"];
+const DEPENDENCIES = ["rectangle", "rectangle-collider", "polygon", "polygon-collider", "transform"];
 
-export default class NarrowPhaseCollisionSystem {
+export default class PolygonColliderSystem {
     constructor() {
         this.entities = [];
         this.projectionA = {
@@ -14,8 +14,7 @@ export default class NarrowPhaseCollisionSystem {
             max: 0
         };
         this.timestamp = 0;
-        this.broadPhaseCollisionData = null;
-        this.narrowPhaseCollidableEntityUpdater = new NarrowPhaseCollidableEntityUpdater();
+        this.polygonCollisionData = null;
     }
 
     projectToAxis(vertices, axis, projection) {
@@ -75,22 +74,6 @@ export default class NarrowPhaseCollisionSystem {
         }
 
         return result;
-    }
-
-    updateWorldPoints(entity) {
-        let narrowPhaseCollidable = entity.getComponent("narrow-phase-collidable");
-        let position = entity.getComponent("transform").position;
-
-        narrowPhaseCollidable.parts.forEach((part) => {
-            let worldPoints = part.worldPoints;
-
-            part.points.forEach(function (point, index) {
-                let worldPoint = worldPoints[index];
-                worldPoint.x = point.x + position.x;
-                worldPoint.y = point.y + position.y;
-            });
-        });
-
     }
 
     intersects(entityA, entityB) {
@@ -309,18 +292,12 @@ export default class NarrowPhaseCollisionSystem {
     update(time) {
         this.timestamp = time;
 
-        if (this.broadPhaseCollisionData != null) {
+        if (this.polygonCollisionData != null) {
             const entities = this.broadPhaseCollisionData.dirtyEntities.map(({ id }) => {
                 return this.world.getEntityById(id);
             }).filter((entity) => {
                 return entity.hasComponent("narrow-phase-collidable");
             });
-
-            entities.forEach((entity) => {
-                const collidable = entity.getComponent("narrow-phase-collidable");
-                this.prepareNarrowPhaseCollidable(collidable);
-                this.updateWorldPoints(entity);
-            })
 
             entities.forEach((entity) => {
                 this.handleCollisions(entity);
@@ -333,19 +310,19 @@ export default class NarrowPhaseCollisionSystem {
     }
 
     entityAdded(entity) {
-        if (entity.hasComponent("broad-phase-collision-data")) {
-            this.broadPhaseCollisionData = entity.getComponent("broad-phase-collision-data");
+        if (entity.hasComponent("polygon-collision-data")) {
+            this.broadPhaseCollisionData = entity.getComponent("polygon-collision-data");
         }
     };
 
     entityRemoved(entity) {
-        if (entity.hasComponent("broad-phase-collision-data")) {
+        if (entity.hasComponent("polygon-collision-data")) {
             this.broadPhaseCollisionData = null;
         }
     }
 
     componentRemoved(entity, component) {
-        if (component.type === "broad-phase-collision-data") {
+        if (component.type === "polygon-collision-data") {
             this.broadPhaseCollisionData = null;
         }
     }

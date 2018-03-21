@@ -1,6 +1,9 @@
 import World from "./../../../../src/World";
 import Camera from "./../../../../src/entities/Camera";
-import BroadPhaseCollisionSystem from "./../../../../src/systems/BroadPhaseCollisionSystem";
+import RectangleSystem from  "./../../../../src/systems/RectangleSystem";
+import RectangleColliderSystem from  "./../../../../src/systems/RectangleColliderSystem";
+import PolygonSystem from  "./../../../../src/systems/PolygonSystem";
+import PolygonColliderSystem from  "./../../../../src/systems/PolygonColliderSystem";
 import DynamicLoadingSystem from "./../../../../src/systems/DynamicLoadingSystem";
 import DefaultCameraSystem from "./../../../../src/systems/DefaultCameraSystem";
 import ControllerSystem from "./../../../../src/systems/ControllerSystem";
@@ -10,11 +13,10 @@ import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
 import KeyboardController from "./../../../../src/components/KeyboardController";
 import FollowEntityCameraSystem from "./../../../../src/systems/FollowEntityCameraSystem";
-import NarrowPhaseCollisionSystem from "./../../../../src/systems/NarrowPhaseCollisionSystem";
 import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
 // import CursorEventSystem from "./../../../../src/systems/CursorEventSystem";
 // import CursorSystem from "./../../../../src/systems/CursorSystem";
-import SolidBody from "./../../../../src/components/SolidBody";
+//import SolidBody from "./../../../../src/components/SolidBody";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
@@ -45,9 +47,11 @@ const controllerSystem = new ControllerSystem();
 const keyboardInputSystem = new KeyboardInputSystem();
 const movableSystem = new MovableSystem();
 const followEntityCameraSystem = new FollowEntityCameraSystem();
-const solidBodySystem = new SolidBodySystem();
-const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
-const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
+//const solidBodySystem = new SolidBodySystem();
+const rectangleSystem = new RectangleSystem();
+const rectangleColliderSystem = new RectangleColliderSystem();
+const polygonSystem = new PolygonSystem();
+const polygonColliderSystem = new PolygonColliderSystem();
 //const cursorSystem = new CursorSystem({canvas, cameraName, document});
 //const cursorEventSystem = new CursorEventSystem();
 
@@ -68,13 +72,15 @@ const defaultCameraSystem = new DefaultCameraSystem({
 //world.addSystem(cursorSystem);
 //world.addSystem(cursorEventSystem);
 world.addSystem(dynamicLoadingSystem);
-world.addSystem(solidBodySystem);
+//world.addSystem(solidBodySystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
-world.addSystem(broadPhaseCollisionSystem);
-world.addSystem(narrowPhaseCollisionSystem);
+world.addSystem(rectangleSystem);
+world.addSystem(rectangleColliderSystem);
+world.addSystem(polygonSystem);
+world.addSystem(polygonColliderSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities

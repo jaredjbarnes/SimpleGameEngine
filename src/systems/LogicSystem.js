@@ -23,9 +23,6 @@ export default class LogicSystem {
 
         var state = entity.getComponent("state");
 
-        if (state == null) {
-            return null;
-        }
         return state;
     }
 

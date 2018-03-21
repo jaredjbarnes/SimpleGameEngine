@@ -1,22 +1,15 @@
 ﻿import invokeMethod from "./utilities/invokeMethod";
 
 export default class World {
-    constructor(size) {
-        var self = this;
-
-        size = size || {
-            width: 1000,
-            height: 1000
-        };
-
+    constructor() {
         this._entityDelegate = {
-            componentAdded: function () {
-                var args = Array.prototype.slice.call(arguments, 0);
-                self.notifySystems("componentAdded", args);
+            componentAdded: () => {
+                const args = Array.prototype.slice.call(arguments, 0);
+                this.notifySystems("componentAdded", args);
             },
-            componentRemoved: function () {
-                var args = Array.prototype.slice.call(arguments, 0);
-                self.notifySystems("componentRemoved", args);
+            componentRemoved: () => {
+                const args = Array.prototype.slice.call(arguments, 0);
+                this.notifySystems("componentRemoved", args);
             }
         };
 
@@ -26,12 +19,9 @@ export default class World {
         this._systems = [];
         this._entities = [];
         this._entitiesById = {};
-        this._services = new Map();
-
+        this._services = {};
         this.isRunning = false;
-        this.size = size;
         this._loop = this._loop.bind(this);
-
 
     }
 
@@ -40,15 +30,12 @@ export default class World {
         this._animationFrame = requestAnimationFrame(this._loop);
     }
 
-    notifySystems(methodName, args) {
-        args = args || [];
-
-        var self = this;
-        var systems = this._systems;
-
-        systems.forEach(function (system) {
+    notifySystems(methodName, args = []) {
+        const systems = this._systems;
+        for (let x = 0; x < systems.length; x++) {
+            const system = systems[x];
             invokeMethod(system, methodName, args);
-        });
+        }
     }
 
     addSystem(system) {
@@ -63,37 +50,43 @@ export default class World {
     }
 
     addService(name, service) {
-        this._services.set(name, service);
+        this._services[name] = service;
         this.notifySystems("serviceAdded", [name, service]);
     }
 
     getService(name) {
-        return this._services.get(name) || null;
+        return this._services[name] || null;
+    }
+
+    getServices() {
+        return Object.assign({}, this._services);
     }
 
     removeService(name) {
-        var service = this._services.get(service);
+        const service = this._services[service];
 
-        this._services.delete(name);
-        this.notifySystems("serviceRemoved", [name, service]);
+        if (service != null) {
+            delete this._services[name];
+            this.notifySystems("serviceRemoved", [name, service]);
+        }
     }
 
     removeSystem(system) {
-        var systems = this._systems;
-        var index = systems.indexOf(system);
+        const systems = this._systems;
+        const index = systems.indexOf(system);
 
         if (index > -1) {
             systems.splice(index, 1);
             invokeMethod(system, "deactivated", [this]);
             invokeMethod(system, "systemRemoved", [system]);
-
         }
     }
 
-    addEntity(entity) {
-        var entities = this._entities;
-        var entitiesById = this._entitiesById;
-        var registeredEntity = entitiesById[entity.id];
+    addEntity(_entity) {
+        const entity = _entity;
+        const entities = this._entities;
+        const entitiesById = this._entitiesById;
+        const registeredEntity = entitiesById[entity.id];
 
         if (registeredEntity == null) {
             entitiesById[entity.id] = entity;
@@ -104,15 +97,15 @@ export default class World {
 
     }
 
-    removeEntity(entity) {
-        var entities = this._entities;
-        var entitiesById = this._entitiesById;
-        var registeredEntity = entitiesById[entity.id];
-        var index;
+    removeEntity(_entity) {
+        const entity = _entity;
+        const entities = this._entities;
+        const entitiesById = this._entitiesById;
+        const registeredEntity = entitiesById[entity.id];
 
         if (registeredEntity != null) {
             delete entitiesById[entity.id];
-            index = entities.indexOf(entity);
+            const index = entities.indexOf(entity);
             entities.splice(index, 1);
             entity.setDelegate(null);
             this.notifySystems("entityRemoved", [entity]);
@@ -120,13 +113,9 @@ export default class World {
     }
 
     update() {
-        var self = this;
-        var systems = this._systems;
-
         this.notifySystems("beforeUpdate", [this.getTime()]);
         this.notifySystems("update", [this.getTime()]);
         this.notifySystems("afterUpdate", [this.getTime()]);
-        
     }
 
     play() {
@@ -150,9 +139,11 @@ export default class World {
     }
 
     getTime() {
-        var time = this._timespans.reduce(function (accumulator, value) {
-            return accumulator + value;
-        }, 0);
+        let time = 0;
+
+        for (let x = 0; x < this._timespans.length; x++) {
+            time += this._timespans[x];
+        }
 
         if (this.isRunning) {
             time += performance.now() - this._startTime;

@@ -1,5 +1,4 @@
 import Entity from "../../Entity";
-import RectangleCollisionData from "../../components/RectangleCollisionData";
 import RectangleUpdater from "./RentangleUpdater";
 
 const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
@@ -8,8 +7,8 @@ export default class RectangleSystem {
     constructor() {
         this.world = null;
         this.rectangleEntities = {};
-        this.rectangleCollisionDataEntity = null;
-        this.createRectangleCollisionDataEntity();
+        this.spatialPartitionDataEntity = null;
+        this.spatialPartitionData = null;
         this.rectangleUpdater = new RectangleUpdater();
     }
 
@@ -18,15 +17,19 @@ export default class RectangleSystem {
         this.rectangleEntities[entity.id] = entity;
     }
 
-    createRectangleCollisionDataEntity() {
-        this.rectangleCollisionDataEntity = new Entity();
-        this.rectangleCollisionData = new RectangleCollisionData();
-        this.rectangleCollisionDataEntity.addComponent(this.rectangleCollisionData);
+    addSpatialPartitionEntity(entity){
+        this.spatialPartitionDataEntity = entity;
+        this.spatialPartitionData = entity.getComponent("spatial-partition-data");
     }
 
     isRectangleEntity(_entity) {
         const entity = _entity;
-        return entity.hasComnponents(RECTANGLE_ENTITIES_DEPENDENCIES);
+        return entity.hasComponents(RECTANGLE_ENTITIES_DEPENDENCIES);
+    }
+
+    isSpatialPartitionDataEntity(_entity) {
+        const entity = _entity;
+        return entity.hasComponents("spatial-partition-data");
     }
 
     isDirty(_entity) {
@@ -39,10 +42,21 @@ export default class RectangleSystem {
         delete this.rectangleEntities[entity.id];
     }
 
+    removeSpatialPartitionEntity(){
+        this.spatialPartitionData = null;
+        this.spatialPartitionDataEntity = null;
+    }
+
     wasRectangleEntity(_entity, _component) {
         const entity = _entity;
         const component = _component;
         return this.rectangleEntities[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
+    }
+
+    wasSpatialPartitionEntity(_entity, _component) {
+        const entity = _entity;
+        const component = _component;
+        return entity === this.spatialPartitionDataEntity && component.type === "spatial-partition-data";
     }
 
     // Life cycle methods
@@ -60,6 +74,8 @@ export default class RectangleSystem {
         const component = _component;
         if (this.wasRectangle(entity, component)) {
             this.removeRectangleEntity(entity);
+        } else if (this.wasSpatialPartitionEntity(entity, component)){
+            this.removeSpatialPartitionEntity();
         }
     }
 
@@ -67,6 +83,8 @@ export default class RectangleSystem {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.addRectangleEntity(entity);
+        } else if (this.isSpatialPartitionDataEntity(entity)){
+            this.addSpatialPartitionEntity(entity);
         }
     }
 
@@ -74,6 +92,8 @@ export default class RectangleSystem {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.removeRectangleEntity(entity);
+        } else if (this.isSpatialPartitionDataEntity(entity)){
+            this.removeSpatialPartitionEntity();
         }
     }
 
@@ -83,7 +103,7 @@ export default class RectangleSystem {
     }
 
     update() {
-        this.rectangleCollisionData.dirtyEntities.length = 0;
+        this.spatialPartitionData.dirtyEntities.length = 0;
 
         for (let id in this.rectangleEntities) {
             const entity = this.rectangleEntities[id];
@@ -91,7 +111,7 @@ export default class RectangleSystem {
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
                 this.rectangleUpdater.update();
-                this.rectangleCollisionData.dirtyEntities.push(entity);
+                this.spatialPartitionData.dirtyEntities.push(entity);
             }
         }
     }

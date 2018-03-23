@@ -1,5 +1,4 @@
-﻿import Entity from "../Entity";
-import CellPosition from "./CellPosition";
+﻿import CellPosition from "./CellPosition";
 import Collision from "./Collision";
 
 export default class RectangleColliderSystem {
@@ -166,12 +165,6 @@ export default class RectangleColliderSystem {
     activated(_world) {
         const world = _world;
         this.world = world
-
-        world.getEntities().forEach((_entity) => {
-            const entity = _entity;
-            this.entityAdded(entity)
-        });
-
     }
 
     deactivated(_world) {

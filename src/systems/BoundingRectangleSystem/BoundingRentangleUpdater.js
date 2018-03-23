@@ -74,35 +74,10 @@ export default class BoundingRectangleUpdater {
         const min = this.min;
         const max = this.max;
 
-        for (let x = 0; x < corners.length; x++) {
-            transformedPoint.x = corners[x].x -= origin.x;
-            transformedPoint.y = corners[x].x -= origin.y;
-
-            Vector.rotate(transformedPoint, angle, rotatedPoint);
-
-            if (rotatedPoint.x > max.x) {
-                max.x = rotatedPoint.x;
-            }
-
-            if (rotatedPoint.x < min.x) {
-                min.x = rotatedPoint.x;
-            }
-
-            if (rotatedPoint.y > max.y) {
-                max.y = rotatedPoint.y;
-            }
-
-            if (rotatedPoint.y < min.y) {
-                min.y = rotatedPoint.y;
-            }
-        }
-
-        this.rectangle.top = min.y;
-        this.rectangle.left = min.x;
-        this.rectangle.bottom = max.y;
-        this.rectangle.right = max.x;
-        this.rectangle.isDirty = false;
-        this.transform.isDirty = false;
+        this.rectangle.top = this.transform.position.y;
+        this.rectangle.left = this.transform.position.x;
+        this.rectangle.bottom = this.transform.position.y + this.rectangle.height;
+        this.rectangle.right = this.transform.position.x + this.rectangle.width;
     }
 
     updateOrigin() {

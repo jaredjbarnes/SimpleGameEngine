@@ -2,14 +2,15 @@ import Entity from "../entities/DynamicLoadingCell";
 
 class Cell {
     constructor({ column, row, cellSize }) {
-        this.rowIndex = row;
-        this.columnIndex = column;
+        this.row = row;
+        this.column = column;
         this.entity = new Entity({ x: column * cellSize, y: row * cellSize }, cellSize);
         this.transform = this.entity.getComponent("transform");
+        this.rectangle = this.entity.getComponent("rectangle");
         this.transform.position.x = column * cellSize;
         this.transform.position.y = row * cellSize;
         this.position = this.transform.position;
-        this.size = this.transform.size;
+        this.rectangle = this.rectangle;
     }
 }
 
@@ -22,8 +23,8 @@ export default class DynamicLoadingSystem {
         this.cellSize = cellSize;
         this.camera = {
             position: null,
-            size: null,
-            collidable: null
+            rectangle: null,
+            collider: null
         };
 
         for (let y = 0; y < 3; y++) {
@@ -32,7 +33,7 @@ export default class DynamicLoadingSystem {
                 const column = x - 1;
                 const index = (y * 3) + x;
 
-                this.cellPositions.push({ columnIndex: column, rowIndex: row });
+                this.cellPositions.push({ column: column, row: row });
                 this.cells.push(new Cell({ column, row, cellSize }));
             }
         }
@@ -41,9 +42,9 @@ export default class DynamicLoadingSystem {
 
     _addCamera(entity) {
         const transform = entity.getComponent("transform");
+        this.camera.rectangle = entity.getComponent("rectangle");
+        this.camera.collider = entity.getComponent("rectangle-collider");
         this.camera.position = transform.position;
-        this.camera.size = transform.size;
-        this.camera.collidable = entity.getComponent("collidable");
     }
 
     _findCellPositionsWithCenter(x, y) {
@@ -57,29 +58,29 @@ export default class DynamicLoadingSystem {
                 const index = (y * 3) + x;
                 const cellPosition = this.cellPositions[index];
 
-                cellPosition.rowIndex = row;
-                cellPosition.columnIndex = column;
+                cellPosition.row = row;
+                cellPosition.column = column;
             }
         }
     }
 
     _isCamera(entity) {
         return (
-            entity.hasComponents(["camera", "transform", "collidable"]) &&
+            entity.hasComponents(["camera", "transform", "rectangle", "rectangle-collider"]) &&
             entity.getComponent("camera").name === this.cameraName
         );
     }
 
     _hasCamera() {
         return this.camera.position != null &&
-            this.camera.size != null &&
-            this.camera.collidable != null;
+            this.camera.rectangle != null &&
+            this.camera.collider != null;
     }
 
     _removeCamera() {
         this.camera.position = null;
-        this.camera.size = null;
-        this.camera.collidable = null;
+        this.camera.rectangle = null;
+        this.camera.collider = null;
     }
 
     _reset() {
@@ -87,8 +88,8 @@ export default class DynamicLoadingSystem {
     }
 
     _updateCells() {
-        const cameraCenterX = this.camera.position.x + (this.camera.size.width / 2);
-        const cameraCenterY = this.camera.position.y + (this.camera.size.height / 2);
+        const cameraCenterX = this.camera.position.x + (this.camera.rectangle.width / 2);
+        const cameraCenterY = this.camera.position.y + (this.camera.rectangle.height / 2);
 
         this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
 
@@ -98,8 +99,8 @@ export default class DynamicLoadingSystem {
             let cell = this.cells[x];
 
             let index = this.cellPositions.findIndex((cellPosition) => {
-                return cell.columnIndex === cellPosition.columnIndex &&
-                    cell.rowIndex === cellPosition.rowIndex;
+                return cell.column === cellPosition.column &&
+                    cell.row === cellPosition.row;
             });
 
             if (index === -1) {
@@ -111,17 +112,17 @@ export default class DynamicLoadingSystem {
             const cellPosition = this.cellPositions[x];
 
             let index = this.cells.findIndex((cell) => {
-                return cell.columnIndex === cellPosition.columnIndex &&
-                    cell.rowIndex === cellPosition.rowIndex;
+                return cell.column === cellPosition.column &&
+                    cell.row === cellPosition.row;
             });
 
             if (index === -1) {
                 const cell = availableCanvasCells.pop();
-                cell.rowIndex = cellPosition.rowIndex;
-                cell.columnIndex = cellPosition.columnIndex;
+                cell.row = cellPosition.row;
+                cell.column = cellPosition.column;
 
-                cell.position.x = cellPosition.columnIndex * this.cellSize;
-                cell.position.y = cellPosition.rowIndex * this.cellSize;
+                cell.position.x = cellPosition.column * this.cellSize;
+                cell.position.y = cellPosition.row * this.cellSize;
                 cell.transform.isDirty = true;
             }
         }

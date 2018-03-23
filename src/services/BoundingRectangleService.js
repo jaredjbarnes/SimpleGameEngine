@@ -3,5 +3,6 @@ export default class BoundingRectangleService {
         this.name = "bounding-rectangle-service";
         this.entitiesById = {};
         this.dirtyEntities = [];
+        this.entities = [];
     }
 }

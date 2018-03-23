@@ -1,6 +1,6 @@
 export default class CellPosition {
-    constructor(columnIndex, rowIndex) {
-        this.rowIndex = rowIndex;
-        this.columnIndex = columnIndex;
+    constructor(column, row) {
+        this.row = row;
+        this.column = column;
     }
 }

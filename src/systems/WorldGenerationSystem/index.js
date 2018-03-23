@@ -237,8 +237,8 @@ export default class WorldGenerationSystem {
 
                     if (!worldGenerationCell.loadedGround) {
                         biom.addGroundEntites({
-                            columnIndex: x,
-                            rowIndex: y,
+                            column: x,
+                            row: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
                             intensity: intensity,
@@ -248,8 +248,8 @@ export default class WorldGenerationSystem {
                         worldGenerationCell.loadedGround = true;
                     } else if (!worldGenerationCell.loadedProps) {
                         biom.addPropEntities({
-                            columnIndex: x,
-                            rowIndex: y,
+                            column: x,
+                            row: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
                             intensity: intensity,
@@ -259,8 +259,8 @@ export default class WorldGenerationSystem {
                         worldGenerationCell.loadedProps = true;
                     } else if (!worldGenerationCell.loadedCreatures) {
                         biom.addCreatureEntities({
-                            columnIndex: x,
-                            rowIndex: y,
+                            column: x,
+                            row: y,
                             scaleFactor: BIOM_PERLIN_SCALING_FACTOR,
                             noise: this.noise,
                             intensity: intensity,

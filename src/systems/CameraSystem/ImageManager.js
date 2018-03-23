@@ -79,6 +79,10 @@ export default class ImageManager {
         const rasterizers = this.rasterizers;
         const images = [];
 
+        if (entity == null){
+            return images;
+        }
+
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
             if (component != null) {

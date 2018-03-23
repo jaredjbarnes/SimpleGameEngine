@@ -1,5 +1,5 @@
 export default class Grid {
-    constructor(buckets) {
+    constructor(buckets = {}) {
         this.buckets = buckets;
     }
 

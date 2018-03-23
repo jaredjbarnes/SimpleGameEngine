@@ -67,8 +67,8 @@
         canvas.width = width;
         canvas.height = height;
 
-        context.translate(width / 2, height / 2);
-        context.rotate(angle * Math.PI / 180);
+        //context.translate(width / 2, height / 2);
+        //context.rotate(angle * Math.PI / 180);
 
         this.getImageAsync(path).then((image) => {
             context.globalAlpha = imageComponent.opacity;
@@ -78,8 +78,8 @@
                 position.y,
                 size.width,
                 size.height,
-                -transform.origin.x,
-                -transform.origin.y,
+                0,
+                0,
                 rectangle.width,
                 rectangle.height
             );

@@ -50,8 +50,8 @@ export default class CameraSystem {
         this.renderableEntities = {};
 
         this.sort = (_entityA, _entityB) => {
-            const entityA = _entityA.id;
-            const entityB = _entityB.id;
+            const entityA = _entityA;
+            const entityB = _entityB;
             const zIndexAComponent = entityA.getComponent("z-index");
             const zIndexBComponent = entityB.getComponent("z-index");
             const zIndexA = zIndexAComponent != null ? zIndexAComponent.value : 0;
@@ -77,24 +77,12 @@ export default class CameraSystem {
         }
     }
 
-    _getBroadPhaseCollisionCell({ rowIndex, columnIndex }) {
-        let cell = this.rectangleCollisionData.grid[`${columnIndex}_${rowIndex}`];
-        if (cell == null) {
-            return [];
-        }
-        return cell;
-    }
-
     _hasCamera() {
         return this.camera != null;
     }
 
     _isDynamicLoadingCellEntity(entity) {
         return entity.hasComponents(["dynamic-loading-cell", "transform", "rectangle-collider"])
-    }
-
-    _isRectangleCollisionDataEntity(entity) {
-        return entity.hasComponents(["rectangle-collision-data"]);
     }
 
     _isCameraEntity(entity) {
@@ -108,15 +96,19 @@ export default class CameraSystem {
         });
     }
 
+    _isReady() {
+        return this.spatialPartitionService != null && this._hasCamera();
+    }
+
     _updateCell(_cell, _dirtyCellPositions) {
         const cell = _cell;
         const dirtyCellPositions = _dirtyCellPositions;
-        const cellSize = this.rectangleCollisionData.cellSize;
+        const cellSize = this.spatialPartitionService.cellSize;
 
-        for (let x = 0; x < dirtyCellPositions.length; x++) {
-            const dirtyCellPosition = dirtyCellPositions[x];
-            const cellY = dirtyCellPosition.rowIndex * cellSize;
-            const cellX = dirtyCellPosition.columnIndex * cellSize;
+        for (let key in _dirtyCellPositions) {
+            const dirtyCellPosition = dirtyCellPositions[key];
+            const cellY = dirtyCellPosition.row * cellSize;
+            const cellX = dirtyCellPosition.column * cellSize;
 
             const top = Math.max(cellY, cell.rectangle.top);
             const left = Math.max(cellX, cell.rectangle.left);
@@ -139,14 +131,8 @@ export default class CameraSystem {
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
                     const transform = entity.getComponent("transform");
-
-                    const rotation = transform.rotation;
-
-                    if (entity === null) {
-                        continue;
-                    }
-
                     const images = this.imageManager.getEntityImages(entity);
+                    const rotation = transform.rotation;
 
                     // If the entity isn't renderable then don't go on.
                     if (images.length === 0) {
@@ -210,31 +196,30 @@ export default class CameraSystem {
     }
 
     _updateCells() {
-        const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions.slice();
+        const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
         const grid = this.spatialPartitionService.grid;
         const renderableCells = {};
         let fullCellRenderCount = 0;
 
-        for (let x = 0; x < dirtyCellPositions.length; x++) {
-            const cellPosition = dirtyCellPositions[x];
+        for (let key in dirtyCells) {
+            const cellPosition = dirtyCells[key];
             const entities = grid.getBucket(cellPosition);
 
             for (let i = 0; i < entities.length; i++) {
                 const entity = entities[i]
-                const transform = entity.getComponent("transform");
                 const spatialPartition = entity.getComponent("spatial-partition");
                 const cellPositions = spatialPartition.cellPositions;
                 const lastCellPositions = spatialPartition.lastCellPositions;
 
-                if (this.imageManager.isRenderable(entity) && (transform.isDirty)) {
+                if (this.imageManager.isRenderable(entity)) {
                     for (let c = 0; c < cellPositions.length; c++) {
                         const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                     }
 
                     for (let c = 0; c < lastCellPositions.length; c++) {
                         const cellPosition = lastCellPositions[c];
-                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                     }
                 }
             }
@@ -242,8 +227,9 @@ export default class CameraSystem {
 
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
-            const collisions = cell.collidable.collisions;
-            const cellPositions = cell.collidable.cellPositions;
+            const collisions = cell.rectangleCollider.collisions;
+            const spatialPartition = cell.entity.getComponent("spatial-partition");
+            const cellPositions = spatialPartition.cellPositions;
 
             if (cell.transform.isDirty || cell.isDirty) {
 
@@ -253,7 +239,7 @@ export default class CameraSystem {
 
                     for (let c = 0; c < cellPositions.length; c++) {
                         const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                     }
 
                 } else {
@@ -275,14 +261,12 @@ export default class CameraSystem {
                     const entityCellPositions = entity.getComponent("rectangle-collider").cellPositions;
                     for (let z = 0; z < entityCellPositions.length; z++) {
                         const cellPosition = entityCellPositions[z];
-                        renderableCells[`${cellPosition.columnIndex}_${cellPosition.rowIndex}`] = cellPosition;
+                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                     }
                 }
             }
 
-            dirtyCellPositions = Object.keys(renderableCells).map(key => renderableCells[key]);
-
-            this._updateCell(this.cells[x], dirtyCellPositions);
+            this._updateCell(this.cells[x], renderableCells);
         }
     }
 
@@ -339,9 +323,16 @@ export default class CameraSystem {
     activated(world) {
         this.world = world;
 
-        this.world.getEntities().forEach((entity) => {
+        const entities = this.world.getEntities();
+        for (let x = 0; x < entities.length; x++) {
+            const entity = entities[x];
             this.entityAdded(entity);
-        });
+        }
+
+        const services = this.world.getServices();
+        for (let name in services) {
+            this.serviceAdded(name, services[name]);
+        }
     }
 
     componentAdded(entity, component) {
@@ -349,9 +340,7 @@ export default class CameraSystem {
     }
 
     componentRemoved(entity, component) {
-        if (component.type === "rectangle-collision-data") {
-            this.rectangleCollisionData = null;
-        } else if (this.cameraCanvasCellEntities.indexOf(entity) > -1) {
+        if (this.cameraCanvasCellEntities.indexOf(entity) > -1) {
             const index = this.cameraCanvasCellEntities.indexOf(entity) > -1;
             this.cameraCanvasCellEntities.splice(index, 1);
         }
@@ -362,9 +351,7 @@ export default class CameraSystem {
     }
 
     entityAdded(entity) {
-        if (this._isRectangleCollisionDataEntity(entity)) {
-            this.rectangleCollisionData = entity.getComponent("rectangle-collision-data");
-        } else if (this._isDynamicLoadingCellEntity(entity)) {
+        if (this._isDynamicLoadingCellEntity(entity)) {
             this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
         } else if (this._isCameraEntity(entity)) {
             this.camera = new Camera(entity, this.canvasFactory.create());
@@ -379,9 +366,21 @@ export default class CameraSystem {
         }
     }
 
+    serviceAdded(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = service;
+        }
+    }
+
+    serviceRemoved(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = null;
+        }
+    }
+
     update(currentTime) {
         this.drawImageCount = 0;
-        if (this._hasCamera()) {
+        if (this._isReady()) {
             this.renderableEntities = {};
 
             this._updateCells();

@@ -3,12 +3,10 @@
 export default class World {
     constructor() {
         this._entityDelegate = {
-            componentAdded: () => {
-                const args = Array.prototype.slice.call(arguments, 0);
+            componentAdded: (...args) => {
                 this.notifySystems("componentAdded", args);
             },
-            componentRemoved: () => {
-                const args = Array.prototype.slice.call(arguments, 0);
+            componentRemoved: (...args) => {
                 this.notifySystems("componentRemoved", args);
             }
         };
@@ -68,8 +66,8 @@ export default class World {
         return Object.assign({}, this._services);
     }
 
-    removeService(service) {
-        const service = this._services[service];
+    removeService(_service) {
+        const service = this._services[_service.name];
 
         if (service != null) {
             delete this._services[name];

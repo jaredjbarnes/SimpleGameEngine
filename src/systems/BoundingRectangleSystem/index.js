@@ -1,23 +1,22 @@
-import Entity from "../../Entity";
-import RectangleUpdater from "./RentangleUpdater";
+import RectangleUpdater from "./BoundingRentangleUpdater";
 import BoundingRectangleService from "./../../services/BoundingRectangleService";
 
 const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
 
-export default class RectangleSystem {
+export default class BoundingRectangleSystem {
     constructor() {
         this.world = null;
-        this.boundingRectangleService.entitiesById = {};
         this.rectangleUpdater = new RectangleUpdater();
         this.boundingRectangleService = new BoundingRectangleService();
-        this.removedEntities = [];
-        this.addedEntities = [];
     }
 
     addRectangleEntity(_entity) {
-        const entity = entity;
-        this.boundingRectangleService.entitiesById[entity.id] = entity;
-        this.addedEntities.push(entity);
+        const entity = _entity;
+        if (this.boundingRectangleService.entitiesById[entity.id] == null) {
+            this.boundingRectangleService.entitiesById[entity.id] = entity;
+            this.boundingRectangleService.entities.push(entity);
+        }
+
     }
 
     isRectangleEntity(_entity) {
@@ -32,8 +31,11 @@ export default class RectangleSystem {
 
     removeRectangleEntity(_entity) {
         const entity = _entity;
-        delete this.boundingRectangleService.entitiesById[entity.id];
-        this.removedEntities.push(entity);
+        if (this.boundingRectangleService.entitiesById[entity.id]) {
+            delete this.boundingRectangleService.entitiesById[entity.id];
+            const index = this.boundingRectangleService.entities.indexOf(entity);
+            this.boundingRectangleService.entities.splice(index, 1);
+        }
     }
 
     wasRectangleEntity(_entity, _component) {
@@ -48,6 +50,15 @@ export default class RectangleSystem {
         this.world.addService(this.boundingRectangleService);
     }
 
+    afterUpdate() {
+        const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        for (let x = 0; x < dirtyEntities.length; x++) {
+            const entity = dirtyEntities[x];
+            entity.getComponent("transform").isDirty = false;
+            entity.getComponent("rectangle").isDirty = false;
+        }
+    }
+
     componentAdded(_entity, _component) {
         const entity = _entity;
         this.entityAdded(entity);
@@ -58,21 +69,21 @@ export default class RectangleSystem {
         const component = _component;
         if (this.wasRectangle(entity, component)) {
             this.removeRectangleEntity(entity);
-        } 
+        }
     }
 
     entityAdded(_entity) {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.addRectangleEntity(entity);
-        } 
+        }
     }
 
     entityRemoved(_entity) {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.removeRectangleEntity(entity);
-        } 
+        }
     }
 
     deactivated() {
@@ -84,18 +95,12 @@ export default class RectangleSystem {
 
     update() {
         const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        const entitiesById = this.boundingRectangleService.entitiesById;
+        const entities = this.boundingRectangleService.entities;
         dirtyEntities.length = 0;
 
-        for (let x = 0 ; x < this.addedEntities.length; x++){
-            dirtyEntities.push(this.addedEntities[x]);
-        }
-
-        for (let x = 0 ; x < this.removedEntities.length; x++){
-            dirtyEntities.push(this.removedEntities[x]);
-        }
-
-        for (let id in this.boundingRectangleService.entitiesById) {
-            const entity = this.boundingRectangleService.entitiesById[id];
+        for (let x = 0; x < entities.length; x++) {
+            const entity = entities[x];
 
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
@@ -104,7 +109,5 @@ export default class RectangleSystem {
             }
         }
 
-        this.addedEntities.length = 0;
-        this.removedEntities.length = 0;
     }
 }

@@ -1,7 +1,7 @@
 ﻿export default class Shape {
     constructor() {
         this.type = "shape";
-
+        this.id = null;
         this.fillColor = {
             red: 0,
             green: 0,

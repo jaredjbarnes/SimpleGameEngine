@@ -10,11 +10,15 @@
     }
 
     getIdentity(entity) {
-        const transform = entity.getComponent("transform");
-        const rectangle = entity.getComponent("rectangle");
         const shape = entity.getComponent("shape");
 
-        return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
+        if (shape.id != null) {
+            return shape.id;
+        } else {
+            const transform = entity.getComponent("transform");
+            const rectangle = entity.getComponent("rectangle");
+            return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
+        }
     }
 
     rasterize(entity) {
@@ -31,8 +35,8 @@
         canvas.width = width;
         canvas.height = height;
 
-        context.translate(width / 2, height / 2);
-        context.rotate(angle * Math.PI / 180);
+        //context.translate(width / 2, height / 2);
+        //context.rotate(angle * Math.PI / 180);
         context.globalAlpha = shape.opacity;
         context.beginPath();
 
@@ -41,9 +45,9 @@
             const y = point.y;
 
             if (index === 0) {
-                context.moveTo(-x - transform.origin.x, -y - transform.origin.y);
+                context.moveTo(x, y);
             } else {
-                context.lineTo(-x - transform.origin.x, -y - transform.origin.y);
+                context.lineTo(x, y);
             }
         });
 

@@ -28,34 +28,32 @@ export default class SpatialPartitionSystem {
         dirtyEntities.length = 0;
         spatialPartitionService.dirtyCellPositions = {};
 
-        for (let id in entitiesById) {
-            const entity = entitiesById[id];
+        for (let i = 0; i < this.boundingRectangleData.dirtyEntities.length; i++) {
+            const entity = this.boundingRectangleData.dirtyEntities[i];
 
-            if (this.isEntityDirty(entity)) {
-                const spatialPartition = entity.getComponent("spatial-partitioning");
-                const lastCellPositions = spatialPartition.cellPositions;
-                const newCellPositions = this.getCellPositions(entity);
+            const spatialPartition = entity.getComponent("spatial-partition");
+            const lastCellPositions = spatialPartition.cellPositions;
+            const newCellPositions = this.getCellPositions(entity);
 
-                spatialPartition.lastCellPositions = lastCellPositions;
-                spatialPartition.cellPositions = newCellPositions;
+            spatialPartition.lastCellPositions = lastCellPositions;
+            spatialPartition.cellPositions = newCellPositions;
 
-                for (let x = 0; x < lastCellPositions.length; x++) {
-                    const cellPosition = lastCellPositions[x];
-                    const key = grid.getKey(cellPosition);
-                    spatialPartitionService.dirtyCellPositions[key] = cellPosition;
-                }
-
-                for (let x = 0; x < newCellPositions.length; x++) {
-                    const cellPosition = newCellPositions[x];
-                    const key = grid.getKey(cellPosition);
-                    spatialPartitionService.dirtyCellPositions[key] = cellPosition;
-                }
-
-                grid.remove(lastCellPositions, entity);
-                grid.add(newCellPositions, entity);
-
-                dirtyEntities.push(entity);
+            for (let x = 0; x < lastCellPositions.length; x++) {
+                const cellPosition = lastCellPositions[x];
+                const key = grid.getKey(cellPosition);
+                spatialPartitionService.dirtyCellPositions[key] = cellPosition;
             }
+
+            for (let x = 0; x < newCellPositions.length; x++) {
+                const cellPosition = newCellPositions[x];
+                const key = grid.getKey(cellPosition);
+                spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+            }
+
+            grid.remove(lastCellPositions, entity);
+            grid.add(newCellPositions, entity);
+
+            dirtyEntities.push(entity);
         }
     }
 
@@ -89,11 +87,6 @@ export default class SpatialPartitionSystem {
         return cellPositions;
     }
 
-    isEntityDirty(_entity) {
-        const entity = _entity;
-        return entity.getComponent("transform").isDirty || entity.getComponent("rectangle");
-    }
-
     isPlacable(_entity) {
         const entity = _entity;
         return entity.hasComponents(PLACABLE_ENTITY_DEPENDENCIES);
@@ -108,7 +101,7 @@ export default class SpatialPartitionSystem {
         const entitiesById = this.spatialPartitionService.entitiesById;
         const spatialPartitioning = entity.getComponent("spatial-partition");
         const cellPositions = spatialPartitioning.cellPositions;
-        
+
         this.grid.remove(cellPositions, entity);
 
         delete entitiesById[entity.id];
@@ -163,13 +156,13 @@ export default class SpatialPartitionSystem {
         const entity = _entity;
 
         if (this.isPlacable(entity) &&
-         this.spatialPartitionService.entitiesById[entity.id]) {
+            this.spatialPartitionService.entitiesById[entity.id]) {
             this.removePlacableEntity();
         }
     }
 
-    serviceAdded(name, service){
-        if (name === "bounding-rectangle-data"){
+    serviceAdded(name, service) {
+        if (name === "bounding-rectangle-data") {
             this.boundingRectangleData = service;
         }
     }

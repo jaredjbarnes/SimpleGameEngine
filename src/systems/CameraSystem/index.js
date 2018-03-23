@@ -42,7 +42,7 @@ export default class CameraSystem {
         this.imageManager = imageManager;
         this.cameraName = cameraName;
         this.canvasFactory = canvasFactory;
-        this.rectangleCollisionData = null;
+        this.spatialPartitionService = null;
         this.cells = [];
         this.world = null;
         this.camera = null;
@@ -50,8 +50,8 @@ export default class CameraSystem {
         this.renderableEntities = {};
 
         this.sort = (_entityA, _entityB) => {
-            const entityA = this.world.getEntityById(_entityA.id);
-            const entityB = this.world.getEntityById(_entityB.id);
+            const entityA = _entityA.id;
+            const entityB = _entityB.id;
             const zIndexAComponent = entityA.getComponent("z-index");
             const zIndexBComponent = entityB.getComponent("z-index");
             const zIndexA = zIndexAComponent != null ? zIndexAComponent.value : 0;
@@ -98,7 +98,8 @@ export default class CameraSystem {
     }
 
     _isCameraEntity(entity) {
-        return entity.hasComponents(["camera", "transform", "rectangle-collider"]) && entity.getComponent("camera").name === this.cameraName;
+        return entity.hasComponents(["camera", "transform", "rectangle-collider"]) &&
+            entity.getComponent("camera").name === this.cameraName;
     }
 
     _isCell(entity) {
@@ -123,14 +124,18 @@ export default class CameraSystem {
             const right = Math.min(cellX + cellSize, cell.rectangle.right);
 
             if (top < bottom && left < right) {
-                const entities = this._getBroadPhaseCollisionCell(dirtyCellPosition);
+                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition);
                 entities.sort(this.sort);
 
-                cell.context.clearRect(left - cell.rectangle.left, top - cell.rectangle.top, right - left, bottom - top);
+                cell.context.clearRect(
+                    left - cell.rectangle.left,
+                    top - cell.rectangle.top,
+                    right - left,
+                    bottom - top
+                );
 
                 for (let y = 0; y < entities.length; y++) {
-                    const collidableEntity = entities[y];
-                    const entity = this.world.getEntityById(collidableEntity.id);
+                    const entity = entities[y];
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
                     const transform = entity.getComponent("transform");
@@ -205,27 +210,21 @@ export default class CameraSystem {
     }
 
     _updateCells() {
-        let dirtyCellPositions = this.rectangleCollisionData.dirtyCellPositions.slice();
+        const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions.slice();
+        const grid = this.spatialPartitionService.grid;
         const renderableCells = {};
         let fullCellRenderCount = 0;
 
         for (let x = 0; x < dirtyCellPositions.length; x++) {
             const cellPosition = dirtyCellPositions[x];
-            const collidableEntities = this._getBroadPhaseCollisionCell(cellPosition);
+            const entities = grid.getBucket(cellPosition);
 
-            for (let i = 0; i < collidableEntities.length; i++) {
-                const collidableEntity = collidableEntities[i]
-                const id = collidableEntity.id;
-                const rectangleCollider = collidableEntity.collidable;
-                const entity = this.world.getEntityById(id);
-                const cellPositions = collidable.cellPositions;
-                const lastCellPositions = collidable.lastCellPositions;
-
-                if (entity == null) {
-                    return;
-                }
-
+            for (let i = 0; i < entities.length; i++) {
+                const entity = entities[i]
                 const transform = entity.getComponent("transform");
+                const spatialPartition = entity.getComponent("spatial-partition");
+                const cellPositions = spatialPartition.cellPositions;
+                const lastCellPositions = spatialPartition.lastCellPositions;
 
                 if (this.imageManager.isRenderable(entity) && (transform.isDirty)) {
                     for (let c = 0; c < cellPositions.length; c++) {

@@ -2,8 +2,6 @@
 import CellPosition from "./CellPosition";
 import Collision from "./Collision";
 
-const RECTANGLE_DEPENDENCIES = ["transform", "rectangle", "rectangle-collider"];
-
 export default class RectangleColliderSystem {
     constructor(cellSize = 200) {
         this.cellSize = cellSize;
@@ -17,62 +15,33 @@ export default class RectangleColliderSystem {
             left: 0
         };
         this.availableCollisions = [];
-        this.rectangleCollisionDataEntity = null;
-        this.rectangleCollisionData = null;
-
+        this.spatialPartitionService = null;
     }
 
-    addRectangleCollisionDataEntity(_entity) {
+    removeCollisionsFromEntity(_entity) {
         const entity = _entity;
-        this.rectangleCollisionDataEntity = entity;
-        this.rectangleCollisionData = entity.getComponent("rectangle-collision-data");
-    }
+        const collider = entity.getComponent("rectangle-collider");
 
-    addEntityToCellPosition(_entity, _cellPosition) {
-        const entity = _entity;
-        const cellPosition = _cellPosition;
-        const cell = this.getCell(cellPosition);
-        const index = cell.indexOf(entity);
+        if (collider != null) {
+            const collisions = collider.collisions;
 
-        if (index === -1) {
-            cell.push(entity);
-        }
-    }
-
-    addEntityToCellPositions(_entity, _cellPositions) {
-        const entity = _entity;
-        const cellPositions = _cellPositions;
-
-        for (let x = 0; x < cellPositions.length; x++) {
-            const cellPosition = cellPositions[x];
-            this.addEntityToCellPosition(entity, cellPosition);
-        }
-
-        this.addCellPositionsToDirtyCellPositions(cellPositions);
-    }
-
-    addCellPositionsToDirtyCellPositions(_cellPositions) {
-        const cellPositions = _cellPositions;
-        const dirtyCellPositions = this.rectangleCollisionData.dirtyCellPositions;
-
-        for (let x = 0; x < cellPositions.length; x++) {
-            let isIn = false;
-            for (let y = 0; y < dirtyCellPositions.length; y++) {
-                if (cellPositions[x].rowIndex === dirtyCellPositions[y].rowIndex &&
-                    cellPositions[x].columnIndex === dirtyCellPositions[y].columnIndex) {
-                    isIn = true;
-                    break;
-                }
+            for (let id in collisions) {
+                this.releaseCollision(collisions[id]);
             }
 
-            if (!isIn) {
-                dirtyCellPositions.push(cellPositions[x]);
-            }
+            collider.collisions = {};
         }
-
     }
 
-    createCollision(id) {
+    removeCollisionsFromEntities(entities) {
+        for (let x = 0; x < entities.length; x++) {
+            this.removeCollisionsFromEntity(entity);
+        }
+    }
+
+    createCollision(_id) {
+        const id = _id;
+
         if (this.availableCollisions.length > 0) {
             let collision = this.availableCollisions.pop();
             collision.id = id;
@@ -87,85 +56,6 @@ export default class RectangleColliderSystem {
             return collision;
         }
         return new Collision(id);
-    }
-
-    findDirtyCells() {
-        const dirtyEntities = this.rectangleCollisionData.dirtyEntities;
-        const entities = this.entities;
-
-        for (let x = 0; x < dirtyEntities.length; x++) {
-            const dirtyEntity = dirtyEntities[x];
-            const collider = dirtyEntity.getComponent("rectangle-collider");
-            const rectangle = dirtyEntity.getComponent("rectangle");
-            const collisions = collider.collisions;
-
-            let lastCellPositions = collider.cellPositions;
-            let newCellPositions = this.getCellPositions(rectangle);
-
-            this.removeEntityFromCellPositions(dirtyEntity, lastCellPositions);
-            this.addEntityToCellPositions(dirtyEntity, newCellPositions);
-
-            collider.cellPositions = newCellPositions;
-            collider.lastCellPositions = lastCellPositions;
-
-            for (let y in collisions) {
-                const collision = collisions[y];
-                const otherEntity = this.rectangleCollisionData.entitiesById[y];
-                const otherCollider = otherEntity.getComponent("rectangle-collider");
-
-                this.releaseCollision(collision);
-
-                if (otherEntity) {
-                    this.releaseCollision(collider.collisions[dirtyEntity.id]);
-                    delete collider.collisions[dirtyEntity.id];
-                }
-
-            }
-
-            collider.collisions = {};
-        }
-
-        this.dirtyEntities = dirtyEntities;
-    }
-
-    getCell({ rowIndex, columnIndex }) {
-        const key = `${columnIndex}_${rowIndex}`;
-        let cell = this.grid[key];
-
-        if (cell == null) {
-            cell = this.grid[key] = [];
-        }
-
-        return cell;
-    }
-
-    getCellPositions(rectangle) {
-        const top = rectangle.top;
-        const left = rectangle.left;
-        const right = rectangle.right;
-        const bottom = rectangle.bottom;
-        const cellSize = this.cellSize;
-
-        const topCell = Math.floor(top / cellSize);
-        const bottomCell = Math.floor(bottom / cellSize);
-        const leftCell = Math.floor(left / cellSize);
-        const rightCell = Math.floor(right / cellSize);
-
-        let row = topCell;
-        let column = leftCell;
-
-        let cellPositions = [];
-
-        while (row <= bottomCell) {
-            while (column <= rightCell) {
-                cellPositions.push(new CellPosition(column, row));
-                column += 1;
-            }
-            column = leftCell;
-            row += 1;
-        }
-
-        return cellPositions;
     }
 
     getIntersection(_rectangleA, _rectangleB) {
@@ -188,9 +78,8 @@ export default class RectangleColliderSystem {
         return null;
     }
 
-    isRectangleColliderDataEntity(_entity) {
-        const entity = _entity;
-        return entity.hasComponent("rectangle-collision-data");
+    isReady() {
+        return this.spatialPartitionService != null;
     }
 
     releaseCollision(_collision) {
@@ -200,64 +89,44 @@ export default class RectangleColliderSystem {
         }
     }
 
-    removeCell({ columnIndex, rowIndex }) {
-        if (this.grid[`${columnIndex}_${rowIndex}`]) {
-            delete this.grid[`${columnIndex}_${rowIndex}`];
-        }
-    }
-
-    removeRectangleCollisionDataEntity(_entity){
-        const entity = _entity;
-        this.rectangleCollisionData = null;
-        this.rectangleCollisionDataEntity = null;
-    }
-
-    removeEntityFromCellPositions(_entity, _cellPositions) {
-        const entity = _entity;
-        const cellPositions = _cellPositions;
-
-        for (let x = 0; x < cellPositions.length; x++) {
-            const cellPosition = cellPositions[x];
-            const cell = this.getCell(cellPosition);
-
-            if (cell != null) {
-                const index = cell.indexOf(entity);
-
-                if (index > -1) {
-                    cell.splice(index, 1);
-                    if (cell.length === 0) {
-                        this.removeCell(cellPosition);
-                    }
-                }
-            }
-        }
-
-        this.addCellPositionsToDirtyCellPositions(cellPositions);
-
-    }
-
     updateGridCells() {
-        const cellPositions = this.rectangleCollisionData.dirtyCellPositions;
+        const cellPositions = this.spatialPartitionService.dirtyCellPositions;
+        const grid = this.spatialPartitionService.grid;
+
+        for (let index = 0; index < cellPositions.length; index++) {
+            const entities = grid.getBucket(cellPosition);
+            this.removeCollisionsFromEntities(entities);
+        }
 
         for (let index = 0; index < cellPositions.length; index++) {
             const cellPosition = cellPositions[index];
-            const cell = this.getCell(cellPosition);
+            const entities = grid.getBucket(cellPosition);
 
-            // Add collision data to the entities.
-            for (let y = 0; y < cell.length; y++) {
-                const entity = cell[y];
-                const collider = entity.getComponent("rectangle-collider");
+            for (let y = 0; y < entities.length; y++) {
+                const entity = entities[y];
                 const rectangle = entity.getComponent("rectangle");
+                const collider = entity.getComponent("rectangle-collider");
+
+                if (collider == null || rectangle == null) {
+                    continue;
+                }
+
                 const collisions = collider.collisions;
                 const index = y;
 
-                for (let x = index + 1; x < cell.length; x++) {
-                    const otherEntity = cell[x];
-                    const otherCollider = otherEntity.getComponent("rectangle-collider");
+                for (let x = index + 1; x < entities.length; x++) {
+                    const otherEntity = entities[x];
                     const otherRectangle = otherEntity.getComponent("rectangle");
-                    const otherCollisions = collider.collisions;
+                    const otherCollider = otherEntity.getComponent("rectangle-collider");
 
-                    if ((otherCollisions[entity.id] && otherCollisions[entity.id].timestamp === this.currentTimestamp)) {
+                    if (otherCollider == null || otherRectangle == null) {
+                        continue;
+                    }
+
+                    const otherCollisions = otherCollider.collisions;
+
+                    if ((otherCollisions[entity.id] &&
+                        otherCollisions[entity.id].timestamp === this.currentTimestamp)) {
                         continue;
                     }
 
@@ -293,10 +162,7 @@ export default class RectangleColliderSystem {
 
     }
 
-    /******************************************************************/
-    /*                    System Life Cycle Hooks                     */
-    /******************************************************************/
-
+    //Life Cycle Methods
     activated(_world) {
         const world = _world;
         this.world = world
@@ -308,49 +174,30 @@ export default class RectangleColliderSystem {
 
     }
 
-    componentAdded(_entity, _component) {
-        const entity = _entity;
-        this.entityAdded(entity);
-    }
-
-    componentRemoved(_entity, _component) {
-        const entity = _entity;
-        const component = _component;
-
-        if (component.type === "rectangle-collision-data") {
-            this.addRectangleCollisionDataEntity(entity);
-        }
-    }
-
     deactivated(_world) {
         const world = _world;
         this.world = null;
         this.currentTimestamp = 0;
-        this.rectangleCollisionData = null;
-        this.rectangleCollisionDataEntity = null;
+        this.spatialPartitionService = null;
     }
 
-    entityAdded(_entity) {
-        const entity = _entity;
-        if (this.isRectangleColliderDataEntity(entity)){
-            this.addRectangleCollisionDataEntity(entity);
+    serviceAdded(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = service;
         }
     }
 
-    entityRemoved(_entity) {
-        const entity = _entity;
-        if (this.isRectangleColliderDataEntity(entity)){
-            this.removeRectangleCollisionDataEntity(entity);
+    serviceRemoved(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = null;
         }
     }
 
     update(currentTimestamp) {
-        this.currentTimestamp = currentTimestamp;
-        this.rectangleCollisionData.dirtyCellPositions.length = 0;
-        this.rectangleCollisionData.dirtyEntities.length = 0;
-
-        this.findDirtyCells();
-        this.updateGridCells();
+        if (this.isReady()) {
+            this.currentTimestamp = currentTimestamp;
+            this.updateGridCells();
+        }
     }
 
 }

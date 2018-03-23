@@ -20,14 +20,20 @@ export default class World {
         this._entities = [];
         this._entitiesById = {};
         this._services = {};
-        this.isRunning = false;
         this._loop = this._loop.bind(this);
+        this._isRunning = false;
 
     }
 
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
+    }
+
+    validateService(service) {
+        if (typeof service.name !== "string") {
+            throw new Error("Services need to have a name property.");
+        };
     }
 
     notifySystems(methodName, args = []) {
@@ -49,9 +55,9 @@ export default class World {
         }
     }
 
-    addService(name, service) {
-        this._services[name] = service;
-        this.notifySystems("serviceAdded", [name, service]);
+    addService(service) {
+        this._services[service.name] = service;
+        this.notifySystems("serviceAdded", [service.name, service]);
     }
 
     getService(name) {
@@ -62,7 +68,7 @@ export default class World {
         return Object.assign({}, this._services);
     }
 
-    removeService(name) {
+    removeService(service) {
         const service = this._services[service];
 
         if (service != null) {
@@ -119,8 +125,8 @@ export default class World {
     }
 
     play() {
-        if (!this.isRunning) {
-            this.isRunning = true;
+        if (!this._isRunning) {
+            this._isRunning = true;
             this._startTime = performance.now();
             this._loop();
 
@@ -129,8 +135,8 @@ export default class World {
     }
 
     pause() {
-        if (this.isRunning) {
-            this.isRunning = false;
+        if (this._isRunning) {
+            this._isRunning = false;
             this._timespans.push(performance.now() - this._startTime);
             cancelAnimationFrame(this._animationFrame);
 
@@ -145,7 +151,7 @@ export default class World {
             time += this._timespans[x];
         }
 
-        if (this.isRunning) {
+        if (this._isRunning) {
             time += performance.now() - this._startTime;
         }
 

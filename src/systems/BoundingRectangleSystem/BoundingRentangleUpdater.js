@@ -1,6 +1,6 @@
 import Vector from "../../Vector";
 
-export default class RectangleUpdater {
+export default class BoundingRectangleUpdater {
     constructor() {
         this.entity = null;
         this.rectangle = null;

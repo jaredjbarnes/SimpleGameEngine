@@ -1,5 +1,6 @@
 export default class AudioManager {
     constructor(){
+        this.name = "audio-manager"
         this._sounds = new Map();
     }
     

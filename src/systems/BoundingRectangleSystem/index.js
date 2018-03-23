@@ -1,35 +1,28 @@
 import Entity from "../../Entity";
 import RectangleUpdater from "./RentangleUpdater";
+import BoundingRectangleService from "./../../services/BoundingRectangleService";
 
 const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
 
 export default class RectangleSystem {
     constructor() {
         this.world = null;
-        this.rectangleEntities = {};
-        this.spatialPartitionDataEntity = null;
-        this.spatialPartitionData = null;
+        this.boundingRectangleService.entitiesById = {};
         this.rectangleUpdater = new RectangleUpdater();
+        this.boundingRectangleService = new BoundingRectangleService();
+        this.removedEntities = [];
+        this.addedEntities = [];
     }
 
     addRectangleEntity(_entity) {
-        const _entity = entity;
-        this.rectangleEntities[entity.id] = entity;
-    }
-
-    addSpatialPartitionEntity(entity){
-        this.spatialPartitionDataEntity = entity;
-        this.spatialPartitionData = entity.getComponent("spatial-partition-data");
+        const entity = entity;
+        this.boundingRectangleService.entitiesById[entity.id] = entity;
+        this.addedEntities.push(entity);
     }
 
     isRectangleEntity(_entity) {
         const entity = _entity;
         return entity.hasComponents(RECTANGLE_ENTITIES_DEPENDENCIES);
-    }
-
-    isSpatialPartitionDataEntity(_entity) {
-        const entity = _entity;
-        return entity.hasComponents("spatial-partition-data");
     }
 
     isDirty(_entity) {
@@ -39,29 +32,20 @@ export default class RectangleSystem {
 
     removeRectangleEntity(_entity) {
         const entity = _entity;
-        delete this.rectangleEntities[entity.id];
-    }
-
-    removeSpatialPartitionEntity(){
-        this.spatialPartitionData = null;
-        this.spatialPartitionDataEntity = null;
+        delete this.boundingRectangleService.entitiesById[entity.id];
+        this.removedEntities.push(entity);
     }
 
     wasRectangleEntity(_entity, _component) {
         const entity = _entity;
         const component = _component;
-        return this.rectangleEntities[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
-    }
-
-    wasSpatialPartitionEntity(_entity, _component) {
-        const entity = _entity;
-        const component = _component;
-        return entity === this.spatialPartitionDataEntity && component.type === "spatial-partition-data";
+        return this.boundingRectangleService.entitiesById[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
     }
 
     // Life cycle methods
     activated(_world) {
         this.world = _world;
+        this.world.addService(this.boundingRectangleService);
     }
 
     componentAdded(_entity, _component) {
@@ -74,45 +58,53 @@ export default class RectangleSystem {
         const component = _component;
         if (this.wasRectangle(entity, component)) {
             this.removeRectangleEntity(entity);
-        } else if (this.wasSpatialPartitionEntity(entity, component)){
-            this.removeSpatialPartitionEntity();
-        }
+        } 
     }
 
     entityAdded(_entity) {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.addRectangleEntity(entity);
-        } else if (this.isSpatialPartitionDataEntity(entity)){
-            this.addSpatialPartitionEntity(entity);
-        }
+        } 
     }
 
     entityRemoved(_entity) {
         const entity = _entity;
         if (this.isRectangleEntity(entity)) {
             this.removeRectangleEntity(entity);
-        } else if (this.isSpatialPartitionDataEntity(entity)){
-            this.removeSpatialPartitionEntity();
-        }
+        } 
     }
 
     deactivated() {
+        this.world.removeService(this.boundingRectangleService);
         this.world = null;
-        this.rectangleEntities = {};
+        this.boundingRectangleService.entitiesById = {};
+        this.boundingRectangleService.dirtyEntities.length = 0;
     }
 
     update() {
-        this.spatialPartitionData.dirtyEntities.length = 0;
+        const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        dirtyEntities.length = 0;
 
-        for (let id in this.rectangleEntities) {
-            const entity = this.rectangleEntities[id];
+        for (let x = 0 ; x < this.addedEntities.length; x++){
+            dirtyEntities.push(this.addedEntities[x]);
+        }
+
+        for (let x = 0 ; x < this.removedEntities.length; x++){
+            dirtyEntities.push(this.removedEntities[x]);
+        }
+
+        for (let id in this.boundingRectangleService.entitiesById) {
+            const entity = this.boundingRectangleService.entitiesById[id];
 
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
                 this.rectangleUpdater.update();
-                this.spatialPartitionData.dirtyEntities.push(entity);
+                this.boundingRectangleService.dirtyEntities.push(entity);
             }
         }
+
+        this.addedEntities.length = 0;
+        this.removedEntities.length = 0;
     }
 }

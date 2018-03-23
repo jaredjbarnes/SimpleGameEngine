@@ -2,6 +2,7 @@ import easings from "./easings";
 
 export default class AnimationManager {
     constructor() {
+        this.name = "animation-manager";
         this.animations = [];
         this.currentTime = 0;
         this.world = null;

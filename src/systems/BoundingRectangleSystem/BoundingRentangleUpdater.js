@@ -52,17 +52,17 @@ export default class BoundingRectangleUpdater {
     }
 
     updateCorners() {
-        this.corners[0].x = 0;
-        this.corners[0].y = 0;
+        this.corners[0].x = -this.transform.origin.x;
+        this.corners[0].y = -this.transform.origin.y;
 
-        this.corners[1].x = this.rectangle.width;
-        this.corners[1].y = 0;
+        this.corners[1].x = this.rectangle.width - this.transform.origin.x;
+        this.corners[1].y = -this.transform.origin.y;
 
-        this.corners[2].x = this.rectangle.width;
-        this.corners[2].y = this.rectangle.height;
+        this.corners[2].x = this.rectangle.width - this.transform.origin.x;
+        this.corners[2].y = this.rectangle.height - this.transform.origin.y;
 
-        this.corners[3].x = 0;
-        this.corners[3].y = this.rectangle.height;
+        this.corners[3].x = -this.transform.origin.x;
+        this.corners[3].y = this.rectangle.height - this.transform.origin.y;
     }
 
     updateBoundingRectangle() {
@@ -70,14 +70,26 @@ export default class BoundingRectangleUpdater {
         const angle = this.transform.rotation;
         const rotatedPoint = this.rotatedPoint;
         const origin = this.transform.origin;
+        const position = this.transform.position;
         const transformedPoint = this.transformedPoint;
         const min = this.min;
         const max = this.max;
 
-        this.rectangle.top = this.transform.position.y;
-        this.rectangle.left = this.transform.position.x;
-        this.rectangle.bottom = this.transform.position.y + this.rectangle.height;
-        this.rectangle.right = this.transform.position.x + this.rectangle.width;
+        min.x = max.x = transformedPoint.x = position.x;
+        min.y = max.y = transformedPoint.y = position.y;
+
+        for (let x = 0; x < corners.length; x++) {
+            Vector.rotate(corners[x], angle, rotatedPoint);
+            min.x = Math.min(transformedPoint.x + rotatedPoint.x, min.x);
+            min.y = Math.min(transformedPoint.y + rotatedPoint.y, min.y);
+            max.x = Math.max(transformedPoint.x + rotatedPoint.x, max.x);
+            max.y = Math.max(transformedPoint.y + rotatedPoint.y, max.y);
+        }
+
+        this.rectangle.top = min.y;
+        this.rectangle.left = min.x;
+        this.rectangle.bottom = max.y;
+        this.rectangle.right = max.x;
     }
 
     updateOrigin() {

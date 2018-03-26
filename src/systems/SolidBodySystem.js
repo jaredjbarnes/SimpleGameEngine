@@ -1,15 +1,16 @@
-const DEPENDENCIES = ["solid-body", "narrow-phase-collidable", "movable"];
+const DEPENDENCIES = ["solid-body", "polygon-collider", "movable"];
 
 export default class SolidBodySystem {
     constructor() {
-        this.entities = new Map();
+        this.entities = {};
         this.world = null;
     }
 
     update() {
-        this.entities.forEach((entity) => {
+        for (let id in this.entities) {
+            const entity = this.entities[id];
             this.updateEntity(entity);
-        });
+        }
     }
 
     activated(world) {
@@ -25,13 +26,15 @@ export default class SolidBodySystem {
     }
 
     entityAdded(entity) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity.id, entity);
+        if (this.entities[entity.id] == null && entity.hasComponents(DEPENDENCIES)) {
+            this.entities[entity.id] = entity;
         }
     }
 
     entityRemoved(entity) {
-        this.entities.delete(entity.id);
+        if (this.entities[entity.id] != null) {
+            delete this.entities[entity.id];
+        }
     }
 
     componentAdded(entity, component) {
@@ -39,23 +42,20 @@ export default class SolidBodySystem {
     }
 
     componentRemoved(entity, component) {
-        if (DEPENDENCIES.indexOf(component.type) > -1) {
-            this.entities.delete(entity.id);
+        if (this.entities[entity.id] != null) {
+            delete this.entities[entity.id];
         }
     }
 
     updateEntity(entity) {
-        let activeCollisions = entity.getComponent("narrow-phase-collidable").collisions;
+        let activeCollisions = entity.getComponent("polygon-collider").collisions;
         let movable = entity.getComponent("movable");
         let solidBody = entity.getComponent("solid-body");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];
-            if (collision.endTimestamp == null) {
-                movable.x += Math.round(collision.penetration.x);
-                movable.y += Math.round(collision.penetration.y);
-            }
-
+            movable.x += Math.round(collision.penetration.x);
+            movable.y += Math.round(collision.penetration.y);
         }
     }
 

@@ -4,42 +4,42 @@
 
 export default class Vector {
 
-    static add(vectorA, vectorB, reference = {}) {
+    static add(vectorA, vectorB, reference = {x: 0, y: 0}) {
         reference.x = vectorA.x + vectorB.x;
         reference.y = vectorA.y + vectorB.y;
 
         return reference;
     }
 
-    static subtract(vectorA, vectorB, reference = {}) {
+    static subtract(vectorA, vectorB, reference = {x: 0, y: 0}) {
         reference.x = vectorA.x - vectorB.x;
         reference.y = vectorA.y - vectorB.y;
 
         return reference;
     }
 
-    static multiply(vectorA, vectorB, reference = {}) {
+    static multiply(vectorA, vectorB, reference = {x: 0, y: 0}) {
         reference.x = vectorA.x * vectorB.x;
         reference.y = vectorA.y * vectorB.y;
 
         return reference;
     }
 
-    static divide(vectorA, vectorB, reference = {}) {
+    static divide(vectorA, vectorB, reference = {x: 0, y: 0}) {
         reference.x = vectorA.x / vectorB.x;
         reference.y = vectorA.y / vectorB.y;
 
         return reference;
     }
 
-    static scale(vector, scale, reference = {}) {
+    static scale(vector, scale, reference = {x: 0, y: 0}) {
         reference.x = scale * vector.x;
         reference.y = scale * vector.y;
 
         return reference;
     }
 
-    static project(vectorA, vectorB, reference = {}) {
+    static project(vectorA, vectorB, reference = {x: 0, y: 0}) {
         var scale;
 
         var firstDot = Vector.dot(vectorA, vectorB);
@@ -54,14 +54,14 @@ export default class Vector {
         return Vector.scale(vectorB, scale, reference);
     }
 
-    static getLeftNormal(vector, reference = {}) {
+    static getLeftNormal(vector, reference = {x: 0, y: 0}) {
         reference.x = -vector.y;
         reference.y = vector.x;
 
         return reference;
     }
 
-    static getRightNormal(vector, reference = {}) {
+    static getRightNormal(vector, reference = {x: 0, y: 0}) {
         reference.x = vector.y;
         reference.y = -vector.x;
 
@@ -76,14 +76,14 @@ export default class Vector {
         return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
     }
 
-    static negate(vector, reference = {}) {
+    static negate(vector, reference = {x: 0, y: 0}) {
         reference.x = -vector.x;
-        refernece.y = -vector.y;
+        reference.y = -vector.y;
 
         return reference;
     }
 
-    static rotate(vector, angle, reference = {}) {
+    static rotate(vector, angle, reference = {x: 0, y: 0}) {
         const radians = angle * Math.PI / 180;
         const sin = Math.sin(radians);
         const cos = Math.cos(radians);
@@ -98,7 +98,7 @@ export default class Vector {
         return reference;
     }
 
-    static normalize(vector, reference = {}) {
+    static normalize(vector, reference = {x: 0, y: 0}) {
 
         var magnitude = Vector.magnitude(vector);
 

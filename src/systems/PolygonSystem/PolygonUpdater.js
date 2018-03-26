@@ -12,14 +12,19 @@ export default class PolygonUpdater {
         };
     }
 
-    ensureClosedPolygon() {
-        const points = this.polygon.points;
-        const firstPoint = points[0];
-        const lastPoint = points[points.length - 1];
+    prepareNormals() {
+        const vertices = this.polygon.vertices;
+        const normals = this.polygon.normals;
 
-        if (firstPoint.x !== lastPoint.x || firstPoint.y !== lastPoint.y) {
-            points.push(firstPoint);
+        if (vertices.length != normals.length) {
+            for (let x = 0; x < vertices.length; x++) {
+                normals.push({
+                    x: 0,
+                    y: 0
+                });
+            }
         }
+
     }
 
     prepareRotatedPoints() {
@@ -31,8 +36,8 @@ export default class PolygonUpdater {
 
             for (let x = 0; x < points.length; x++) {
                 rotatedPoints.push({
-                    x: 0,
-                    y: 0
+                    x: points[x].x,
+                    y: points[x].y
                 });
             }
         }
@@ -80,7 +85,6 @@ export default class PolygonUpdater {
     }
 
     update() {
-        this.ensureClosedPolygon();
         this.updateRotatedPoints();
         this.updateWorldPoints();
         this.updateVertices();
@@ -89,6 +93,8 @@ export default class PolygonUpdater {
     }
 
     updateNormals() {
+        this.prepareNormals();
+
         const normals = this.polygon.normals;
         const vertices = this.polygon.vertices;
 
@@ -105,6 +111,7 @@ export default class PolygonUpdater {
         const transform = this.transform;
         const polygon = this.polygon;
 
+        // Only update if necessary.
         if (transform.rotation !== polygon.rotation) {
             polygon.rotation = transform.rotation;
 
@@ -113,7 +120,7 @@ export default class PolygonUpdater {
             const angle = transform.rotation;
             const origin = transform.origin;
 
-            for (let x = 0; x < points; x++) {
+            for (let x = 0; x < points.length; x++) {
                 const point = points[x];
                 this.transformedPoint.x = point.x - origin.x;
                 this.transformedPoint.y = point.y - origin.y;
@@ -127,7 +134,7 @@ export default class PolygonUpdater {
 
     updateSize() {
         const polygon = this.polygon;
-        const points = polygon.points;
+        const points = polygon.rotatedPoints;
         const length = points.length;
 
         let top = points[0].y;
@@ -157,11 +164,11 @@ export default class PolygonUpdater {
 
         const rotation = this.transform.rotation;
         const points = this.polygon.rotatedPoints;
-        const vertices = this.vertices;
+        const vertices = this.polygon.vertices;
 
-        for (let x = 0; x < points; x++) {
+        for (let x = 0; x < points.length; x++) {
             const point = points[x];
-            const vertex = this.vertices[x];
+            const vertex = vertices[x];
 
             const nextPoint = points[x + 1] || points[0];
 
@@ -172,14 +179,17 @@ export default class PolygonUpdater {
     }
 
     updateWorldPoints() {
+        this.prepareWorldPoints();
+
         const position = this.transform.position;
         const rotatedPoints = this.polygon.rotatedPoints;
         const worldPoints = this.polygon.worldPoints;
 
-        for (let x = 0; x < worldPoints.length; x++) {
+        for (let x = 0; x < rotatedPoints.length; x++) {
             worldPoints[x].x = rotatedPoints[x].x + position.x;
             worldPoints[x].y = rotatedPoints[x].y + position.y;
         }
+
     }
 
 }

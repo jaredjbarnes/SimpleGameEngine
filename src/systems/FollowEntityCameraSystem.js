@@ -38,8 +38,8 @@ export default class FollowEntityCameraSystem {
 
     update() {
         if (this._entityToFollow != null && this._camera != null) {
-            var x = this._entityPosition.x - (this._cameraRectangle.width / 2) + (this._entityRectangle.width / 2);
-            var y = this._entityPosition.y - (this._cameraRectangle.height / 2) + (this._entityRectangle.height / 2);
+            var x = this._entityPosition.x;
+            var y = this._entityPosition.y;
             this._cameraPosition.x = Math.floor(x);
             this._cameraPosition.y = Math.floor(y);
         }

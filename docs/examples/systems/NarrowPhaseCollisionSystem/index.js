@@ -1,11 +1,13 @@
 import World from "./../../../../src/World";
 import Camera from "./../../../../src/entities/Camera";
 import BroadPhaseCollisionSystem from "./../../../../src/systems/BroadPhaseCollisionSystem";
+import NarrowPhaseCollisionSystem from "./../../../../src/systems/NarrowPhaseCollisionSystem";
 import DynamicLoadingSystem from "./../../../../src/systems/DynamicLoadingSystem";
 import DefaultCameraSystem from "./../../../../src/systems/DefaultCameraSystem";
 import ControllerSystem from "./../../../../src/systems/ControllerSystem";
 import KeyboardInputSystem from "./../../../../src/systems/KeyboardInputSystem";
 import MovableSystem from "./../../../../src/systems/MovementSystem";
+import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
 import KeyboardController from "./../../../../src/components/KeyboardController";
@@ -41,6 +43,8 @@ const keyboardInputSystem = new KeyboardInputSystem();
 const movableSystem = new MovableSystem();
 const followEntityCameraSystem = new FollowEntityCameraSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
+const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
+const solidBodySystem = new SolidBodySystem();
 
 followEntityCameraSystem.camera = camera;
 followEntityCameraSystem.setEntityToFollow(player);
@@ -59,9 +63,11 @@ const defaultCameraSystem = new DefaultCameraSystem({
 world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
+world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities

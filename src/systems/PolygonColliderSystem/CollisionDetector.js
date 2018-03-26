@@ -1,9 +1,10 @@
 import Vector from "../../Vector";
 
-export default class CollisionHandler {
+export default class CollisionDetector {
     constructor() {
         this.entityA = null;
         this.entityB = null;
+        this.currentTime = 0;
         this.colliderA = [];
         this.colliderB = [];
         this.transformA = null;
@@ -15,12 +16,12 @@ export default class CollisionHandler {
         this.collisionDataA = {
             overlap: Number.MAX_VALUE,
             normal: null,
-            normalNumber: null
+            normalIndex: null
         };
         this.collisionDataB = {
             overlap: Number.MAX_VALUE,
             normal: null,
-            normalNumber: null
+            normalIndex: null
         };
         this.verticesA = [];
         this.verticesB = [];
@@ -28,10 +29,14 @@ export default class CollisionHandler {
         this.normalsB = [];
         this.polygonA = null;
         this.polygonB = null;
-        this.collisionA = null;
-        this.collisionB = null;
-        this.originA = null;
-        this.originB = null;
+        this.originA = {
+            x: 0,
+            y: 0
+        };
+        this.originB = {
+            x: 0,
+            y: 0
+        };
         this.projectionA = {
             min: 0,
             max: 0
@@ -63,7 +68,7 @@ export default class CollisionHandler {
     }
 
     preparePolygonA(polygon) {
-        this.verticesA = polygon.vertices;
+        this.verticesA = polygon.worldPoints;
         this.normalsA = polygon.normals;
         this.polygonA = polygon;
 
@@ -75,7 +80,7 @@ export default class CollisionHandler {
     }
 
     preparePolygonB(polygon) {
-        this.verticesB = polygon.vertices;
+        this.verticesB = polygon.worldPoints;
         this.normalsB = polygon.normals;
         this.polygonB = polygon;
 
@@ -105,9 +110,15 @@ export default class CollisionHandler {
         projection.max = max;
     }
 
-    updateCollisions(entityA, entityB) {
+    updateCollisions(entityA, entityB, currentTime) {
+        if (!entityA.hasComponent("polygon-collider") ||
+            !entityB.hasComponent("polygon-collider")) {
+            return;
+        }
+
         this.entityA = entityA;
         this.entityB = entityB;
+        this.currentTime = currentTime;
 
         this.prepareProperties();
         this.checkForCollisions();
@@ -124,10 +135,6 @@ export default class CollisionHandler {
                 this.projectionA.max - this.projectionB.min,
                 this.projectionB.max - this.projectionA.min
             );
-
-            if (overlap <= 0) {
-                this.collisionDataA.overlap = overlap;
-            }
 
             if (overlap < this.collisionDataA.overlap) {
                 this.collisionDataA.overlap = overlap;
@@ -149,10 +156,6 @@ export default class CollisionHandler {
                 this.projectionB.max - this.projectionA.min
             );
 
-            if (overlap <= 0) {
-                this.collisionDataB.overlap = overlap;
-            }
-
             if (overlap < this.collisionDataB.overlap) {
                 this.collisionDataB.overlap = overlap;
                 this.collisionDataB.normal = normal;
@@ -167,6 +170,12 @@ export default class CollisionHandler {
 
             for (let b = 0; b < this.polygonsB.length; b++) {
                 this.preparePolygonB(this.polygonsB[b]);
+
+                // If the collision has already been calculated.
+                if (this.colliderA.collisions[this.entityB.id] != null) {
+                    continue;
+                }
+
                 this.projectVerticesOnEntityBNormals();
 
                 if (this.collisionDataA.overlap <= 0) {
@@ -178,6 +187,59 @@ export default class CollisionHandler {
                 if (this.collisionDataB.overlap <= 0) {
                     continue;
                 }
+
+                const collisionA = {};
+                collisionA.otherEntity = this.entityB;
+                collisionA.entity = this.entityA;
+
+                const collisionB = {};
+                collisionB.otherEntity = this.entityA;
+                collisionB.entity = this.entityB;
+
+                if (this.collisionDataA.overlap < this.collisionDataB.overlap) {
+
+                    const minOverlap = this.collisionDataA.overlap;
+                    let normal = this.collisionDataA.normal;
+
+                    if (Vector.dot(normal, Vector.subtract(this.originA, this.originB)) > 0) {
+                        normal = Vector.negate(normal);
+                    }
+
+                    const penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = Vector.negate(penetration);
+                    collisionA.normal = normal;
+
+                    collisionB.penetration = penetration;
+                    collisionB.normal = normal;
+
+                } else {
+
+                    const minOverlap = this.collisionDataB.overlap;
+                    let normal = this.collisionDataB.normal;
+
+                    if (Vector.dot(normal, Vector.subtract(this.originB, this.originA)) > 0) {
+                        normal = Vector.negate(normal);
+                    }
+
+                    const penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = penetration;
+                    collisionA.normal = normal;
+
+                    collisionB.penetration = Vector.negate(penetration);
+                    collisionB.normal = normal;
+
+                }
+
+                this.colliderA.collisions[this.entityB.id] = collisionA;
+                this.colliderB.collisions[this.entityA.id] = collisionB;
 
             }
         }

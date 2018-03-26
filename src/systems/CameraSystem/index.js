@@ -258,9 +258,12 @@ export default class CameraSystem {
 
                 const isDirty = this.imageManager.isEntityDirty(entity);
                 if (isDirty) {
-                    const entityCellPositions = entity.getComponent("rectangle-collider").cellPositions;
-                    for (let z = 0; z < entityCellPositions.length; z++) {
-                        const cellPosition = entityCellPositions[z];
+
+                    const spatialPartition = cell.entity.getComponent("spatial-partition");
+                    const cellPositions = spatialPartition.cellPositions;
+
+                    for (let z = 0; z < cellPositions.length; z++) {
+                        const cellPosition = cellPositions[z];
                         renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                     }
                 }

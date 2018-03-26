@@ -10,6 +10,5 @@ export default class Polygon {
         this.center = { x: 0, y: 0 };
         this.size = { width: 0, height: 0 };
         this.rotation = 0;
-        this.isDirty = true;
     }
 }

@@ -13,7 +13,7 @@
         const shape = entity.getComponent("shape");
 
         if (shape.id != null) {
-            return shape.id;
+            return shape.id + entity.getComponent("transform").rotation;
         } else {
             const transform = entity.getComponent("transform");
             const rectangle = entity.getComponent("rectangle");
@@ -31,23 +31,24 @@
         const angle = transform.rotation;
         const width = rectangle.right - rectangle.left;
         const height = rectangle.bottom - rectangle.top;
+        const origin = transform.origin;
 
         canvas.width = width;
         canvas.height = height;
 
-        //context.translate(width / 2, height / 2);
-        //context.rotate(angle * Math.PI / 180);
+        context.translate(width / 2, height / 2);
+        context.rotate(angle * Math.PI / 180);
         context.globalAlpha = shape.opacity;
         context.beginPath();
 
-        shape.points.forEach(function (point, index) {
+        shape.points.forEach((point, index) => {
             const x = point.x;
             const y = point.y;
 
             if (index === 0) {
-                context.moveTo(x, y);
+                context.moveTo(x - origin.x, y - origin.y);
             } else {
-                context.lineTo(x, y);
+                context.lineTo(x - origin.x, y - origin.y);
             }
         });
 

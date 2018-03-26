@@ -34,7 +34,7 @@ export default class RectangleColliderSystem {
 
     removeCollisionsFromEntities(entities) {
         for (let x = 0; x < entities.length; x++) {
-            this.removeCollisionsFromEntity(entity);
+            this.removeCollisionsFromEntity(entities[x]);
         }
     }
 
@@ -88,17 +88,17 @@ export default class RectangleColliderSystem {
         }
     }
 
-    updateGridCells() {
+    updateCollisions() {
         const cellPositions = this.spatialPartitionService.dirtyCellPositions;
         const grid = this.spatialPartitionService.grid;
 
-        for (let index = 0; index < cellPositions.length; index++) {
-            const entities = grid.getBucket(cellPosition);
+        for (let key in cellPositions) {
+            const entities = grid.getBucket(cellPositions[key]);
             this.removeCollisionsFromEntities(entities);
         }
 
-        for (let index = 0; index < cellPositions.length; index++) {
-            const cellPosition = cellPositions[index];
+        for (let key in cellPositions) {
+            const cellPosition = cellPositions[key];
             const entities = grid.getBucket(cellPosition);
 
             for (let y = 0; y < entities.length; y++) {
@@ -189,7 +189,7 @@ export default class RectangleColliderSystem {
     update(currentTimestamp) {
         if (this.isReady()) {
             this.currentTimestamp = currentTimestamp;
-            this.updateGridCells();
+            this.updateCollisions();
         }
     }
 

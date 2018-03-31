@@ -1,4 +1,4 @@
-export default class TurnLeftShoot {
+export default class Drift {
     constructor(){}
 
     activated(entity, options, world){

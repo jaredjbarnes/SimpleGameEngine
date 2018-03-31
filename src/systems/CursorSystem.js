@@ -1,14 +1,15 @@
 import Entity from "../Entity";
+import Rectangle from "../components/Rectangle";
 import Cursor from "../components/Cursor";
 import Transform from "../components/Transform";
-import Collidable from "../components/Collidable";
+import RectangleCollider from "../components/RectangleCollider";
 import Shape from "../components/Shape";
 
 const DEPENDENCIES = ["cursor", "transform"];
 const CAMERA_DEPENDENCIES = ["camera", "transform"];
 
 export default class CursorSystem {
-    constructor({ canvas, cameraName, document, showCursor = false }) {
+    constructor({ canvas, cameraName, document, showCursor = false}) {
         this.world = null;
         this.canvas = canvas;
         this.camera = null;
@@ -37,11 +38,11 @@ export default class CursorSystem {
 
         this._mousemove = (event) => {
             this.canvasRect = this.canvas.getBoundingClientRect();
-            const size = this.camera.getComponent("size");
+            const rectangle = this.camera.getComponent("rectangle");
 
             this.scale = {
-                x: size.width / this.canvasRect.width,
-                y: size.height / this.canvasRect.height
+                x: rectangle.width / this.canvasRect.width,
+                y: rectangle.height / this.canvasRect.height
             };
 
             this.cursorPosition.x = (event.pageX - this.canvasRect.left) * this.scale.x;
@@ -61,10 +62,10 @@ export default class CursorSystem {
     }
 
     _createCursorEntity() {
-        const size = new Size();
+        const rectangle = new Rectangle();
         const transform = new Transform();
         const cursor = new Cursor();
-        const collidable = new Collidable();
+        const rectangleCollider = new RetangleCollider();
         const shape = new Shape();
 
         shape.points.push(
@@ -77,14 +78,14 @@ export default class CursorSystem {
 
         shape.fillColor.red = 255;
 
-        size.height = 5;
-        size.width = 5;
+        rectangle.height = 3;
+        rectangle.width = 3;
 
         this.cursorEntity = new Entity();
-        this.cursorEntity.addComponent(size);
+        this.cursorEntity.addComponent(rectangle);
         this.cursorEntity.addComponent(position);
         this.cursorEntity.addComponent(cursor);
-        this.cursorEntity.addComponent(collidable);
+        this.cursorEntity.addComponent(rectangleCollider);
 
         if (this.showCursor) {
             this.cursorEntity.addComponent(shape);
@@ -148,13 +149,13 @@ export default class CursorSystem {
 
         const entity = this.cursorEntity;
         let position = entity.getComponent("position");
-        let size = entity.getComponent("size");
+        let rectangle = entity.getComponent("rectangle");
 
-        let width = size.width > 0 ? size.width : 1;
-        let height = size.height > 0 ? size.height : 1;
+        let width = rectangle.width > 0 ? rectangle.width : 1;
+        let height = rectangle.height > 0 ? rectangle.height : 1;
 
-        let halfWidth = parseInt(size.width / 2, 10);
-        let halfHeight = parseInt(size.height / 2, 10);
+        let halfWidth = parseInt(rectangle.width / 2, 10);
+        let halfHeight = parseInt(rectangle.height / 2, 10);
 
         position.x = this.cursorPosition.x + this.cameraPosition.x - halfWidth;
         position.y = this.cursorPosition.y + this.cameraPosition.y - halfHeight;

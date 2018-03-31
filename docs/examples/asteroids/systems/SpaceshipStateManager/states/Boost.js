@@ -1,4 +1,4 @@
-export default class TurnLeftShoot {
+export default class Boost {
     constructor(){}
 
     activated(entity, options, world){

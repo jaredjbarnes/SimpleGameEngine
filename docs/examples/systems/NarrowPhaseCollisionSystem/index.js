@@ -74,7 +74,7 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 10000; x++) {
+for (let x = 0; x < 30000; x++) {
     const entity = new StaticText(x, {
         x: getRandomNumber(-10000, 10000),
         y: getRandomNumber(-10000, 10000)

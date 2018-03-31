@@ -7,28 +7,28 @@ export default class StateManagerSystem {
         this.world = null;
         this.isReady = true;
         this.name = null;
-        this.entities = new Map();
-        this.states = new Map();
+        this.entities = {};
+        this.states = {};
         this.stateDescriptors = [];
     }
 
     updateState(stateName, entity) {
-        var state = this.states.get(stateName);
+        const state = this.states[stateName];
         invokeMethod(state, "update", [entity, this.world]);
     }
 
     activateState(stateName, entity, options) {
-        var state = this.states.get(stateName);
+        const state = this.states[stateName];
         invokeMethod(state, "activated", [entity, options, this.world]);
     }
 
     deactivateState(stateName, entity) {
-        var state = this.states.get(stateName);
+        const state = this.states[stateName];
         invokeMethod(state, "deactivated", [entity, this.world]);
     }
 
     maintainState(entity) {
-        var state = entity.getComponent("state");
+        const state = entity.getComponent("state");
 
         if (state.activeName !== state.name) {
             this.deactivateState(state.activeName, entity);
@@ -38,13 +38,14 @@ export default class StateManagerSystem {
         }
 
         this.updateState(state.name, entity);
-
     }
 
     update() {
-        this.entities.forEach((entity) => {
+        const entities = this.entities;
+        for (let id in entities) {
+            const entity = entities[entity.id];
             this.maintainState(entity);
-        });
+        }
     };
 
     cacheEntities() {
@@ -54,16 +55,17 @@ export default class StateManagerSystem {
     }
 
     activated(world) {
+        const entities = this.entities;
         this.world = world;
         this.cacheEntities();
 
-        this.entities.forEach((entity) => {
-            var state = entity.getComponent("state");
-            var stateName = state.name;
+        for (let id in entities) {
+            const entity = entities[entity.id];
+            const state = entity.getComponent("state");
+            const stateName = state.name;
 
             this.activateState(stateName, entity);
-        });
-
+        }
     }
 
     deactivated() {
@@ -72,31 +74,33 @@ export default class StateManagerSystem {
     }
 
     entityAdded(entity) {
-        var state = entity.getComponent("state");
+        const state = entity.getComponent("state");
         if (state != null && state.stateManagerName === this.name) {
-            this.entities.set(entity.id, entity);
+            this.entities[entity.id] = entity;
         }
     }
 
     entityRemoved(entity) {
-        this.entities.delete(entity.id);
+        if (this.entities[entity.id] != null) {
+            delete this.entities[entity.id];
+        }
     }
 
     componentAdded(entity, component) {
         if (component.type === "state" && component.stateManagerName === this.name) {
-            this.entities.set(entity.id, entity);
+            this.entities[entity.id] = entity;
         }
     }
 
     componentRemoved(entity, component) {
         if (component.type === "state") {
-            this.entities.delete(entity.id);
+            delete this.entities[entity.id];
         }
     }
 
     addState(name, state) {
         if (typeof name === "string" && state != null) {
-            this.states.set(name, state);
+            this.states[name] = state;
             invokeMethod(state, "initialize", [this.world]);
         }
     }

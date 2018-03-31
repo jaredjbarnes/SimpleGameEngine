@@ -55,24 +55,22 @@
         textTexture.height = textHeight;
         textTexture.width = textWidth;
 
-        if (textTexture.horizontalAlignment === "center") {
-            x = width / 2;
+        if (textTexture.horizontalAlignment === "left") {
+            x = -width / 2;
         } else if (textTexture.horizontalAlignment === "right") {
-            x = width;
+            x = width / 2;
         }
 
         if (textTexture.verticalAlignment === "top") {
-            y = 0;
-        } else if (textTexture.verticalAlignment === "middle") {
-            y = (height / 2) - (textHeight / 2);
+            y = -textHeight / 2;
         } else if (textTexture.verticalAlignment === "bottom") {
-            y = height - textHeight;
+            y = textHeight / 2;
         }
 
         var color = this.convertToRgba(textTexture.font.color);
 
         context.fillStyle = color;
-        context.fillText(textTexture.text, parseInt(-x - transform.origin.x, 10), parseInt(-y - transform.origin.y, 10));
+        context.fillText(textTexture.text, parseInt(x, 10), parseInt(y - (textHeight / 2), 10));
 
         return canvas;
     }

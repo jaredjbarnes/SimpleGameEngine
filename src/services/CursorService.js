@@ -1,5 +1,5 @@
-export default class MouseService {
+export default class CursorService {
     constructor(){
-        this.cursorEntity = cursorEntity;
+        this.cursorEntity = null;
     }
 }

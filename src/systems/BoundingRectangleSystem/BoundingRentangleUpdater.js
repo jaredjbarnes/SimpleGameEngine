@@ -86,10 +86,10 @@ export default class BoundingRectangleUpdater {
             max.y = Math.max(transformedPoint.y + rotatedPoint.y, max.y);
         }
 
-        this.rectangle.top = min.y;
-        this.rectangle.left = min.x;
-        this.rectangle.bottom = max.y;
-        this.rectangle.right = max.x;
+        this.rectangle.top = Math.floor(min.y);
+        this.rectangle.left = Math.floor(min.x);
+        this.rectangle.bottom = Math.floor(max.y);
+        this.rectangle.right = Math.floor(max.x);
     }
 
     updateOrigin() {

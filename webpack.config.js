@@ -1,22 +1,33 @@
 const path = require('path');
 
-const cameraSystem = {
-    entry: "./docs/examples/systems/CameraSystem/index.js",
-    output: {
-        filename: "index.js",
-        path: path.resolve(__dirname, 'docs/examples/systems/cameraSystem/dist')
-    }
-}
-
-const narrowPhaseCollisionSystem = {
-    entry: "./docs/examples/systems/narrowPhaseCollisionSystem/index.js",
-    output: {
-        filename: "index.js",
-        path: path.resolve(__dirname, 'docs/examples/systems/narrowPhaseCollisionSystem/dist')
-    }
-}
-
-module.exports = [
-    cameraSystem,
-    narrowPhaseCollisionSystem
+const systems = [
+    "cameraSystem",
+    "narrowPhaseCollisionSystem",
+    "cursorSystem"
 ];
+
+const games = [
+    "asteroids"
+];
+
+const systemBuilds = systems.map((systemName) => {
+    return {
+        entry: `./docs/examples/systems/${systemName}/index.js`,
+        output: {
+            filename: "index.js",
+            path: path.resolve(__dirname, `docs/examples/systems/${systemName}/dist`)
+        }
+    }
+});
+
+const gameBuilds = systems.map((gameName) => {
+    return {
+        entry: `./docs/examples/games/${gameName}/index.js`,
+        output: {
+            filename: "index.js",
+            path: path.resolve(__dirname, `docs/examples/games/${gameName}/dist`)
+        }
+    }
+});
+
+module.exports = builds.concat(gameBuilds);

@@ -17,6 +17,7 @@ export default class World {
         this._systems = [];
         this._entities = [];
         this._entitiesById = {};
+        this._entitiesByType = {};
         this._services = {};
         this._loop = this._loop.bind(this);
         this._isRunning = false;
@@ -86,13 +87,26 @@ export default class World {
         }
     }
 
+    addEntityToTypesArray(entity) {
+        const type = entity.type;
+
+        if (type != null) {
+            if (!Array.isArray(this._entitiesByType[type])) {
+                this._entitiesByType[type] = [];
+            }
+            this._entitiesByType[type].push(entity);
+        }
+    }
+
     addEntity(_entity) {
         const entity = _entity;
         const entities = this._entities;
         const entitiesById = this._entitiesById;
+        const entitiesByType = this._entitiesByType;
         const registeredEntity = entitiesById[entity.id];
 
         if (registeredEntity == null) {
+            this.addEntityToTypesArray(entity);
             entitiesById[entity.id] = entity;
             entities.push(entity);
             entity.setDelegate(this._entityDelegate);
@@ -109,10 +123,26 @@ export default class World {
 
         if (registeredEntity != null) {
             delete entitiesById[entity.id];
+            this.removeEntityFromTypesArray(entity);
             const index = entities.indexOf(entity);
             entities.splice(index, 1);
             entity.setDelegate(null);
             this.notifySystems("entityRemoved", [entity]);
+        }
+    }
+
+    removeEntityFromTypesArray(entity) {
+        const type = entity.type;
+
+        if (type != null) {
+            if (!Array.isArray(this._entitiesByType[type])) {
+                this._entitiesByType[type] = [];
+            }
+
+            const index = this._entitiesByType[type].indexOf(entity);
+            if (index > -1) {
+                this._entitiesByType[type].splice(index, 1);
+            }
         }
     }
 
@@ -167,6 +197,10 @@ export default class World {
     getEntityById(id) {
         var _id = id;
         return this._entitiesById[_id] || null;
+    }
+
+    getEntityByType(type) {
+        return this._entitiesByType[type] || null;
     }
 
 }

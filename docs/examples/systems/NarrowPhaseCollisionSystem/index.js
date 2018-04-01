@@ -5,7 +5,7 @@ import NarrowPhaseCollisionSystem from "./../../../../src/systems/NarrowPhaseCol
 import DynamicLoadingSystem from "./../../../../src/systems/DynamicLoadingSystem";
 import DefaultCameraSystem from "./../../../../src/systems/DefaultCameraSystem";
 import ControllerSystem from "./../../../../src/systems/ControllerSystem";
-import KeyboardInputSystem from "./../../../../src/systems/KeyboardInputSystem";
+import KeyboardSystem from "./../../../../src/systems/KeyboardSystem";
 import MovableSystem from "./../../../../src/systems/MovementSystem";
 import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
 import Text from "./entities/Text";
@@ -39,15 +39,16 @@ const player = new Text("P");
 
 // Systems
 const controllerSystem = new ControllerSystem();
-const keyboardInputSystem = new KeyboardInputSystem();
+const keyboardInputSystem = new KeyboardSystem();
 const movableSystem = new MovableSystem();
-const followEntityCameraSystem = new FollowEntityCameraSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 const solidBodySystem = new SolidBodySystem();
 
-followEntityCameraSystem.camera = camera;
-followEntityCameraSystem.setEntityToFollow(player);
+const followEntityCameraSystem = new FollowEntityCameraSystem({
+    cameraEntityId: camera.id,
+    followEntityId: player.id
+});
 
 const dynamicLoadingSystem = new DynamicLoadingSystem({
     cameraName: cameraName,

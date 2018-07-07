@@ -1,4 +1,5 @@
 import invokeMethod from "../utilities/invokeMethod";
+import Validator from "../utilities/Validator";
 
 const DEPENDENCIES = ["state"];
 
@@ -98,10 +99,13 @@ export default class StateManagerSystem {
         }
     }
 
-    addState(name, state) {
-        if (typeof name === "string" && state != null) {
-            this.states[name] = state;
+    addState(state) {
+        const validator = new Validator(state);
+        if (validator.validate("name").isString()) {
+            this.states[state.name] = state;
             invokeMethod(state, "initialize", [this.world]);
+        } else {
+            throw new Error("States must have a name property of type string.");
         }
     }
 

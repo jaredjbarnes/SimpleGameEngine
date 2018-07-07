@@ -1,5 +1,7 @@
 export default class Drift {
-    constructor(){}
+    constructor(){
+        this.name = "drift";
+    }
 
     activated(entity, options, world){
 
@@ -10,6 +12,7 @@ export default class Drift {
     }
 
     update(entity, world){
-
+        const spaceRigidBody = entity.getComponent("space-rigid-body");
+        const transform
     }
 }

@@ -342,7 +342,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_DynamicLoadingSystem__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardInputSystem__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Text__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(46);
@@ -387,7 +387,7 @@ const player = new __WEBPACK_IMPORTED_MODULE_8__entities_Text__["a" /* default *
 
 // Systems
 const controllerSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__["a" /* default */]();
-const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardInputSystem__["a" /* default */]();
+const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__["a" /* default */]();
 const movableSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__["a" /* default */]();
 
@@ -2988,7 +2988,7 @@ class ControllerSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class KeyboardInputSystem {
+﻿class KeyboardSystem {
     constructor(doc) {
         this._world = null;
         var pressedKeys = this.pressedKeys = {};
@@ -3046,7 +3046,7 @@ class ControllerSystem {
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardInputSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardSystem;
 
 
 /***/ }),

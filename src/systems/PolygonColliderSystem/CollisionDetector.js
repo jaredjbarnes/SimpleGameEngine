@@ -55,10 +55,14 @@ export default class CollisionDetector {
 
         if (polygonBodyA == null) {
             this.polygonsA = [polygonA];
+        } else {
+            this.polygonsA = polygonBodyA.polygons;
         }
 
         if (polygonBodyB == null) {
             this.polygonsB = [polygonB];
+        } else {
+            this.polygonsB = polygonBodyB.polygons;
         }
 
         this.transformA = this.entityA.getComponent("transform");

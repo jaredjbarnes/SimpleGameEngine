@@ -6,6 +6,9 @@ import RectangleCollider from "./../../../../../src/components/RectangleCollider
 import Shape from "./../../../../../src/components/Shape";
 import SolidBody from "./../../../../../src/components/SolidBody";
 import Opacity from "../../../../../src/components/Opacity";
+import PolygonBody from "./../../../../../src/components/PolygonBody";
+import Polygon from "./../../../../../src/components/Polygon";
+import PolygonCollider from "./../../../../../src/components/PolygonCollider";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {
@@ -19,6 +22,25 @@ export default class StaticText extends Entity {
         const shape = new Shape();
         const solidBody = new SolidBody();
         const opacity = new Opacity();
+        const body = new PolygonBody();
+        const polygon = new Polygon();
+        const polygonCollider = new PolygonCollider();
+
+        polygon.points.push({
+            x: 0,
+            y: 0
+        },{
+            x: 100,
+            y: 0
+        },{
+            x: 100,
+            y: 30
+        },{
+            x: 0,
+            y: 30
+        });
+
+        body.polygons.push(polygon);
 
         opacity.value = Math.random();
 
@@ -54,5 +76,8 @@ export default class StaticText extends Entity {
         this.addComponent(rectangleCollider);
         this.addComponent(shape);
         this.addComponent(opacity);
+        this.addComponent(solidBody);
+        this.addComponent(body);
+        this.addComponent(polygonCollider);
     }
 }

@@ -534,7 +534,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DynamicLoadingSystem__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_DefaultCameraSystem__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardInputSystem__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_Text__ = __webpack_require__(48);
@@ -584,7 +584,7 @@ const player = new __WEBPACK_IMPORTED_MODULE_10__entities_Text__["a" /* default 
 
 // Systems
 const controllerSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__["a" /* default */]();
-const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardInputSystem__["a" /* default */]();
+const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__["a" /* default */]();
 const movableSystem = new __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__["a" /* default */]();
 const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__["a" /* default */]();
@@ -2237,10 +2237,14 @@ class CollisionDetector {
 
         if (polygonBodyA == null) {
             this.polygonsA = [polygonA];
+        } else {
+            this.polygonsA = polygonBodyA.polygons;
         }
 
         if (polygonBodyB == null) {
             this.polygonsB = [polygonB];
+        } else {
+            this.polygonsB = polygonBodyB.polygons;
         }
 
         this.transformA = this.entityA.getComponent("transform");
@@ -3704,7 +3708,7 @@ class ControllerSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class KeyboardInputSystem {
+﻿class KeyboardSystem {
     constructor(doc) {
         this._world = null;
         var pressedKeys = this.pressedKeys = {};
@@ -3762,7 +3766,7 @@ class ControllerSystem {
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardInputSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardSystem;
 
 
 /***/ }),

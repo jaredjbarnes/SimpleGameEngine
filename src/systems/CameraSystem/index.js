@@ -37,9 +37,9 @@ class Camera {
 }
 
 export default class CameraSystem {
-    constructor({ canvas, cameraName, imageManager, canvasFactory, sort = idSort }) {
+    constructor({ canvas, cameraName, compositor, canvasFactory, sort = idSort }) {
         this.canvas = canvas;
-        this.imageManager = imageManager;
+        this.compositor = compositor;
         this.cameraName = cameraName;
         this.canvasFactory = canvasFactory;
         this.spatialPartitionService = null;
@@ -69,11 +69,11 @@ export default class CameraSystem {
 
     _cleanEntities() {
         const renderableEntities = this.renderableEntities;
-        const imageManager = this.imageManager;
+        const compositor = this.compositor;
 
         for (let id in renderableEntities) {
             const entity = renderableEntities[id];
-            imageManager.cleanEntity(entity);
+            compositor.cleanEntity(entity);
         }
     }
 
@@ -131,7 +131,7 @@ export default class CameraSystem {
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
                     const transform = entity.getComponent("transform");
-                    const images = this.imageManager.getEntityImages(entity);
+                    const images = this.compositor.getEntityImages(entity);
                     const rotation = transform.rotation;
 
                     // If the entity isn't renderable then don't go on.
@@ -211,7 +211,7 @@ export default class CameraSystem {
                 const cellPositions = spatialPartition.cellPositions;
                 const lastCellPositions = spatialPartition.lastCellPositions;
 
-                if (this.imageManager.isRenderable(entity)) {
+                if (this.compositor.isRenderable(entity)) {
                     for (let c = 0; c < cellPositions.length; c++) {
                         const cellPosition = cellPositions[c];
                         renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
@@ -256,7 +256,7 @@ export default class CameraSystem {
                     continue;
                 }
 
-                const isDirty = this.imageManager.isEntityDirty(entity);
+                const isDirty = this.compositor.isEntityDirty(entity);
                 if (isDirty) {
 
                     const spatialPartition = cell.entity.getComponent("spatial-partition");

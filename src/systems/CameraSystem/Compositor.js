@@ -1,8 +1,6 @@
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
-window.getIdentityCount = 0;
-
-export default class ImageManager {
+export default class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
@@ -89,7 +87,6 @@ export default class ImageManager {
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
             if (component != null) {
-                window.getIdentityCount++;
                 const rasterizer = rasterizers[type];
                 const imageId = rasterizer.getIdentity(entity);
                 let image = this.getImage(imageId);

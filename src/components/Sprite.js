@@ -1,4 +1,3 @@
-import Image from "./Image";
 export default class Sprite {
     constructor(){
         this.type = "sprite";

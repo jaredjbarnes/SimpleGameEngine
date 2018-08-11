@@ -18,7 +18,6 @@ export default class SpriteSystem {
             const entity = this.entities[x];
             const sprite = entity.getComponent("sprite");
             const imageTexture = entity.getComponent("image");
-            const position = entity.getComponent("position");
 
             const index = Math.floor(sprite.index);
             const newImage = sprite.images[index];

@@ -1,4 +1,4 @@
-import ImageManager from "./CameraSystem/ImageManager";
+import Compositor from "./CameraSystem/Compositor";
 import CanvasFactory from "./CameraSystem/CanvasFactory";
 import ImageFactory from "./CameraSystem/ImageFactory";
 import ImageRasterizer from "./CameraSystem/ImageRasterizer";
@@ -10,7 +10,7 @@ import CameraSystem from "./CameraSystem";
 
 export default class DefaultCameraSystem extends CameraSystem {
     constructor({ canvas, cameraName, assetRoot }) {
-        const imageManager = new ImageManager();
+        const compositor = new Compositor();
         const canvasFactory = new CanvasFactory();
         const imageFactory = new ImageFactory();
 
@@ -22,24 +22,24 @@ export default class DefaultCameraSystem extends CameraSystem {
         super({
             canvas,
             cameraName,
-            imageManager,
+            compositor,
             canvasFactory
         });
 
         this.polygonRasterizer = null;
         this.canvasFactory = canvasFactory;
-        this.imageManager = imageManager;
+        this.compositor = compositor;
 
-        imageManager.addRasterizer(imageRasterizer);
-        imageManager.addRasterizer(lineRasterizer);
-        imageManager.addRasterizer(shapeRasterizer);
-        imageManager.addRasterizer(textRasterizer);
+        compositor.addRasterizer(imageRasterizer);
+        compositor.addRasterizer(lineRasterizer);
+        compositor.addRasterizer(shapeRasterizer);
+        compositor.addRasterizer(textRasterizer);
     }
 
     enablePolygonRasterizer(colors) {
         if (this.polygonRasterizer == null) {
             this.polygonRasterizer = new PolygonRasterizer({ canvasFactory: this.canvasFactory, colors });
-            this.imageManager.addRasterizer(this.polygonRasterizer);
+            this.compositor.addRasterizer(this.polygonRasterizer);
         }
     }
 }

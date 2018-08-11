@@ -50,12 +50,13 @@ export default class SolidBodySystem {
     updateEntity(entity) {
         let activeCollisions = entity.getComponent("polygon-collider").collisions;
         let movable = entity.getComponent("movable");
-        let solidBody = entity.getComponent("solid-body");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];
-            movable.x += Math.round(collision.penetration.x);
-            movable.y += Math.round(collision.penetration.y);
+            movable.x += Math.round(-collision.penetration.x);
+            movable.y += Math.round(-collision.penetration.y);
+
+            this.world.log("SolidBodySystem move:", collision);
         }
     }
 

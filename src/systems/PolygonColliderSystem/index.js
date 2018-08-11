@@ -2,7 +2,7 @@ import CollisionDetector from "./CollisionDetector";
 
 export default class PolygonColliderSystem {
     constructor() {
-        this.collisionDetector = new CollisionDetector();
+        this.collisionDetector = null;
         this.boundingRectangleService = null;
         this.world = null;
         this.currentTime = 0;
@@ -78,6 +78,8 @@ export default class PolygonColliderSystem {
     activated(world) {
         this.world = world;
         const services = this.world.getServices();
+        this.collisionDetector = new CollisionDetector(world);
+
         for (let name in services){
             this.serviceAdded(name, services[name]);
         }
@@ -86,6 +88,7 @@ export default class PolygonColliderSystem {
     deactivated() {
         this.world = null;
         this.boundingRectangleService = null;
+        this.collisionDetector = null;
     }
 
     serviceAdded(name, service) {

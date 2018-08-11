@@ -1,7 +1,7 @@
 ﻿import invokeMethod from "./utilities/invokeMethod";
 
 export default class World {
-    constructor() {
+    constructor(logger) {
         this._entityDelegate = {
             componentAdded: (...args) => {
                 this.notifySystems("componentAdded", args);
@@ -21,12 +21,27 @@ export default class World {
         this._services = {};
         this._loop = this._loop.bind(this);
         this._isRunning = false;
-
+        this._logger = typeof logger !== "function" ? () => { } : logger;
+        this.isLogEnabled = false;
     }
 
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
+    }
+
+    log(...args) {
+        if (this.isLogEnabled) {
+            this._logger.apply(null, args);
+        }
+    }
+
+    enableLogging() {
+        this.isLogEnabled = true;
+    }
+
+    disableLogging() {
+        this.isLogEnabled = false;
     }
 
     validateService(service) {

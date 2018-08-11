@@ -29,12 +29,12 @@ export default class ImageManager {
         this.imageTypes = Object.keys(this.rasterizers);
     }
 
-    cleanEntity(_entity){
+    cleanEntity(_entity) {
         const entity = _entity;
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            if (component != null){
+            if (component != null) {
                 component.isDirty = false;
             }
         }
@@ -48,7 +48,7 @@ export default class ImageManager {
         return this.images[identifier] || null;
     }
 
-    isRenderable(_entity){
+    isRenderable(_entity) {
         const entity = _entity;
 
         for (let type in this.rasterizers) {
@@ -67,6 +67,9 @@ export default class ImageManager {
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
             if (component && component.isDirty) {
+                const rasterizer = this.rasterizers[type];
+                const imageId = rasterizer.getIdentity(entity);
+                this.images[imageId] = null;
                 return true;
             }
         }
@@ -79,7 +82,7 @@ export default class ImageManager {
         const rasterizers = this.rasterizers;
         const images = [];
 
-        if (entity == null){
+        if (entity == null) {
             return images;
         }
 

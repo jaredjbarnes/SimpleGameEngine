@@ -29,11 +29,11 @@ export default class CollisionDetector {
         this.normalsB = [];
         this.polygonA = null;
         this.polygonB = null;
-        this.originA = {
+        this.positionA = {
             x: 0,
             y: 0
         };
-        this.originB = {
+        this.positionB = {
             x: 0,
             y: 0
         };
@@ -80,7 +80,7 @@ export default class CollisionDetector {
         this.collisionDataA.normal = null;
         this.collisionDataA.normalIndex = null;
 
-        Vector.add(this.transformA.position, this.transformA.origin, this.originA);
+        this.positionA = this.transformA.position;
     }
 
     preparePolygonB(polygon) {
@@ -92,7 +92,7 @@ export default class CollisionDetector {
         this.collisionDataB.normal = null;
         this.collisionDataB.normalIndex = null;
 
-        Vector.add(this.transformB.position, this.transformB.origin, this.originB);
+        this.positionB = this.transformB.position;
     }
 
     projectToAxis(vertices, normal, projection) {
@@ -203,9 +203,11 @@ export default class CollisionDetector {
                 if (this.collisionDataA.overlap < this.collisionDataB.overlap) {
 
                     const minOverlap = this.collisionDataA.overlap;
+                    const direction = Vector.subtract(this.positionA, this.positionB);
+
                     let normal = this.collisionDataA.normal;
 
-                    if (Vector.dot(normal, Vector.subtract(this.originA, this.originB)) > 0) {
+                    if (Vector.dot(normal, direction) < 0) {
                         normal = Vector.negate(normal);
                     }
 
@@ -215,7 +217,7 @@ export default class CollisionDetector {
                     };
 
                     collisionA.penetration = Vector.negate(penetration);
-                    collisionA.normal = normal;
+                    collisionA.normal = Vector.negate(normal);
 
                     collisionB.penetration = penetration;
                     collisionB.normal = normal;
@@ -223,9 +225,11 @@ export default class CollisionDetector {
                 } else {
 
                     const minOverlap = this.collisionDataB.overlap;
+                    const direction = Vector.subtract(this.positionB, this.positionA);
+
                     let normal = this.collisionDataB.normal;
 
-                    if (Vector.dot(normal, Vector.subtract(this.originB, this.originA)) > 0) {
+                    if (Vector.dot(normal, direction) < 0) {
                         normal = Vector.negate(normal);
                     }
 
@@ -238,7 +242,7 @@ export default class CollisionDetector {
                     collisionA.normal = normal;
 
                     collisionB.penetration = Vector.negate(penetration);
-                    collisionB.normal = normal;
+                    collisionB.normal = Vector.negate(normal);
 
                 }
 

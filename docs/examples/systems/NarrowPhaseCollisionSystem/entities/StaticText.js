@@ -29,20 +29,20 @@ export default class StaticText extends Entity {
         polygon.points.push({
             x: 0,
             y: 0
-        },{
+        }, {
             x: 100,
             y: 0
-        },{
+        }, {
             x: 100,
             y: 30
-        },{
+        }, {
             x: 0,
             y: 30
         });
 
         body.polygons.push(polygon);
 
-        opacity.value = Math.random();
+        opacity.value = 1;
 
         shape.border.thickness = 1;
         shape.fillColor.red = red;
@@ -64,10 +64,10 @@ export default class StaticText extends Entity {
 
         rectangle.width = 100;
         rectangle.height = 30;
+
         transform.position.x = x;
         transform.position.y = y;
-
-        transform.rotation = 13;
+        transform.rotation = Math.floor(Math.random() * 360);
         transform.isDirty = true;
 
         this.addComponent(transform);

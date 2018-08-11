@@ -2,7 +2,6 @@
     constructor(canvasFactory) {
         this.type = "shape";
         this.canvasFactory = canvasFactory;
-        this.shapeCache = {};
     }
 
     convertToRgba(color) {

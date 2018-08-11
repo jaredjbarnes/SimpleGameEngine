@@ -10,7 +10,6 @@ import MovableSystem from "./../../../../src/systems/MovementSystem";
 import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
-import KeyboardController from "./../../../../src/components/KeyboardController";
 import FollowEntityCameraSystem from "./../../../../src/systems/FollowEntityCameraSystem";
 
 const getRandomNumber = (min, max) => {
@@ -31,7 +30,7 @@ const getRandomRgba = () => {
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");
-const world = new World();
+const world = new World(console.log);
 
 // Entities
 const camera = new Camera(cameraName);
@@ -60,6 +59,8 @@ const defaultCameraSystem = new DefaultCameraSystem({
     cameraName
 });
 
+//defaultCameraSystem.enablePolygonRasterizer();
+
 // Set up world
 world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
@@ -77,8 +78,8 @@ world.addEntity(player);
 
 for (let x = 0; x < 30000; x++) {
     const entity = new StaticText(x, {
-        x: getRandomNumber(-10000, 10000),
-        y: getRandomNumber(-10000, 10000)
+        x: getRandomNumber(-15000, 15000),
+        y: getRandomNumber(-15000, 15000)
     }, getRandomRgba());
 
     world.addEntity(entity);

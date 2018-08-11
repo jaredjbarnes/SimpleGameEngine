@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(4);
 ﻿
 
@@ -463,19 +463,6 @@ class Text {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class KeyboardController {
-    constructor() {
-        this.type = "keyboard-controller";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 ﻿class Shape {
     constructor() {
         this.type = "shape";
@@ -509,7 +496,7 @@ class Text {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -522,7 +509,7 @@ class SolidBody {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -536,7 +523,7 @@ class PolygonBody {
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -558,7 +545,7 @@ class Polygon {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -572,26 +559,24 @@ class PolygonCollider {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DynamicLoadingSystem__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_DefaultCameraSystem__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_Text__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_KeyboardController__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__src_systems_FollowEntityCameraSystem__ = __webpack_require__(56);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DynamicLoadingSystem__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_DefaultCameraSystem__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_Text__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_systems_FollowEntityCameraSystem__ = __webpack_require__(58);
 
 
 
@@ -624,7 +609,7 @@ const getRandomRgba = () => {
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");
-const world = new __WEBPACK_IMPORTED_MODULE_0__src_World__["a" /* default */]();
+const world = new __WEBPACK_IMPORTED_MODULE_0__src_World__["a" /* default */](console.log);
 
 // Entities
 const camera = new __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__["a" /* default */](cameraName);
@@ -638,7 +623,7 @@ const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_B
 const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__["a" /* default */]();
 const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__["a" /* default */]();
 
-const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_13__src_systems_FollowEntityCameraSystem__["a" /* default */]({
+const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_12__src_systems_FollowEntityCameraSystem__["a" /* default */]({
     cameraEntityId: camera.id,
     followEntityId: player.id
 });
@@ -652,6 +637,8 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_Default
     canvas,
     cameraName
 });
+
+//defaultCameraSystem.enablePolygonRasterizer();
 
 // Set up world
 world.addSystem(dynamicLoadingSystem);
@@ -670,8 +657,8 @@ world.addEntity(player);
 
 for (let x = 0; x < 30000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__["a" /* default */](x, {
-        x: getRandomNumber(-10000, 10000),
-        y: getRandomNumber(-10000, 10000)
+        x: getRandomNumber(-15000, 15000),
+        y: getRandomNumber(-15000, 15000)
     }, getRandomRgba());
 
     world.addEntity(entity);
@@ -683,7 +670,7 @@ window.world = world;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -691,7 +678,7 @@ window.world = world;
 ﻿
 
 class World {
-    constructor() {
+    constructor(logger) {
         this._entityDelegate = {
             componentAdded: (...args) => {
                 this.notifySystems("componentAdded", args);
@@ -711,12 +698,27 @@ class World {
         this._services = {};
         this._loop = this._loop.bind(this);
         this._isRunning = false;
-
+        this._logger = typeof logger !== "function" ? () => { } : logger;
+        this.isLogEnabled = false;
     }
 
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
+    }
+
+    log(...args) {
+        if (this.isLogEnabled) {
+            this._logger.apply(null, args);
+        }
+    }
+
+    enableLogging() {
+        this.isLogEnabled = true;
+    }
+
+    disableLogging() {
+        this.isLogEnabled = false;
     }
 
     validateService(service) {
@@ -898,12 +900,12 @@ class World {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RectangleCollider__ = __webpack_require__(3);
@@ -939,7 +941,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -960,7 +962,7 @@ var S4 = function () {
 });
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -975,13 +977,13 @@ var S4 = function () {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(6);
 
 
@@ -1002,12 +1004,12 @@ class BroadPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_3__SystemsBund
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(21);
 
 
 
@@ -1125,7 +1127,7 @@ class BoundingRectangleSystem {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1233,7 +1235,7 @@ class BoundingRectangleUpdater {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1249,13 +1251,13 @@ class BoundingRectangleService {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(25);
 
 
 
@@ -1445,7 +1447,7 @@ class SpatialPartitionSystem {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1500,7 +1502,7 @@ class Grid {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1515,7 +1517,7 @@ class SpatialPartition {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1532,12 +1534,12 @@ class SpatialPartitionService {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CellPosition__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Collision__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CellPosition__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Collision__ = __webpack_require__(28);
 ﻿
 
 
@@ -1738,7 +1740,7 @@ class RectangleColliderSystem {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1752,7 +1754,7 @@ class CellPosition {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1773,13 +1775,13 @@ class Collision {
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(32);
 
 
 
@@ -1796,11 +1798,11 @@ class NarrowPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_0__SystemsBun
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Entity__ = __webpack_require__(0);
 
 
@@ -1894,7 +1896,7 @@ class PolygonSystem {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2098,16 +2100,16 @@ class PolygonUpdater {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__ = __webpack_require__(33);
 
 
 class PolygonColliderSystem {
     constructor() {
-        this.collisionDetector = new __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__["a" /* default */]();
+        this.collisionDetector = null;
         this.boundingRectangleService = null;
         this.world = null;
         this.currentTime = 0;
@@ -2183,6 +2185,8 @@ class PolygonColliderSystem {
     activated(world) {
         this.world = world;
         const services = this.world.getServices();
+        this.collisionDetector = new __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__["a" /* default */](world);
+
         for (let name in services){
             this.serviceAdded(name, services[name]);
         }
@@ -2191,6 +2195,7 @@ class PolygonColliderSystem {
     deactivated() {
         this.world = null;
         this.boundingRectangleService = null;
+        this.collisionDetector = null;
     }
 
     serviceAdded(name, service) {
@@ -2214,7 +2219,7 @@ class PolygonColliderSystem {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2250,11 +2255,11 @@ class CollisionDetector {
         this.normalsB = [];
         this.polygonA = null;
         this.polygonB = null;
-        this.originA = {
+        this.positionA = {
             x: 0,
             y: 0
         };
-        this.originB = {
+        this.positionB = {
             x: 0,
             y: 0
         };
@@ -2301,7 +2306,7 @@ class CollisionDetector {
         this.collisionDataA.normal = null;
         this.collisionDataA.normalIndex = null;
 
-        __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(this.transformA.position, this.transformA.origin, this.originA);
+        this.positionA = this.transformA.position;
     }
 
     preparePolygonB(polygon) {
@@ -2313,7 +2318,7 @@ class CollisionDetector {
         this.collisionDataB.normal = null;
         this.collisionDataB.normalIndex = null;
 
-        __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].add(this.transformB.position, this.transformB.origin, this.originB);
+        this.positionB = this.transformB.position;
     }
 
     projectToAxis(vertices, normal, projection) {
@@ -2424,9 +2429,11 @@ class CollisionDetector {
                 if (this.collisionDataA.overlap < this.collisionDataB.overlap) {
 
                     const minOverlap = this.collisionDataA.overlap;
+                    const direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.positionA, this.positionB);
+
                     let normal = this.collisionDataA.normal;
 
-                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.originA, this.originB)) > 0) {
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, direction) < 0) {
                         normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
                     }
 
@@ -2436,7 +2443,7 @@ class CollisionDetector {
                     };
 
                     collisionA.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
-                    collisionA.normal = normal;
+                    collisionA.normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
 
                     collisionB.penetration = penetration;
                     collisionB.normal = normal;
@@ -2444,9 +2451,11 @@ class CollisionDetector {
                 } else {
 
                     const minOverlap = this.collisionDataB.overlap;
+                    const direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.positionB, this.positionA);
+
                     let normal = this.collisionDataB.normal;
 
-                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.originB, this.originA)) > 0) {
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, direction) < 0) {
                         normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
                     }
 
@@ -2459,7 +2468,7 @@ class CollisionDetector {
                     collisionA.normal = normal;
 
                     collisionB.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
-                    collisionB.normal = normal;
+                    collisionB.normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
 
                 }
 
@@ -2474,11 +2483,11 @@ class CollisionDetector {
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(35);
 
 
 class Cell {
@@ -2663,7 +2672,7 @@ class DynamicLoadingSystem {
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2671,7 +2680,7 @@ class DynamicLoadingSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(36);
 
 
 
@@ -2703,7 +2712,7 @@ class DynamicLoadingSystem {
 });
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2716,18 +2725,19 @@ class DynamicLoadingCell {
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_LineRasterizer__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_ShapeRasterizer__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_TextRasterizer__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(47);
 
 
 
@@ -2737,16 +2747,17 @@ class DynamicLoadingCell {
 
 
 
-class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_7__CameraSystem__["a" /* default */] {
-    constructor({canvas, cameraName, assetRoot }) {
+
+class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a" /* default */] {
+    constructor({ canvas, cameraName, assetRoot }) {
         const imageManager = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__["a" /* default */]();
         const canvasFactory = new __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__["a" /* default */]();
         const imageFactory = new __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__["a" /* default */]();
 
         const imageRasterizer = new __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__["a" /* default */]({ canvasFactory, imageFactory, assetRoot });
-        const lineRasterizer = new __WEBPACK_IMPORTED_MODULE_4__CameraSystem_LineRasterizer__["a" /* default */](canvasFactory);
-        const shapeRasterizer = new __WEBPACK_IMPORTED_MODULE_5__CameraSystem_ShapeRasterizer__["a" /* default */](canvasFactory);
-        const textRasterizer = new __WEBPACK_IMPORTED_MODULE_6__CameraSystem_TextRasterizer__["a" /* default */](canvasFactory);
+        const lineRasterizer = new __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__["a" /* default */](canvasFactory);
+        const shapeRasterizer = new __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__["a" /* default */](canvasFactory);
+        const textRasterizer = new __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__["a" /* default */](canvasFactory);
 
         super({
             canvas,
@@ -2755,17 +2766,28 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_7__CameraSystem__["a
             canvasFactory
         });
 
+        this.polygonRasterizer = null;
+        this.canvasFactory = canvasFactory;
+        this.imageManager = imageManager;
+
         imageManager.addRasterizer(imageRasterizer);
         imageManager.addRasterizer(lineRasterizer);
         imageManager.addRasterizer(shapeRasterizer);
         imageManager.addRasterizer(textRasterizer);
+    }
+
+    enablePolygonRasterizer(colors) {
+        if (this.polygonRasterizer == null) {
+            this.polygonRasterizer = new __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__["a" /* default */]({ canvasFactory: this.canvasFactory, colors });
+            this.imageManager.addRasterizer(this.polygonRasterizer);
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DefaultCameraSystem;
 
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2800,12 +2822,12 @@ class ImageManager {
         this.imageTypes = Object.keys(this.rasterizers);
     }
 
-    cleanEntity(_entity){
+    cleanEntity(_entity) {
         const entity = _entity;
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            if (component != null){
+            if (component != null) {
                 component.isDirty = false;
             }
         }
@@ -2819,7 +2841,7 @@ class ImageManager {
         return this.images[identifier] || null;
     }
 
-    isRenderable(_entity){
+    isRenderable(_entity) {
         const entity = _entity;
 
         for (let type in this.rasterizers) {
@@ -2838,6 +2860,9 @@ class ImageManager {
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
             if (component && component.isDirty) {
+                const rasterizer = this.rasterizers[type];
+                const imageId = rasterizer.getIdentity(entity);
+                this.images[imageId] = null;
                 return true;
             }
         }
@@ -2850,7 +2875,7 @@ class ImageManager {
         const rasterizers = this.rasterizers;
         const images = [];
 
-        if (entity == null){
+        if (entity == null) {
             return images;
         }
 
@@ -2881,7 +2906,7 @@ class ImageManager {
 
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2905,7 +2930,7 @@ class CanvasFactory {
 
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2928,7 +2953,7 @@ class ImageFactory {
 
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3033,7 +3058,180 @@ class ImageFactory {
 
 
 /***/ }),
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(43);
+
+
+const defaultColors = {
+    rotatedPoints: "rgba(255, 0, 0, 1)",
+    normals: "rgba(80, 80, 220, 1)",
+    center: "rgba(80, 255, 80, 1)",
+    size: "rgba(255, 0, 0, 1)",
+    penetration: "rgba(80, 255, 80, 1)"
+};
+
+class PolygonRasterizer {
+    constructor({ canvasFactory, colors }) {
+        this.type = "polygon-body";
+        this.canvasFactory = canvasFactory;
+        this.colors = Object(__WEBPACK_IMPORTED_MODULE_0__utilities_overlay__["a" /* default */])(defaultColors, colors);
+    }
+
+    getIdentity(entity) {
+        return `polygon-${entity.id}`;
+    }
+
+    rasterize(entity) {
+        const canvas = this.canvasFactory.create();
+        const context = canvas.getContext("2d");
+
+        const polygonBody = entity.getComponent("polygon-body");
+        const polygonCollider = entity.getComponent("polygon-collider");
+
+        polygonBody.polygons.forEach((polygon) => {
+            const width = polygon.size.width;
+            const height = polygon.size.height;
+            const origin = polygon.center;
+            const normalsLineSize = Math.max(width, height) * 2;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            context.translate(width / 2, height / 2);
+            context.beginPath();
+
+            polygon.rotatedPoints.forEach((point, index) => {
+                const x = point.x;
+                const y = point.y;
+
+                if (index === 0) {
+                    context.moveTo(x, y);
+                } else {
+                    context.lineTo(x, y);
+                }
+            });
+
+            context.lineWidth = 1;
+            context.strokeStyle = this.colors.rotatedPoints;
+            context.stroke();
+            context.closePath();
+
+            context.beginPath();
+            polygon.normals.forEach((point, index) => {
+                const x = point.x * normalsLineSize;
+                const y = point.y * normalsLineSize;
+
+                context.moveTo(0, 0);
+                context.lineTo(x, y);
+
+            });
+
+            context.lineWidth = 1;
+            context.strokeStyle = this.colors.normals;
+            context.stroke();
+            context.closePath();
+
+            if (polygonCollider != null) {
+                context.beginPath();
+
+                for (let key in polygonCollider.collisions) {
+                    const collision = polygonCollider.collisions[key];
+                    context.moveTo(0, 0);
+                    context.lineTo(collision.penetration.x, collision.penetration.y);
+                }
+
+                context.lineWidth = 2;
+                context.strokeStyle = this.colors.penetration;
+                context.stroke();
+            }
+
+        });
+
+        return canvas;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonRasterizer;
+
+
+/***/ }),
 /* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const isObject = obj => {
+    return typeof obj === "object" && obj !== null && !Array.isArray(obj);
+  };
+  
+  const isPrimitive = value => {
+    return !Array.isArray(value) && !isObject(value);
+  };
+  
+  const clone = obj => {
+    if (isPrimitive(obj)) {
+      return obj;
+    }
+  
+    const result = Array.isArray(obj) ? [] : {};
+  
+    Object.keys(obj).forEach(key => {
+      result[key] = clone(obj[key]);
+    });
+  
+    return result;
+  };
+  
+  const overlay = (bottom, top) => {
+    if (bottom == null && top != null) {
+      return clone(top);
+    }
+  
+    if (top == null && bottom != null) {
+      return clone(bottom);
+    }
+  
+    const result = clone(top);
+  
+    if (isPrimitive(bottom)) {
+      if (typeof bottom === typeof top) {
+        return top;
+      } else {
+        return bottom;
+      }
+    }
+  
+    Object.keys(bottom).forEach(key => {
+      if (Array.isArray(bottom[key])) {
+        if (Array.isArray(top[key])) {
+          result[key] = overlay(bottom[key], top[key]);
+        } else {
+          result[key] = clone(bottom[key]);
+        }
+      } else if (isObject(bottom[key])) {
+        if (isObject(top[key])) {
+          result[key] = overlay(bottom[key], top[key]);
+        } else {
+          result[key] = clone(bottom[key]);
+        }
+      } else if (isPrimitive(bottom[key])) {
+        if (typeof bottom[key] === typeof top[key]) {
+          result[key] = overlay(bottom[key], top[key]);
+        } else {
+          result[key] = clone(bottom[key]);
+        }
+      }
+    });
+  
+    return result;
+  };
+  
+  /* harmony default export */ __webpack_exports__["a"] = (overlay);
+  
+
+/***/ }),
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3093,7 +3291,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3101,7 +3299,6 @@ class LineRenderer {
     constructor(canvasFactory) {
         this.type = "shape";
         this.canvasFactory = canvasFactory;
-        this.shapeCache = {};
     }
 
     convertToRgba(color) {
@@ -3171,7 +3368,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3256,7 +3453,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3659,7 +3856,7 @@ class CameraSystem {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3743,7 +3940,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3809,7 +4006,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3887,7 +4084,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3943,12 +4140,13 @@ class SolidBodySystem {
     updateEntity(entity) {
         let activeCollisions = entity.getComponent("polygon-collider").collisions;
         let movable = entity.getComponent("movable");
-        let solidBody = entity.getComponent("solid-body");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];
-            movable.x += Math.round(collision.penetration.x);
-            movable.y += Math.round(collision.penetration.y);
+            movable.x += Math.round(-collision.penetration.x);
+            movable.y += Math.round(-collision.penetration.y);
+
+            this.world.log("SolidBodySystem move:", collision);
         }
     }
 
@@ -3958,7 +4156,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3967,14 +4165,14 @@ class SolidBodySystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonBody__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_components_Polygon__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_PolygonCollider__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_components_Polygon__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_PolygonCollider__ = __webpack_require__(12);
 
 
 
@@ -4064,7 +4262,20 @@ class SolidBodySystem {
 });
 
 /***/ }),
-/* 52 */
+/* 53 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class KeyboardController {
+    constructor() {
+        this.type = "keyboard-controller";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
+
+
+/***/ }),
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4078,7 +4289,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4093,7 +4304,7 @@ class Movable {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4102,12 +4313,12 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_PolygonBody__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_Polygon__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonCollider__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_PolygonBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_Polygon__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonCollider__ = __webpack_require__(12);
 
 
 
@@ -4139,20 +4350,20 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         polygon.points.push({
             x: 0,
             y: 0
-        },{
+        }, {
             x: 100,
             y: 0
-        },{
+        }, {
             x: 100,
             y: 30
-        },{
+        }, {
             x: 0,
             y: 30
         });
 
         body.polygons.push(polygon);
 
-        opacity.value = Math.random();
+        opacity.value = 1;
 
         shape.border.thickness = 1;
         shape.fillColor.red = red;
@@ -4174,10 +4385,10 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
 
         rectangle.width = 100;
         rectangle.height = 30;
+
         transform.position.x = x;
         transform.position.y = y;
-
-        transform.rotation = 13;
+        transform.rotation = Math.floor(Math.random() * 360);
         transform.isDirty = true;
 
         this.addComponent(transform);
@@ -4195,7 +4406,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4209,7 +4420,7 @@ class Opacity {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

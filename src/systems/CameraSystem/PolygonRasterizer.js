@@ -29,7 +29,6 @@ export default class PolygonRasterizer {
         polygonBody.polygons.forEach((polygon) => {
             const width = polygon.size.width;
             const height = polygon.size.height;
-            const origin = polygon.center;
             const normalsLineSize = Math.max(width, height) * 2;
 
             canvas.width = width;

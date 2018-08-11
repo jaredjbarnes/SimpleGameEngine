@@ -655,10 +655,10 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 30000; x++) {
+for (let x = 0; x < 10000; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__["a" /* default */](x, {
-        x: getRandomNumber(-15000, 15000),
-        y: getRandomNumber(-15000, 15000)
+        x: getRandomNumber(-10000, 10000),
+        y: getRandomNumber(-10000, 10000)
     }, getRandomRgba());
 
     world.addEntity(entity);

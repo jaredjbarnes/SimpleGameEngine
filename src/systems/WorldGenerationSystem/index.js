@@ -1,13 +1,6 @@
-import Collidable from "../../components/Collidable";
-import Size from "../../components/Size";
-import Position from "../../components/Position";
-import Shape from "../../components/Shape";
-import Text from "../../components/Text";
-import Entity from "../../Entity";
 import Noise from "./Noise";
 import Validator from "../../utilities/Validator";
 import WorldGenerationCell from "../../components/WorldGenerationCell";
-import { start } from "repl";
 import invokeMethod from "../../utilities/invokeMethod";
 
 const WORLD_PERLIN_SCALING_FACTOR = 5000;
@@ -22,7 +15,6 @@ export default class WorldGenerationSystem {
     }) {
         this.world = null;
         this.dynamicLoadingCells = [];
-        this.broadPhaseCollisitionData = null;
         this.noise = new Noise(seed);
         this.blockSize = blockSize;
         this.bioms = [];
@@ -68,7 +60,7 @@ export default class WorldGenerationSystem {
 
     componentRemoved(entity, component) {
         if (component.type === "dynamic-loading-cell"
-            && entity.hasComponents(["size", "position", "collidable"])
+            && entity.hasComponents(["transform", "rectangle", "rectangle-collider"])
         ) {
             this.removeDynamicCellEntity(entity);
         } else if (component.type === "broad-phase-collision-data") {
@@ -79,7 +71,6 @@ export default class WorldGenerationSystem {
     deactivated(world) {
         this.world = null;
         this.dynamicLoadingCells = [];
-        this.broadPhaseCollisitionData = null;
     }
 
     despawnCell(dynamicLoadingCell) {
@@ -111,8 +102,6 @@ export default class WorldGenerationSystem {
                 this.dynamicCellEntities[entity.id] = [];
                 this.dynamicLoadingCells.push(entity);
             }
-        } else if (this.isBroadPhaseCollisionDataEntity(entity)) {
-            this.broadPhaseCollisitionData = entity.getComponent("broad-phase-collision-data");
         }
     }
 
@@ -149,12 +138,8 @@ export default class WorldGenerationSystem {
             worldGenerationCell.loadedCreatures;
     }
 
-    isBroadPhaseCollisionDataEntity(entity) {
-        return entity.hasComponents(["broad-phase-collision-data"]);
-    }
-
     isDynamicLoadingCellEntity(entity) {
-        return entity.hasComponents(["dynamic-loading-cell", "size", "position", "collidable"]);
+        return entity.hasComponents(["dynamic-loading-cell", "transform", "rectangle", "rectangle-collider"]);
     }
 
     notifyBioms(methodName, args) {
@@ -186,11 +171,11 @@ export default class WorldGenerationSystem {
     }
 
     spawnCell(dynamicLoadingCell) {
-        const position = dynamicLoadingCell.getComponent("position");
-        const size = dynamicLoadingCell.getComponent("size");
+        const position = dynamicLoadingCell.getComponent("transform").position;
+        const rectangle = dynamicLoadingCell.getComponent("rectangle");
         const worldGenerationCell = dynamicLoadingCell.getComponent("world-generation-cell");
-        const columnCount = size.width / this.blockSize;
-        const rowCount = size.height / this.blockSize;
+        const columnCount = rectangle.width / this.blockSize;
+        const rowCount = rectangle.height / this.blockSize;
 
         const offsetX = position.x / this.blockSize;
         const offsetY = position.y / this.blockSize;
@@ -276,16 +261,14 @@ export default class WorldGenerationSystem {
     }
 
     update(currentTime) {
-        if (this.broadPhaseCollisitionData != null) {
-            for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
-                const dynamicLoadingCell = this.dynamicLoadingCells[x];
+        for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
+            const dynamicLoadingCell = this.dynamicLoadingCells[x];
 
-                if (this.isCellDirty(dynamicLoadingCell)) {
-                    this.despawnCell(dynamicLoadingCell);
-                    this.spawnCell(dynamicLoadingCell);
-                } else if (!this.isCellFinishedSpawning(dynamicLoadingCell)) {
-                    this.spawnCell(dynamicLoadingCell);
-                }
+            if (this.isCellDirty(dynamicLoadingCell)) {
+                this.despawnCell(dynamicLoadingCell);
+                this.spawnCell(dynamicLoadingCell);
+            } else if (!this.isCellFinishedSpawning(dynamicLoadingCell)) {
+                this.spawnCell(dynamicLoadingCell);
             }
         }
     }
@@ -331,14 +314,14 @@ export default class WorldGenerationSystem {
     }
 
     validateBlockSize(dynamicLoadingCell) {
-        const size = dynamicLoadingCell.getComponent("size");
+        const rectangle = dynamicLoadingCell.getComponent("rectangle");
 
-        if (size.width % this.blockSize !== 0) {
-            throw new Error("The dynamic cell block isn't divisble by the block size.");
+        if (rectangle.width % this.blockSize !== 0) {
+            throw new Error("The dynamic cell block isn't divisble by the block rectangle.");
         }
 
-        if (size.height % this.blockSize !== 0) {
-            throw new Error("The dynamic cell block isn't divisble by the block size.");
+        if (rectangle.height % this.blockSize !== 0) {
+            throw new Error("The dynamic cell block isn't divisble by the block rectangle.");
         }
     }
 

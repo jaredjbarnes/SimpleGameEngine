@@ -1,16 +1,16 @@
-import Entity from "./../../../../../src/Entity";
-import Transform from "./../../../../../src/components/Transform";
-import Text from "./../../../../../src/components/Text";
-import RectangleCollider from "./../../../../../src/components/RectangleCollider";
-import Rectangle from "./../../../../../src/components/Rectangle";
-import KeyboardController from "./../../../../../src/components/KeyboardController";
-import KeyboardInput from "./../../../../../src/components/KeyboardInput";
-import Movable from "./../../../../../src/components/Movable";
-import Shape from "./../../../../../src/components/Shape";
-import SolidBody from "./../../../../../src/components/SolidBody";
-import PolygonBody from "./../../../../../src/components/PolygonBody";
-import Polygon from "./../../../../../src/components/Polygon";
-import PolygonCollider from "./../../../../../src/components/PolygonCollider";
+import Entity from "../../../../../src/Entity";
+import Transform from "../../../../../src/components/Transform";
+import Text from "../../../../../src/components/Text";
+import RectangleCollider from "../../../../../src/components/RectangleCollider";
+import Rectangle from "../../../../../src/components/Rectangle";
+import KeyboardController from "../../../../../src/components/KeyboardController";
+import KeyboardInput from "../../../../../src/components/KeyboardInput";
+import Movable from "../../../../../src/components/Movable";
+import Shape from "../../../../../src/components/Shape";
+import SolidBody from "../../../../../src/components/SolidBody";
+import PolygonBody from "../../../../../src/components/PolygonBody";
+import Polygon from "../../../../../src/components/Polygon";
+import PolygonCollider from "../../../../../src/components/PolygonCollider";
 
 export default class extends Entity {
     constructor(text) {

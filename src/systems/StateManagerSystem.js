@@ -1,7 +1,4 @@
 import invokeMethod from "../utilities/invokeMethod";
-import Validator from "../utilities/Validator";
-
-const DEPENDENCIES = ["state"];
 
 export default class StateManagerSystem {
     constructor() {
@@ -100,8 +97,7 @@ export default class StateManagerSystem {
     }
 
     addState(state) {
-        const validator = new Validator(state);
-        if (validator.validate("name").isString()) {
+        if (typeof state.name === "string") {
             this.states[state.name] = state;
             invokeMethod(state, "initialize", [this.world]);
         } else {

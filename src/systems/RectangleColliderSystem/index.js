@@ -1,5 +1,4 @@
-﻿import CellPosition from "./CellPosition";
-import Collision from "./Collision";
+﻿import Collision from "./Collision";
 
 export default class RectangleColliderSystem {
     constructor(cellSize = 200) {

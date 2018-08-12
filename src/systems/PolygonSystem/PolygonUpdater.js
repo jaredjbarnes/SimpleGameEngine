@@ -112,7 +112,8 @@ export default class PolygonUpdater {
         const polygon = this.polygon;
 
         // Only update if necessary.
-        if (transform.rotation !== polygon.rotation) {
+        if (transform.rotation !== polygon.rotation || polygon.isDirty) {
+            polygon.isDirty = false;
             polygon.rotation = transform.rotation;
 
             const points = polygon.points;

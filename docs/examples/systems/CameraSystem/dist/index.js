@@ -1976,7 +1976,7 @@ class DynamicLoadingCell {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(34);
@@ -1997,7 +1997,7 @@ class DynamicLoadingCell {
 
 class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a" /* default */] {
     constructor({ canvas, cameraName, assetRoot }) {
-        const imageManager = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_ImageManager__["a" /* default */]();
+        const compositor = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__["a" /* default */]();
         const canvasFactory = new __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__["a" /* default */]();
         const imageFactory = new __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__["a" /* default */]();
 
@@ -2009,24 +2009,24 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
         super({
             canvas,
             cameraName,
-            imageManager,
+            compositor,
             canvasFactory
         });
 
         this.polygonRasterizer = null;
         this.canvasFactory = canvasFactory;
-        this.imageManager = imageManager;
+        this.compositor = compositor;
 
-        imageManager.addRasterizer(imageRasterizer);
-        imageManager.addRasterizer(lineRasterizer);
-        imageManager.addRasterizer(shapeRasterizer);
-        imageManager.addRasterizer(textRasterizer);
+        compositor.addRasterizer(imageRasterizer);
+        compositor.addRasterizer(lineRasterizer);
+        compositor.addRasterizer(shapeRasterizer);
+        compositor.addRasterizer(textRasterizer);
     }
 
     enablePolygonRasterizer(colors) {
         if (this.polygonRasterizer == null) {
             this.polygonRasterizer = new __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__["a" /* default */]({ canvasFactory: this.canvasFactory, colors });
-            this.imageManager.addRasterizer(this.polygonRasterizer);
+            this.compositor.addRasterizer(this.polygonRasterizer);
         }
     }
 }
@@ -2040,9 +2040,7 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
 "use strict";
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
-window.getIdentityCount = 0;
-
-class ImageManager {
+class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
@@ -2129,7 +2127,6 @@ class ImageManager {
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
             if (component != null) {
-                window.getIdentityCount++;
                 const rasterizer = rasterizers[type];
                 const imageId = rasterizer.getIdentity(entity);
                 let image = this.getImage(imageId);
@@ -2149,7 +2146,7 @@ class ImageManager {
 
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageManager;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Compositor;
 
 
 /***/ }),
@@ -2341,7 +2338,6 @@ class PolygonRasterizer {
         polygonBody.polygons.forEach((polygon) => {
             const width = polygon.size.width;
             const height = polygon.size.height;
-            const origin = polygon.center;
             const normalsLineSize = Math.max(width, height) * 2;
 
             canvas.width = width;
@@ -2743,9 +2739,9 @@ class Camera {
 }
 
 class CameraSystem {
-    constructor({ canvas, cameraName, imageManager, canvasFactory, sort = idSort }) {
+    constructor({ canvas, cameraName, compositor, canvasFactory, sort = idSort }) {
         this.canvas = canvas;
-        this.imageManager = imageManager;
+        this.compositor = compositor;
         this.cameraName = cameraName;
         this.canvasFactory = canvasFactory;
         this.spatialPartitionService = null;
@@ -2775,11 +2771,11 @@ class CameraSystem {
 
     _cleanEntities() {
         const renderableEntities = this.renderableEntities;
-        const imageManager = this.imageManager;
+        const compositor = this.compositor;
 
         for (let id in renderableEntities) {
             const entity = renderableEntities[id];
-            imageManager.cleanEntity(entity);
+            compositor.cleanEntity(entity);
         }
     }
 
@@ -2837,7 +2833,7 @@ class CameraSystem {
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
                     const transform = entity.getComponent("transform");
-                    const images = this.imageManager.getEntityImages(entity);
+                    const images = this.compositor.getEntityImages(entity);
                     const rotation = transform.rotation;
 
                     // If the entity isn't renderable then don't go on.
@@ -2917,7 +2913,7 @@ class CameraSystem {
                 const cellPositions = spatialPartition.cellPositions;
                 const lastCellPositions = spatialPartition.lastCellPositions;
 
-                if (this.imageManager.isRenderable(entity)) {
+                if (this.compositor.isRenderable(entity)) {
                     for (let c = 0; c < cellPositions.length; c++) {
                         const cellPosition = cellPositions[c];
                         renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
@@ -2962,7 +2958,7 @@ class CameraSystem {
                     continue;
                 }
 
-                const isDirty = this.imageManager.isEntityDirty(entity);
+                const isDirty = this.compositor.isEntityDirty(entity);
                 if (isDirty) {
 
                     const spatialPartition = cell.entity.getComponent("spatial-partition");

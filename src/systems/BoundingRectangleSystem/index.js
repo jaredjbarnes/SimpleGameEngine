@@ -1,5 +1,5 @@
 import RectangleUpdater from "./BoundingRentangleUpdater";
-import BoundingRectangleService from "./../../services/BoundingRectangleService";
+import BoundingRectangleService from "../../services/BoundingRectangleService";
 
 const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
 

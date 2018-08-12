@@ -1,7 +1,7 @@
-import Entity from "./../Entity";
-import Transform from "./../components/Transform";
-import Rectangle from "./../components/Rectangle";
-import RectangleCollider from "./../components/RectangleCollider";
+import Entity from "../Entity";
+import Transform from "../components/Transform";
+import Rectangle from "../components/Rectangle";
+import RectangleCollider from "../components/RectangleCollider";
 import DynamicLoadingCell from "../components/DynamicLoadingCell";
 
 export default class extends Entity {

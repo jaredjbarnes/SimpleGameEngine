@@ -1,8 +1,8 @@
-﻿import Entity from "./../Entity";
-import CameraComponent from "./../components/Camera";
-import Transform from "./../components/Transform";
-import Rectangle from "./../components/Rectangle";
-import RectangleCollider from "./../components/RectangleCollider";
+﻿import Entity from "../Entity";
+import CameraComponent from "../components/Camera";
+import Transform from "../components/Transform";
+import Rectangle from "../components/Rectangle";
+import RectangleCollider from "../components/RectangleCollider";
 
 export default class Camera extends Entity {
     constructor(name, { width = 300, height = 300 } = {}) {

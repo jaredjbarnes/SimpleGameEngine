@@ -1,16 +1,16 @@
-import World from "./../../../../src/World";
-import Camera from "./../../../../src/entities/Camera";
-import BroadPhaseCollisionSystem from "./../../../../src/systems/BroadPhaseCollisionSystem";
-import NarrowPhaseCollisionSystem from "./../../../../src/systems/NarrowPhaseCollisionSystem";
-import DynamicLoadingSystem from "./../../../../src/systems/DynamicLoadingSystem";
-import DefaultCameraSystem from "./../../../../src/systems/DefaultCameraSystem";
-import ControllerSystem from "./../../../../src/systems/ControllerSystem";
-import KeyboardSystem from "./../../../../src/systems/KeyboardSystem";
-import MovableSystem from "./../../../../src/systems/MovementSystem";
-import SolidBodySystem from "./../../../../src/systems/SolidBodySystem";
+import World from "../../../../src/World";
+import Camera from "../../../../src/entities/Camera";
+import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
+import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem";
+import DynamicLoadingSystem from "../../../../src/systems/DynamicLoadingSystem";
+import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
+import ControllerSystem from "../../../../src/systems/ControllerSystem";
+import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
+import MovableSystem from "../../../../src/systems/MovementSystem";
+import SolidBodySystem from "../../../../src/systems/SolidBodySystem";
 import Text from "./entities/Text";
 import StaticText from "./entities/StaticText";
-import FollowEntityCameraSystem from "./../../../../src/systems/FollowEntityCameraSystem";
+import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;

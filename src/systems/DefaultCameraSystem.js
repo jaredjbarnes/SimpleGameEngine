@@ -7,8 +7,10 @@ import LineRasterizer from "./CameraSystem/LineRasterizer";
 import ShapeRasterizer from "./CameraSystem/ShapeRasterizer";
 import TextRasterizer from "./CameraSystem/TextRasterizer";
 import CameraSystem from "./CameraSystem";
+import SystemsBundlerSystem from "./SystemsBundlerSystem";
+import DynamicLoadingSystem from "./DynamicLoadingSystem";
 
-export default class DefaultCameraSystem extends CameraSystem {
+class DefaultCameraSystem extends CameraSystem {
     constructor({ canvas, cameraName, assetRoot }) {
         const compositor = new Compositor();
         const canvasFactory = new CanvasFactory();
@@ -41,5 +43,13 @@ export default class DefaultCameraSystem extends CameraSystem {
             this.polygonRasterizer = new PolygonRasterizer({ canvasFactory: this.canvasFactory, colors });
             this.compositor.addRasterizer(this.polygonRasterizer);
         }
+    }
+}
+
+export default class extends SystemsBundlerSystem {
+    constructor({ canvas, cameraName, assetRoot, cellSize }) {
+        super();
+        this.systems.push(new DynamicLoadingSystem({ cameraName, cellSize }));
+        this.systems.push(new DefaultCameraSystem({ canvas, cameraName, assetRoot }));
     }
 }

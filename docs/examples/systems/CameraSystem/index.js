@@ -1,15 +1,14 @@
-import World from "./../../../../src/World";
-import Camera from "./../../../../src/entities/Camera";
-import BroadPhaseCollisionSystem from "./../../../../src/systems/BroadPhaseCollisionSystem";
-import DynamicLoadingSystem from "./../../../../src/systems/DynamicLoadingSystem";
-import DefaultCameraSystem from "./../../../../src/systems/DefaultCameraSystem";
-import ControllerSystem from "./../../../../src/systems/ControllerSystem";
-import KeyboardSystem from "./../../../../src/systems/KeyboardSystem";
-import MovableSystem from "./../../../../src/systems/MovementSystem";
+import World from "../../../../src/World";
+import Camera from "../../../../src/entities/Camera";
+import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
+import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
+import ControllerSystem from "../../../../src/systems/ControllerSystem";
+import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
+import MovableSystem from "../../../../src/systems/MovementSystem";
 import Text from "./entities/Text";
+import Mario from "./entities/Mario";
 import StaticText from "./entities/StaticText";
-import KeyboardController from "./../../../../src/components/KeyboardController";
-import FollowEntityCameraSystem from "./../../../../src/systems/FollowEntityCameraSystem";
+import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
@@ -34,6 +33,12 @@ const world = new World();
 // Entities
 const camera = new Camera(cameraName);
 const player = new Text("P");
+const mario = new Mario();
+const mario2 = new Mario({ position: { x: 32, y: 0 }, flipHorizontally: true, flipVertically: false });
+const mario3 = new Mario({ position: { x: -32, y: 0 }, flipHorizontally: true, flipVertically: true });
+const mario4 = new Mario({ position: { x: -60, y: 0 }, flipHorizontally: false, flipVertically: false });
+
+mario4.getComponent("transform").rotation = 90;
 
 // Systems
 const controllerSystem = new ControllerSystem();
@@ -46,18 +51,13 @@ const followEntityCameraSystem = new FollowEntityCameraSystem({
     followEntityId: player.id
 });
 
-const dynamicLoadingSystem = new DynamicLoadingSystem({
-    cameraName: cameraName,
+const defaultCameraSystem = new DefaultCameraSystem({
+    canvas,
+    cameraName,
     cellSize: 300
 });
 
-const defaultCameraSystem = new DefaultCameraSystem({
-    canvas,
-    cameraName
-});
-
 // Set up world
-world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movableSystem);
@@ -68,6 +68,10 @@ world.addSystem(defaultCameraSystem);
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
+world.addEntity(mario);
+world.addEntity(mario2);
+world.addEntity(mario3);
+world.addEntity(mario4);
 
 for (let x = 0; x < 10000; x++) {
     const entity = new StaticText(x, {

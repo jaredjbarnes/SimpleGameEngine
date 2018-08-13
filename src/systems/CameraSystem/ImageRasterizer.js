@@ -7,12 +7,12 @@
         this.loadingImages = {};
     }
 
-    getImageAsync(path) {
-        if (this.loadingImages[path] != null) {
-            return this.loadingImages[path];
+    getImageAsync(url) {
+        if (this.loadingImages[url] != null) {
+            return this.loadingImages[url];
         }
 
-        return this.loadingImages[path] = new Promise((resolve, reject) => {
+        return this.loadingImages[url] = new Promise((resolve, reject) => {
             const image = this.imageFactory.create();
 
             image.onload = () => {
@@ -20,7 +20,7 @@
             };
 
             image.onerror = reject;
-            image.src = path;
+            image.src = url;
         });
     }
 
@@ -40,7 +40,7 @@
     }
 
     getImageIdentity(image) {
-        return `${image.path}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}`;
+        return `${image.url}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}|${image.flipHorizontally}|${image.flipVertically}`;
     }
 
     getIdentity(entity) {
@@ -54,32 +54,56 @@
         const canvas = this.canvasFactory.create();
         const context = canvas.getContext("2d");
         const imageComponent = entity.getComponent("image");
-        const transform = entity.getComponent("transform");
         const rectangle = entity.getComponent("rectangle");
+        const transform = entity.getComponent("transform");
         const angle = transform.rotation;
-        const path = this.getPath(imageComponent.path);
+        const url = this.gerUrl(imageComponent.url);
         const padding = imageComponent.padding;
         const position = imageComponent.position;
         const size = imageComponent.size;
         const width = rectangle.right - rectangle.left + padding.left + padding.right;
         const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
+        const origin = transform.origin;
 
         canvas.width = width;
         canvas.height = height;
 
-        //context.translate(width / 2, height / 2);
-        //context.rotate(angle * Math.PI / 180);
-
-        this.getImageAsync(path).then((image) => {
+        this.getImageAsync(url).then((image) => {
             context.globalAlpha = imageComponent.opacity;
+
+            const translate = {
+                x: 0,
+                y: 0
+            };
+
+            const scale = {
+                x: 1,
+                y: 1
+            };
+
+            if (imageComponent.flipHorizontally) {
+                scale.x = -1;
+                translate.x = size.width;
+            }
+
+            if (imageComponent.flipVertically) {
+                scale.y = -1;
+                translate.y = size.height;
+            }
+
+            context.scale(scale.x, scale.y);
+
+            context.translate(width / 2 - translate.x, height / 2 - translate.y);
+            context.rotate(angle * Math.PI / 180);
+
             context.drawImage(
                 image,
                 position.x,
                 position.y,
                 size.width,
                 size.height,
-                0,
-                0,
+                -origin.x,
+                -origin.y,
                 rectangle.width,
                 rectangle.height
             );
@@ -91,7 +115,7 @@
         return canvas;
     }
 
-    getPath(path) {
-        return this.assetRoot + path;
+    gerUrl(url) {
+        return this.assetRoot + url;
     }
 }

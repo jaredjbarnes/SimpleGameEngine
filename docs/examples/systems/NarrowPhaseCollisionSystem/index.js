@@ -2,7 +2,6 @@ import World from "../../../../src/World";
 import Camera from "../../../../src/entities/Camera";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
 import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem";
-import DynamicLoadingSystem from "../../../../src/systems/DynamicLoadingSystem";
 import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
 import ControllerSystem from "../../../../src/systems/ControllerSystem";
 import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
@@ -49,20 +48,15 @@ const followEntityCameraSystem = new FollowEntityCameraSystem({
     followEntityId: player.id
 });
 
-const dynamicLoadingSystem = new DynamicLoadingSystem({
-    cameraName: cameraName,
-    cellSize: 300
-});
-
 const defaultCameraSystem = new DefaultCameraSystem({
     canvas,
-    cameraName
+    cameraName,
+    cellSize: 300
 });
 
 //defaultCameraSystem.enablePolygonRasterizer();
 
 // Set up world
-world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(solidBodySystem);

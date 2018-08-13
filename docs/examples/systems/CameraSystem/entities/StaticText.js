@@ -1,10 +1,10 @@
-import Entity from "./../../../../../src/Entity";
-import Transform from "./../../../../../src/components/Transform";
-import Text from "./../../../../../src/components/Text";
-import Rectangle from "./../../../../../src/components/Rectangle";
-import RectangleCollider from "./../../../../../src/components/RectangleCollider";
-import Shape from "./../../../../../src/components/Shape";
-import SolidBody from "./../../../../../src/components/SolidBody";
+import Entity from "../../../../../src/Entity";
+import Transform from "../../../../../src/components/Transform";
+import Text from "../../../../../src/components/Text";
+import Rectangle from "../../../../../src/components/Rectangle";
+import RectangleCollider from "../../../../../src/components/RectangleCollider";
+import Shape from "../../../../../src/components/Shape";
+import SolidBody from "../../../../../src/components/SolidBody";
 import Opacity from "../../../../../src/components/Opacity";
 
 export default class StaticText extends Entity {

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(4);
 ﻿
 
@@ -358,43 +358,6 @@ class Vector {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class Shape {
-    constructor() {
-        this.type = "shape";
-        this.id = null;
-        this.fillColor = {
-            red: 0,
-            green: 0,
-            blue: 0,
-            alpha: 1
-        };
-
-        this.border = {
-            thickness: 0,
-            color: {
-                red: 0,
-                green: 0,
-                blue: 0,
-                alpha: 1
-            }
-        };
-
-        this.points = [];
-        this.path = null;
-        this.opacity = 1;
-        this.zIndex = 0;
-        this.isDirty = true;
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(4);
 
 
@@ -459,6 +422,43 @@ class SystemsBundlerSystem {
 
 
 /***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class Shape {
+    constructor() {
+        this.type = "shape";
+        this.id = null;
+        this.fillColor = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        };
+
+        this.border = {
+            thickness: 0,
+            color: {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 1
+            }
+        };
+
+        this.points = [];
+        this.path = null;
+        this.opacity = 1;
+        this.zIndex = 0;
+        this.isDirty = true;
+
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+
+
+/***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -500,19 +500,6 @@ class Text {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class KeyboardController {
-    constructor() {
-        this.type = "keyboard-controller";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 class SolidBody {
     constructor() {
         this.type = "solid-body";
@@ -522,28 +509,24 @@ class SolidBody {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DynamicLoadingSystem__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_DefaultCameraSystem__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_Text__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_KeyboardController__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__src_systems_FollowEntityCameraSystem__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__src_systems_CursorSystem__ = __webpack_require__(56);
-
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_systems_CursorSystem__ = __webpack_require__(56);
 
 
 
@@ -580,32 +563,28 @@ const world = new __WEBPACK_IMPORTED_MODULE_0__src_World__["a" /* default */]();
 
 // Entities
 const camera = new __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__["a" /* default */](cameraName);
-const player = new __WEBPACK_IMPORTED_MODULE_10__entities_Text__["a" /* default */]("P");
+const player = new __WEBPACK_IMPORTED_MODULE_9__entities_Text__["a" /* default */]("P");
 
 // Systems
-const controllerSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_ControllerSystem__["a" /* default */]();
-const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_KeyboardSystem__["a" /* default */]();
-const movableSystem = new __WEBPACK_IMPORTED_MODULE_8__src_systems_MovementSystem__["a" /* default */]();
+const controllerSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__["a" /* default */]();
+const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__["a" /* default */]();
+const movableSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__["a" /* default */]();
 const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__["a" /* default */]();
-const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_9__src_systems_SolidBodySystem__["a" /* default */]();
+const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__["a" /* default */]();
 
-const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_13__src_systems_FollowEntityCameraSystem__["a" /* default */]({
+const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__["a" /* default */]({
     cameraEntityId: camera.id,
     followEntityId: player.id
 });
 
-const dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_DynamicLoadingSystem__["a" /* default */]({
-    cameraName: cameraName,
+const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__["a" /* default */]({
+    canvas,
+    cameraName,
     cellSize: 300
 });
 
-const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_DefaultCameraSystem__["a" /* default */]({
-    canvas,
-    cameraName
-});
-
-const cursorSystem = new __WEBPACK_IMPORTED_MODULE_14__src_systems_CursorSystem__["a" /* default */]({
+const cursorSystem = new __WEBPACK_IMPORTED_MODULE_12__src_systems_CursorSystem__["a" /* default */]({
     canvas,
     cameraName,
     showCursor: true,
@@ -614,7 +593,6 @@ const cursorSystem = new __WEBPACK_IMPORTED_MODULE_14__src_systems_CursorSystem_
 
 
 // Set up world
-world.addSystem(dynamicLoadingSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(solidBodySystem);
@@ -630,7 +608,7 @@ world.addEntity(camera);
 world.addEntity(player);
 
 for (let x = 0; x < 10000; x++) {
-    const entity = new __WEBPACK_IMPORTED_MODULE_11__entities_StaticText__["a" /* default */](x, {
+    const entity = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x, {
         x: getRandomNumber(-10000, 10000),
         y: getRandomNumber(-10000, 10000)
     }, getRandomRgba());
@@ -644,7 +622,7 @@ window.world = world;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -874,12 +852,12 @@ class World {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RectangleCollider__ = __webpack_require__(3);
@@ -915,7 +893,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -936,7 +914,7 @@ var S4 = function () {
 });
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -951,14 +929,14 @@ var S4 = function () {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(6);
 
 
 
@@ -978,12 +956,12 @@ class BroadPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_3__SystemsBund
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(18);
 
 
 
@@ -1101,7 +1079,7 @@ class BoundingRectangleSystem {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1209,7 +1187,7 @@ class BoundingRectangleUpdater {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1225,13 +1203,13 @@ class BoundingRectangleService {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(22);
 
 
 
@@ -1421,7 +1399,7 @@ class SpatialPartitionSystem {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1476,7 +1454,7 @@ class Grid {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1491,7 +1469,7 @@ class SpatialPartition {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1508,11 +1486,11 @@ class SpatialPartitionService {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Collision__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Collision__ = __webpack_require__(24);
 ﻿
 
 class RectangleColliderSystem {
@@ -1712,7 +1690,7 @@ class RectangleColliderSystem {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1733,13 +1711,13 @@ class Collision {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(28);
 
 
 
@@ -1756,11 +1734,11 @@ class NarrowPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_0__SystemsBun
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Entity__ = __webpack_require__(0);
 
 
@@ -1854,7 +1832,7 @@ class PolygonSystem {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2059,11 +2037,11 @@ class PolygonUpdater {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__ = __webpack_require__(29);
 
 
 class PolygonColliderSystem {
@@ -2178,7 +2156,7 @@ class PolygonColliderSystem {
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2442,261 +2420,23 @@ class CollisionDetector {
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__ = __webpack_require__(41);
 
 
-class Cell {
-    constructor({ column, row, cellSize }) {
-        this.row = row;
-        this.column = column;
-        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
-        this.transform = this.entity.getComponent("transform");
-        this.rectangle = this.entity.getComponent("rectangle");
-        this.transform.position.x = column * cellSize;
-        this.transform.position.y = row * cellSize;
-        this.position = this.transform.position;
-        this.rectangle = this.rectangle;
-    }
-}
-
-class DynamicLoadingSystem {
-    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
-        this.world = null;
-        this.cameraName = cameraName;
-        this.cells = [];
-        this.cellPositions = [];
-        this.cellSize = cellSize;
-        this.camera = {
-            position: null,
-            rectangle: null,
-            collider: null
-        };
-
-        for (let y = 0; y < 3; y++) {
-            for (let x = 0; x < 3; x++) {
-                const row = y - 1;
-                const column = x - 1;
-                const index = (y * 3) + x;
-
-                this.cellPositions.push({ column: column, row: row });
-                this.cells.push(new Cell({ column, row, cellSize }));
-            }
-        }
-
-    }
-
-    _addCamera(entity) {
-        const transform = entity.getComponent("transform");
-        this.camera.rectangle = entity.getComponent("rectangle");
-        this.camera.collider = entity.getComponent("rectangle-collider");
-        this.camera.position = transform.position;
-    }
-
-    _findCellPositionsWithCenter(x, y) {
-        const centerColumn = Math.floor(x / this.cellSize);
-        const centerRow = Math.floor(y / this.cellSize);
-
-        for (let y = 0; y < 3; y++) {
-            for (let x = 0; x < 3; x++) {
-                const row = centerRow + y - 1;
-                const column = centerColumn + x - 1;
-                const index = (y * 3) + x;
-                const cellPosition = this.cellPositions[index];
-
-                cellPosition.row = row;
-                cellPosition.column = column;
-            }
-        }
-    }
-
-    _isCamera(entity) {
-        return (
-            entity.hasComponents(["camera", "transform", "rectangle", "rectangle-collider"]) &&
-            entity.getComponent("camera").name === this.cameraName
-        );
-    }
-
-    _hasCamera() {
-        return this.camera.position != null &&
-            this.camera.rectangle != null &&
-            this.camera.collider != null;
-    }
-
-    _removeCamera() {
-        this.camera.position = null;
-        this.camera.rectangle = null;
-        this.camera.collider = null;
-    }
-
-    _reset() {
-        this._removeCamera();
-    }
-
-    _updateCells() {
-        const cameraCenterX = this.camera.position.x + (this.camera.rectangle.width / 2);
-        const cameraCenterY = this.camera.position.y + (this.camera.rectangle.height / 2);
-
-        this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
-
-        const availableCanvasCells = [];
-
-        for (let x = 0; x < this.cells.length; x++) {
-            let cell = this.cells[x];
-
-            let index = this.cellPositions.findIndex((cellPosition) => {
-                return cell.column === cellPosition.column &&
-                    cell.row === cellPosition.row;
-            });
-
-            if (index === -1) {
-                availableCanvasCells.push(cell);
-            }
-        }
-
-        for (let x = 0; x < this.cellPositions.length; x++) {
-            const cellPosition = this.cellPositions[x];
-
-            let index = this.cells.findIndex((cell) => {
-                return cell.column === cellPosition.column &&
-                    cell.row === cellPosition.row;
-            });
-
-            if (index === -1) {
-                const cell = availableCanvasCells.pop();
-                cell.row = cellPosition.row;
-                cell.column = cellPosition.column;
-
-                cell.position.x = cellPosition.column * this.cellSize;
-                cell.position.y = cellPosition.row * this.cellSize;
-                cell.transform.isDirty = true;
-            }
-        }
-    }
-
-    activated(world) {
-        this.world = world;
-        const entities = this.world.getEntities();
-
-        entities.forEach((entity) => {
-            this.entityAdded(entity);
-        });
-
-        for (let x = 0; x < this.cells.length; x++) {
-            this.world.addEntity(this.cells[x].entity);
-        }
-    }
-
-    componentAdded(entity, component) {
-        if (this._isCamera(entity)) {
-            this._addCamera(entity);
-        }
-    }
-
-    componentRemoved(entity, component) {
-        if (this._isCamera(entity)) {
-            this._removeCamera();
-        }
-    }
-
-    deactivated() {
-        this._reset();
-        for (let x = 0; x < this.cells.length; x++) {
-            this.world.removeEntity(this.cells[x].entity);
-        }
-    }
-
-    entityAdded(entity) {
-        if (this._isCamera(entity)) {
-            this._addCamera(entity);
-        }
-    }
-
-    entityRemoved(entity) {
-        if (this._isCamera(entity)) {
-            this._removeCamera();
-        }
-    }
-
-    update(currentTime) {
-        if (this._hasCamera()) {
-            this._updateCells();
-        }
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingSystem;
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(33);
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
-        super();
-
-        const transform = new __WEBPACK_IMPORTED_MODULE_1__components_Transform__["a" /* default */]();
-        transform.position.x = x;
-        transform.position.y = y;
-        transform.isDirty = true;
-
-        const rectangle = new __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__["a" /* default */]();
-        rectangle.width = cellSize;
-        rectangle.height = cellSize;
-
-        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__["a" /* default */]();
-        const dynamicLoadingCell = new __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__["a" /* default */]();
-
-        this.addComponent(transform);
-        this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
-        this.addComponent(dynamicLoadingCell);
-
-    }
-});
-
-/***/ }),
-/* 33 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class DynamicLoadingCell {
-    constructor(){
-        this.type = "dynamic-loading-cell";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingCell;
-
-
-/***/ }),
-/* 34 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(44);
 
 
 
@@ -2742,11 +2482,17 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = DefaultCameraSystem;
 
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__["a" /* default */] {
+    constructor({ canvas, cameraName, assetRoot, cellSize }) {
+        super();
+        this.systems.push(new __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__["a" /* default */]({ cameraName, cellSize }));
+        this.systems.push(new DefaultCameraSystem({ canvas, cameraName, assetRoot }));
+    }
+});
 
 /***/ }),
-/* 35 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2862,7 +2608,7 @@ class Compositor {
 
 
 /***/ }),
-/* 36 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2886,7 +2632,7 @@ class CanvasFactory {
 
 
 /***/ }),
-/* 37 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2909,7 +2655,7 @@ class ImageFactory {
 
 
 /***/ }),
-/* 38 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2922,12 +2668,12 @@ class ImageFactory {
         this.loadingImages = {};
     }
 
-    getImageAsync(path) {
-        if (this.loadingImages[path] != null) {
-            return this.loadingImages[path];
+    getImageAsync(url) {
+        if (this.loadingImages[url] != null) {
+            return this.loadingImages[url];
         }
 
-        return this.loadingImages[path] = new Promise((resolve, reject) => {
+        return this.loadingImages[url] = new Promise((resolve, reject) => {
             const image = this.imageFactory.create();
 
             image.onload = () => {
@@ -2935,7 +2681,7 @@ class ImageFactory {
             };
 
             image.onerror = reject;
-            image.src = path;
+            image.src = url;
         });
     }
 
@@ -2955,7 +2701,7 @@ class ImageFactory {
     }
 
     getImageIdentity(image) {
-        return `${image.path}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}`;
+        return `${image.url}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}|${image.flipHorizontally}|${image.flipVertically}`;
     }
 
     getIdentity(entity) {
@@ -2969,32 +2715,56 @@ class ImageFactory {
         const canvas = this.canvasFactory.create();
         const context = canvas.getContext("2d");
         const imageComponent = entity.getComponent("image");
-        const transform = entity.getComponent("transform");
         const rectangle = entity.getComponent("rectangle");
+        const transform = entity.getComponent("transform");
         const angle = transform.rotation;
-        const path = this.getPath(imageComponent.path);
+        const url = this.gerUrl(imageComponent.url);
         const padding = imageComponent.padding;
         const position = imageComponent.position;
         const size = imageComponent.size;
         const width = rectangle.right - rectangle.left + padding.left + padding.right;
         const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
+        const origin = transform.origin;
 
         canvas.width = width;
         canvas.height = height;
 
-        //context.translate(width / 2, height / 2);
-        //context.rotate(angle * Math.PI / 180);
-
-        this.getImageAsync(path).then((image) => {
+        this.getImageAsync(url).then((image) => {
             context.globalAlpha = imageComponent.opacity;
+
+            const translate = {
+                x: 0,
+                y: 0
+            };
+
+            const scale = {
+                x: 1,
+                y: 1
+            };
+
+            if (imageComponent.flipHorizontally) {
+                scale.x = -1;
+                translate.x = size.width;
+            }
+
+            if (imageComponent.flipVertically) {
+                scale.y = -1;
+                translate.y = size.height;
+            }
+
+            context.scale(scale.x, scale.y);
+
+            context.translate(width / 2 - translate.x, height / 2 - translate.y);
+            context.rotate(angle * Math.PI / 180);
+
             context.drawImage(
                 image,
                 position.x,
                 position.y,
                 size.width,
                 size.height,
-                0,
-                0,
+                -origin.x,
+                -origin.y,
                 rectangle.width,
                 rectangle.height
             );
@@ -3006,19 +2776,19 @@ class ImageFactory {
         return canvas;
     }
 
-    getPath(path) {
-        return this.assetRoot + path;
+    gerUrl(url) {
+        return this.assetRoot + url;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ImageRasterizer;
 
 
 /***/ }),
-/* 39 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(36);
 
 
 const defaultColors = {
@@ -3112,7 +2882,7 @@ class PolygonRasterizer {
 
 
 /***/ }),
-/* 40 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3186,7 +2956,7 @@ const isObject = obj => {
   
 
 /***/ }),
-/* 41 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3246,7 +3016,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 42 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3323,7 +3093,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 43 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3408,7 +3178,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 44 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3811,7 +3581,249 @@ class CameraSystem {
 
 
 /***/ }),
-/* 45 */
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(42);
+
+
+class Cell {
+    constructor({ column, row, cellSize }) {
+        this.row = row;
+        this.column = column;
+        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
+        this.transform = this.entity.getComponent("transform");
+        this.rectangle = this.entity.getComponent("rectangle");
+        this.transform.position.x = column * cellSize;
+        this.transform.position.y = row * cellSize;
+        this.position = this.transform.position;
+        this.rectangle = this.rectangle;
+    }
+}
+
+class DynamicLoadingSystem {
+    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
+        this.world = null;
+        this.cameraName = cameraName;
+        this.cells = [];
+        this.cellPositions = [];
+        this.cellSize = cellSize;
+        this.camera = {
+            position: null,
+            rectangle: null,
+            collider: null
+        };
+
+        for (let y = 0; y < 3; y++) {
+            for (let x = 0; x < 3; x++) {
+                const row = y - 1;
+                const column = x - 1;
+                const index = (y * 3) + x;
+
+                this.cellPositions.push({ column: column, row: row });
+                this.cells.push(new Cell({ column, row, cellSize }));
+            }
+        }
+
+    }
+
+    _addCamera(entity) {
+        const transform = entity.getComponent("transform");
+        this.camera.rectangle = entity.getComponent("rectangle");
+        this.camera.collider = entity.getComponent("rectangle-collider");
+        this.camera.position = transform.position;
+    }
+
+    _findCellPositionsWithCenter(x, y) {
+        const centerColumn = Math.floor(x / this.cellSize);
+        const centerRow = Math.floor(y / this.cellSize);
+
+        for (let y = 0; y < 3; y++) {
+            for (let x = 0; x < 3; x++) {
+                const row = centerRow + y - 1;
+                const column = centerColumn + x - 1;
+                const index = (y * 3) + x;
+                const cellPosition = this.cellPositions[index];
+
+                cellPosition.row = row;
+                cellPosition.column = column;
+            }
+        }
+    }
+
+    _isCamera(entity) {
+        return (
+            entity.hasComponents(["camera", "transform", "rectangle", "rectangle-collider"]) &&
+            entity.getComponent("camera").name === this.cameraName
+        );
+    }
+
+    _hasCamera() {
+        return this.camera.position != null &&
+            this.camera.rectangle != null &&
+            this.camera.collider != null;
+    }
+
+    _removeCamera() {
+        this.camera.position = null;
+        this.camera.rectangle = null;
+        this.camera.collider = null;
+    }
+
+    _reset() {
+        this._removeCamera();
+    }
+
+    _updateCells() {
+        const cameraCenterX = this.camera.position.x + (this.camera.rectangle.width / 2);
+        const cameraCenterY = this.camera.position.y + (this.camera.rectangle.height / 2);
+
+        this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
+
+        const availableCanvasCells = [];
+
+        for (let x = 0; x < this.cells.length; x++) {
+            let cell = this.cells[x];
+
+            let index = this.cellPositions.findIndex((cellPosition) => {
+                return cell.column === cellPosition.column &&
+                    cell.row === cellPosition.row;
+            });
+
+            if (index === -1) {
+                availableCanvasCells.push(cell);
+            }
+        }
+
+        for (let x = 0; x < this.cellPositions.length; x++) {
+            const cellPosition = this.cellPositions[x];
+
+            let index = this.cells.findIndex((cell) => {
+                return cell.column === cellPosition.column &&
+                    cell.row === cellPosition.row;
+            });
+
+            if (index === -1) {
+                const cell = availableCanvasCells.pop();
+                cell.row = cellPosition.row;
+                cell.column = cellPosition.column;
+
+                cell.position.x = cellPosition.column * this.cellSize;
+                cell.position.y = cellPosition.row * this.cellSize;
+                cell.transform.isDirty = true;
+            }
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+        const entities = this.world.getEntities();
+
+        entities.forEach((entity) => {
+            this.entityAdded(entity);
+        });
+
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.addEntity(this.cells[x].entity);
+        }
+    }
+
+    componentAdded(entity, component) {
+        if (this._isCamera(entity)) {
+            this._addCamera(entity);
+        }
+    }
+
+    componentRemoved(entity, component) {
+        if (this._isCamera(entity)) {
+            this._removeCamera();
+        }
+    }
+
+    deactivated() {
+        this._reset();
+        for (let x = 0; x < this.cells.length; x++) {
+            this.world.removeEntity(this.cells[x].entity);
+        }
+    }
+
+    entityAdded(entity) {
+        if (this._isCamera(entity)) {
+            this._addCamera(entity);
+        }
+    }
+
+    entityRemoved(entity) {
+        if (this._isCamera(entity)) {
+            this._removeCamera();
+        }
+    }
+
+    update(currentTime) {
+        if (this._hasCamera()) {
+            this._updateCells();
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingSystem;
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Transform__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(43);
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
+    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
+        super();
+
+        const transform = new __WEBPACK_IMPORTED_MODULE_1__components_Transform__["a" /* default */]();
+        transform.position.x = x;
+        transform.position.y = y;
+        transform.isDirty = true;
+
+        const rectangle = new __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__["a" /* default */]();
+        rectangle.width = cellSize;
+        rectangle.height = cellSize;
+
+        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__["a" /* default */]();
+        const dynamicLoadingCell = new __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__["a" /* default */]();
+
+        this.addComponent(transform);
+        this.addComponent(rectangle);
+        this.addComponent(rectangleCollider);
+        this.addComponent(dynamicLoadingCell);
+
+    }
+});
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class DynamicLoadingCell {
+    constructor(){
+        this.type = "dynamic-loading-cell";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingCell;
+
+
+/***/ }),
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3895,7 +3907,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3961,7 +3973,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4039,7 +4051,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4111,7 +4123,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4120,12 +4132,12 @@ class SolidBodySystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_State__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SolidBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SolidBody__ = __webpack_require__(9);
 
 
 
@@ -4192,6 +4204,19 @@ class SolidBodySystem {
 });
 
 /***/ }),
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class KeyboardController {
+    constructor() {
+        this.type = "keyboard-controller";
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = KeyboardController;
+
+
+/***/ }),
 /* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4252,8 +4277,8 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(54);
 
 
@@ -4392,7 +4417,7 @@ class FollowEntityCameraSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Cursor__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_CursorService__ = __webpack_require__(59);
 
 

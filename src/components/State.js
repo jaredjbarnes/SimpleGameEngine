@@ -1,6 +1,7 @@
 ﻿export default class State {
     constructor() {
         this.type = "state";
+        this.initialized = false;
         
         this.activeName = null;
         this.activeConfig = {};

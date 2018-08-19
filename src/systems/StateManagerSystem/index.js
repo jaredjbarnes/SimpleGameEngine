@@ -12,22 +12,22 @@ export default class StateManagerSystem {
 
     updateState(stateName, entity, config) {
         const state = this.states[stateName];
-        invokeMethod(state, "update", [entity, this.world]);
+        invokeMethod(state, "update", []);
     }
 
     activateState(stateName, entity, config) {
         const state = this.states[stateName];
-        invokeMethod(state, "activated", [entity, config, this.world]);
+        invokeMethod(state, "activated", []);
     }
 
     deactivateState(stateName, entity, config) {
         const state = this.states[stateName];
-        invokeMethod(state, "deactivated", [entity, this.world]);
+        invokeMethod(state, "deactivated", []);
     }
 
     maintainState(entity) {
         const state = entity.getComponent("state");
-        invokeMethod(state, "prepare", [entity, state.config, this.world]);
+        invokeMethod(state, "setup", [entity, state.config, this.world]);
 
         if (state.activeName !== state.name) {
             this.deactivateState(state.activeName, entity, state.config);
@@ -75,24 +75,37 @@ export default class StateManagerSystem {
     entityAdded(entity) {
         const state = entity.getComponent("state");
         if (state != null && state.stateManagerName === this.name) {
+            if (!state.initialized) {
+                invokeMethod(this, "initialize", [entity]);
+                state.initialized = true;
+            }
             this.entities[entity.id] = entity;
         }
     }
 
     entityRemoved(entity) {
         if (this.entities[entity.id] != null) {
+            const state = entity.getComponent("state");
+            invokeMethod(this, "shutdown", [entity]);
+            state.initialized = false;
             delete this.entities[entity.id];
         }
     }
 
     componentAdded(entity, component) {
         if (component.type === "state" && component.stateManagerName === this.name) {
+            if (!component.initialized) {
+                invokeMethod(this, "initialize", [entity]);
+                component.initialized = true;
+            }
             this.entities[entity.id] = entity;
         }
     }
 
     componentRemoved(entity, component) {
         if (component.type === "state") {
+            invokeMethod(this, "shutdown", [entity]);
+            component.initialized = false;
             delete this.entities[entity.id];
         }
     }
@@ -100,7 +113,6 @@ export default class StateManagerSystem {
     addState(state) {
         if (typeof state.name === "string") {
             this.states[state.name] = state;
-            invokeMethod(state, "initialize", [this.world]);
         } else {
             throw new Error("States must have a name property of type string.");
         }

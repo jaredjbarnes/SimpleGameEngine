@@ -6,7 +6,7 @@ export default class State {
         this.world = null;
     }
 
-    prepare(entity, config, world){
+    setup(entity, config, world){
         this.entity = entity;
         this.config = config;
         this.world = world;

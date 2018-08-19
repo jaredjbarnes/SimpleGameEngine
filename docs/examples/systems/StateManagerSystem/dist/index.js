@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(4);
 ﻿
 
@@ -235,6 +235,129 @@ class Rectangle {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// These helper methods are static for optimization purposes. 
+// The optional references allows the developer to choose where the
+// result is saved to. This is huge for GC.
+
+class Vector {
+
+    static add(vectorA, vectorB, reference = {x: 0, y: 0}) {
+        reference.x = vectorA.x + vectorB.x;
+        reference.y = vectorA.y + vectorB.y;
+
+        return reference;
+    }
+
+    static subtract(vectorA, vectorB, reference = {x: 0, y: 0}) {
+        reference.x = vectorA.x - vectorB.x;
+        reference.y = vectorA.y - vectorB.y;
+
+        return reference;
+    }
+
+    static multiply(vectorA, vectorB, reference = {x: 0, y: 0}) {
+        reference.x = vectorA.x * vectorB.x;
+        reference.y = vectorA.y * vectorB.y;
+
+        return reference;
+    }
+
+    static divide(vectorA, vectorB, reference = {x: 0, y: 0}) {
+        reference.x = vectorA.x / vectorB.x;
+        reference.y = vectorA.y / vectorB.y;
+
+        return reference;
+    }
+
+    static scale(vector, scale, reference = {x: 0, y: 0}) {
+        reference.x = scale * vector.x;
+        reference.y = scale * vector.y;
+
+        return reference;
+    }
+
+    static project(vectorA, vectorB, reference = {x: 0, y: 0}) {
+        var scale;
+
+        var firstDot = Vector.dot(vectorA, vectorB);
+        var secondDot = Vector.dot(vectorB, vectorB);
+
+        if (!firstDot || !secondDot) {
+            scale = 0;
+        } else {
+            scale = firstDot / secondDot;
+        }
+
+        return Vector.scale(vectorB, scale, reference);
+    }
+
+    static getLeftNormal(vector, reference = {x: 0, y: 0}) {
+        reference.x = -vector.y;
+        reference.y = vector.x;
+
+        return reference;
+    }
+
+    static getRightNormal(vector, reference = {x: 0, y: 0}) {
+        reference.x = vector.y;
+        reference.y = -vector.x;
+
+        return reference;
+    }
+
+    static magnitude(vector) {
+        return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
+    }
+
+    static dot(vectorA, vectorB) {
+        return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
+    }
+
+    static negate(vector, reference = {x: 0, y: 0}) {
+        reference.x = -vector.x;
+        reference.y = -vector.y;
+
+        return reference;
+    }
+
+    static rotate(vector, angle, reference = {x: 0, y: 0}) {
+        const radians = angle * Math.PI / 180;
+        const sin = Math.sin(radians);
+        const cos = Math.cos(radians);
+
+        const x = vector.x;
+        const y = vector.y;
+
+        // The multiplying and dividing is to limit the floating point.
+        reference.x = Math.round(1000 * (x * cos - y * sin)) / 1000;
+        reference.y = Math.round(1000 * (x * sin + y * cos)) / 1000;
+
+        return reference;
+    }
+
+    static normalize(vector, reference = {x: 0, y: 0}) {
+
+        var magnitude = Vector.magnitude(vector);
+
+        if (magnitude === 0) {
+            reference.x = 0;
+            reference.y = 0;
+        }
+
+        reference.x = vector.x / magnitude;
+        reference.y = vector.y / magnitude;
+
+        return reference;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(4);
 
 
@@ -299,7 +422,7 @@ class SystemsBundlerSystem {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -336,7 +459,7 @@ class Text {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -373,7 +496,7 @@ class Text {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -386,22 +509,75 @@ class SolidBody {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class PolygonBody {
+    constructor(){
+        this.type = "polygon-body";
+        this.polygons = [];
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonBody;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Polygon {
+    constructor() {
+        this.type = "polygon";
+        this.points = [];
+        this.rotatedPoints = [];
+        this.vertices = [];
+        this.normals = [];
+        this.worldPoints = [];
+        this.projectionVertices = [];
+        this.center = { x: 0, y: 0 };
+        this.size = { width: 0, height: 0 };
+        this.rotation = 0;
+        this.isDirty = true;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Polygon;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class PolygonCollider {
+    constructor() {
+        this.type = "polygon-collider";
+        this.collisions = {};
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonCollider;
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_DefaultCameraSystem__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_ControllerSystem__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_KeyboardSystem__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_MovementSystem__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_Text__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Mario__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_World__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__ = __webpack_require__(57);
+
 
 
 
@@ -432,53 +608,49 @@ const getRandomRgba = () => {
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");
-const world = new __WEBPACK_IMPORTED_MODULE_0__src_World__["a" /* default */]();
+const world = new __WEBPACK_IMPORTED_MODULE_0__src_World__["a" /* default */](console.log);
 
 // Entities
 const camera = new __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__["a" /* default */](cameraName);
-const player = new __WEBPACK_IMPORTED_MODULE_7__entities_Text__["a" /* default */]("P");
-const mario = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default */]();
-const mario2 = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default */]({ position: { x: 32, y: 0 }, flipHorizontally: true, flipVertically: false });
-const mario3 = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default */]({ position: { x: -32, y: 0 }, flipHorizontally: true, flipVertically: true });
-const mario4 = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default */]({ position: { x: -60, y: 0 }, flipHorizontally: false, flipVertically: false });
-
-mario4.getComponent("transform").rotation = 90;
+const player = new __WEBPACK_IMPORTED_MODULE_9__entities_Text__["a" /* default */]("P");
 
 // Systems
-const controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_ControllerSystem__["a" /* default */]();
-const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_KeyboardSystem__["a" /* default */]();
-const movableSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_MovementSystem__["a" /* default */]();
+const controllerSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__["a" /* default */]();
+const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__["a" /* default */]();
+const movableSystem = new __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__["a" /* default */]();
+const narrowPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__["a" /* default */]();
+const solidBodySystem = new __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__["a" /* default */]();
 
-const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__["a" /* default */]({
+const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__["a" /* default */]({
     cameraEntityId: camera.id,
     followEntityId: player.id
 });
 
-const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_DefaultCameraSystem__["a" /* default */]({
+const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__["a" /* default */]({
     canvas,
     cameraName,
     cellSize: 300
 });
 
+//defaultCameraSystem.enablePolygonRasterizer();
+
 // Set up world
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
+world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
-world.addEntity(mario);
-world.addEntity(mario2);
-world.addEntity(mario3);
-world.addEntity(mario4);
 
 for (let x = 0; x < 10000; x++) {
-    const entity = new __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__["a" /* default */](x, {
+    const entity = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x, {
         x: getRandomNumber(-10000, 10000),
         y: getRandomNumber(-10000, 10000)
     }, getRandomRgba());
@@ -492,7 +664,7 @@ window.world = world;
 
 
 /***/ }),
-/* 10 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -722,12 +894,12 @@ class World {
 
 
 /***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RectangleCollider__ = __webpack_require__(3);
@@ -763,7 +935,7 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -784,7 +956,7 @@ var S4 = function () {
 });
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -799,14 +971,14 @@ var S4 = function () {
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(6);
 
 
 
@@ -826,12 +998,12 @@ class BroadPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_3__SystemsBund
 
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRentangleUpdater__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_BoundingRectangleService__ = __webpack_require__(21);
 
 
 
@@ -949,11 +1121,11 @@ class BoundingRectangleSystem {
 
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
 
 
 class BoundingRectangleUpdater {
@@ -1057,130 +1229,7 @@ class BoundingRectangleUpdater {
 
 
 /***/ }),
-/* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// These helper methods are static for optimization purposes. 
-// The optional references allows the developer to choose where the
-// result is saved to. This is huge for GC.
-
-class Vector {
-
-    static add(vectorA, vectorB, reference = {x: 0, y: 0}) {
-        reference.x = vectorA.x + vectorB.x;
-        reference.y = vectorA.y + vectorB.y;
-
-        return reference;
-    }
-
-    static subtract(vectorA, vectorB, reference = {x: 0, y: 0}) {
-        reference.x = vectorA.x - vectorB.x;
-        reference.y = vectorA.y - vectorB.y;
-
-        return reference;
-    }
-
-    static multiply(vectorA, vectorB, reference = {x: 0, y: 0}) {
-        reference.x = vectorA.x * vectorB.x;
-        reference.y = vectorA.y * vectorB.y;
-
-        return reference;
-    }
-
-    static divide(vectorA, vectorB, reference = {x: 0, y: 0}) {
-        reference.x = vectorA.x / vectorB.x;
-        reference.y = vectorA.y / vectorB.y;
-
-        return reference;
-    }
-
-    static scale(vector, scale, reference = {x: 0, y: 0}) {
-        reference.x = scale * vector.x;
-        reference.y = scale * vector.y;
-
-        return reference;
-    }
-
-    static project(vectorA, vectorB, reference = {x: 0, y: 0}) {
-        var scale;
-
-        var firstDot = Vector.dot(vectorA, vectorB);
-        var secondDot = Vector.dot(vectorB, vectorB);
-
-        if (!firstDot || !secondDot) {
-            scale = 0;
-        } else {
-            scale = firstDot / secondDot;
-        }
-
-        return Vector.scale(vectorB, scale, reference);
-    }
-
-    static getLeftNormal(vector, reference = {x: 0, y: 0}) {
-        reference.x = -vector.y;
-        reference.y = vector.x;
-
-        return reference;
-    }
-
-    static getRightNormal(vector, reference = {x: 0, y: 0}) {
-        reference.x = vector.y;
-        reference.y = -vector.x;
-
-        return reference;
-    }
-
-    static magnitude(vector) {
-        return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
-    }
-
-    static dot(vectorA, vectorB) {
-        return (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y);
-    }
-
-    static negate(vector, reference = {x: 0, y: 0}) {
-        reference.x = -vector.x;
-        reference.y = -vector.y;
-
-        return reference;
-    }
-
-    static rotate(vector, angle, reference = {x: 0, y: 0}) {
-        const radians = angle * Math.PI / 180;
-        const sin = Math.sin(radians);
-        const cos = Math.cos(radians);
-
-        const x = vector.x;
-        const y = vector.y;
-
-        // The multiplying and dividing is to limit the floating point.
-        reference.x = Math.round(1000 * (x * cos - y * sin)) / 1000;
-        reference.y = Math.round(1000 * (x * sin + y * cos)) / 1000;
-
-        return reference;
-    }
-
-    static normalize(vector, reference = {x: 0, y: 0}) {
-
-        var magnitude = Vector.magnitude(vector);
-
-        if (magnitude === 0) {
-            reference.x = 0;
-            reference.y = 0;
-        }
-
-        reference.x = vector.x / magnitude;
-        reference.y = vector.y / magnitude;
-
-        return reference;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
-
-
-/***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1196,13 +1245,13 @@ class BoundingRectangleService {
 
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Grid__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SpatialPartition__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_SpatialPartitionService__ = __webpack_require__(25);
 
 
 
@@ -1392,7 +1441,7 @@ class SpatialPartitionSystem {
 
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1447,7 +1496,7 @@ class Grid {
 
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1462,7 +1511,7 @@ class SpatialPartition {
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1479,11 +1528,11 @@ class SpatialPartitionService {
 
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Collision__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Collision__ = __webpack_require__(27);
 ﻿
 
 class RectangleColliderSystem {
@@ -1682,7 +1731,7 @@ class RectangleColliderSystem {
 
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1703,21 +1752,730 @@ class Collision {
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(31);
+
+
+
+
+class NarrowPhaseCollisionSystem extends __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__["a" /* default */] {
+    constructor(){
+        super();
+
+        this.systems.push(new __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__["a" /* default */]());
+        this.systems.push(new __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__["a" /* default */]());
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = NarrowPhaseCollisionSystem;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Entity__ = __webpack_require__(0);
+
+
+
+const POLYGON_DEPENDENCIES = ["transform", "rectangle", "polygon"];
+const POLYGON_BODY_DEPENDENCIES = ["transform", "rectangle", "polygon-body"];
+
+class PolygonSystem {
+    constructor() {
+        this.world = null;
+        this.polygonUpdater = new __WEBPACK_IMPORTED_MODULE_0__PolygonUpdater__["a" /* default */]();
+        this.boundingRectangleService = null;
+    }
+
+    isPolygonEntity(_entity) {
+        const entity = _entity;
+        return entity.hasComponents(POLYGON_DEPENDENCIES);
+    }
+
+    isPolygonBodyEntity(_entity) {
+        const entity = _entity;
+        return entity.hasComponents(POLYGON_BODY_DEPENDENCIES);
+    }
+    
+    // Life cycle methods.
+    activated(world) {
+       this.world = world;
+        
+        const services = this.world.getServices();
+        for (let name in services){
+            this.serviceAdded(name, services[name]);
+        }
+    }
+
+    deactivated() {
+        this.world = null;
+        this.boundingRectangleService = null;
+    }
+
+    serviceAdded(name, service){
+        if (name === "bounding-rectangle-service"){
+            this.boundingRectangleService = service;
+        }
+    }
+
+    serviceRemoved(name, service){
+        if (name === "bounding-rectangle-service"){
+            this.boundingRectangleService = null;
+        }
+    }
+
+    update() {
+        if (this.boundingRectangleService != null) {
+            const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+
+            for (let x = 0; x < dirtyEntities.length; x++) {
+                const entity = dirtyEntities[x];
+
+                if (this.isPolygonBodyEntity(entity)) {
+                    this.updatePolygonBodyEntity(entity);
+                } else if (this.isPolygonEntity(entity)) {
+                    this.updatePolygonEntity(entity);
+                }
+            }
+        }
+    }
+
+    updatePolygonEntity(_entity) {
+        const entity = _entity;
+        const polygon = entity.getComponent("polygon");
+        this.polygonUpdater.setEntity(entity);
+        this.polygonUpdater.setPolygon(polygon);
+        this.polygonUpdater.update();
+    }
+
+    updatePolygonBodyEntity(_entity) {
+        const entity = _entity;
+        const polygonBody = entity.getComponent("polygon-body");
+        const polygons = polygonBody.polygons;
+
+        this.polygonUpdater.setEntity(entity);
+        for (let x = 0; x < polygons.length; x++) {
+            const polygon = polygons[x];
+            this.polygonUpdater.setPolygon(polygon);
+            this.polygonUpdater.update();
+        }
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonSystem;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
+
+
+class PolygonUpdater {
+
+    constructor() {
+        this.entity = null;
+        this.transform = null;
+        this.polygon = null;
+        this.transformedPoint = {
+            x: 0,
+            y: 0
+        };
+    }
+
+    prepareNormals() {
+        const vertices = this.polygon.vertices;
+        const normals = this.polygon.normals;
+
+        if (vertices.length != normals.length) {
+            for (let x = 0; x < vertices.length; x++) {
+                normals.push({
+                    x: 0,
+                    y: 0
+                });
+            }
+        }
+
+    }
+
+    prepareRotatedPoints() {
+        const rotatedPoints = this.polygon.rotatedPoints;
+        const points = this.polygon.points;
+
+        if (rotatedPoints.length !== points.length) {
+            rotatedPoints.length = 0;
+
+            for (let x = 0; x < points.length; x++) {
+                rotatedPoints.push({
+                    x: points[x].x,
+                    y: points[x].y
+                });
+            }
+        }
+    }
+
+    prepareVertices() {
+        const points = this.polygon.points;
+        const vertices = this.polygon.vertices;
+
+        if (vertices.length !== points.length) {
+            vertices.length = 0;
+
+            for (let x = 0; x < points.length; x++) {
+                vertices.push({
+                    x: 0,
+                    y: 0
+                });
+            }
+        }
+    }
+
+    prepareWorldPoints() {
+        const worldPoints = this.polygon.worldPoints;
+        const points = this.polygon.rotatedPoints;
+
+        if (worldPoints.length !== points.length) {
+            worldPoints.length = 0;
+
+            for (let x = 0; x < points.length; x++) {
+                worldPoints.push({
+                    x: 0,
+                    y: 0
+                });
+            }
+        }
+    }
+
+    setEntity(entity) {
+        this.entity = entity;
+        this.transform = entity.getComponent("transform");
+    }
+
+    setPolygon(polygon) {
+        this.polygon = polygon;
+    }
+
+    update() {
+        this.updateRotatedPoints();
+        this.updateWorldPoints();
+        this.updateVertices();
+        this.updateNormals();
+        this.updateSize();
+    }
+
+    updateNormals() {
+        this.prepareNormals();
+
+        const normals = this.polygon.normals;
+        const vertices = this.polygon.vertices;
+
+        for (let x = 0; x < vertices.length; x++) {
+            const vertex = vertices[x];
+            const normal = normals[x];
+
+            __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].normalize(__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].getLeftNormal(vertex, normal), normal);
+        }
+    }
+
+    updateRotatedPoints() {
+        this.prepareRotatedPoints();
+        const transform = this.transform;
+        const polygon = this.polygon;
+
+        // Only update if necessary.
+        if (transform.rotation !== polygon.rotation || polygon.isDirty) {
+            polygon.isDirty = false;
+            polygon.rotation = transform.rotation;
+
+            const points = polygon.points;
+            const rotatedPoints = polygon.rotatedPoints;
+            const angle = transform.rotation;
+            const origin = transform.origin;
+
+            for (let x = 0; x < points.length; x++) {
+                const point = points[x];
+                this.transformedPoint.x = point.x - origin.x;
+                this.transformedPoint.y = point.y - origin.y;
+
+                const rotatedPoint = rotatedPoints[x];
+
+                __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].rotate(this.transformedPoint, angle, rotatedPoint);
+            }
+        }
+    }
+
+    updateSize() {
+        const polygon = this.polygon;
+        const points = polygon.rotatedPoints;
+        const length = points.length;
+
+        let top = points[0].y;
+        let left = points[0].x;
+        let bottom = points[0].y;
+        let right = points[0].x;
+
+        for (let x = 1; x < length; x++) {
+            top = Math.min(top, points[x].y);
+            left = Math.min(left, points[x].x);
+            bottom = Math.max(bottom, points[x].y);
+            right = Math.max(right, points[x].x);
+        }
+
+        const width = right - left;
+        const height = bottom - top;
+
+        polygon.size.width = width;
+        polygon.size.height = height;
+
+        polygon.center.x = left + this.transform.position.x + (width / 2);
+        polygon.center.y = top + this.transform.position.y + (height / 2);
+    }
+
+    updateVertices() {
+        this.prepareVertices();
+
+        const rotation = this.transform.rotation;
+        const points = this.polygon.rotatedPoints;
+        const vertices = this.polygon.vertices;
+
+        for (let x = 0; x < points.length; x++) {
+            const point = points[x];
+            const vertex = vertices[x];
+
+            const nextPoint = points[x + 1] || points[0];
+
+            vertex.x = point.x - nextPoint.x;
+            vertex.y = point.y - nextPoint.y;
+        }
+
+    }
+
+    updateWorldPoints() {
+        this.prepareWorldPoints();
+
+        const position = this.transform.position;
+        const rotatedPoints = this.polygon.rotatedPoints;
+        const worldPoints = this.polygon.worldPoints;
+
+        for (let x = 0; x < rotatedPoints.length; x++) {
+            worldPoints[x].x = rotatedPoints[x].x + position.x;
+            worldPoints[x].y = rotatedPoints[x].y + position.y;
+        }
+
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonUpdater;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__ = __webpack_require__(32);
+
+
+class PolygonColliderSystem {
+    constructor() {
+        this.collisionDetector = null;
+        this.boundingRectangleService = null;
+        this.world = null;
+        this.currentTime = 0;
+        this.dirtyPolygons = [];
+    }
+
+    cleanCollisions() {
+        const dirtyPolygons = this.dirtyPolygons;
+
+        for (let x = 0; x < dirtyPolygons.length; x++) {
+            this.removeCollisionsFromDirtyEntity(dirtyPolygons[x]);
+        }
+    }
+
+    findDirtyPolygons() {
+        const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        const dirtyPolygons = this.dirtyPolygons = [];
+
+        for (let x = 0; x < dirtyEntities.length; x++) {
+            const entity = dirtyEntities[x];
+
+            if (this.isPolygon(entity)) {
+                dirtyPolygons.push(entity);
+            }
+        }
+    }
+
+    isPolygon(entity) {
+        return entity.hasComponent("polygon-collider");
+    }
+
+    isReady() {
+        return this.boundingRectangleService != null;
+    }
+
+    removeCollisionsFromDirtyEntity(entity) {
+        let polygons;
+        const collider = entity.getComponent("polygon-collider");
+
+        // If we need to optimize this further, this would be a good place to start.
+        // Create a collision pool like in rectangleColliderSystem.
+        collider.collisions = {};
+    }
+
+    updatePolygonEntity(entity) {
+        const rectangleCollider = entity.getComponent("rectangle-collider");
+
+        if (rectangleCollider) {
+            const collisions = rectangleCollider.collisions;
+
+            for (let id in collisions) {
+                const otherEntity = this.world.getEntityById(id);
+
+                if (otherEntity == null) {
+                    continue;
+                }
+
+                this.collisionDetector.updateCollisions(entity, otherEntity, this.currentTime);
+            }
+        }
+    }
+
+    updateCollisions() {
+        const dirtyPolygons = this.dirtyPolygons;
+
+        for (let x = 0; x < dirtyPolygons.length; x++) {
+            this.updatePolygonEntity(dirtyPolygons[x]);
+        }
+
+    }
+
+    // Life Cycle Methods
+    activated(world) {
+        this.world = world;
+        const services = this.world.getServices();
+        this.collisionDetector = new __WEBPACK_IMPORTED_MODULE_0__CollisionDetector__["a" /* default */](world);
+
+        for (let name in services){
+            this.serviceAdded(name, services[name]);
+        }
+    }
+
+    deactivated() {
+        this.world = null;
+        this.boundingRectangleService = null;
+        this.collisionDetector = null;
+    }
+
+    serviceAdded(name, service) {
+        if (name === "bounding-rectangle-service") {
+            this.boundingRectangleService = service;
+        }
+    }
+
+    update(currentTime) {
+        if (this.isReady()) {
+            this.currentTime = currentTime;
+            this.findDirtyPolygons();
+            this.cleanCollisions();
+            this.updateCollisions();
+        }
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PolygonColliderSystem;
+
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
+
+
+class CollisionDetector {
+    constructor() {
+        this.entityA = null;
+        this.entityB = null;
+        this.currentTime = 0;
+        this.colliderA = [];
+        this.colliderB = [];
+        this.transformA = null;
+        this.transformB = null;
+        this.polygonsA = [];
+        this.polygonsB = [];
+
+        // Loop specific variables.
+        this.collisionDataA = {
+            overlap: Number.MAX_VALUE,
+            normal: null,
+            normalIndex: null
+        };
+        this.collisionDataB = {
+            overlap: Number.MAX_VALUE,
+            normal: null,
+            normalIndex: null
+        };
+        this.verticesA = [];
+        this.verticesB = [];
+        this.normalsA = [];
+        this.normalsB = [];
+        this.polygonA = null;
+        this.polygonB = null;
+        this.positionA = {
+            x: 0,
+            y: 0
+        };
+        this.positionB = {
+            x: 0,
+            y: 0
+        };
+        this.projectionA = {
+            min: 0,
+            max: 0
+        };
+        this.projectionB = {
+            min: 0,
+            max: 0
+        };
+    }
+
+    prepareProperties() {
+        const polygonBodyA = this.entityA.getComponent("polygon-body");
+        const polygonA = this.entityA.getComponent("polygon");
+        const polygonBodyB = this.entityB.getComponent("polygon-body");
+        const polygonB = this.entityB.getComponent("polygon");
+
+        if (polygonBodyA == null) {
+            this.polygonsA = [polygonA];
+        } else {
+            this.polygonsA = polygonBodyA.polygons;
+        }
+
+        if (polygonBodyB == null) {
+            this.polygonsB = [polygonB];
+        } else {
+            this.polygonsB = polygonBodyB.polygons;
+        }
+
+        this.transformA = this.entityA.getComponent("transform");
+        this.transformB = this.entityB.getComponent("transform");
+        this.colliderA = this.entityA.getComponent("polygon-collider");
+        this.colliderB = this.entityB.getComponent("polygon-collider");
+    }
+
+    preparePolygonA(polygon) {
+        this.verticesA = polygon.worldPoints;
+        this.normalsA = polygon.normals;
+        this.polygonA = polygon;
+
+        this.collisionDataA.overlap = Number.MAX_VALUE;
+        this.collisionDataA.normal = null;
+        this.collisionDataA.normalIndex = null;
+
+        this.positionA = this.transformA.position;
+    }
+
+    preparePolygonB(polygon) {
+        this.verticesB = polygon.worldPoints;
+        this.normalsB = polygon.normals;
+        this.polygonB = polygon;
+
+        this.collisionDataB.overlap = Number.MAX_VALUE;
+        this.collisionDataB.normal = null;
+        this.collisionDataB.normalIndex = null;
+
+        this.positionB = this.transformB.position;
+    }
+
+    projectToAxis(vertices, normal, projection) {
+        let min = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(vertices[0], normal);
+        let max = min;
+        let dot;
+
+        for (let i = 1; i < vertices.length; i += 1) {
+            dot = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(vertices[i], normal);
+
+            if (dot > max) {
+                max = dot;
+            } else if (dot < min) {
+                min = dot;
+            }
+        }
+
+        projection.min = min;
+        projection.max = max;
+    }
+
+    updateCollisions(entityA, entityB, currentTime) {
+        if (!entityA.hasComponent("polygon-collider") ||
+            !entityB.hasComponent("polygon-collider")) {
+            return;
+        }
+
+        this.entityA = entityA;
+        this.entityB = entityB;
+        this.currentTime = currentTime;
+
+        this.prepareProperties();
+        this.checkForCollisions();
+    }
+
+    projectVerticesOnEntityBNormals() {
+        for (let i = 0; i < this.normalsB.length; i++) {
+            const normal = this.normalsB[i];
+
+            this.projectToAxis(this.verticesA, normal, this.projectionA);
+            this.projectToAxis(this.verticesB, normal, this.projectionB);
+
+            const overlap = Math.min(
+                this.projectionA.max - this.projectionB.min,
+                this.projectionB.max - this.projectionA.min
+            );
+
+            if (overlap < this.collisionDataA.overlap) {
+                this.collisionDataA.overlap = overlap;
+                this.collisionDataA.normal = normal;
+                this.collisionDataA.normalIndex = i;
+            }
+        }
+    }
+
+    projectVerticesOnEntityANormals() {
+        for (let i = 0; i < this.normalsA.length; i++) {
+            const normal = this.normalsA[i];
+
+            this.projectToAxis(this.verticesA, normal, this.projectionA);
+            this.projectToAxis(this.verticesB, normal, this.projectionB);
+
+            const overlap = Math.min(
+                this.projectionA.max - this.projectionB.min,
+                this.projectionB.max - this.projectionA.min
+            );
+
+            if (overlap < this.collisionDataB.overlap) {
+                this.collisionDataB.overlap = overlap;
+                this.collisionDataB.normal = normal;
+                this.collisionDataB.normalIndex = i;
+            }
+        }
+    }
+
+    checkForCollisions() {
+        for (let a = 0; a < this.polygonsA.length; a++) {
+            this.preparePolygonA(this.polygonsA[a]);
+
+            for (let b = 0; b < this.polygonsB.length; b++) {
+                this.preparePolygonB(this.polygonsB[b]);
+
+                // If the collision has already been calculated.
+                if (this.colliderA.collisions[this.entityB.id] != null) {
+                    continue;
+                }
+
+                this.projectVerticesOnEntityBNormals();
+
+                if (this.collisionDataA.overlap <= 0) {
+                    continue;
+                }
+
+                this.projectVerticesOnEntityANormals();
+
+                if (this.collisionDataB.overlap <= 0) {
+                    continue;
+                }
+
+                const collisionA = {};
+                collisionA.otherEntity = this.entityB;
+                collisionA.entity = this.entityA;
+
+                const collisionB = {};
+                collisionB.otherEntity = this.entityA;
+                collisionB.entity = this.entityB;
+
+                if (this.collisionDataA.overlap < this.collisionDataB.overlap) {
+
+                    const minOverlap = this.collisionDataA.overlap;
+                    const direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.positionA, this.positionB);
+
+                    let normal = this.collisionDataA.normal;
+
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, direction) < 0) {
+                        normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+                    }
+
+                    const penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
+                    collisionA.normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+
+                    collisionB.penetration = penetration;
+                    collisionB.normal = normal;
+
+                } else {
+
+                    const minOverlap = this.collisionDataB.overlap;
+                    const direction = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].subtract(this.positionB, this.positionA);
+
+                    let normal = this.collisionDataB.normal;
+
+                    if (__WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].dot(normal, direction) < 0) {
+                        normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+                    }
+
+                    const penetration = {
+                        x: minOverlap * normal.x,
+                        y: minOverlap * normal.y
+                    };
+
+                    collisionA.penetration = penetration;
+                    collisionA.normal = normal;
+
+                    collisionB.penetration = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(penetration);
+                    collisionB.normal = __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].negate(normal);
+
+                }
+
+                this.colliderA.collisions[this.entityB.id] = collisionA;
+                this.colliderB.collisions[this.entityA.id] = collisionB;
+
+            }
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CollisionDetector;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CameraSystem_PolygonRasterizer__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__ = __webpack_require__(44);
 
 
 
@@ -1775,7 +2533,7 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
 });
 
 /***/ }),
-/* 26 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1891,7 +2649,7 @@ class Compositor {
 
 
 /***/ }),
-/* 27 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1915,7 +2673,7 @@ class CanvasFactory {
 
 
 /***/ }),
-/* 28 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1938,7 +2696,7 @@ class ImageFactory {
 
 
 /***/ }),
-/* 29 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2067,11 +2825,11 @@ class ImageFactory {
 
 
 /***/ }),
-/* 30 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(39);
 
 
 const defaultColors = {
@@ -2165,7 +2923,7 @@ class PolygonRasterizer {
 
 
 /***/ }),
-/* 31 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2239,7 +2997,7 @@ const isObject = obj => {
   
 
 /***/ }),
-/* 32 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2298,7 +3056,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 33 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2369,7 +3127,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 34 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2454,7 +3212,7 @@ class LineRenderer {
 
 
 /***/ }),
-/* 35 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2857,11 +3615,11 @@ class CameraSystem {
 
 
 /***/ }),
-/* 36 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(45);
 
 
 class Cell {
@@ -3046,7 +3804,7 @@ class DynamicLoadingSystem {
 
 
 /***/ }),
-/* 37 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3054,7 +3812,7 @@ class DynamicLoadingSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(46);
 
 
 
@@ -3086,7 +3844,7 @@ class DynamicLoadingSystem {
 });
 
 /***/ }),
-/* 38 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3099,7 +3857,7 @@ class DynamicLoadingCell {
 
 
 /***/ }),
-/* 39 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3183,7 +3941,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 40 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3249,7 +4007,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 41 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3327,20 +4085,98 @@ class MovementSystem {
 
 
 /***/ }),
-/* 42 */
+/* 50 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const DEPENDENCIES = ["solid-body", "polygon-collider", "movable"];
+
+class SolidBodySystem {
+    constructor() {
+        this.entities = {};
+        this.world = null;
+    }
+
+    update() {
+        for (let id in this.entities) {
+            const entity = this.entities[id];
+            this.updateEntity(entity);
+        }
+    }
+
+    activated(world) {
+        this.world = world;
+        world.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    deactivated() {
+        this.world = null;
+        this.entities.clear();
+    }
+
+    entityAdded(entity) {
+        if (this.entities[entity.id] == null && entity.hasComponents(DEPENDENCIES)) {
+            this.entities[entity.id] = entity;
+        }
+    }
+
+    entityRemoved(entity) {
+        if (this.entities[entity.id] != null) {
+            delete this.entities[entity.id];
+        }
+    }
+
+    componentAdded(entity, component) {
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (this.entities[entity.id] != null) {
+            delete this.entities[entity.id];
+        }
+    }
+
+    updateEntity(entity) {
+        let activeCollisions = entity.getComponent("polygon-collider").collisions;
+        let movable = entity.getComponent("movable");
+
+        for (let key in activeCollisions) {
+            let collision = activeCollisions[key];
+            movable.x += Math.round(-collision.penetration.x);
+            movable.y += Math.round(-collision.penetration.y);
+
+            this.world.log("SolidBodySystem move:", collision);
+        }
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBodySystem;
+
+
+
+/***/ }),
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_components_Polygon__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_PolygonCollider__ = __webpack_require__(12);
+
+
+
 
 
 
@@ -3366,6 +4202,25 @@ class MovementSystem {
         const movable = new __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__["a" /* default */]();
         const shape = new __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__["a" /* default */]();
         const solidBody = new __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__["a" /* default */]();
+        const body = new __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonBody__["a" /* default */]();
+        const polygon = new __WEBPACK_IMPORTED_MODULE_11__src_components_Polygon__["a" /* default */]();
+        const polygonCollider = new __WEBPACK_IMPORTED_MODULE_12__src_components_PolygonCollider__["a" /* default */]();
+
+        polygon.points.push({
+            x: 0,
+            y: 0
+        },{
+            x: 30,
+            y: 0
+        },{
+            x: 30,
+            y: 30
+        },{
+            x: 0,
+            y: 30
+        });
+
+        body.polygons.push(polygon);
 
         textTexture.text = text;
         textTexture.font.size = 17;
@@ -3402,11 +4257,13 @@ class MovementSystem {
         this.addComponent(movable);
         this.addComponent(shape);
         this.addComponent(solidBody);
+        this.addComponent(body);
+        this.addComponent(polygonCollider);
     }
 });
 
 /***/ }),
-/* 43 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3419,7 +4276,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 44 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3433,7 +4290,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 45 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3448,102 +4305,24 @@ class Movable {
 
 
 /***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Image__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(3);
-
-
-
-
-
-
-class Mario extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */] {
-    constructor({ position, flipHorizontally, flipVertically } = { position: { x: 0, y: 0 }, flipHorizontally: false, flipVertically: false }) {
-        super();
-        this.type = "Mario";
-
-        const image = new __WEBPACK_IMPORTED_MODULE_1__src_components_Image__["a" /* default */]();
-        image.url = "./images/Mario.png";
-        image.isDirty = true;
-        image.size.width = 16;
-        image.size.height = 26;
-        image.flipHorizontally = flipHorizontally;
-        image.flipVertically = flipVertically;
-
-        const rectangle = new __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__["a" /* default */]();
-        rectangle.width = 16;
-        rectangle.height = 26;
-        rectangle.isDirty = true;
-
-        const transform = new __WEBPACK_IMPORTED_MODULE_2__src_components_Transform__["a" /* default */]();
-        transform.position.x = position.x;
-        transform.position.y = position.y;
-
-        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__["a" /* default */]();
-
-        this.addComponent(image);
-        this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
-        this.addComponent(transform);
-
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Mario;
-
-
-/***/ }),
-/* 47 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class Image {
-    constructor() {
-        this.type = "image";
-        this.url = null;
-        this.position = {
-            x: 0,
-            y: 0
-        };
-        this.size = {
-            width: 0,
-            height: 0
-        };
-        this.padding = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        };
-        this.opacity = 1;
-        this.zIndex = 0;
-        this.flipHorizontally = false;
-        this.flipVertically = false;
-        this.isDirty = true;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Image;
-
-
-/***/ }),
-/* 48 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_PolygonBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_Polygon__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonCollider__ = __webpack_require__(12);
+
+
+
 
 
 
@@ -3565,8 +4344,27 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         const shape = new __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__["a" /* default */]();
         const solidBody = new __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__["a" /* default */]();
         const opacity = new __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__["a" /* default */]();
+        const body = new __WEBPACK_IMPORTED_MODULE_8__src_components_PolygonBody__["a" /* default */]();
+        const polygon = new __WEBPACK_IMPORTED_MODULE_9__src_components_Polygon__["a" /* default */]();
+        const polygonCollider = new __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonCollider__["a" /* default */]();
 
-        opacity.value = Math.random();
+        polygon.points.push({
+            x: 0,
+            y: 0
+        }, {
+            x: 100,
+            y: 0
+        }, {
+            x: 100,
+            y: 30
+        }, {
+            x: 0,
+            y: 30
+        });
+
+        body.polygons.push(polygon);
+
+        opacity.value = 1;
 
         shape.border.thickness = 1;
         shape.fillColor.red = red;
@@ -3588,10 +4386,10 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
 
         rectangle.width = 100;
         rectangle.height = 30;
+
         transform.position.x = x;
         transform.position.y = y;
-
-        transform.rotation = 13;
+        transform.rotation = Math.floor(Math.random() * 360);
         transform.isDirty = true;
 
         this.addComponent(transform);
@@ -3600,13 +4398,16 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         this.addComponent(rectangleCollider);
         this.addComponent(shape);
         this.addComponent(opacity);
+        this.addComponent(solidBody);
+        this.addComponent(body);
+        this.addComponent(polygonCollider);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = StaticText;
 
 
 /***/ }),
-/* 49 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3620,7 +4421,7 @@ class Opacity {
 
 
 /***/ }),
-/* 50 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

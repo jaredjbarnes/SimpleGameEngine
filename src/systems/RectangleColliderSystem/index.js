@@ -167,7 +167,6 @@ export default class RectangleColliderSystem {
     }
 
     deactivated(_world) {
-        const world = _world;
         this.world = null;
         this.currentTimestamp = 0;
         this.spatialPartitionService = null;
@@ -179,7 +178,7 @@ export default class RectangleColliderSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "spatial-partition-service") {
             this.spatialPartitionService = null;
         }

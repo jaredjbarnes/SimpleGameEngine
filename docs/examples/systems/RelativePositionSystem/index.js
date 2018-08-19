@@ -1,15 +1,15 @@
 import World from "../../../../src/World";
 import Camera from "../../../../src/entities/Camera";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
-import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem";
 import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
 import ControllerSystem from "../../../../src/systems/ControllerSystem";
 import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
 import MovableSystem from "../../../../src/systems/MovementSystem";
-import SolidBodySystem from "../../../../src/systems/SolidBodySystem";
-import Text from "./entities/Text";
+import Player from "./entities/Player";
+import Relative from "./entities/Relative";
 import StaticText from "./entities/StaticText";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
+import RelativePositionSystem from "../../../../src/systems/RelativePositionSystem";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
@@ -29,19 +29,19 @@ const getRandomRgba = () => {
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");
-const world = new World(console.log);
+const world = new World();
 
 // Entities
 const camera = new Camera(cameraName);
-const player = new Text("P");
+const player = new Player();
+const relative = new Relative(player.id);
 
 // Systems
 const controllerSystem = new ControllerSystem();
 const keyboardInputSystem = new KeyboardSystem();
 const movableSystem = new MovableSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
-const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
-const solidBodySystem = new SolidBodySystem();
+const relativePositionSystem = new RelativePositionSystem();
 
 const followEntityCameraSystem = new FollowEntityCameraSystem({
     cameraEntityId: camera.id,
@@ -54,26 +54,24 @@ const defaultCameraSystem = new DefaultCameraSystem({
     cellSize: 300
 });
 
-//defaultCameraSystem.systems[1].enablePolygonRasterizer();
-
 // Set up world
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
-world.addSystem(solidBodySystem);
 world.addSystem(movableSystem);
+world.addSystem(relativePositionSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(broadPhaseCollisionSystem);
-world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
+world.addEntity(relative);
 
-for (let x = 0; x < 10; x++) {
+for (let x = 0; x < 10000; x++) {
     const entity = new StaticText(x, {
-        x: getRandomNumber(-100, 100),
-        y: getRandomNumber(-100, 100)
+        x: getRandomNumber(-10000, 10000),
+        y: getRandomNumber(-10000, 10000)
     }, getRandomRgba());
 
     world.addEntity(entity);

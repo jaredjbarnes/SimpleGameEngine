@@ -2,7 +2,6 @@ export default class Animation {
     constructor() {
         this.target = null;
         this.property = null;
-        this.propertyAccessors = [];
         this.startTime = 0;
         this.duration = 0;
         this.easing = "linear";

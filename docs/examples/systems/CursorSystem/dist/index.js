@@ -1660,7 +1660,6 @@ class RectangleColliderSystem {
     }
 
     deactivated(_world) {
-        const world = _world;
         this.world = null;
         this.currentTimestamp = 0;
         this.spatialPartitionService = null;
@@ -1672,7 +1671,7 @@ class RectangleColliderSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "spatial-partition-service") {
             this.spatialPartitionService = null;
         }
@@ -2974,7 +2973,7 @@ class LineRenderer {
         const rectangle = entity.getComponent("rectangle");
         const line = entity.getComponent("line");
 
-        return `rectangle=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
+        return `rectangle=${JSON.stringify(rectangle)}, line=${JSON.stringify(line)}`;
     }
 
     rasterize(entity) {
@@ -2986,7 +2985,6 @@ class LineRenderer {
         const context = canvas.getContext("2d");
 
         const angle = transform.rotatioon;
-        const position = transform.position;
         const width = rectangle.right - rectangle.left;
         const height = rectangle.bottom - rectangle.top;
 
@@ -3031,15 +3029,9 @@ class LineRenderer {
     }
 
     getIdentity(entity) {
-        const shape = entity.getComponent("shape");
-
-        if (shape.id != null) {
-            return shape.id + entity.getComponent("transform").rotation;
-        } else {
-            const transform = entity.getComponent("transform");
-            const rectangle = entity.getComponent("rectangle");
-            return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
-        }
+        const transform = entity.getComponent("transform");
+        
+        return `${entity.id}|${transform.rotation}`;
     }
 
     rasterize(entity) {
@@ -4255,10 +4247,10 @@ class Movable {
         this.type = "state";
         
         this.activeName = null;
-        this.activeOptions = {};
+        this.activeConfig = {};
         
         this.name = null;
-        this.options = {};
+        this.config = {};
         
         this.stateManagerName = null;
 
@@ -4528,6 +4520,7 @@ class CursorSystem {
         zIndex.value = Infinity;
 
         this.cursorEntity = new __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */]();
+        this.cursorEntity.type = "cursor";
         this.cursorEntity.addComponent(rectangle);
         this.cursorEntity.addComponent(transform);
         this.cursorEntity.addComponent(cursor);

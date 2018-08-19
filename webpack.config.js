@@ -1,33 +1,18 @@
-const path = require('path');
+const path = require("path");
+const fs = require("fs");
+const examplesRoot = path.resolve(__dirname, "docs/examples/systems");
+const folders = fs.readdirSync(examplesRoot);
 
-const systems = [
-    "cameraSystem",
-    "narrowPhaseCollisionSystem",
-    "cursorSystem"
-];
-
-const games = [
-    "asteroids"
-];
-
-const systemBuilds = systems.map((systemName) => {
+const systemBuilds = folders.filter((item)=>{
+    return item.indexOf(".") < 0;
+}).map((systemName) => {
     return {
-        entry: path.resolve(__dirname, `docs/examples/systems/${systemName}/index.js`),
+        entry: path.resolve(examplesRoot, `${systemName}/index.js`),
         output: {
             filename: "index.js",
-            path: path.resolve(__dirname, `docs/examples/systems/${systemName}/dist`)
+            path: path.resolve(examplesRoot, `${systemName}/dist`)
         }
     }
 });
-
-// const gameBuilds = systems.map((gameName) => {
-//     return {
-//         entry: path.resolve(__dirname, `docs/examples/games/${gameName}/index.js`),
-//         output: {
-//             filename: "index.js",
-//             path: path.resolve(__dirname, `docs/examples/games/${gameName}/dist`)
-//         }
-//     }
-// });
 
 module.exports = systemBuilds;

@@ -12,7 +12,7 @@ export default class LineRenderer {
         const rectangle = entity.getComponent("rectangle");
         const line = entity.getComponent("line");
 
-        return `rectangle=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
+        return `rectangle=${JSON.stringify(rectangle)}, line=${JSON.stringify(line)}`;
     }
 
     rasterize(entity) {
@@ -24,7 +24,6 @@ export default class LineRenderer {
         const context = canvas.getContext("2d");
 
         const angle = transform.rotatioon;
-        const position = transform.position;
         const width = rectangle.right - rectangle.left;
         const height = rectangle.bottom - rectangle.top;
 

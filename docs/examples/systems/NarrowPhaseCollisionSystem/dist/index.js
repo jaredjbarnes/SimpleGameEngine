@@ -633,7 +633,7 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_Default
     cellSize: 300
 });
 
-//defaultCameraSystem.enablePolygonRasterizer();
+//defaultCameraSystem.systems[1].enablePolygonRasterizer();
 
 // Set up world
 world.addSystem(keyboardInputSystem);
@@ -649,10 +649,10 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 10000; x++) {
+for (let x = 0; x < 10; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x, {
-        x: getRandomNumber(-10000, 10000),
-        y: getRandomNumber(-10000, 10000)
+        x: getRandomNumber(-100, 100),
+        y: getRandomNumber(-100, 100)
     }, getRandomRgba());
 
     world.addEntity(entity);
@@ -1702,7 +1702,6 @@ class RectangleColliderSystem {
     }
 
     deactivated(_world) {
-        const world = _world;
         this.world = null;
         this.currentTimestamp = 0;
         this.spatialPartitionService = null;
@@ -1714,7 +1713,7 @@ class RectangleColliderSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "spatial-partition-service") {
             this.spatialPartitionService = null;
         }
@@ -3016,7 +3015,7 @@ class LineRenderer {
         const rectangle = entity.getComponent("rectangle");
         const line = entity.getComponent("line");
 
-        return `rectangle=${JSON.stringify(size)}, line=${JSON.stringify(line)}`;
+        return `rectangle=${JSON.stringify(rectangle)}, line=${JSON.stringify(line)}`;
     }
 
     rasterize(entity) {
@@ -3028,7 +3027,6 @@ class LineRenderer {
         const context = canvas.getContext("2d");
 
         const angle = transform.rotatioon;
-        const position = transform.position;
         const width = rectangle.right - rectangle.left;
         const height = rectangle.bottom - rectangle.top;
 
@@ -3073,15 +3071,9 @@ class LineRenderer {
     }
 
     getIdentity(entity) {
-        const shape = entity.getComponent("shape");
-
-        if (shape.id != null) {
-            return shape.id + entity.getComponent("transform").rotation;
-        } else {
-            const transform = entity.getComponent("transform");
-            const rectangle = entity.getComponent("rectangle");
-            return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
-        }
+        const transform = entity.getComponent("transform");
+        
+        return `${entity.id}|${transform.rotation}`;
     }
 
     rasterize(entity) {

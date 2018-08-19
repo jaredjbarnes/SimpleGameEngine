@@ -3,10 +3,10 @@
         this.type = "state";
         
         this.activeName = null;
-        this.activeOptions = {};
+        this.activeConfig = {};
         
         this.name = null;
-        this.options = {};
+        this.config = {};
         
         this.stateManagerName = null;
 

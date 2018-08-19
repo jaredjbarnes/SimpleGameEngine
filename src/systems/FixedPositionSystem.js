@@ -10,10 +10,8 @@ export default class FixedPositionSystem {
         this.camera = null;
     }
 
-    _hasComposition(entity) {
-        return DEPENDENCIES.every((name) => {
-            return entity.hasComponent(name);
-        });
+    hasComposition(entity) {
+        return entity.hasComponents(DEPENDENCIES);
     }
 
     activated(world) {
@@ -29,13 +27,13 @@ export default class FixedPositionSystem {
     }
 
     entityAdded(entity) {
-        if (this._hasComposition(entity)) {
+        if (this.hasComposition(entity)) {
             this.entities.push(entity);
         }
     }
 
     entityRemoved(entity) {
-        if (this._hasComposition(entity)) {
+        if (this.hasComposition(entity)) {
             var index = this.entities.indexOf(entity);
             if (index > -1) {
                 this.entities.splice(index, 1);

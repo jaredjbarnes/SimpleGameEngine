@@ -1,4 +1,4 @@
-import invokeMethod from "../utilities/invokeMethod";
+import invokeMethod from "../../utilities/invokeMethod";
 
 export default class StateManagerSystem {
     constructor() {
@@ -10,38 +10,39 @@ export default class StateManagerSystem {
         this.stateDescriptors = [];
     }
 
-    updateState(stateName, entity) {
+    updateState(stateName, entity, config) {
         const state = this.states[stateName];
         invokeMethod(state, "update", [entity, this.world]);
     }
 
-    activateState(stateName, entity, options) {
+    activateState(stateName, entity, config) {
         const state = this.states[stateName];
-        invokeMethod(state, "activated", [entity, options, this.world]);
+        invokeMethod(state, "activated", [entity, config, this.world]);
     }
 
-    deactivateState(stateName, entity) {
+    deactivateState(stateName, entity, config) {
         const state = this.states[stateName];
         invokeMethod(state, "deactivated", [entity, this.world]);
     }
 
     maintainState(entity) {
         const state = entity.getComponent("state");
+        invokeMethod(state, "prepare", [entity, state.config, this.world]);
 
         if (state.activeName !== state.name) {
-            this.deactivateState(state.activeName, entity);
+            this.deactivateState(state.activeName, entity, state.config);
             state.activeName = state.name;
-            state.activeOptions = state.options;
-            this.activateState(state.name, entity, state.options);
+            state.activeConfig = state.config;
+            this.activateState(state.name, entity, state.config);
         }
 
-        this.updateState(state.name, entity);
+        this.updateState(state.name, entity, state.config);
     }
 
     update() {
         const entities = this.entities;
         for (let id in entities) {
-            const entity = entities[entity.id];
+            const entity = entities[id];
             this.maintainState(entity);
         }
     };
@@ -58,7 +59,7 @@ export default class StateManagerSystem {
         this.cacheEntities();
 
         for (let id in entities) {
-            const entity = entities[entity.id];
+            const entity = entities[id];
             const state = entity.getComponent("state");
             const stateName = state.name;
 

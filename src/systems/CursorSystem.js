@@ -107,6 +107,7 @@ export default class CursorSystem {
         zIndex.value = Infinity;
 
         this.cursorEntity = new Entity();
+        this.cursorEntity.type = "cursor";
         this.cursorEntity.addComponent(rectangle);
         this.cursorEntity.addComponent(transform);
         this.cursorEntity.addComponent(cursor);

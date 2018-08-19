@@ -9,15 +9,9 @@
     }
 
     getIdentity(entity) {
-        const shape = entity.getComponent("shape");
-
-        if (shape.id != null) {
-            return shape.id + entity.getComponent("transform").rotation;
-        } else {
-            const transform = entity.getComponent("transform");
-            const rectangle = entity.getComponent("rectangle");
-            return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
-        }
+        const transform = entity.getComponent("transform");
+        
+        return `${entity.id}|${transform.rotation}`;
     }
 
     rasterize(entity) {

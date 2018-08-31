@@ -7,6 +7,8 @@ export default class Rectangle {
         this.left = 0;
         this.bottom = 0;
         this.right = 0;
+        this.transformedWidth = 0;
+        this.transformedHeight = 0;
         this.isDirty = true;
     }
 }

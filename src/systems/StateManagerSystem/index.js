@@ -8,42 +8,39 @@ export default class StateManagerSystem {
         this.entities = {};
         this.states = {};
         this.stateDescriptors = [];
+        this.entity = null;
+        this.state = null;
     }
 
-    updateState(stateName, entity, config) {
-        const state = this.states[stateName];
-        invokeMethod(state, "update", []);
-    }
+    maintainState() {
+        const currentState = this.states[this.state.activeName];
+        const nextState = this.states[this.state.name];
 
-    activateState(stateName, entity, config) {
-        const state = this.states[stateName];
-        invokeMethod(state, "activated", []);
-    }
+        if (this.state.activeName !== this.state.name) {
+            invokeMethod(currentState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(currentState, "deactivated");
 
-    deactivateState(stateName, entity, config) {
-        const state = this.states[stateName];
-        invokeMethod(state, "deactivated", []);
-    }
+            this.state.activeName = this.state.name;
+            this.state.activeConfig = this.state.config;
 
-    maintainState(entity) {
-        const state = entity.getComponent("state");
-        invokeMethod(state, "setup", [entity, state.config, this.world]);
+            invokeMethod(nextState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(nextState, "activated");
+            invokeMethod(nextState, "update");
 
-        if (state.activeName !== state.name) {
-            this.deactivateState(state.activeName, entity, state.config);
-            state.activeName = state.name;
-            state.activeConfig = state.config;
-            this.activateState(state.name, entity, state.config);
+        } else {
+            invokeMethod(currentState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(currentState, "update");
         }
 
-        this.updateState(state.name, entity, state.config);
     }
 
     update() {
         const entities = this.entities;
+
         for (let id in entities) {
-            const entity = entities[id];
-            this.maintainState(entity);
+            this.entity = entities[id];
+            this.state = entity.getComponent("state");
+            this.maintainState();
         }
     };
 
@@ -54,22 +51,13 @@ export default class StateManagerSystem {
     }
 
     activated(world) {
-        const entities = this.entities;
         this.world = world;
         this.cacheEntities();
-
-        for (let id in entities) {
-            const entity = entities[id];
-            const state = entity.getComponent("state");
-            const stateName = state.name;
-
-            this.activateState(stateName, entity);
-        }
     }
 
     deactivated() {
         this.world = null;
-        this.entities = new Map();
+        this.entities = {};
     }
 
     entityAdded(entity) {
@@ -94,10 +82,12 @@ export default class StateManagerSystem {
 
     componentAdded(entity, component) {
         if (component.type === "state" && component.stateManagerName === this.name) {
+            
             if (!component.initialized) {
                 invokeMethod(this, "initialize", [entity]);
                 component.initialized = true;
             }
+
             this.entities[entity.id] = entity;
         }
     }
@@ -115,6 +105,12 @@ export default class StateManagerSystem {
             this.states[state.name] = state;
         } else {
             throw new Error("States must have a name property of type string.");
+        }
+    }
+
+    removeState(state){
+        if (state != null && typeof state.name === "string" && this.states[state.name] != null){
+            delete this.states[state.name];
         }
     }
 

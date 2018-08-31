@@ -130,9 +130,7 @@ export default class CameraSystem {
                     const entity = entities[y];
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
-                    const transform = entity.getComponent("transform");
                     const images = this.compositor.getEntityImages(entity);
-                    const rotation = transform.rotation;
 
                     // If the entity isn't renderable then don't go on.
                     if (images.length === 0) {
@@ -199,7 +197,6 @@ export default class CameraSystem {
         const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
         const grid = this.spatialPartitionService.grid;
         const renderableCells = {};
-        let fullCellRenderCount = 0;
 
         for (let key in dirtyCells) {
             const cellPosition = dirtyCells[key];
@@ -231,19 +228,11 @@ export default class CameraSystem {
             const spatialPartition = cell.entity.getComponent("spatial-partition");
             const cellPositions = spatialPartition.cellPositions;
 
-            if (cell.transform.isDirty || cell.isDirty) {
+            if (cell.transform.isDirty) {
 
-                if (fullCellRenderCount === 0) {
-                    fullCellRenderCount++;
-                    cell.isDirty = false;
-
-                    for (let c = 0; c < cellPositions.length; c++) {
-                        const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-
-                } else {
-                    cell.isDirty = true;
+                for (let c = 0; c < cellPositions.length; c++) {
+                    const cellPosition = cellPositions[c];
+                    renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                 }
 
             }

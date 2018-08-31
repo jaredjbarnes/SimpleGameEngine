@@ -88,8 +88,8 @@ export default class DynamicLoadingSystem {
     }
 
     _updateCells() {
-        const cameraCenterX = this.camera.position.x + (this.camera.rectangle.width / 2);
-        const cameraCenterY = this.camera.position.y + (this.camera.rectangle.height / 2);
+        const cameraCenterX = this.camera.position.x;
+        const cameraCenterY = this.camera.position.y;
 
         this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
 

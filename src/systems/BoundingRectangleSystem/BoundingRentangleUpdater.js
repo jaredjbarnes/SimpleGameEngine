@@ -90,10 +90,12 @@ export default class BoundingRectangleUpdater {
         this.rectangle.left = Math.floor(min.x);
         this.rectangle.bottom = Math.floor(max.y);
         this.rectangle.right = Math.floor(max.x);
+        this.rectangle.transformedWidth = this.rectangle.right - this.rectangle.left;
+        this.rectangle.transformedHeight = this.rectangle.bottom - this.rectangle.top;
     }
 
     updateOrigin() {
-        this.transform.origin.x = this.rectangle.width / 2;
-        this.transform.origin.y = this.rectangle.height / 2;
+        this.transform.origin.x = Math.floor(this.rectangle.width / 2);
+        this.transform.origin.y = Math.floor(this.rectangle.height / 2);
     }
 }

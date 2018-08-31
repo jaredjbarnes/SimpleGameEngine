@@ -197,6 +197,8 @@ class Rectangle {
         this.left = 0;
         this.bottom = 0;
         this.right = 0;
+        this.transformedWidth = 0;
+        this.transformedHeight = 0;
         this.isDirty = true;
     }
 }
@@ -1046,11 +1048,13 @@ class BoundingRectangleUpdater {
         this.rectangle.left = Math.floor(min.x);
         this.rectangle.bottom = Math.floor(max.y);
         this.rectangle.right = Math.floor(max.x);
+        this.rectangle.transformedWidth = this.rectangle.right - this.rectangle.left;
+        this.rectangle.transformedHeight = this.rectangle.bottom - this.rectangle.top;
     }
 
     updateOrigin() {
-        this.transform.origin.x = this.rectangle.width / 2;
-        this.transform.origin.y = this.rectangle.height / 2;
+        this.transform.origin.x = Math.floor(this.rectangle.width / 2);
+        this.transform.origin.y = Math.floor(this.rectangle.height / 2);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BoundingRectangleUpdater;
@@ -2313,9 +2317,15 @@ class LineRenderer {
     }
 
     getIdentity(entity) {
-        const transform = entity.getComponent("transform");
-        
-        return `${entity.id}|${transform.rotation}`;
+        const shape = entity.getComponent("shape");
+
+        if (shape.id != null) {
+            return shape.id + entity.getComponent("transform").rotation;
+        } else {
+            const transform = entity.getComponent("transform");
+            const rectangle = entity.getComponent("rectangle");
+            return `${JSON.stringify(transform)}|${JSON.stringify(shape)}|${JSON.stringify(rectangle)}`;
+        }
     }
 
     rasterize(entity) {
@@ -2590,9 +2600,7 @@ class CameraSystem {
                     const entity = entities[y];
                     const opacity = entity.getComponent("opacity");
                     const rectangle = entity.getComponent("rectangle");
-                    const transform = entity.getComponent("transform");
                     const images = this.compositor.getEntityImages(entity);
-                    const rotation = transform.rotation;
 
                     // If the entity isn't renderable then don't go on.
                     if (images.length === 0) {
@@ -2659,7 +2667,6 @@ class CameraSystem {
         const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
         const grid = this.spatialPartitionService.grid;
         const renderableCells = {};
-        let fullCellRenderCount = 0;
 
         for (let key in dirtyCells) {
             const cellPosition = dirtyCells[key];
@@ -2691,19 +2698,11 @@ class CameraSystem {
             const spatialPartition = cell.entity.getComponent("spatial-partition");
             const cellPositions = spatialPartition.cellPositions;
 
-            if (cell.transform.isDirty || cell.isDirty) {
+            if (cell.transform.isDirty) {
 
-                if (fullCellRenderCount === 0) {
-                    fullCellRenderCount++;
-                    cell.isDirty = false;
-
-                    for (let c = 0; c < cellPositions.length; c++) {
-                        const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-
-                } else {
-                    cell.isDirty = true;
+                for (let c = 0; c < cellPositions.length; c++) {
+                    const cellPosition = cellPositions[c];
+                    renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                 }
 
             }
@@ -2952,8 +2951,8 @@ class DynamicLoadingSystem {
     }
 
     _updateCells() {
-        const cameraCenterX = this.camera.position.x + (this.camera.rectangle.width / 2);
-        const cameraCenterY = this.camera.position.y + (this.camera.rectangle.height / 2);
+        const cameraCenterX = this.camera.position.x;
+        const cameraCenterY = this.camera.position.y;
 
         this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
 

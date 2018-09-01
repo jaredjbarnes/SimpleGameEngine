@@ -31,7 +31,6 @@ export default class DynamicLoadingSystem {
             for (let x = 0; x < 3; x++) {
                 const row = y - 1;
                 const column = x - 1;
-                const index = (y * 3) + x;
 
                 this.cellPositions.push({ column: column, row: row });
                 this.cells.push(new Cell({ column, row, cellSize }));
@@ -47,9 +46,9 @@ export default class DynamicLoadingSystem {
         this.camera.position = transform.position;
     }
 
-    _findCellPositionsWithCenter(x, y) {
-        const centerColumn = Math.floor(x / this.cellSize);
-        const centerRow = Math.floor(y / this.cellSize);
+    _findCellPositionsWithCenter() {
+        const centerColumn = Math.floor(this.camera.position.x / this.cellSize);
+        const centerRow = Math.floor(this.camera.position.y / this.cellSize);
 
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -88,10 +87,7 @@ export default class DynamicLoadingSystem {
     }
 
     _updateCells() {
-        const cameraCenterX = this.camera.position.x;
-        const cameraCenterY = this.camera.position.y;
-
-        this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
+        this._findCellPositionsWithCenter();
 
         const availableCanvasCells = [];
 
@@ -104,6 +100,7 @@ export default class DynamicLoadingSystem {
             });
 
             if (index === -1) {
+                cell.transform.isDirty = true;
                 availableCanvasCells.push(cell);
             }
         }
@@ -172,7 +169,7 @@ export default class DynamicLoadingSystem {
         }
     }
 
-    update(currentTime) {
+    beforeUpdate(currentTime) {
         if (this._hasCamera()) {
             this._updateCells();
         }

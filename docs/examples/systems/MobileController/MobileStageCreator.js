@@ -29,6 +29,10 @@ export default class MobileStageCreator {
         this.adjustCanvasSize();
       });
     });
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+      this.adjustCanvasSize();
+    });
   }
 
   adjustCanvasSize() {
@@ -47,7 +51,6 @@ export default class MobileStageCreator {
     }
 
     this.cameraRectangle.isDirty = true;
-    this.cameraTransform.isDirty = true;
   }
 
   createAButton() {

@@ -3456,10 +3456,10 @@ class CameraSystem {
 
         for (let x = 0; x < this.cells.length; x++) {
             const cell = this.cells[x];
-            const top = Math.max(cell.transform.position.y, this.camera.transform.position.y);
-            const left = Math.max(cell.transform.position.x, this.camera.transform.position.x);
-            const bottom = Math.min(cell.transform.position.y + cell.rectangle.height, this.camera.transform.position.y + this.camera.rectangle.height);
-            const right = Math.min(cell.transform.position.x + cell.rectangle.width, this.camera.transform.position.x + this.camera.rectangle.width);
+            const top = Math.max(cell.rectangle.top, this.camera.rectangle.top);
+            const left = Math.max(cell.rectangle.left, this.camera.rectangle.left);
+            const bottom = Math.min(cell.rectangle.bottom, this.camera.rectangle.bottom);
+            const right = Math.min(cell.rectangle.right, this.camera.rectangle.right);
 
             if (top < bottom && left < right) {
 
@@ -3467,17 +3467,17 @@ class CameraSystem {
                 let sourceY = 0;
                 const sourceWidth = right - left;
                 const sourceHeight = bottom - top;
-                const destinationX = left - this.camera.transform.position.x;
-                const destinationY = top - this.camera.transform.position.y;
+                const destinationX = left - this.camera.rectangle.left;
+                const destinationY = top - this.camera.rectangle.top;
                 const destinationWidth = right - left;
                 const destinationHeight = bottom - top;
 
-                if (cell.transform.position.x < this.camera.transform.position.x) {
-                    sourceX = this.camera.transform.position.x - cell.transform.position.x;
+                if (cell.rectangle.left < this.camera.rectangle.left) {
+                    sourceX = this.camera.rectangle.left - cell.rectangle.left;
                 }
 
-                if (cell.transform.position.y < this.camera.transform.position.y) {
-                    sourceY = this.camera.transform.position.y - cell.transform.position.y;
+                if (cell.rectangle.top < this.camera.rectangle.top) {
+                    sourceY = this.camera.rectangle.top - cell.rectangle.top;
                 }
 
                 const context = canvas.getContext("2d");
@@ -3530,7 +3530,14 @@ class CameraSystem {
 
     entityAdded(entity) {
         if (this._isDynamicLoadingCellEntity(entity)) {
-            this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
+            const index = this.cells.findIndex((cell) => {
+                return cell.entity === entity;
+            });
+
+            if (index === -1) {
+                this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
+            }
+
         } else if (this._isCameraEntity(entity)) {
             this.camera = new Camera(entity, this.canvasFactory.create());
         }
@@ -3610,7 +3617,6 @@ class DynamicLoadingSystem {
             for (let x = 0; x < 3; x++) {
                 const row = y - 1;
                 const column = x - 1;
-                const index = (y * 3) + x;
 
                 this.cellPositions.push({ column: column, row: row });
                 this.cells.push(new Cell({ column, row, cellSize }));
@@ -3626,9 +3632,9 @@ class DynamicLoadingSystem {
         this.camera.position = transform.position;
     }
 
-    _findCellPositionsWithCenter(x, y) {
-        const centerColumn = Math.floor(x / this.cellSize);
-        const centerRow = Math.floor(y / this.cellSize);
+    _findCellPositionsWithCenter() {
+        const centerColumn = Math.floor(this.camera.position.x / this.cellSize);
+        const centerRow = Math.floor(this.camera.position.y / this.cellSize);
 
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -3667,10 +3673,7 @@ class DynamicLoadingSystem {
     }
 
     _updateCells() {
-        const cameraCenterX = this.camera.position.x;
-        const cameraCenterY = this.camera.position.y;
-
-        this._findCellPositionsWithCenter(cameraCenterX, cameraCenterY);
+        this._findCellPositionsWithCenter();
 
         const availableCanvasCells = [];
 
@@ -3683,6 +3686,7 @@ class DynamicLoadingSystem {
             });
 
             if (index === -1) {
+                cell.transform.isDirty = true;
                 availableCanvasCells.push(cell);
             }
         }
@@ -3751,7 +3755,7 @@ class DynamicLoadingSystem {
         }
     }
 
-    update(currentTime) {
+    beforeUpdate(currentTime) {
         if (this._hasCamera()) {
             this._updateCells();
         }

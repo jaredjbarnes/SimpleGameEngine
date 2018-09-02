@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "noisejs": "^2.1.0",
-    "proc-noise": "0.0.1"
+    "proc-noise": "0.0.1",
+    "resize-observer-polyfill": "^1.5.0"
   },
   "author": "Jared J Barnes",
   "license": "MIT"

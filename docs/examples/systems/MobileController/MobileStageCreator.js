@@ -1,4 +1,5 @@
 import MobileController from "./MobileController";
+import ResizeObserver from "resize-observer-polyfill";
 
 export default class MobileStageCreator {
   constructor({ window, document, camera, controllerInputService, maxSize = 300 }) {
@@ -24,15 +25,11 @@ export default class MobileStageCreator {
     this.createCanvas();
     this.setupMobileController();
 
-    window.addEventListener("orientationchange", () => {
-      requestAnimationFrame(() => {
-        this.adjustCanvasSize();
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", (event) => {
+    this.resizeObserver = new ResizeObserver(() => {
       this.adjustCanvasSize();
     });
+
+    this.resizeObserver.observe(document.body);
   }
 
   adjustCanvasSize() {

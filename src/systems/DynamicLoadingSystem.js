@@ -100,7 +100,6 @@ export default class DynamicLoadingSystem {
             });
 
             if (index === -1) {
-                cell.transform.isDirty = true;
                 availableCanvasCells.push(cell);
             }
         }

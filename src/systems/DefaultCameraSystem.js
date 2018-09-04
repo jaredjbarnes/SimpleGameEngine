@@ -49,7 +49,10 @@ class DefaultCameraSystem extends CameraSystem {
 export default class extends SystemsBundlerSystem {
     constructor({ canvas, cameraName, assetRoot, cellSize }) {
         super();
-        this.systems.push(new DynamicLoadingSystem({ cameraName, cellSize }));
-        this.systems.push(new DefaultCameraSystem({ canvas, cameraName, assetRoot }));
+        this.dynamicLoadingSystem = new DynamicLoadingSystem({ cameraName, cellSize });
+        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot });
+        
+        this.systems.push(this.dynamicLoadingSystem);
+        this.systems.push(this.defaultCameraSystem);
     }
 }

@@ -1773,8 +1773,11 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__["a" /* default */] {
     constructor({ canvas, cameraName, assetRoot, cellSize }) {
         super();
-        this.systems.push(new __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__["a" /* default */]({ cameraName, cellSize }));
-        this.systems.push(new DefaultCameraSystem({ canvas, cameraName, assetRoot }));
+        this.dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__["a" /* default */]({ cameraName, cellSize });
+        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot });
+        
+        this.systems.push(this.dynamicLoadingSystem);
+        this.systems.push(this.defaultCameraSystem);
     }
 });
 
@@ -2808,8 +2811,13 @@ class CameraSystem {
         }
     }
 
-    deactivated(world) {
-
+    deactivated() {
+        this.spatialPartitionService = null;
+        this.cells = [];
+        this.world = null;
+        this.camera = null;
+        this.drawImageCount = 0;
+        this.renderableEntities = {};
     }
 
     entityAdded(entity) {
@@ -2970,7 +2978,6 @@ class DynamicLoadingSystem {
             });
 
             if (index === -1) {
-                cell.transform.isDirty = true;
                 availableCanvasCells.push(cell);
             }
         }

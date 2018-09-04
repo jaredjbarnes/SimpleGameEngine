@@ -338,8 +338,13 @@ export default class CameraSystem {
         }
     }
 
-    deactivated(world) {
-
+    deactivated() {
+        this.spatialPartitionService = null;
+        this.cells = [];
+        this.world = null;
+        this.camera = null;
+        this.drawImageCount = 0;
+        this.renderableEntities = {};
     }
 
     entityAdded(entity) {

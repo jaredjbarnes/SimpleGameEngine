@@ -4,6 +4,7 @@ export default class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
+        this.compositeImages = {};
         this.imageTypes = [];
     }
 
@@ -64,12 +65,8 @@ export default class Compositor {
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            if (component && component.isDirty) {
-                const rasterizer = this.rasterizers[type];
-                const imageId = rasterizer.getIdentity(entity);
-                this.images[imageId] = null;
-                return true;
-            }
+            this.compositeImages[entity.id] = null;
+            return component && component.isDirty;
         }
 
         return false;
@@ -78,11 +75,17 @@ export default class Compositor {
     getEntityImages(_entity) {
         const entity = _entity;
         const rasterizers = this.rasterizers;
-        const images = [];
+        let images = this.compositeImages[entity.id];
 
         if (entity == null) {
+            return [];
+        }
+
+        if (images != null){
             return images;
         }
+
+        images = [];
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
@@ -101,6 +104,8 @@ export default class Compositor {
         }
 
         images.sort(sortByZIndex);
+
+        this.compositeImages[entity.id] = images;
 
         return images;
 

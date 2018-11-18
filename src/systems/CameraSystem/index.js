@@ -11,6 +11,9 @@
     }
 };
 
+window.dynamicLoadingCellMoves = 0;
+window.drawCells = 0;
+
 class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
         this.transform = cameraCanvasCellEntity.getComponent("transform");
@@ -171,6 +174,7 @@ export default class CameraSystem {
                         const image = images[z];
 
                         this.drawImageCount++;
+                        window.drawCells = this.drawImageCount;
                         cell.context.drawImage(
                             image,
                             sourceX,
@@ -229,12 +233,11 @@ export default class CameraSystem {
             const cellPositions = spatialPartition.cellPositions;
 
             if (cell.transform.isDirty) {
-
+                window.dynamicLoadingCellMoves++;
                 for (let c = 0; c < cellPositions.length; c++) {
                     const cellPosition = cellPositions[c];
                     renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                 }
-
             }
 
             // Find dirty entities with in the loading area that need updating.
@@ -391,6 +394,6 @@ export default class CameraSystem {
             this._transferToCanvas();
             this._cleanEntities();
         }
-        //console.log(this.drawImageCount);
+        
     }
 }

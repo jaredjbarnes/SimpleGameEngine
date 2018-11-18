@@ -43,11 +43,17 @@
         return `${image.url}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}|${image.flipHorizontally}|${image.flipVertically}`;
     }
 
-    getIdentity(entity) {
+    getIdentity(_entity) {
+        const entity = _entity;
         const image = entity.getComponent("image");
         const transform = entity.getComponent("transform");
 
-        return `${this.getImageIdentity(image)}|${transform.rotation}`;
+        if (image.id != null) {
+            return `${image.id}|${transform.rotation}`;
+        } else {
+            return `${this.getImageIdentity(image)}|${transform.rotation}`;
+        }
+
     }
 
     rasterize(entity) {

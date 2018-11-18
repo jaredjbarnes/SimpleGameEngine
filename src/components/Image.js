@@ -1,6 +1,7 @@
 ﻿export default class Image {
     constructor() {
         this.type = "image";
+        this.id = null;
         this.url = null;
         this.position = {
             x: 0,

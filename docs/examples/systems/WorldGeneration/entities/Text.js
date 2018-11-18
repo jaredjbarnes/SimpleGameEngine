@@ -10,6 +10,7 @@ import SolidBody from "../../../../../src/components/SolidBody";
 import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
+import ZIndex from "../../../../../src/components/ZIndex";
 
 export default class extends Entity {
     constructor(text) {
@@ -27,6 +28,9 @@ export default class extends Entity {
         const body = new PolygonBody();
         const polygon = new Polygon();
         const polygonCollider = new PolygonCollider();
+        const zIndex = new ZIndex();
+
+        zIndex.value = 2;
 
         polygon.points.push({
             x: 0,
@@ -80,5 +84,6 @@ export default class extends Entity {
         this.addComponent(solidBody);
         this.addComponent(body);
         this.addComponent(polygonCollider);
+        this.addComponent(zIndex);
     }
 }

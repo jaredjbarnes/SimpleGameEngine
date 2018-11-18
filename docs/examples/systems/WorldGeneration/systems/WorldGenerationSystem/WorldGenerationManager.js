@@ -1,11 +1,10 @@
 import EntityPool from "../../../../../../src/utilities/EntityPool";
-import Grass from "../../entities/Grass";
-import Sand from "../../entities/Sand";
-import Water from "../../entities/Water";
-import { timingSafeEqual } from "crypto";
+import Water from "../../entities/ground/Water";
+import GroundEntityIdentifier from "./GroundEntityIdentifier";
+import groundEntities from "./groundEntities";
 
 const GRASS = "grass";
-const SAND = "sand";
+const DIRT = "dirt";
 const WATER = "water";
 
 export default class WorldGenerationManager {
@@ -23,22 +22,30 @@ export default class WorldGenerationManager {
         this.world = null;
 
         this.entityPool = new EntityPool();
-        this.entityPool.addEntityType("grass", Grass);
-        this.entityPool.addEntityType("sand", Sand);
-        this.entityPool.addEntityType("water", Water);
 
-    }
+        for (let type in groundEntities){
+            this.entityPool.addEntityType(type, groundEntities[type]);
+        }
 
-    isGrassValue(value) {
-        return value >= -1 && value <= -0;
-    }
+        this.entityPool.addEntityType(WATER, Water);
 
-    isSandValue(value) {
-        return value > -0 && value <= 0.25;
-    }
+        this.groundEntityIdentifier = new GroundEntityIdentifier({
+            noise,
+            scale
+        });
 
-    isWaterValue(value) {
-        return value > 0.25 && value <= 1;
+        this.groundEntityIdentifier.addRange({
+            name: GRASS,
+            min: -1,
+            max: 0
+        });
+
+        this.groundEntityIdentifier.addRange({
+            name: DIRT,
+            min: 0,
+            max: 0.25
+        });
+
     }
 
     loadEnemies() {
@@ -58,17 +65,13 @@ export default class WorldGenerationManager {
 
             for (let x = startX; x < endX; x += this.cellSize) {
                 for (let y = startY; y < endY; y += this.cellSize) {
-                    let entity;
-                    
-                    const groundValue = this.noise.perlin(x / this.scale, y / this.scale);
+                    let entityType = this.groundEntityIdentifier.getTileIdentity(x, y);
 
-                    if (this.isGrassValue(groundValue)) {
-                        entity = this.entityPool.acquire(GRASS);
-                    } else if (this.isSandValue(groundValue)) {
-                        entity = this.entityPool.acquire(SAND);
-                    } else if (this.isWaterValue(groundValue)) {
-                        entity = this.entityPool.acquire(WATER);
+                    if (entityType == null) {
+                        entityType = WATER;
                     }
+
+                    const entity = this.entityPool.acquire(entityType);
 
                     const transform = entity.getComponent("transform");
                     transform.position.x = x + (this.cellSize / 2);

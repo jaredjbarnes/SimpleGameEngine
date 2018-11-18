@@ -2550,6 +2550,7 @@ class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
+        this.compositeImages = {};
         this.imageTypes = [];
     }
 
@@ -2610,12 +2611,8 @@ class Compositor {
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            if (component && component.isDirty) {
-                const rasterizer = this.rasterizers[type];
-                const imageId = rasterizer.getIdentity(entity);
-                this.images[imageId] = null;
-                return true;
-            }
+            this.compositeImages[entity.id] = null;
+            return component && component.isDirty;
         }
 
         return false;
@@ -2624,11 +2621,17 @@ class Compositor {
     getEntityImages(_entity) {
         const entity = _entity;
         const rasterizers = this.rasterizers;
-        const images = [];
+        let images = this.compositeImages[entity.id];
 
         if (entity == null) {
+            return [];
+        }
+
+        if (images != null){
             return images;
         }
+
+        images = [];
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
@@ -2647,6 +2650,8 @@ class Compositor {
         }
 
         images.sort(sortByZIndex);
+
+        this.compositeImages[entity.id] = images;
 
         return images;
 
@@ -2752,11 +2757,17 @@ class ImageFactory {
         return `${image.url}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}|${image.flipHorizontally}|${image.flipVertically}`;
     }
 
-    getIdentity(entity) {
+    getIdentity(_entity) {
+        const entity = _entity;
         const image = entity.getComponent("image");
         const transform = entity.getComponent("transform");
 
-        return `${this.getImageIdentity(image)}|${transform.rotation}`;
+        if (image.id != null) {
+            return `${image.id}|${transform.rotation}`;
+        } else {
+            return `${this.getImageIdentity(image)}|${transform.rotation}`;
+        }
+
     }
 
     rasterize(entity) {
@@ -3242,6 +3253,9 @@ class LineRenderer {
     }
 };
 
+window.dynamicLoadingCellMoves = 0;
+window.drawCells = 0;
+
 class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
         this.transform = cameraCanvasCellEntity.getComponent("transform");
@@ -3402,6 +3416,7 @@ class CameraSystem {
                         const image = images[z];
 
                         this.drawImageCount++;
+                        window.drawCells = this.drawImageCount;
                         cell.context.drawImage(
                             image,
                             sourceX,
@@ -3460,12 +3475,11 @@ class CameraSystem {
             const cellPositions = spatialPartition.cellPositions;
 
             if (cell.transform.isDirty) {
-
+                window.dynamicLoadingCellMoves++;
                 for (let c = 0; c < cellPositions.length; c++) {
                     const cellPosition = cellPositions[c];
                     renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
                 }
-
             }
 
             // Find dirty entities with in the loading area that need updating.
@@ -3622,7 +3636,7 @@ class CameraSystem {
             this._transferToCanvas();
             this._cleanEntities();
         }
-        //console.log(this.drawImageCount);
+        
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;

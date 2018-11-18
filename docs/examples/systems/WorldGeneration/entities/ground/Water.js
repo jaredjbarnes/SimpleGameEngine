@@ -1,8 +1,8 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Rectangle from "../../../../../src/components/Rectangle";
-import Shape from "../../../../../src/components/Shape";
+import Entity from "../../../../../../src/Entity";
+import Transform from "../../../../../../src/components/Transform";
+import RectangleCollider from "../../../../../../src/components/RectangleCollider";
+import Rectangle from "../../../../../../src/components/Rectangle";
+import Shape from "../../../../../../src/components/Shape";
 
 const SIZE = 100;
 

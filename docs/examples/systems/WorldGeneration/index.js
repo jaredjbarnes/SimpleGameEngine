@@ -60,7 +60,7 @@ const followEntityCameraSystem = new FollowEntityCameraSystem({
 const defaultCameraSystem = new DefaultCameraSystem({
     canvas,
     cameraName,
-    cellSize: 300
+    cellSize: 400
 });
 
 const playerControllerSystem = new PlayerControllerSystem();

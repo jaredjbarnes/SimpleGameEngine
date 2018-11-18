@@ -69,7 +69,7 @@ class PropertyValidator {
 
 }
 
-export class Validator {
+export default class Validator {
     constructor(obj) {
         this.obj = obj;
     }

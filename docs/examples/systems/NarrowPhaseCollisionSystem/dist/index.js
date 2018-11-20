@@ -3605,9 +3605,7 @@ class CameraSystem {
     }
 
     entityRemoved(entity) {
-        if (this._isRectangleCollisionDataEntity(entity)) {
-            this.rectangleCollisionData = null;
-        } else if (this._isDynamicLoadingCellEntity(entity)) {
+        if (this._isDynamicLoadingCellEntity(entity)) {
             throw new Error("The Camera cannot run without dynamic loading cells.");
         }
     }
@@ -3914,8 +3912,8 @@ class ControllerSystem {
     }
 
     componentAdded(entity, component) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity, entity);
+        if (DEPENDENCIES.includes(component.type)) {
+            this.entities.set(entity.id, entity);
         }
     }
 

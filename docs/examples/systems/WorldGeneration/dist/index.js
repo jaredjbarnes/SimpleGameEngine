@@ -3590,9 +3590,7 @@ class CameraSystem {
     }
 
     entityRemoved(entity) {
-        if (this._isRectangleCollisionDataEntity(entity)) {
-            this.rectangleCollisionData = null;
-        } else if (this._isDynamicLoadingCellEntity(entity)) {
+        if (this._isDynamicLoadingCellEntity(entity)) {
             throw new Error("The Camera cannot run without dynamic loading cells.");
         }
     }

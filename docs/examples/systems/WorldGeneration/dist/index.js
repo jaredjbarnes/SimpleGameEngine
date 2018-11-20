@@ -1262,7 +1262,6 @@ class SpatialPartitionSystem {
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
-        const entitiesById = spatialPartitionService.entitiesById;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
 
@@ -1411,7 +1410,7 @@ class SpatialPartitionSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "bounding-rectangle-service") {
             this.boundingRectangleData = null;
         }
@@ -5789,7 +5788,7 @@ class WorldGenerationSystem {
         this.removeDynamicLoadingCell(entity);
     }
 
-    beforeUpdate() {
+    afterUpdate() {
         for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
             const entity = this.dynamicLoadingCells[x];
             this.worldGenerationManager.manage(this.world, entity);

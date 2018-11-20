@@ -7,7 +7,6 @@ export default class StateManagerSystem {
         this.name = null;
         this.entities = {};
         this.states = {};
-        this.stateDescriptors = [];
         this.entity = null;
         this.state = null;
     }

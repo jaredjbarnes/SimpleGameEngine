@@ -86,7 +86,7 @@ export default class WorldGenerationSystem {
         this.removeDynamicLoadingCell(entity);
     }
 
-    beforeUpdate() {
+    afterUpdate() {
         for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
             const entity = this.dynamicLoadingCells[x];
             this.worldGenerationManager.manage(this.world, entity);

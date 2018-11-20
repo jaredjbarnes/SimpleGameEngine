@@ -21,7 +21,6 @@ export default class SpatialPartitionSystem {
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
-        const entitiesById = spatialPartitionService.entitiesById;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
 
@@ -160,7 +159,7 @@ export default class SpatialPartitionSystem {
 
         if (this.isPlacable(entity) &&
             this.spatialPartitionService.entitiesById[entity.id]) {
-            this.removePlacableEntity();
+            this.removePlacableEntity(entity);
         }
     }
 
@@ -170,7 +169,7 @@ export default class SpatialPartitionSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "bounding-rectangle-service") {
             this.boundingRectangleData = null;
         }

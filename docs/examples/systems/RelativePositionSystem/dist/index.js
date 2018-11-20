@@ -1213,7 +1213,6 @@ class SpatialPartitionSystem {
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
-        const entitiesById = spatialPartitionService.entitiesById;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
 
@@ -1362,7 +1361,7 @@ class SpatialPartitionSystem {
         }
     }
 
-    serviceRemoved(name, service) {
+    serviceRemoved(name) {
         if (name === "bounding-rectangle-service") {
             this.boundingRectangleData = null;
         }

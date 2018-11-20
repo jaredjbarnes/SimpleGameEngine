@@ -12,4 +12,16 @@ export default class State {
         this.world = world;
     }
 
+    activated(){
+
+    }
+
+    deactivated(){
+        
+    }
+
+    update(){
+
+    }
+
 }

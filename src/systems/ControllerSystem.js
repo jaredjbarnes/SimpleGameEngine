@@ -30,8 +30,8 @@ export default class ControllerSystem {
     }
 
     componentAdded(entity, component) {
-        if (entity.hasComponents(DEPENDENCIES)) {
-            this.entities.set(entity, entity);
+        if (DEPENDENCIES.includes(component.type)) {
+            this.entities.set(entity.id, entity);
         }
     }
 

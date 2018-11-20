@@ -1415,7 +1415,7 @@ class SpatialPartitionSystem {
 
         if (this.isPlacable(entity) &&
             this.spatialPartitionService.entitiesById[entity.id]) {
-            this.removePlacableEntity();
+            this.removePlacableEntity(entity);
         }
     }
 

@@ -492,6 +492,18 @@ world.play();
 
 window.world = world;
 
+document.getElementById("remove-entities").addEventListener("click", () => {
+    const entities = world.getEntities();
+    
+    for (let x = 0 ; x < entities.length ; x++){
+        const entity = entities[x];
+
+        if (entity.type === "static-text"){
+            world.removeEntity(entity);
+        }
+    }
+});
+
 
 /***/ }),
 /* 10 */
@@ -931,8 +943,8 @@ class BoundingRectangleSystem {
 
     update() {
         const dirtyEntities = this.boundingRectangleService.dirtyEntities;
-        const entitiesById = this.boundingRectangleService.entitiesById;
         const entities = this.boundingRectangleService.entities;
+
         dirtyEntities.length = 0;
 
         for (let x = 0; x < entities.length; x++) {
@@ -941,11 +953,11 @@ class BoundingRectangleSystem {
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
                 this.rectangleUpdater.update();
-                this.boundingRectangleService.dirtyEntities.push(entity);
+                dirtyEntities.push(entity);
             }
         }
-
     }
+
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BoundingRectangleSystem;
 
@@ -995,12 +1007,18 @@ class BoundingRectangleUpdater {
             x: 0,
             y: 0
         };
+
+        this.origin = {
+            x: 0,
+            y: 0
+        };
     }
 
     setEntity(_entity) {
         this.entity = _entity;
         this.rectangle = this.entity.getComponent("rectangle");
         this.transform = this.entity.getComponent("transform");
+        this.origin = this.transform.origin;
     }
 
     update() {
@@ -1027,27 +1045,25 @@ class BoundingRectangleUpdater {
         const corners = this.corners;
         const angle = this.transform.rotation;
         const rotatedPoint = this.rotatedPoint;
-        const origin = this.transform.origin;
         const position = this.transform.position;
-        const transformedPoint = this.transformedPoint;
         const min = this.min;
         const max = this.max;
 
-        min.x = max.x = transformedPoint.x = position.x;
-        min.y = max.y = transformedPoint.y = position.y;
+        min.x = max.x = position.x;
+        min.y = max.y = position.y;
 
         for (let x = 0; x < corners.length; x++) {
             __WEBPACK_IMPORTED_MODULE_0__Vector__["a" /* default */].rotate(corners[x], angle, rotatedPoint);
-            min.x = Math.min(transformedPoint.x + rotatedPoint.x, min.x);
-            min.y = Math.min(transformedPoint.y + rotatedPoint.y, min.y);
-            max.x = Math.max(transformedPoint.x + rotatedPoint.x, max.x);
-            max.y = Math.max(transformedPoint.y + rotatedPoint.y, max.y);
+            min.x = Math.min(position.x - rotatedPoint.x, min.x);
+            min.y = Math.min(position.y - rotatedPoint.y, min.y);
+            max.x = Math.max(position.x - rotatedPoint.x, max.x);
+            max.y = Math.max(position.y - rotatedPoint.y, max.y);
         }
 
         this.rectangle.top = Math.floor(min.y);
         this.rectangle.left = Math.floor(min.x);
-        this.rectangle.bottom = Math.floor(max.y);
-        this.rectangle.right = Math.floor(max.x);
+        this.rectangle.bottom = Math.ceil(max.y);
+        this.rectangle.right = Math.ceil(max.x);
         this.rectangle.transformedWidth = this.rectangle.right - this.rectangle.left;
         this.rectangle.transformedHeight = this.rectangle.bottom - this.rectangle.top;
     }
@@ -1258,9 +1274,13 @@ class SpatialPartitionSystem {
             }
 
             grid.remove(lastCellPositions, entity);
-            grid.add(newCellPositions, entity);
+
+            if (this.world.getEntityById(entity.id) != null) {
+                grid.add(newCellPositions, entity);
+            }
 
         }
+
     }
 
     getCellPositions(entity) {
@@ -1321,7 +1341,7 @@ class SpatialPartitionSystem {
     //Life Cycle Hooks
     activated(world) {
         this.world = world;
-       
+
         const entities = this.world.getEntities();
         for (let x = 0; x < entities.length; x++) {
             const entity = entities[x];
@@ -1329,7 +1349,7 @@ class SpatialPartitionSystem {
         }
 
         const services = this.world.getServices();
-        for (let name in services){
+        for (let name in services) {
             this.serviceAdded(name, services[name]);
         }
 
@@ -2534,6 +2554,7 @@ class CameraSystem {
         this.camera = null;
         this.drawImageCount = 0;
         this.renderableEntities = {};
+        this.removedEntities = [];
 
         this.sort = (_entityA, _entityB) => {
             const entityA = _entityA;
@@ -2591,6 +2612,7 @@ class CameraSystem {
         const dirtyCellPositions = _dirtyCellPositions;
         const cellSize = this.spatialPartitionService.cellSize;
 
+
         for (let key in _dirtyCellPositions) {
             const dirtyCellPosition = dirtyCellPositions[key];
             const cellY = dirtyCellPosition.row * cellSize;
@@ -2602,6 +2624,7 @@ class CameraSystem {
             const right = Math.min(cellX + cellSize, cell.rectangle.right);
 
             if (top < bottom && left < right) {
+
                 const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition);
                 entities.sort(this.sort);
 
@@ -2657,7 +2680,6 @@ class CameraSystem {
                         const image = images[z];
 
                         this.drawImageCount++;
-                        window.drawCells = this.drawImageCount;
                         cell.context.drawImage(
                             image,
                             sourceX,
@@ -2683,7 +2705,19 @@ class CameraSystem {
     _updateCells() {
         const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
         const grid = this.spatialPartitionService.grid;
+        const removedEntities = this.removedEntities;
         const renderableCells = {};
+
+        for (let x = 0 ; x < removedEntities.length ; x++){
+            const entity = removedEntities[x];
+            const spatialPartition = entity.getComponent("spatial-partition");
+            const cellPositions = spatialPartition.cellPositions;
+
+            for (let c = 0; c < cellPositions.length; c++) {
+                const cellPosition = cellPositions[c];
+                renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
+            }
+        }
 
         for (let key in dirtyCells) {
             const cellPosition = dirtyCells[key];
@@ -2707,6 +2741,7 @@ class CameraSystem {
                     }
                 }
             }
+
         }
 
         for (let x = 0; x < this.cells.length; x++) {
@@ -2716,7 +2751,6 @@ class CameraSystem {
             const cellPositions = spatialPartition.cellPositions;
 
             if (cell.transform.isDirty) {
-                window.dynamicLoadingCellMoves++;
                 for (let c = 0; c < cellPositions.length; c++) {
                     const cellPosition = cellPositions[c];
                     renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
@@ -2852,6 +2886,10 @@ class CameraSystem {
         if (this._isDynamicLoadingCellEntity(entity)) {
             throw new Error("The Camera cannot run without dynamic loading cells.");
         }
+
+        if (this.compositor.isRenderable(entity)){
+            this.removedEntities.push(entity);
+        }
     }
 
     serviceAdded(name, service) {
@@ -2875,7 +2913,9 @@ class CameraSystem {
             this._transferToCanvas();
             this._cleanEntities();
         }
-        
+
+        this.removedEntities.length = 0;
+
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;
@@ -3596,8 +3636,8 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         shape.fillColor.blue = blue;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 100, y: 0 },
-            { x: 100, y: 30 },
+            { x: 300, y: 0 },
+            { x: 300, y: 30 },
             { x: 0, y: 30 },
             { x: 0, y: 0 }
         );
@@ -3608,12 +3648,12 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         textTexture.horizontalAlignment = "center";
         textTexture.verticalAlignment = "middle";
 
-        rectangle.width = 100;
+        rectangle.width = 300;
         rectangle.height = 30;
         transform.position.x = x;
         transform.position.y = y;
 
-        transform.rotation = 13;
+        transform.rotation = 90;
         transform.isDirty = true;
 
         this.addComponent(transform);

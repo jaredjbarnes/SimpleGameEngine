@@ -28,8 +28,8 @@ export default class StaticText extends Entity {
         shape.fillColor.blue = blue;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 100, y: 0 },
-            { x: 100, y: 30 },
+            { x: 300, y: 0 },
+            { x: 300, y: 30 },
             { x: 0, y: 30 },
             { x: 0, y: 0 }
         );
@@ -40,12 +40,12 @@ export default class StaticText extends Entity {
         textTexture.horizontalAlignment = "center";
         textTexture.verticalAlignment = "middle";
 
-        rectangle.width = 100;
+        rectangle.width = 300;
         rectangle.height = 30;
         transform.position.x = x;
         transform.position.y = y;
 
-        transform.rotation = 13;
+        transform.rotation = 90;
         transform.isDirty = true;
 
         this.addComponent(transform);

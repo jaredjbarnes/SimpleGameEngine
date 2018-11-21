@@ -49,9 +49,13 @@ export default class SpatialPartitionSystem {
             }
 
             grid.remove(lastCellPositions, entity);
-            grid.add(newCellPositions, entity);
+
+            if (this.world.getEntityById(entity.id) != null) {
+                grid.add(newCellPositions, entity);
+            }
 
         }
+
     }
 
     getCellPositions(entity) {
@@ -112,7 +116,7 @@ export default class SpatialPartitionSystem {
     //Life Cycle Hooks
     activated(world) {
         this.world = world;
-       
+
         const entities = this.world.getEntities();
         for (let x = 0; x < entities.length; x++) {
             const entity = entities[x];
@@ -120,7 +124,7 @@ export default class SpatialPartitionSystem {
         }
 
         const services = this.world.getServices();
-        for (let name in services){
+        for (let name in services) {
             this.serviceAdded(name, services[name]);
         }
 

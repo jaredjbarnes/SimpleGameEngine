@@ -37,12 +37,18 @@ export default class BoundingRectangleUpdater {
             x: 0,
             y: 0
         };
+
+        this.origin = {
+            x: 0,
+            y: 0
+        };
     }
 
     setEntity(_entity) {
         this.entity = _entity;
         this.rectangle = this.entity.getComponent("rectangle");
         this.transform = this.entity.getComponent("transform");
+        this.origin = this.transform.origin;
     }
 
     update() {
@@ -69,27 +75,25 @@ export default class BoundingRectangleUpdater {
         const corners = this.corners;
         const angle = this.transform.rotation;
         const rotatedPoint = this.rotatedPoint;
-        const origin = this.transform.origin;
         const position = this.transform.position;
-        const transformedPoint = this.transformedPoint;
         const min = this.min;
         const max = this.max;
 
-        min.x = max.x = transformedPoint.x = position.x;
-        min.y = max.y = transformedPoint.y = position.y;
+        min.x = max.x = position.x;
+        min.y = max.y = position.y;
 
         for (let x = 0; x < corners.length; x++) {
             Vector.rotate(corners[x], angle, rotatedPoint);
-            min.x = Math.min(transformedPoint.x + rotatedPoint.x, min.x);
-            min.y = Math.min(transformedPoint.y + rotatedPoint.y, min.y);
-            max.x = Math.max(transformedPoint.x + rotatedPoint.x, max.x);
-            max.y = Math.max(transformedPoint.y + rotatedPoint.y, max.y);
+            min.x = Math.min(position.x - rotatedPoint.x, min.x);
+            min.y = Math.min(position.y - rotatedPoint.y, min.y);
+            max.x = Math.max(position.x - rotatedPoint.x, max.x);
+            max.y = Math.max(position.y - rotatedPoint.y, max.y);
         }
 
         this.rectangle.top = Math.floor(min.y);
         this.rectangle.left = Math.floor(min.x);
-        this.rectangle.bottom = Math.floor(max.y);
-        this.rectangle.right = Math.floor(max.x);
+        this.rectangle.bottom = Math.ceil(max.y);
+        this.rectangle.right = Math.ceil(max.x);
         this.rectangle.transformedWidth = this.rectangle.right - this.rectangle.left;
         this.rectangle.transformedHeight = this.rectangle.bottom - this.rectangle.top;
     }

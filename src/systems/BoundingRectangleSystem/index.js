@@ -95,8 +95,8 @@ export default class BoundingRectangleSystem {
 
     update() {
         const dirtyEntities = this.boundingRectangleService.dirtyEntities;
-        const entitiesById = this.boundingRectangleService.entitiesById;
         const entities = this.boundingRectangleService.entities;
+
         dirtyEntities.length = 0;
 
         for (let x = 0; x < entities.length; x++) {
@@ -105,9 +105,9 @@ export default class BoundingRectangleSystem {
             if (this.isDirty(entity)) {
                 this.rectangleUpdater.setEntity(entity);
                 this.rectangleUpdater.update();
-                this.boundingRectangleService.dirtyEntities.push(entity);
+                dirtyEntities.push(entity);
             }
         }
-
     }
+
 }

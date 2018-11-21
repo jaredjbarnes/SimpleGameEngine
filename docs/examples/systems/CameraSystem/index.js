@@ -85,3 +85,15 @@ for (let x = 0; x < 10000; x++) {
 world.play();
 
 window.world = world;
+
+document.getElementById("remove-entities").addEventListener("click", () => {
+    const entities = world.getEntities();
+    
+    for (let x = 0 ; x < entities.length ; x++){
+        const entity = entities[x];
+
+        if (entity.type === "static-text"){
+            world.removeEntity(entity);
+        }
+    }
+});

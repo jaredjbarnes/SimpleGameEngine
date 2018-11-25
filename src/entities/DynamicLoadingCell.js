@@ -5,7 +5,7 @@ import RectangleCollider from "../components/RectangleCollider";
 import DynamicLoadingCell from "../components/DynamicLoadingCell";
 
 export default class extends Entity {
-    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
+    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize = 256) {
         super();
 
         const transform = new Transform();

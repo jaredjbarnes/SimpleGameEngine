@@ -6,8 +6,22 @@ export default class Grid {
     add(cellPositions, entity) {
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
-            const bucket = this.getBucket(cellPosition);
+            let bucket = this.getBucket(cellPosition);
+
+            if (bucket == null) {
+                this.createBucket(cellPosition);
+                bucket = this.getBucket(cellPosition);
+            }
+
             bucket.push(entity);
+        }
+    }
+
+    createBucket({ column, row }) {
+        const key = this.getKey(column, row);
+
+        if (this.buckets[key] == null) {
+            this.buckets[key] = [];
         }
     }
 
@@ -19,13 +33,7 @@ export default class Grid {
 
     getBucket({ column, row }) {
         const key = this.getKey(column, row);
-        let bucket = this.buckets[key];
-
-        if (bucket == null) {
-            bucket = this.buckets[key] = [];
-        }
-
-        return bucket;
+        return this.buckets[key] || null;
     }
 
     getKey(column, row) {
@@ -36,10 +44,19 @@ export default class Grid {
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const bucket = this.getBucket(cellPosition);
+
+            if (bucket == null){
+                return;
+            }
+            
             const index = bucket.indexOf(entity);
 
             if (index > -1) {
                 bucket.splice(index, 1);
+            }
+
+            if (bucket.length === 0) {
+                delete this.buckets[this.getKey(cellPosition.column, cellPosition.row)]
             }
         }
     }

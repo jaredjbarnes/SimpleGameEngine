@@ -1,6 +1,6 @@
 class Pool {
-    constructor({EntityType, type}) {
-        this.EntityType = EntityType;
+    constructor({ type, factory }) {
+        this.factory = factory;
         this.type = type;
         this.available = [];
         this.locked = {};
@@ -23,12 +23,11 @@ class Pool {
 
         if (this.available.length > 0) {
             entity = this.available.pop();
-
-            this.locked[entity.id] = entity;
         } else {
-            entity = new this.EntityType();
+            entity = this.factory();
         }
-
+        
+        this.locked[entity.id] = entity;
         return entity;
     }
 }
@@ -38,8 +37,8 @@ export default class EntityPool {
         this.pools = {};
     }
 
-    addEntityType(type, EntityType) {
-        this.pools[type] = new Pool({ EntityType, type });
+    addEntityType(type, factory) {
+        this.pools[type] = new Pool({ factory, type });
     }
 
     removeEntityType(type) {
@@ -62,7 +61,7 @@ export default class EntityPool {
         return this.pools[entity.type].release(entity);
     }
 
-    clear(){
+    clear() {
         this.pools = {};
     }
 }

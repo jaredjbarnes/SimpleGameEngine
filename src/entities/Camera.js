@@ -5,7 +5,7 @@ import Rectangle from "../components/Rectangle";
 import RectangleCollider from "../components/RectangleCollider";
 
 export default class Camera extends Entity {
-    constructor(name, { width = 300, height = 300 } = {}) {
+    constructor(name, { width = 256, height = 256 } = {}) {
         super();
 
         const camera = new CameraComponent();

@@ -14,6 +14,8 @@
 window.dynamicLoadingCellMoves = 0;
 window.drawCells = 0;
 
+const emptyArray = [];
+
 class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
         this.transform = cameraCanvasCellEntity.getComponent("transform");
@@ -122,7 +124,7 @@ export default class CameraSystem {
 
             if (top < bottom && left < right) {
 
-                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition);
+                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition) || emptyArray;
                 entities.sort(this.sort);
 
                 cell.context.clearRect(
@@ -218,7 +220,7 @@ export default class CameraSystem {
 
         for (let key in dirtyCells) {
             const cellPosition = dirtyCells[key];
-            const entities = grid.getBucket(cellPosition);
+            const entities = grid.getBucket(cellPosition) || emptyArray;
 
             for (let i = 0; i < entities.length; i++) {
                 const entity = entities[i]
@@ -254,7 +256,7 @@ export default class CameraSystem {
                 }
             }
 
-            // Find dirty entities with in the loading area that need updating.
+            // Find dirty entities with in the loaded area that need updating.
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
 

@@ -15,7 +15,7 @@ class Cell {
 }
 
 export default class DynamicLoadingSystem {
-    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
+    constructor({ cellSize, cameraName } = { cellSize: 128, cameraName: null }) {
         this.world = null;
         this.cameraName = cameraName;
         this.cells = [];

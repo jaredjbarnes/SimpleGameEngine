@@ -1,46 +1,14 @@
-import WorldGeneration from "../../components/WorldGeneration";
 import WorldGenerationManager from "./WorldGenerationManager";
 
-const DYNAMIC_LOADING_CELL = "dynamic-loading-cell";
-const WORLD_GENERATION = "world-generation";
-
 export default class WorldGenerationSystem {
-    constructor({ noise, scale = 1000 }) {
+    constructor({ noise, scale = 5, cameraName, buffer = 128 }) {
         this.noise = noise;
         this.scale = scale;
+        this.cameraName = cameraName;
+        this.buffer = buffer;
         this.world = null;
-        
-        this.worldGenerationManager = new WorldGenerationManager({ noise, scale });
-        this.dynamicLoadingCells = [];
-    }
-
-    addDynamicLoadingCell(entity) {
-        const index = this.dynamicLoadingCells.indexOf(entity);
-        if (index === -1) {
-            this.dynamicLoadingCells.push(entity);
-
-            entity.getComponent("transform").isDirty = true;
-
-            if (!entity.hasComponent(WORLD_GENERATION)) {
-                entity.addComponent(new WorldGeneration());
-            }
-        }
-    }
-
-    isDynamicLoadingCell(entity) {
-        return entity.hasComponent(DYNAMIC_LOADING_CELL);
-    }
-
-    isDynamicLoadingCellComponent(component) {
-        return component.type === DYNAMIC_LOADING_CELL;
-    }
-
-    removeDynamicLoadingCell(entity) {
-        const index = this.dynamicLoadingCells.indexOf(entity);
-        if (index > -1) {
-            entity.removeComponentByType(WORLD_GENERATION);
-            this.dynamicLoadingCells.splice(index, 1);
-        }
+        this.camera = null;
+        this.worldGenerationManager = null;
     }
 
     // Life-cycle Methods
@@ -58,38 +26,69 @@ export default class WorldGenerationSystem {
         }
     }
 
+    setup() {
+        if (this.worldGenerationManager != null) {
+            return;
+        }
+
+        this.worldGenerationManager = new WorldGenerationManager({
+            world: this.world,
+            noise: this.noise,
+            scale: this.scale,
+            entity: this.camera,
+            buffer: this.buffer
+        });
+
+    }
+
+    setCamera(entity) {
+        this.camera = entity;
+        this.setup();
+    }
+
+    teardown() {
+        this.camera = null;
+        this.worldGenerationManager = null;
+    }
+
+    isCamera(entity) {
+        const cameraComponent = entity.getComponent("camera");
+
+        return cameraComponent != null && cameraComponent.name === this.cameraName;
+    }
+
     componentAdded(entity) {
-        if (this.isDynamicLoadingCell(entity)) {
-            this.addDynamicLoadingCell(entity);
+        if (this.isCamera(entity)) {
+            this.setCamera(entity);
         }
     }
 
     componentRemoved(entity, component) {
-        if (this.isDynamicLoadingCellComponent(component)) {
-            this.removeDynamicLoadingCell(entity);
+        if (component.type === "camera" && component.name === this.cameraName) {
+            this.teardown();
         }
     }
 
     deactivated() {
         this.world = null;
-        this.dynamicLoadingCells = null;
         this.entityPool.clear();
     }
 
     entityAdded(entity) {
-        if (this.isDynamicLoadingCell(entity)) {
-            this.addDynamicLoadingCell(entity);
+        if (this.isCamera(entity)) {
+            this.setCamera(entity);
         }
     }
 
     entityRemoved(entity) {
-        this.removeDynamicLoadingCell(entity);
+        if (this.isCamera(entity)) {
+            this.teardown();
+        }
     }
 
-    afterUpdate() {
-        for (let x = 0; x < this.dynamicLoadingCells.length; x++) {
-            const entity = this.dynamicLoadingCells[x];
-            this.worldGenerationManager.manage(this.world, entity);
+    update() {
+        if (this.worldGenerationManager != null) {
+            this.worldGenerationManager.manage();
         }
     }
 

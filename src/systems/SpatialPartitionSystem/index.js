@@ -161,8 +161,7 @@ export default class SpatialPartitionSystem {
     entityRemoved(_entity) {
         const entity = _entity;
 
-        if (this.isPlacable(entity) &&
-            this.spatialPartitionService.entitiesById[entity.id]) {
+        if (this.isPlacable(entity)) {
             this.removePlacableEntity(entity);
         }
     }

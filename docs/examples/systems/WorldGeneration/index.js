@@ -13,22 +13,6 @@ import PlayerControllerSystem from "./systems/PlayerControllerSystem";
 import WorldGenerationSystem from "./systems/WorldGenerationSystem";
 import Noise from "../../../../src/utilities/Noise";
 
-const getRandomNumber = (min, max) => {
-    const range = max - min;
-    const value = Math.random() * range;
-
-    return parseInt(value + min, 10);
-}
-
-const getRandomRgba = () => {
-    return {
-        red: getRandomNumber(0, 255),
-        green: getRandomNumber(0, 255),
-        blue: getRandomNumber(0, 255),
-        alpha: 1
-    };
-}
-
 const cameraName = "main";
 const camera = new Camera(cameraName);
 
@@ -60,25 +44,25 @@ const followEntityCameraSystem = new FollowEntityCameraSystem({
 const defaultCameraSystem = new DefaultCameraSystem({
     canvas,
     cameraName,
-    cellSize: 400
+    cellSize: 512
 });
 
 const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
     noise: new Noise(),
-    scale: 1000
+    cameraName: "main"
 });
 
 camera.getComponent("rectangle").height = mobileStageCreator.canvas.height;
 camera.getComponent("rectangle").width = mobileStageCreator.canvas.width;
 
 // Set up world
-world.addSystem(worldGenerationSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(playerControllerSystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
+world.addSystem(worldGenerationSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
 world.addSystem(defaultCameraSystem);

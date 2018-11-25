@@ -926,7 +926,7 @@ class World {
 
 
 class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor(name, { width = 300, height = 300 } = {}) {
+    constructor(name, { width = 256, height = 256 } = {}) {
         super();
 
         const camera = new __WEBPACK_IMPORTED_MODULE_1__components_Camera__["a" /* default */]();
@@ -1437,8 +1437,7 @@ class SpatialPartitionSystem {
     entityRemoved(_entity) {
         const entity = _entity;
 
-        if (this.isPlacable(entity) &&
-            this.spatialPartitionService.entitiesById[entity.id]) {
+        if (this.isPlacable(entity)) {
             this.removePlacableEntity(entity);
         }
     }
@@ -1478,8 +1477,22 @@ class Grid {
     add(cellPositions, entity) {
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
-            const bucket = this.getBucket(cellPosition);
+            let bucket = this.getBucket(cellPosition);
+
+            if (bucket == null) {
+                this.createBucket(cellPosition);
+                bucket = this.getBucket(cellPosition);
+            }
+
             bucket.push(entity);
+        }
+    }
+
+    createBucket({ column, row }) {
+        const key = this.getKey(column, row);
+
+        if (this.buckets[key] == null) {
+            this.buckets[key] = [];
         }
     }
 
@@ -1491,13 +1504,7 @@ class Grid {
 
     getBucket({ column, row }) {
         const key = this.getKey(column, row);
-        let bucket = this.buckets[key];
-
-        if (bucket == null) {
-            bucket = this.buckets[key] = [];
-        }
-
-        return bucket;
+        return this.buckets[key] || null;
     }
 
     getKey(column, row) {
@@ -1508,10 +1515,19 @@ class Grid {
         for (let x = 0; x < cellPositions.length; x++) {
             const cellPosition = cellPositions[x];
             const bucket = this.getBucket(cellPosition);
+
+            if (bucket == null){
+                return;
+            }
+            
             const index = bucket.indexOf(entity);
 
             if (index > -1) {
                 bucket.splice(index, 1);
+            }
+
+            if (bucket.length === 0) {
+                delete this.buckets[this.getKey(cellPosition.column, cellPosition.row)]
             }
         }
     }
@@ -1559,6 +1575,7 @@ class SpatialPartitionService {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Collision__ = __webpack_require__(27);
 ﻿
+const emptyArray = [];
 
 class RectangleColliderSystem {
     constructor(cellSize = 200) {
@@ -1652,13 +1669,13 @@ class RectangleColliderSystem {
         const grid = this.spatialPartitionService.grid;
 
         for (let key in cellPositions) {
-            const entities = grid.getBucket(cellPositions[key]);
+            const entities = grid.getBucket(cellPositions[key]) || emptyArray;
             this.removeCollisionsFromEntities(entities);
         }
 
         for (let key in cellPositions) {
             const cellPosition = cellPositions[key];
-            const entities = grid.getBucket(cellPosition);
+            const entities = grid.getBucket(cellPosition) || emptyArray;
 
             for (let y = 0; y < entities.length; y++) {
                 const entity = entities[y];
@@ -2571,7 +2588,6 @@ class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
-        this.compositeImages = {};
         this.imageTypes = [];
     }
 
@@ -2632,7 +2648,6 @@ class Compositor {
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            this.compositeImages[entity.id] = null;
             return component && component.isDirty;
         }
 
@@ -2642,17 +2657,12 @@ class Compositor {
     getEntityImages(_entity) {
         const entity = _entity;
         const rasterizers = this.rasterizers;
-        let images = this.compositeImages[entity.id];
 
         if (entity == null) {
             return [];
         }
 
-        if (images != null){
-            return images;
-        }
-
-        images = [];
+        let images = [];
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
@@ -2671,8 +2681,6 @@ class Compositor {
         }
 
         images.sort(sortByZIndex);
-
-        this.compositeImages[entity.id] = images;
 
         return images;
 
@@ -3193,11 +3201,10 @@ class LineRenderer {
     }
 
     getIdentity(entity) {
-        const transform = entity.getComponent("transform");
-        const rectangle = entity.getComponent("rectangle");
         const textTexture = entity.getComponent("text");
+        const rectangle = entity.getComponent("rectangle");
 
-        return `transform=${JSON.stringify(transform)}|text=${JSON.stringify(textTexture)}|${JSON.stringify(rectangle)}`;
+        return `text=${JSON.stringify(textTexture)}|${rectangle.width}|${rectangle.height}}`;
     }
 
     rasterize(entity) {
@@ -3276,6 +3283,8 @@ class LineRenderer {
 
 window.dynamicLoadingCellMoves = 0;
 window.drawCells = 0;
+
+const emptyArray = [];
 
 class CanvasCell {
     constructor(cameraCanvasCellEntity, canvas) {
@@ -3385,7 +3394,7 @@ class CameraSystem {
 
             if (top < bottom && left < right) {
 
-                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition);
+                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition) || emptyArray;
                 entities.sort(this.sort);
 
                 cell.context.clearRect(
@@ -3481,7 +3490,7 @@ class CameraSystem {
 
         for (let key in dirtyCells) {
             const cellPosition = dirtyCells[key];
-            const entities = grid.getBucket(cellPosition);
+            const entities = grid.getBucket(cellPosition) || emptyArray;
 
             for (let i = 0; i < entities.length; i++) {
                 const entity = entities[i]
@@ -3517,7 +3526,7 @@ class CameraSystem {
                 }
             }
 
-            // Find dirty entities with in the loading area that need updating.
+            // Find dirty entities with in the loaded area that need updating.
             for (let y in collisions) {
                 const entity = this.world.getEntityById(y);
 
@@ -3704,7 +3713,7 @@ class Cell {
 }
 
 class DynamicLoadingSystem {
-    constructor({ cellSize, cameraName } = { cellSize: 1000, cameraName: null }) {
+    constructor({ cellSize, cameraName } = { cellSize: 128, cameraName: null }) {
         this.world = null;
         this.cameraName = cameraName;
         this.cells = [];
@@ -3883,7 +3892,7 @@ class DynamicLoadingSystem {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize) {
+    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize = 256) {
         super();
 
         const transform = new __WEBPACK_IMPORTED_MODULE_1__components_Transform__["a" /* default */]();

@@ -15,11 +15,10 @@
     }
 
     getIdentity(entity) {
-        const transform = entity.getComponent("transform");
-        const rectangle = entity.getComponent("rectangle");
         const textTexture = entity.getComponent("text");
+        const rectangle = entity.getComponent("rectangle");
 
-        return `transform=${JSON.stringify(transform)}|text=${JSON.stringify(textTexture)}|${JSON.stringify(rectangle)}`;
+        return `text=${JSON.stringify(textTexture)}|${rectangle.width}|${rectangle.height}}`;
     }
 
     rasterize(entity) {

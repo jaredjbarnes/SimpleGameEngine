@@ -1,4 +1,5 @@
 ﻿import Collision from "./Collision";
+const emptyArray = [];
 
 export default class RectangleColliderSystem {
     constructor(cellSize = 200) {
@@ -92,13 +93,13 @@ export default class RectangleColliderSystem {
         const grid = this.spatialPartitionService.grid;
 
         for (let key in cellPositions) {
-            const entities = grid.getBucket(cellPositions[key]);
+            const entities = grid.getBucket(cellPositions[key]) || emptyArray;
             this.removeCollisionsFromEntities(entities);
         }
 
         for (let key in cellPositions) {
             const cellPosition = cellPositions[key];
-            const entities = grid.getBucket(cellPosition);
+            const entities = grid.getBucket(cellPosition) || emptyArray;
 
             for (let y = 0; y < entities.length; y++) {
                 const entity = entities[y];

@@ -9,10 +9,10 @@
   },
   "keywords": [],
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "child-process-es6-promise": "^1.2.0",
-    "copy-webpack-plugin": "^4.5.2",
+    "copy-webpack-plugin": "^4.6.0",
     "fs-extra": "^3.0.1",
     "istanbul": "^0.4.5",
     "jsdoc": "^3.4.3",

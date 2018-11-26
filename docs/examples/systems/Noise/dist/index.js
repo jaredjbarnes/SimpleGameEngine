@@ -73,12 +73,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-const noise = new __WEBPACK_IMPORTED_MODULE_0__src_utilities_Noise__["a" /* default */]();
+const noise = new __WEBPACK_IMPORTED_MODULE_0__src_utilities_Noise__["a" /* default */](1234);
 const canvas = document.getElementById("viewport");
 const context = canvas.getContext("2d");
 const width = canvas.width;
 const height = canvas.height;
-const scale = 1000;
 
 const getColor = (x, y) => {
     return Math.floor(((noise.perlin(x / 50, y / 50) + 1) / 2) * 255);

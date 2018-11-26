@@ -1,12 +1,10 @@
 import Validator from "../../../../../../src/utilities/Validator";
 
-export default class GroundEntityIdentifier {
-    constructor({ noise, scale }) {
+export default class EntityIdentifier {
+    constructor({ noise, scale = 5  }) {
         this.noise = noise;
         this.scale = scale;
         this.ranges = [];
-
-        window.groundEntityIdentifier= this;
     }
 
     addRange(range) {
@@ -21,7 +19,7 @@ export default class GroundEntityIdentifier {
         this.ranges.push(range);
     }
 
-    getTileType(value) {
+    getEntityType(value) {
         let name = null;
         const ranges = this.ranges;
 
@@ -36,18 +34,18 @@ export default class GroundEntityIdentifier {
         return name;
     }
 
-    getTileIdentity(x, y) {
+    getEntityIdentity(x, y) {
         const value = this.noise.perlin(x / this.scale, y / this.scale);
         const topValue = this.noise.perlin(x / this.scale, (y - 1) / this.scale);
         const bottomValue = this.noise.perlin(x / this.scale, (y + 1) / this.scale);
         const leftValue = this.noise.perlin((x - 1) / this.scale, y / this.scale);
         const rightValue = this.noise.perlin((x + 1) / this.scale, y / this.scale);
 
-        let valueName = this.getTileType(value);
-        let topName = this.getTileType(topValue);
-        let bottomName = this.getTileType(bottomValue);
-        let leftName = this.getTileType(leftValue);
-        let rightName = this.getTileType(rightValue);
+        let valueName = this.getEntityType(value);
+        let topName = this.getEntityType(topValue);
+        let bottomName = this.getEntityType(bottomValue);
+        let leftName = this.getEntityType(leftValue);
+        let rightName = this.getEntityType(rightValue);
 
         const type = `${valueName}-${topName}-${rightName}-${bottomName}-${leftName}`;
 

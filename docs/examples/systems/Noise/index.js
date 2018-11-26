@@ -1,12 +1,11 @@
 
 import Noise from "../../../../src/utilities/Noise";
 
-const noise = new Noise();
+const noise = new Noise(1234);
 const canvas = document.getElementById("viewport");
 const context = canvas.getContext("2d");
 const width = canvas.width;
 const height = canvas.height;
-const scale = 1000;
 
 const getColor = (x, y) => {
     return Math.floor(((noise.perlin(x / 50, y / 50) + 1) / 2) * 255);

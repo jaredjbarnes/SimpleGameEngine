@@ -1,4 +1,6 @@
 import Ground from "./Ground";
+import Bush from "../../entities/Bush";
+import Tree from "../../entities/Tree";
 
 export default {
     "d-d-d-d-d": () => {
@@ -96,5 +98,11 @@ export default {
     },
     "g-d-g-d-g": () => {
         return new Ground("g-g-g-g-g");
+    },
+    "bush": () => {
+        return new Bush();
+    },
+    "tree": () => {
+        return new Tree();
     }
 }

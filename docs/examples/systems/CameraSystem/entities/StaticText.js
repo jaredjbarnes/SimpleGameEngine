@@ -4,7 +4,6 @@ import Text from "../../../../../src/components/Text";
 import Rectangle from "../../../../../src/components/Rectangle";
 import RectangleCollider from "../../../../../src/components/RectangleCollider";
 import Shape from "../../../../../src/components/Shape";
-import SolidBody from "../../../../../src/components/SolidBody";
 import Opacity from "../../../../../src/components/Opacity";
 
 export default class StaticText extends Entity {
@@ -17,7 +16,6 @@ export default class StaticText extends Entity {
         const rectangle = new Rectangle();
         const rectangleCollider = new RectangleCollider();
         const shape = new Shape();
-        const solidBody = new SolidBody();
         const opacity = new Opacity();
 
         opacity.value = Math.random();
@@ -28,8 +26,8 @@ export default class StaticText extends Entity {
         shape.fillColor.blue = blue;
         shape.points.push(
             { x: 0, y: 0 },
-            { x: 300, y: 0 },
-            { x: 300, y: 30 },
+            { x: 100, y: 0 },
+            { x: 100, y: 30 },
             { x: 0, y: 30 },
             { x: 0, y: 0 }
         );
@@ -40,12 +38,12 @@ export default class StaticText extends Entity {
         textTexture.horizontalAlignment = "center";
         textTexture.verticalAlignment = "middle";
 
-        rectangle.width = 300;
+        rectangle.width = 100;
         rectangle.height = 30;
         transform.position.x = x;
         transform.position.y = y;
 
-        transform.rotation = 90;
+        transform.rotation = 13;
         transform.isDirty = true;
 
         this.addComponent(transform);

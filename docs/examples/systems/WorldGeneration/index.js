@@ -44,13 +44,32 @@ const followEntityCameraSystem = new FollowEntityCameraSystem({
 const defaultCameraSystem = new DefaultCameraSystem({
     canvas,
     cameraName,
-    cellSize: 512
+    cellSize: 512,
+    sort: (entityA, entityB) => {
+        const rectangleA = entityA.getComponent("rectangle");
+        const rectangleB = entityB.getComponent("rectangle");
+
+        if (rectangleA.bottom < rectangleB.bottom) {
+            return -1;
+        } else if (rectangleA.bottom > rectangleB.bottom) {
+            return 1;
+        } else {
+            if (rectangleA.right < rectangleB.right) {
+                return -1
+            } else if (rectangleA.right > rectangleB.right) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
 });
 
 const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
     noise: new Noise(),
+    scale: 8,
     cameraName: "main"
 });
 

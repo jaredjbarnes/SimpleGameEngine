@@ -11,7 +11,7 @@ import SystemsBundlerSystem from "./SystemsBundlerSystem";
 import DynamicLoadingSystem from "./DynamicLoadingSystem";
 
 class DefaultCameraSystem extends CameraSystem {
-    constructor({ canvas, cameraName, assetRoot }) {
+    constructor({ canvas, cameraName, assetRoot, sort }) {
         const compositor = new Compositor();
         const canvasFactory = new CanvasFactory();
         const imageFactory = new ImageFactory();
@@ -25,7 +25,8 @@ class DefaultCameraSystem extends CameraSystem {
             canvas,
             cameraName,
             compositor,
-            canvasFactory
+            canvasFactory,
+            sort
         });
 
         this.polygonRasterizer = null;
@@ -47,10 +48,10 @@ class DefaultCameraSystem extends CameraSystem {
 }
 
 export default class extends SystemsBundlerSystem {
-    constructor({ canvas, cameraName, assetRoot, cellSize }) {
+    constructor({ canvas, cameraName, assetRoot, cellSize, sort }) {
         super();
         this.dynamicLoadingSystem = new DynamicLoadingSystem({ cameraName, cellSize });
-        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot });
+        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot, sort });
         
         this.systems.push(this.dynamicLoadingSystem);
         this.systems.push(this.defaultCameraSystem);

@@ -2515,7 +2515,7 @@ class CollisionDetector {
 
 
 class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a" /* default */] {
-    constructor({ canvas, cameraName, assetRoot }) {
+    constructor({ canvas, cameraName, assetRoot, sort }) {
         const compositor = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__["a" /* default */]();
         const canvasFactory = new __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__["a" /* default */]();
         const imageFactory = new __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__["a" /* default */]();
@@ -2529,7 +2529,8 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
             canvas,
             cameraName,
             compositor,
-            canvasFactory
+            canvasFactory,
+            sort
         });
 
         this.polygonRasterizer = null;
@@ -2551,10 +2552,10 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__["a" /* default */] {
-    constructor({ canvas, cameraName, assetRoot, cellSize }) {
+    constructor({ canvas, cameraName, assetRoot, cellSize, sort }) {
         super();
         this.dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__["a" /* default */]({ cameraName, cellSize });
-        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot });
+        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot, sort });
         
         this.systems.push(this.dynamicLoadingSystem);
         this.systems.push(this.defaultCameraSystem);

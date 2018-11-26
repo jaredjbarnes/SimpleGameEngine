@@ -63,7 +63,7 @@ export default class extends Entity {
         shape.fillColor.blue = 255;
         shape.fillColor.green = 100;
         shape.fillColor.red = 100;
-        shape.fillColor.alpha = 0.25
+        //shape.fillColor.alpha = 0.25
         
         shape.points.push(
             { x: 0, y: 0 },

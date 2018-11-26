@@ -1,6 +1,7 @@
 import Ground from "./Ground";
 import Bush from "../../entities/Bush";
 import Tree from "../../entities/Tree";
+import Flower from "../../entities/Flower";
 
 export default {
     "d-d-d-d-d": () => {
@@ -104,5 +105,8 @@ export default {
     },
     "tree": () => {
         return new Tree();
+    },
+    "flower": () => {
+        return new Flower();
     }
 }

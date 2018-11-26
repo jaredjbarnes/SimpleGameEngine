@@ -1608,7 +1608,8 @@ class RectangleColliderSystem {
         }
     }
 
-    removeCollisionsFromEntities(entities) {
+    removeCollisionsFromEntities(_entities) {
+        const entities = _entities;
         for (let x = 0; x < entities.length; x++) {
             this.removeCollisionsFromEntity(entities[x]);
         }

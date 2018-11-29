@@ -69,7 +69,7 @@
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(1);
 ﻿
 
 
@@ -162,6 +162,18 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
+    args = Array.isArray(args)? args: [];
+   if (obj != null && typeof obj[methodName] === "function"){
+       return obj[methodName].apply(obj, args);
+   }
+});
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 class Transform {
     constructor() {
         this.type = "transform";
@@ -184,7 +196,7 @@ class Transform {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -206,34 +218,7 @@ class Rectangle {
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class RectangleCollider {
-    constructor() {
-        this.type = "rectangle-collider";
-        this.name = null;
-        this.collisions = {};
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = RectangleCollider;
-
-
-/***/ }),
 /* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
-    args = Array.isArray(args)? args: [];
-   if (obj != null && typeof obj[methodName] === "function"){
-       return obj[methodName].apply(obj, args);
-   }
-});
-
-/***/ }),
-/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -356,11 +341,11 @@ class Vector {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(1);
 
 
 class SystemsBundlerSystem {
@@ -424,7 +409,7 @@ class SystemsBundlerSystem {
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -458,6 +443,21 @@ class Text {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Text;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+﻿class RectangleCollider {
+    constructor() {
+        this.type = "rectangle-collider";
+        this.name = null;
+        this.collisions = {};
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = RectangleCollider;
 
 
 /***/ }),
@@ -572,13 +572,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_NarrowPhaseCollisionSystem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_DefaultCameraSystem__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_ControllerSystem__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_KeyboardSystem__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_systems_MovementSystem__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_systems_SolidBodySystem__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_Text__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_FollowEntityCameraSystem__ = __webpack_require__(56);
 
 
 
@@ -668,7 +668,7 @@ window.world = world;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(1);
 ﻿
 
 class World {
@@ -900,11 +900,9 @@ class World {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Camera__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RectangleCollider__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Transform__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__ = __webpack_require__(3);
 ﻿
-
 
 
 
@@ -918,7 +916,6 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
 
         const transform = new __WEBPACK_IMPORTED_MODULE_2__components_Transform__["a" /* default */]();
         const rectangle = new __WEBPACK_IMPORTED_MODULE_3__components_Rectangle__["a" /* default */]();
-        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_4__components_RectangleCollider__["a" /* default */]();
 
         rectangle.width = width;
         rectangle.height = height;
@@ -927,7 +924,6 @@ class Camera extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
         this.addComponent(camera);
         this.addComponent(transform);
         this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
 
     }
 }
@@ -978,7 +974,7 @@ var S4 = function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(5);
 
 
 
@@ -1125,7 +1121,7 @@ class BoundingRectangleSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(4);
 
 
 class BoundingRectangleUpdater {
@@ -1453,6 +1449,8 @@ class SpatialPartitionSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+const emptyArray = Object.freeze([]);
+
 class Grid {
     constructor(buckets = {}) {
         this.buckets = buckets;
@@ -1491,6 +1489,20 @@ class Grid {
         return this.buckets[key] || null;
     }
 
+    getBuckets(_start, _end) {
+        const start = _start;
+        const end = _end;
+        const results = [];
+
+        for (let y = start.row; y <= end.row; y++) {
+            for (let x = start.column; x <= end.column; x++) {
+                const bucket = this.getBucket({ column: x, row: y });
+                bucket.push(bucket || emptyArray);
+            }
+        }
+        return results;
+    }
+
     getKey(column, row) {
         return `${column}_${row}`;
     }
@@ -1500,10 +1512,10 @@ class Grid {
             const cellPosition = cellPositions[x];
             const bucket = this.getBucket(cellPosition);
 
-            if (bucket == null){
+            if (bucket == null) {
                 return;
             }
-            
+
             const index = bucket.indexOf(entity);
 
             if (index > -1) {
@@ -1783,7 +1795,7 @@ class Collision {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(31);
 
@@ -1904,7 +1916,7 @@ class PolygonSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(4);
 
 
 class PolygonUpdater {
@@ -2228,7 +2240,7 @@ class PolygonColliderSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(4);
 
 
 class CollisionDetector {
@@ -2501,10 +2513,6 @@ class CollisionDetector {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__ = __webpack_require__(44);
-
-
 
 
 
@@ -2551,17 +2559,8 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
         }
     }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = DefaultCameraSystem;
 
-/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_9__SystemsBundlerSystem__["a" /* default */] {
-    constructor({ canvas, cameraName, assetRoot, cellSize, sort }) {
-        super();
-        this.dynamicLoadingSystem = new __WEBPACK_IMPORTED_MODULE_10__DynamicLoadingSystem__["a" /* default */]({ cameraName, cellSize });
-        this.defaultCameraSystem = new DefaultCameraSystem({ canvas, cameraName, assetRoot, sort });
-        
-        this.systems.push(this.dynamicLoadingSystem);
-        this.systems.push(this.defaultCameraSystem);
-    }
-});
 
 /***/ }),
 /* 34 */
@@ -2804,6 +2803,8 @@ class ImageFactory {
         canvas.height = height;
 
         this.getImageAsync(url).then((image) => {
+            transform.isDirty = true;
+            rectangle.isDirty = true;
             context.globalAlpha = imageComponent.opacity;
 
             const translate = {
@@ -3254,7 +3255,12 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿const idSort = (_entityA, _entityB) => {
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CanvasPool__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CellRenderer__ = __webpack_require__(45);
+
+
+
+const idSort = (_entityA, _entityB) => {
     const entityA = _entityA;
     const entityB = _entityB;
 
@@ -3267,49 +3273,29 @@ class LineRenderer {
     }
 };
 
-window.dynamicLoadingCellMoves = 0;
-window.drawCells = 0;
-
-const emptyArray = [];
-
-class CanvasCell {
-    constructor(cameraCanvasCellEntity, canvas) {
-        this.transform = cameraCanvasCellEntity.getComponent("transform");
-        this.rectangleCollider = cameraCanvasCellEntity.getComponent("rectangle-collider");
-        this.rectangle = cameraCanvasCellEntity.getComponent("rectangle");
-        this.entity = cameraCanvasCellEntity;
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-        this.canvas.width = this.rectangle.width;
-        this.canvas.height = this.rectangle.height;
-        this.isDirty = false;
-    }
-}
-
-class Camera {
-    constructor(cameraEntity, canvas) {
-        this.transform = cameraEntity.getComponent("transform");
-        this.rectangleCollider = cameraEntity.getComponent("rectangle-collider");
-        this.rectangle = cameraEntity.getComponent("rectangle");
-        this.entity = cameraEntity;
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-    }
-}
-
 class CameraSystem {
-    constructor({ canvas, cameraName, compositor, canvasFactory, sort = idSort }) {
+    constructor({
+        cameraName,
+        canvas,
+        canvasFactory,
+        compositor,
+        sort = idSort
+    }) {
         this.canvas = canvas;
-        this.compositor = compositor;
         this.cameraName = cameraName;
-        this.canvasFactory = canvasFactory;
+        this.compositor = compositor;
+        this.canvasPool = new __WEBPACK_IMPORTED_MODULE_0__CanvasPool__["a" /* default */](canvasFactory);
+        this.cellRenderer = new __WEBPACK_IMPORTED_MODULE_1__CellRenderer__["a" /* default */]();
+        this.cellCanvases = {};
+        this.cellSize = null;
+        this.cameraRectangle = null;
         this.spatialPartitionService = null;
-        this.cells = [];
-        this.world = null;
-        this.camera = null;
-        this.drawImageCount = 0;
-        this.renderableEntities = {};
-        this.removedEntities = [];
+        this.lastRectangle = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
 
         this.sort = (_entityA, _entityB) => {
             const entityA = _entityA;
@@ -3329,91 +3315,332 @@ class CameraSystem {
         }
     }
 
-    _cleanEntities() {
-        const renderableEntities = this.renderableEntities;
-        const compositor = this.compositor;
+    getCanvas(_column, _row) {
+        return this.cellCanvases[`${_column}_${_row}`] || null;
+    }
 
-        for (let id in renderableEntities) {
-            const entity = renderableEntities[id];
-            compositor.cleanEntity(entity);
+    releaseCellCanvasesAndSaveLastRectangle() {
+        const cellSize = this.spatialPartitionService.cellSize;
+        const cameraRectangle = this.cameraRectangle;
+
+        const top = Math.floor(cameraRectangle.top / cellSize);
+        const left = Math.floor(cameraRectangle.left / cellSize);
+        const bottom = Math.ceil((cameraRectangle.bottom / cellSize) + 1);
+        const right = Math.ceil((cameraRectangle.right / cellSize) + 1);
+
+        for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
+            for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
+
+                const intersectionTop = Math.max(y, top);
+                const intersectionLeft = Math.max(x, left);
+                const intersectionBottom = Math.min(y, bottom);
+                const intersectionRight = Math.min(x, right);
+
+                if (!(intersectionTop < intersectionBottom && intersectionLeft < intersectionRight)) {
+                    const canvas = this.getCanvas(x, y);
+
+                    if (canvas != null) {
+                        this.canvasPool.release(canvas);
+                    }
+
+                    delete this.cellCanvases[`${x}_${y}`]
+                }
+            }
+        }
+
+        this.lastRectangle.top = top;
+        this.lastRectangle.left = left;
+        this.lastRectangle.bottom = bottom;
+        this.lastRectangle.right = right;
+    }
+
+    drawToNewCellCanvases() {
+        for (let y = this.lastRectangle.top; y <= this.lastRectangle.bottom; y++) {
+            for (let x = this.lastRectangle.left; x <= this.lastRectangle.right; x++) {
+                let canvas = this.getCanvas(x, y);
+
+                if (canvas != null) {
+                    continue;
+                }
+
+                canvas = this.cellCanvases[`${x}_${y}`] = this.canvasPool.acquire();
+
+                canvas.width = this.cellSize;
+                canvas.height = this.cellSize;
+
+                const entities = this.spatialPartitionService.grid.getBucket({
+                    column: x,
+                    row: y
+                });
+
+                this.cellRenderer.canvas = canvas;
+                this.cellRenderer.context = canvas.getContext("2d");
+                this.cellRenderer.entities = entities;
+                this.cellRenderer.rectangle.top = y;
+                this.cellRenderer.rectangle.left = x;
+                this.cellRenderer.rectangle.right = x + 1;
+                this.cellRenderer.rectangle.bottom = y + 1;
+
+                this.cellRenderer.render();
+            }
         }
     }
 
-    _hasCamera() {
-        return this.camera != null;
+    refreshDirtyCellCanvases() {
+        const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions;
+
+        for (let key in dirtyCellPositions) {
+            const cellPosition = dirtyCellPositions[key];
+            const cellSize = this.cellSize;
+
+            const top = cellPosition.row * cellSize;
+            const left = cellPosition.column * cellSize;
+            const right = left + cellSize;
+            const bottom = top + cellSize;
+
+            const intersectionTop = Math.max(top, this.cameraRectangle.top);
+            const intersectionLeft = Math.max(left, this.cameraRectangle.left);
+            const intersectionBottom = Math.min(bottom, this.cameraRectangle.bottom);
+            const intersectionRight = Math.min(right, this.cameraRectangle.right);
+
+            if (intersectionTop < intersectionBottom &&
+                intersectionLeft < intersectionRight) {
+
+                const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
+                let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
+
+                if (canvas == null) {
+                    canvas = this.cellCanvases[`${cellPosition.column}_${cellPosition.row}`] = this.canvasPool.acquire();
+                }
+
+                this.cellRenderer.canvas = canvas;
+                this.cellRenderer.context = canvas.getContext("2d");
+                this.cellRenderer.entities = entities;
+                this.cellRenderer.rectangle.top = cellPosition.row;
+                this.cellRenderer.rectangle.left = cellPosition.column;
+                this.cellRenderer.rectangle.right = cellPosition.column + 1;
+                this.cellRenderer.rectangle.bottom = cellPosition.row + 1;
+                this.cellRenderer.render();
+            }
+        }
     }
 
-    _isDynamicLoadingCellEntity(entity) {
-        return entity.hasComponents(["dynamic-loading-cell", "transform", "rectangle-collider"])
-    }
-
-    _isCameraEntity(entity) {
-        return entity.hasComponents(["camera", "transform", "rectangle-collider"]) &&
+    isCameraEntity(entity) {
+        return entity.hasComponents(["camera", "transform", "rectangle"]) &&
             entity.getComponent("camera").name === this.cameraName;
     }
 
-    _isCell(entity) {
-        return this.cells.some(cell => {
-            return cell.id === entity.id;
-        });
-    }
+    transferToCanvas() {
+        const cellCanvases = this.cellCanvases;
+        const cellSize = this.cellSize;
+        const context = this.canvas.getContext("2d");
 
-    _isReady() {
-        return this.spatialPartitionService != null && this._hasCamera();
-    }
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    _updateCell(_cell, _dirtyCellPositions) {
-        const cell = _cell;
-        const dirtyCellPositions = _dirtyCellPositions;
-        const cellSize = this.spatialPartitionService.cellSize;
+        for (let key in cellCanvases) {
+            const cellCanvas = cellCanvases[key];
+            const parts = key.split("_");
 
+            const top = parseInt(parts[1], 10) * cellSize;
+            const left = parseInt(parts[0], 10) * cellSize;
+            const right = left + cellSize;
+            const bottom = top + cellSize;
 
-        for (let key in _dirtyCellPositions) {
-            const dirtyCellPosition = dirtyCellPositions[key];
-            const cellY = dirtyCellPosition.row * cellSize;
-            const cellX = dirtyCellPosition.column * cellSize;
+            const intersectionTop = Math.max(top, this.cameraRectangle.top);
+            const intersectionLeft = Math.max(left, this.cameraRectangle.left);
+            const intersectionBottom = Math.min(bottom, this.cameraRectangle.bottom);
+            const intersectionRight = Math.min(right, this.cameraRectangle.right);
 
-            const top = Math.max(cellY, cell.rectangle.top);
-            const left = Math.max(cellX, cell.rectangle.left);
-            const bottom = Math.min(cellY + cellSize, cell.rectangle.bottom);
-            const right = Math.min(cellX + cellSize, cell.rectangle.right);
+            if (intersectionTop < intersectionBottom &&
+                intersectionLeft < intersectionRight) {
 
-            if (top < bottom && left < right) {
+                let sourceX = 0;
+                let sourceY = 0;
+                let destinationX = intersectionLeft - this.cameraRectangle.left;
+                let destinationY = intersectionTop - this.cameraRectangle.top;
+                const width = intersectionRight - intersectionLeft;
+                const height = intersectionBottom - intersectionTop;
 
-                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition) || emptyArray;
-                entities.sort(this.sort);
+                if (width <= 0 || height <= 0) {
+                    continue;
+                }
 
-                cell.context.clearRect(
-                    left - cell.rectangle.left,
-                    top - cell.rectangle.top,
-                    right - left,
-                    bottom - top
+                if (left < intersectionLeft) {
+                    sourceX = intersectionLeft - left;
+                }
+
+                if (top < intersectionTop) {
+                    sourceY = intersectionTop - top;
+                }
+
+                context.drawImage(
+                    cellCanvas,
+                    sourceX,
+                    sourceY,
+                    width,
+                    height,
+                    destinationX,
+                    destinationY,
+                    width,
+                    height
                 );
+            }
+        }
+    }
 
-                for (let y = 0; y < entities.length; y++) {
-                    const entity = entities[y];
-                    const opacity = entity.getComponent("opacity");
-                    const rectangle = entity.getComponent("rectangle");
+    activated(world) {
+        this.world = world;
+
+        const services = this.world.getServices();
+        for (let name in services) {
+            this.serviceAdded(name, services[name]);
+        }
+    }
+
+    update() {
+        if (this.spatialPartitionService != null) {
+            this.releaseCellCanvasesAndSaveLastRectangle();
+            this.drawToNewCellCanvases();
+            this.refreshDirtyCellCanvases();
+            this.transferToCanvas();
+        }
+    }
+
+    entityAdded(entity) {
+        if (this.isCameraEntity(entity)) {
+            this.camera = entity;
+            this.cameraRectangle = this.camera.getComponent("rectangle");
+            this.canvas.width = this.cameraRectangle.width;
+            this.canvas.height = this.cameraRectangle.height;
+        }
+    }
+
+    entityRemoved(entity) {
+
+    }
+
+    serviceAdded(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = service;
+            this.cellSize = service.cellSize;
+            this.cellRenderer.cellSize = service.cellSize;
+            this.cellRenderer.compositor = this.compositor;
+            this.cellRenderer.sort = this.sort;
+        }
+    }
+
+    serviceRemoved(name, service) {
+        if (name === "spatial-partition-service") {
+            this.spatialPartitionService = null;
+            this.cellSize = null;
+            this.cellRenderer = null;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class CanvasPool {
+    constructor(canvasFactory) {
+        this.available = [];
+        this.canvasFactory = canvasFactory;
+    }
+
+    acquire() {
+        if (this.available.length > 0) {
+            return this.available.pop();
+        } else {
+            return this.canvasFactory.create();
+        }
+    }
+
+    release(canvas) {
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        this.available.push(canvas);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CanvasPool;
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class CellRenderer {
+    constructor() {
+        this.canvas = null;
+        this.context = null;
+        this.entities = null;
+        this.rectangle = {
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0
+        };
+        this.cellSize = null;
+        this.compositor = null;
+        this.sort = null;
+    }
+
+    isReady() {
+        return this.context != null &&
+            this.entities != null &&
+            this.rectangle != null &&
+            this.cellSize != null &&
+            this.compositor != null;
+    }
+
+    render() {
+        if (this.isReady()) {
+            const context = this.context;
+
+            context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            const entities = this.entities;
+            const cellSize = this.cellSize;
+            const rectangle = this.rectangle;
+
+            const cellTop = rectangle.top * cellSize;
+            const cellLeft = rectangle.left * cellSize;
+            const cellRight = rectangle.right * cellSize;
+            const cellBottom = rectangle.bottom * cellSize;
+
+            entities.sort(this.sort);
+
+            for (let x = 0; x < entities.length; x++) {
+                const entity = entities[x];
+
+                if (!this.compositor.isRenderable(entity)) {
+                    continue;
+                }
+
+                const opacity = entity.getComponent("opacity");
+                const rectangle = entity.getComponent("rectangle");
+
+                const top = Math.max(rectangle.top, cellTop);
+                const left = Math.max(rectangle.left, cellLeft);
+                const right = Math.min(rectangle.right, cellRight);
+                const bottom = Math.min(rectangle.bottom, cellBottom);
+
+                if (top < bottom && left < right) {
                     const images = this.compositor.getEntityImages(entity);
 
-                    // If the entity isn't renderable then don't go on.
                     if (images.length === 0) {
                         continue;
                     }
 
-                    this.renderableEntities[entity.id] = entity;
-
-                    const intersectedTop = Math.max(top, rectangle.top);
-                    const intersectedLeft = Math.max(left, rectangle.left);
-                    const intersectedBottom = Math.min(bottom, rectangle.bottom);
-                    const intersectedRight = Math.min(right, rectangle.right);
-
                     let sourceX = 0;
                     let sourceY = 0;
-                    let width = intersectedRight - intersectedLeft;
-                    let height = intersectedBottom - intersectedTop;
-                    let destinationX = intersectedLeft - cell.rectangle.left;
-                    let destinationY = intersectedTop - cell.rectangle.top;
+                    let width = right - left;
+                    let height = bottom - top;
+                    let destinationX = left - cellLeft;
+                    let destinationY = top - cellTop;
 
                     if (width <= 0 || height <= 0) {
                         continue;
@@ -3428,14 +3655,13 @@ class CameraSystem {
                     }
 
                     if (opacity != null) {
-                        cell.context.globalAlpha = opacity.value;
+                        context.globalAlpha = opacity.value;
                     }
 
                     for (let z = 0; z < images.length; z++) {
                         const image = images[z];
 
-                        this.drawImageCount++;
-                        cell.context.drawImage(
+                        context.drawImage(
                             image,
                             sourceX,
                             sourceY,
@@ -3449,473 +3675,19 @@ class CameraSystem {
                     }
 
                     if (opacity != null) {
-                        cell.context.globalAlpha = 1;
+                        context.globalAlpha = 1;
                     }
 
                 }
             }
-        }
-    }
-
-    _updateCells() {
-        const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
-        const grid = this.spatialPartitionService.grid;
-        const removedEntities = this.removedEntities;
-        const renderableCells = {};
-
-        for (let x = 0 ; x < removedEntities.length ; x++){
-            const entity = removedEntities[x];
-            const spatialPartition = entity.getComponent("spatial-partition");
-            const cellPositions = spatialPartition.cellPositions;
-
-            for (let c = 0; c < cellPositions.length; c++) {
-                const cellPosition = cellPositions[c];
-                renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-            }
-        }
-
-        for (let key in dirtyCells) {
-            const cellPosition = dirtyCells[key];
-            const entities = grid.getBucket(cellPosition) || emptyArray;
-
-            for (let i = 0; i < entities.length; i++) {
-                const entity = entities[i]
-                const spatialPartition = entity.getComponent("spatial-partition");
-                const cellPositions = spatialPartition.cellPositions;
-                const lastCellPositions = spatialPartition.lastCellPositions;
-
-                if (this.compositor.isRenderable(entity)) {
-                    for (let c = 0; c < cellPositions.length; c++) {
-                        const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-
-                    for (let c = 0; c < lastCellPositions.length; c++) {
-                        const cellPosition = lastCellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-                }
-            }
-
-        }
-
-        for (let x = 0; x < this.cells.length; x++) {
-            const cell = this.cells[x];
-            const collisions = cell.rectangleCollider.collisions;
-            const spatialPartition = cell.entity.getComponent("spatial-partition");
-            const cellPositions = spatialPartition.cellPositions;
-
-            if (cell.transform.isDirty) {
-                for (let c = 0; c < cellPositions.length; c++) {
-                    const cellPosition = cellPositions[c];
-                    renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                }
-            }
-
-            // Find dirty entities with in the loaded area that need updating.
-            for (let y in collisions) {
-                const entity = this.world.getEntityById(y);
-
-                if (entity == null) {
-                    continue;
-                }
-
-                const isDirty = this.compositor.isEntityDirty(entity);
-                if (isDirty) {
-
-                    const spatialPartition = cell.entity.getComponent("spatial-partition");
-                    const cellPositions = spatialPartition.cellPositions;
-
-                    for (let z = 0; z < cellPositions.length; z++) {
-                        const cellPosition = cellPositions[z];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-                }
-            }
-
-            this._updateCell(this.cells[x], renderableCells);
-        }
-    }
-
-    _transferToCanvas() {
-        const canvas = this.canvas;
-
-        canvas.width = this.camera.rectangle.width;
-        canvas.height = this.camera.rectangle.height;
-
-        for (let x = 0; x < this.cells.length; x++) {
-            const cell = this.cells[x];
-            const top = Math.max(cell.rectangle.top, this.camera.rectangle.top);
-            const left = Math.max(cell.rectangle.left, this.camera.rectangle.left);
-            const bottom = Math.min(cell.rectangle.bottom, this.camera.rectangle.bottom);
-            const right = Math.min(cell.rectangle.right, this.camera.rectangle.right);
-
-            if (top < bottom && left < right) {
-
-                let sourceX = 0;
-                let sourceY = 0;
-                const sourceWidth = right - left;
-                const sourceHeight = bottom - top;
-                const destinationX = left - this.camera.rectangle.left;
-                const destinationY = top - this.camera.rectangle.top;
-                const destinationWidth = right - left;
-                const destinationHeight = bottom - top;
-
-                if (cell.rectangle.left < this.camera.rectangle.left) {
-                    sourceX = this.camera.rectangle.left - cell.rectangle.left;
-                }
-
-                if (cell.rectangle.top < this.camera.rectangle.top) {
-                    sourceY = this.camera.rectangle.top - cell.rectangle.top;
-                }
-
-                const context = canvas.getContext("2d");
-
-                this.drawImageCount++;
-                context.drawImage(
-                    cell.canvas,
-                    sourceX,
-                    sourceY,
-                    sourceWidth,
-                    sourceHeight,
-                    destinationX,
-                    destinationY,
-                    destinationWidth,
-                    destinationHeight
-                );
-            }
-        }
-    }
-
-    activated(world) {
-        this.world = world;
-
-        const entities = this.world.getEntities();
-        for (let x = 0; x < entities.length; x++) {
-            const entity = entities[x];
-            this.entityAdded(entity);
-        }
-
-        const services = this.world.getServices();
-        for (let name in services) {
-            this.serviceAdded(name, services[name]);
-        }
-    }
-
-    componentAdded(entity, component) {
-        this.entityAdded(entity);
-    }
-
-    componentRemoved(entity, component) {
-        if (this.cameraCanvasCellEntities.indexOf(entity) > -1) {
-            const index = this.cameraCanvasCellEntities.indexOf(entity) > -1;
-            this.cameraCanvasCellEntities.splice(index, 1);
-        }
-    }
-
-    deactivated() {
-        this.spatialPartitionService = null;
-        this.cells = [];
-        this.world = null;
-        this.camera = null;
-        this.drawImageCount = 0;
-        this.renderableEntities = {};
-    }
-
-    entityAdded(entity) {
-        if (this._isDynamicLoadingCellEntity(entity)) {
-            const index = this.cells.findIndex((cell) => {
-                return cell.entity === entity;
-            });
-
-            if (index === -1) {
-                this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
-            }
-
-        } else if (this._isCameraEntity(entity)) {
-            this.camera = new Camera(entity, this.canvasFactory.create());
-        }
-    }
-
-    entityRemoved(entity) {
-        if (this._isDynamicLoadingCellEntity(entity)) {
-            throw new Error("The Camera cannot run without dynamic loading cells.");
-        }
-
-        if (this.compositor.isRenderable(entity)){
-            this.removedEntities.push(entity);
-        }
-    }
-
-    serviceAdded(name, service) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = service;
-        }
-    }
-
-    serviceRemoved(name, service) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = null;
-        }
-    }
-
-    update(currentTime) {
-        this.drawImageCount = 0;
-        if (this._isReady()) {
-            this.renderableEntities = {};
-
-            this._updateCells();
-            this._transferToCanvas();
-            this._cleanEntities();
-        }
-
-        this.removedEntities.length = 0;
-
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CameraSystem;
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__ = __webpack_require__(45);
-
-
-class Cell {
-    constructor({ column, row, cellSize }) {
-        this.row = row;
-        this.column = column;
-        this.entity = new __WEBPACK_IMPORTED_MODULE_0__entities_DynamicLoadingCell__["a" /* default */]({ x: column * cellSize, y: row * cellSize }, cellSize);
-        this.transform = this.entity.getComponent("transform");
-        this.rectangle = this.entity.getComponent("rectangle");
-        this.transform.position.x = column * cellSize;
-        this.transform.position.y = row * cellSize;
-        this.position = this.transform.position;
-        this.rectangle = this.rectangle;
-    }
-}
-
-class DynamicLoadingSystem {
-    constructor({ cellSize, cameraName } = { cellSize: 128, cameraName: null }) {
-        this.world = null;
-        this.cameraName = cameraName;
-        this.cells = [];
-        this.cellPositions = [];
-        this.cellSize = cellSize;
-        this.camera = {
-            position: null,
-            rectangle: null,
-            collider: null
-        };
-
-        for (let y = 0; y < 3; y++) {
-            for (let x = 0; x < 3; x++) {
-                const row = y - 1;
-                const column = x - 1;
-
-                this.cellPositions.push({ column: column, row: row });
-                this.cells.push(new Cell({ column, row, cellSize }));
-            }
-        }
-
-    }
-
-    _addCamera(entity) {
-        const transform = entity.getComponent("transform");
-        this.camera.rectangle = entity.getComponent("rectangle");
-        this.camera.collider = entity.getComponent("rectangle-collider");
-        this.camera.position = transform.position;
-    }
-
-    _findCellPositionsWithCenter() {
-        const centerColumn = Math.floor(this.camera.position.x / this.cellSize);
-        const centerRow = Math.floor(this.camera.position.y / this.cellSize);
-
-        for (let y = 0; y < 3; y++) {
-            for (let x = 0; x < 3; x++) {
-                const row = centerRow + y - 1;
-                const column = centerColumn + x - 1;
-                const index = (y * 3) + x;
-                const cellPosition = this.cellPositions[index];
-
-                cellPosition.row = row;
-                cellPosition.column = column;
-            }
-        }
-    }
-
-    _isCamera(entity) {
-        return (
-            entity.hasComponents(["camera", "transform", "rectangle", "rectangle-collider"]) &&
-            entity.getComponent("camera").name === this.cameraName
-        );
-    }
-
-    _hasCamera() {
-        return this.camera.position != null &&
-            this.camera.rectangle != null &&
-            this.camera.collider != null;
-    }
-
-    _removeCamera() {
-        this.camera.position = null;
-        this.camera.rectangle = null;
-        this.camera.collider = null;
-    }
-
-    _reset() {
-        this._removeCamera();
-    }
-
-    _updateCells() {
-        this._findCellPositionsWithCenter();
-
-        const availableCanvasCells = [];
-
-        for (let x = 0; x < this.cells.length; x++) {
-            let cell = this.cells[x];
-
-            let index = this.cellPositions.findIndex((cellPosition) => {
-                return cell.column === cellPosition.column &&
-                    cell.row === cellPosition.row;
-            });
-
-            if (index === -1) {
-                availableCanvasCells.push(cell);
-            }
-        }
-
-        for (let x = 0; x < this.cellPositions.length; x++) {
-            const cellPosition = this.cellPositions[x];
-
-            let index = this.cells.findIndex((cell) => {
-                return cell.column === cellPosition.column &&
-                    cell.row === cellPosition.row;
-            });
-
-            if (index === -1) {
-                const cell = availableCanvasCells.pop();
-                cell.row = cellPosition.row;
-                cell.column = cellPosition.column;
-
-                cell.position.x = cellPosition.column * this.cellSize;
-                cell.position.y = cellPosition.row * this.cellSize;
-                cell.transform.isDirty = true;
-            }
-        }
-    }
-
-    activated(world) {
-        this.world = world;
-        const entities = this.world.getEntities();
-
-        entities.forEach((entity) => {
-            this.entityAdded(entity);
-        });
-
-        for (let x = 0; x < this.cells.length; x++) {
-            this.world.addEntity(this.cells[x].entity);
-        }
-    }
-
-    componentAdded(entity, component) {
-        if (this._isCamera(entity)) {
-            this._addCamera(entity);
-        }
-    }
-
-    componentRemoved(entity, component) {
-        if (this._isCamera(entity)) {
-            this._removeCamera();
-        }
-    }
-
-    deactivated() {
-        this._reset();
-        for (let x = 0; x < this.cells.length; x++) {
-            this.world.removeEntity(this.cells[x].entity);
-        }
-    }
-
-    entityAdded(entity) {
-        if (this._isCamera(entity)) {
-            this._addCamera(entity);
-        }
-    }
-
-    entityRemoved(entity) {
-        if (this._isCamera(entity)) {
-            this._removeCamera();
-        }
-    }
-
-    beforeUpdate(currentTime) {
-        if (this._hasCamera()) {
-            this._updateCells();
         }
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingSystem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = CellRenderer;
 
-
-/***/ }),
-/* 45 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__ = __webpack_require__(46);
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0__Entity__["a" /* default */] {
-    constructor({ x = 0, y = 0 } = { x: 0, y: 0 }, cellSize = 256) {
-        super();
-
-        const transform = new __WEBPACK_IMPORTED_MODULE_1__components_Transform__["a" /* default */]();
-        transform.position.x = x;
-        transform.position.y = y;
-        transform.isDirty = true;
-
-        const rectangle = new __WEBPACK_IMPORTED_MODULE_2__components_Rectangle__["a" /* default */]();
-        rectangle.width = cellSize;
-        rectangle.height = cellSize;
-
-        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_3__components_RectangleCollider__["a" /* default */]();
-        const dynamicLoadingCell = new __WEBPACK_IMPORTED_MODULE_4__components_DynamicLoadingCell__["a" /* default */]();
-
-        this.addComponent(transform);
-        this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
-        this.addComponent(dynamicLoadingCell);
-
-    }
-});
 
 /***/ }),
 /* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class DynamicLoadingCell {
-    constructor(){
-        this.type = "dynamic-loading-cell";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = DynamicLoadingCell;
-
-
-/***/ }),
-/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3999,7 +3771,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4065,7 +3837,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4143,7 +3915,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4215,18 +3987,18 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonBody__ = __webpack_require__(10);
@@ -4321,7 +4093,7 @@ class SolidBodySystem {
 });
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4334,7 +4106,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4348,7 +4120,7 @@ class SolidBodySystem {
 
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4363,18 +4135,18 @@ class Movable {
 
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_PolygonBody__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_Polygon__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_PolygonCollider__ = __webpack_require__(12);
@@ -4465,7 +4237,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
 
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4479,7 +4251,7 @@ class Opacity {
 
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

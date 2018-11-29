@@ -1,3 +1,5 @@
+const emptyArray = Object.freeze([]);
+
 export default class Grid {
     constructor(buckets = {}) {
         this.buckets = buckets;
@@ -36,6 +38,20 @@ export default class Grid {
         return this.buckets[key] || null;
     }
 
+    getBuckets(_start, _end) {
+        const start = _start;
+        const end = _end;
+        const results = [];
+
+        for (let y = start.row; y <= end.row; y++) {
+            for (let x = start.column; x <= end.column; x++) {
+                const bucket = this.getBucket({ column: x, row: y });
+                bucket.push(bucket || emptyArray);
+            }
+        }
+        return results;
+    }
+
     getKey(column, row) {
         return `${column}_${row}`;
     }
@@ -45,10 +61,10 @@ export default class Grid {
             const cellPosition = cellPositions[x];
             const bucket = this.getBucket(cellPosition);
 
-            if (bucket == null){
+            if (bucket == null) {
                 return;
             }
-            
+
             const index = bucket.indexOf(entity);
 
             if (index > -1) {

@@ -75,6 +75,8 @@
         canvas.height = height;
 
         this.getImageAsync(url).then((image) => {
+            transform.isDirty = true;
+            rectangle.isDirty = true;
             context.globalAlpha = imageComponent.opacity;
 
             const translate = {

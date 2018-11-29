@@ -1,4 +1,7 @@
-﻿const idSort = (_entityA, _entityB) => {
+import CanvasPool from "./CanvasPool";
+import CellRenderer from "./CellRenderer";
+
+const idSort = (_entityA, _entityB) => {
     const entityA = _entityA;
     const entityB = _entityB;
 
@@ -11,49 +14,29 @@
     }
 };
 
-window.dynamicLoadingCellMoves = 0;
-window.drawCells = 0;
-
-const emptyArray = [];
-
-class CanvasCell {
-    constructor(cameraCanvasCellEntity, canvas) {
-        this.transform = cameraCanvasCellEntity.getComponent("transform");
-        this.rectangleCollider = cameraCanvasCellEntity.getComponent("rectangle-collider");
-        this.rectangle = cameraCanvasCellEntity.getComponent("rectangle");
-        this.entity = cameraCanvasCellEntity;
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-        this.canvas.width = this.rectangle.width;
-        this.canvas.height = this.rectangle.height;
-        this.isDirty = false;
-    }
-}
-
-class Camera {
-    constructor(cameraEntity, canvas) {
-        this.transform = cameraEntity.getComponent("transform");
-        this.rectangleCollider = cameraEntity.getComponent("rectangle-collider");
-        this.rectangle = cameraEntity.getComponent("rectangle");
-        this.entity = cameraEntity;
-        this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-    }
-}
-
 export default class CameraSystem {
-    constructor({ canvas, cameraName, compositor, canvasFactory, sort = idSort }) {
+    constructor({
+        cameraName,
+        canvas,
+        canvasFactory,
+        compositor,
+        sort = idSort
+    }) {
         this.canvas = canvas;
-        this.compositor = compositor;
         this.cameraName = cameraName;
-        this.canvasFactory = canvasFactory;
+        this.compositor = compositor;
+        this.canvasPool = new CanvasPool(canvasFactory);
+        this.cellRenderer = new CellRenderer();
+        this.cellCanvases = {};
+        this.cellSize = null;
+        this.cameraRectangle = null;
         this.spatialPartitionService = null;
-        this.cells = [];
-        this.world = null;
-        this.camera = null;
-        this.drawImageCount = 0;
-        this.renderableEntities = {};
-        this.removedEntities = [];
+        this.lastRectangle = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
 
         this.sort = (_entityA, _entityB) => {
             const entityA = _entityA;
@@ -73,259 +56,174 @@ export default class CameraSystem {
         }
     }
 
-    _cleanEntities() {
-        const renderableEntities = this.renderableEntities;
-        const compositor = this.compositor;
-
-        for (let id in renderableEntities) {
-            const entity = renderableEntities[id];
-            compositor.cleanEntity(entity);
-        }
+    getCanvas(_column, _row) {
+        return this.cellCanvases[`${_column}_${_row}`] || null;
     }
 
-    _hasCamera() {
-        return this.camera != null;
-    }
-
-    _isDynamicLoadingCellEntity(entity) {
-        return entity.hasComponents(["dynamic-loading-cell", "transform", "rectangle-collider"])
-    }
-
-    _isCameraEntity(entity) {
-        return entity.hasComponents(["camera", "transform", "rectangle-collider"]) &&
-            entity.getComponent("camera").name === this.cameraName;
-    }
-
-    _isCell(entity) {
-        return this.cells.some(cell => {
-            return cell.id === entity.id;
-        });
-    }
-
-    _isReady() {
-        return this.spatialPartitionService != null && this._hasCamera();
-    }
-
-    _updateCell(_cell, _dirtyCellPositions) {
-        const cell = _cell;
-        const dirtyCellPositions = _dirtyCellPositions;
+    releaseCellCanvasesAndSaveLastRectangle() {
         const cellSize = this.spatialPartitionService.cellSize;
+        const cameraRectangle = this.cameraRectangle;
 
+        const top = Math.floor(cameraRectangle.top / cellSize);
+        const left = Math.floor(cameraRectangle.left / cellSize);
+        const bottom = Math.ceil((cameraRectangle.bottom / cellSize) + 1);
+        const right = Math.ceil((cameraRectangle.right / cellSize) + 1);
 
-        for (let key in _dirtyCellPositions) {
-            const dirtyCellPosition = dirtyCellPositions[key];
-            const cellY = dirtyCellPosition.row * cellSize;
-            const cellX = dirtyCellPosition.column * cellSize;
+        for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
+            for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
 
-            const top = Math.max(cellY, cell.rectangle.top);
-            const left = Math.max(cellX, cell.rectangle.left);
-            const bottom = Math.min(cellY + cellSize, cell.rectangle.bottom);
-            const right = Math.min(cellX + cellSize, cell.rectangle.right);
+                const intersectionTop = Math.max(y, top);
+                const intersectionLeft = Math.max(x, left);
+                const intersectionBottom = Math.min(y, bottom);
+                const intersectionRight = Math.min(x, right);
 
-            if (top < bottom && left < right) {
+                if (!(intersectionTop < intersectionBottom && intersectionLeft < intersectionRight)) {
+                    const canvas = this.getCanvas(x, y);
 
-                const entities = this.spatialPartitionService.grid.getBucket(dirtyCellPosition) || emptyArray;
-                entities.sort(this.sort);
-
-                cell.context.clearRect(
-                    left - cell.rectangle.left,
-                    top - cell.rectangle.top,
-                    right - left,
-                    bottom - top
-                );
-
-                for (let y = 0; y < entities.length; y++) {
-                    const entity = entities[y];
-                    const opacity = entity.getComponent("opacity");
-                    const rectangle = entity.getComponent("rectangle");
-                    const images = this.compositor.getEntityImages(entity);
-
-                    // If the entity isn't renderable then don't go on.
-                    if (images.length === 0) {
-                        continue;
+                    if (canvas != null) {
+                        this.canvasPool.release(canvas);
                     }
 
-                    this.renderableEntities[entity.id] = entity;
-
-                    const intersectedTop = Math.max(top, rectangle.top);
-                    const intersectedLeft = Math.max(left, rectangle.left);
-                    const intersectedBottom = Math.min(bottom, rectangle.bottom);
-                    const intersectedRight = Math.min(right, rectangle.right);
-
-                    let sourceX = 0;
-                    let sourceY = 0;
-                    let width = intersectedRight - intersectedLeft;
-                    let height = intersectedBottom - intersectedTop;
-                    let destinationX = intersectedLeft - cell.rectangle.left;
-                    let destinationY = intersectedTop - cell.rectangle.top;
-
-                    if (width <= 0 || height <= 0) {
-                        continue;
-                    }
-
-                    if (rectangle.left < left) {
-                        sourceX = left - rectangle.left;
-                    }
-
-                    if (rectangle.top < top) {
-                        sourceY = top - rectangle.top;
-                    }
-
-                    if (opacity != null) {
-                        cell.context.globalAlpha = opacity.value;
-                    }
-
-                    for (let z = 0; z < images.length; z++) {
-                        const image = images[z];
-
-                        this.drawImageCount++;
-                        cell.context.drawImage(
-                            image,
-                            sourceX,
-                            sourceY,
-                            width,
-                            height,
-                            destinationX,
-                            destinationY,
-                            width,
-                            height
-                        );
-                    }
-
-                    if (opacity != null) {
-                        cell.context.globalAlpha = 1;
-                    }
-
+                    delete this.cellCanvases[`${x}_${y}`]
                 }
             }
         }
+
+        this.lastRectangle.top = top;
+        this.lastRectangle.left = left;
+        this.lastRectangle.bottom = bottom;
+        this.lastRectangle.right = right;
     }
 
-    _updateCells() {
-        const dirtyCells = this.spatialPartitionService.dirtyCellPositions;
-        const grid = this.spatialPartitionService.grid;
-        const removedEntities = this.removedEntities;
-        const renderableCells = {};
+    drawToNewCellCanvases() {
+        for (let y = this.lastRectangle.top; y <= this.lastRectangle.bottom; y++) {
+            for (let x = this.lastRectangle.left; x <= this.lastRectangle.right; x++) {
+                let canvas = this.getCanvas(x, y);
 
-        for (let x = 0 ; x < removedEntities.length ; x++){
-            const entity = removedEntities[x];
-            const spatialPartition = entity.getComponent("spatial-partition");
-            const cellPositions = spatialPartition.cellPositions;
-
-            for (let c = 0; c < cellPositions.length; c++) {
-                const cellPosition = cellPositions[c];
-                renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-            }
-        }
-
-        for (let key in dirtyCells) {
-            const cellPosition = dirtyCells[key];
-            const entities = grid.getBucket(cellPosition) || emptyArray;
-
-            for (let i = 0; i < entities.length; i++) {
-                const entity = entities[i]
-                const spatialPartition = entity.getComponent("spatial-partition");
-                const cellPositions = spatialPartition.cellPositions;
-                const lastCellPositions = spatialPartition.lastCellPositions;
-
-                if (this.compositor.isRenderable(entity)) {
-                    for (let c = 0; c < cellPositions.length; c++) {
-                        const cellPosition = cellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-
-                    for (let c = 0; c < lastCellPositions.length; c++) {
-                        const cellPosition = lastCellPositions[c];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-                }
-            }
-
-        }
-
-        for (let x = 0; x < this.cells.length; x++) {
-            const cell = this.cells[x];
-            const collisions = cell.rectangleCollider.collisions;
-            const spatialPartition = cell.entity.getComponent("spatial-partition");
-            const cellPositions = spatialPartition.cellPositions;
-
-            if (cell.transform.isDirty) {
-                for (let c = 0; c < cellPositions.length; c++) {
-                    const cellPosition = cellPositions[c];
-                    renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                }
-            }
-
-            // Find dirty entities with in the loaded area that need updating.
-            for (let y in collisions) {
-                const entity = this.world.getEntityById(y);
-
-                if (entity == null) {
+                if (canvas != null) {
                     continue;
                 }
 
-                const isDirty = this.compositor.isEntityDirty(entity);
-                if (isDirty) {
+                canvas = this.cellCanvases[`${x}_${y}`] = this.canvasPool.acquire();
 
-                    const spatialPartition = cell.entity.getComponent("spatial-partition");
-                    const cellPositions = spatialPartition.cellPositions;
+                canvas.width = this.cellSize;
+                canvas.height = this.cellSize;
 
-                    for (let z = 0; z < cellPositions.length; z++) {
-                        const cellPosition = cellPositions[z];
-                        renderableCells[`${cellPosition.column}_${cellPosition.row}`] = cellPosition;
-                    }
-                }
+                const entities = this.spatialPartitionService.grid.getBucket({
+                    column: x,
+                    row: y
+                });
+
+                this.cellRenderer.canvas = canvas;
+                this.cellRenderer.context = canvas.getContext("2d");
+                this.cellRenderer.entities = entities;
+                this.cellRenderer.rectangle.top = y;
+                this.cellRenderer.rectangle.left = x;
+                this.cellRenderer.rectangle.right = x + 1;
+                this.cellRenderer.rectangle.bottom = y + 1;
+
+                this.cellRenderer.render();
             }
-
-            this._updateCell(this.cells[x], renderableCells);
         }
     }
 
-    _transferToCanvas() {
-        const canvas = this.canvas;
+    refreshDirtyCellCanvases() {
+        const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions;
 
-        canvas.width = this.camera.rectangle.width;
-        canvas.height = this.camera.rectangle.height;
+        for (let key in dirtyCellPositions) {
+            const cellPosition = dirtyCellPositions[key];
+            const cellSize = this.cellSize;
 
-        for (let x = 0; x < this.cells.length; x++) {
-            const cell = this.cells[x];
-            const top = Math.max(cell.rectangle.top, this.camera.rectangle.top);
-            const left = Math.max(cell.rectangle.left, this.camera.rectangle.left);
-            const bottom = Math.min(cell.rectangle.bottom, this.camera.rectangle.bottom);
-            const right = Math.min(cell.rectangle.right, this.camera.rectangle.right);
+            const top = cellPosition.row * cellSize;
+            const left = cellPosition.column * cellSize;
+            const right = left + cellSize;
+            const bottom = top + cellSize;
 
-            if (top < bottom && left < right) {
+            const intersectionTop = Math.max(top, this.cameraRectangle.top);
+            const intersectionLeft = Math.max(left, this.cameraRectangle.left);
+            const intersectionBottom = Math.min(bottom, this.cameraRectangle.bottom);
+            const intersectionRight = Math.min(right, this.cameraRectangle.right);
+
+            if (intersectionTop < intersectionBottom &&
+                intersectionLeft < intersectionRight) {
+
+                const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
+                let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
+
+                if (canvas == null) {
+                    canvas = this.cellCanvases[`${cellPosition.column}_${cellPosition.row}`] = this.canvasPool.acquire();
+                }
+
+                this.cellRenderer.canvas = canvas;
+                this.cellRenderer.context = canvas.getContext("2d");
+                this.cellRenderer.entities = entities;
+                this.cellRenderer.rectangle.top = cellPosition.row;
+                this.cellRenderer.rectangle.left = cellPosition.column;
+                this.cellRenderer.rectangle.right = cellPosition.column + 1;
+                this.cellRenderer.rectangle.bottom = cellPosition.row + 1;
+                this.cellRenderer.render();
+            }
+        }
+    }
+
+    isCameraEntity(entity) {
+        return entity.hasComponents(["camera", "transform", "rectangle"]) &&
+            entity.getComponent("camera").name === this.cameraName;
+    }
+
+    transferToCanvas() {
+        const cellCanvases = this.cellCanvases;
+        const cellSize = this.cellSize;
+        const context = this.canvas.getContext("2d");
+
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        for (let key in cellCanvases) {
+            const cellCanvas = cellCanvases[key];
+            const parts = key.split("_");
+
+            const top = parseInt(parts[1], 10) * cellSize;
+            const left = parseInt(parts[0], 10) * cellSize;
+            const right = left + cellSize;
+            const bottom = top + cellSize;
+
+            const intersectionTop = Math.max(top, this.cameraRectangle.top);
+            const intersectionLeft = Math.max(left, this.cameraRectangle.left);
+            const intersectionBottom = Math.min(bottom, this.cameraRectangle.bottom);
+            const intersectionRight = Math.min(right, this.cameraRectangle.right);
+
+            if (intersectionTop < intersectionBottom &&
+                intersectionLeft < intersectionRight) {
 
                 let sourceX = 0;
                 let sourceY = 0;
-                const sourceWidth = right - left;
-                const sourceHeight = bottom - top;
-                const destinationX = left - this.camera.rectangle.left;
-                const destinationY = top - this.camera.rectangle.top;
-                const destinationWidth = right - left;
-                const destinationHeight = bottom - top;
+                let destinationX = intersectionLeft - this.cameraRectangle.left;
+                let destinationY = intersectionTop - this.cameraRectangle.top;
+                const width = intersectionRight - intersectionLeft;
+                const height = intersectionBottom - intersectionTop;
 
-                if (cell.rectangle.left < this.camera.rectangle.left) {
-                    sourceX = this.camera.rectangle.left - cell.rectangle.left;
+                if (width <= 0 || height <= 0) {
+                    continue;
                 }
 
-                if (cell.rectangle.top < this.camera.rectangle.top) {
-                    sourceY = this.camera.rectangle.top - cell.rectangle.top;
+                if (left < intersectionLeft) {
+                    sourceX = intersectionLeft - left;
                 }
 
-                const context = canvas.getContext("2d");
+                if (top < intersectionTop) {
+                    sourceY = intersectionTop - top;
+                }
 
-                this.drawImageCount++;
                 context.drawImage(
-                    cell.canvas,
+                    cellCanvas,
                     sourceX,
                     sourceY,
-                    sourceWidth,
-                    sourceHeight,
+                    width,
+                    height,
                     destinationX,
                     destinationY,
-                    destinationWidth,
-                    destinationHeight
+                    width,
+                    height
                 );
             }
         }
@@ -334,86 +232,49 @@ export default class CameraSystem {
     activated(world) {
         this.world = world;
 
-        const entities = this.world.getEntities();
-        for (let x = 0; x < entities.length; x++) {
-            const entity = entities[x];
-            this.entityAdded(entity);
-        }
-
         const services = this.world.getServices();
         for (let name in services) {
             this.serviceAdded(name, services[name]);
         }
     }
 
-    componentAdded(entity, component) {
-        this.entityAdded(entity);
-    }
-
-    componentRemoved(entity, component) {
-        if (this.cameraCanvasCellEntities.indexOf(entity) > -1) {
-            const index = this.cameraCanvasCellEntities.indexOf(entity) > -1;
-            this.cameraCanvasCellEntities.splice(index, 1);
+    update() {
+        if (this.spatialPartitionService != null) {
+            this.releaseCellCanvasesAndSaveLastRectangle();
+            this.drawToNewCellCanvases();
+            this.refreshDirtyCellCanvases();
+            this.transferToCanvas();
         }
     }
 
-    deactivated() {
-        this.spatialPartitionService = null;
-        this.cells = [];
-        this.world = null;
-        this.camera = null;
-        this.drawImageCount = 0;
-        this.renderableEntities = {};
-    }
-
     entityAdded(entity) {
-        if (this._isDynamicLoadingCellEntity(entity)) {
-            const index = this.cells.findIndex((cell) => {
-                return cell.entity === entity;
-            });
-
-            if (index === -1) {
-                this.cells.push(new CanvasCell(entity, this.canvasFactory.create()));
-            }
-
-        } else if (this._isCameraEntity(entity)) {
-            this.camera = new Camera(entity, this.canvasFactory.create());
+        if (this.isCameraEntity(entity)) {
+            this.camera = entity;
+            this.cameraRectangle = this.camera.getComponent("rectangle");
+            this.canvas.width = this.cameraRectangle.width;
+            this.canvas.height = this.cameraRectangle.height;
         }
     }
 
     entityRemoved(entity) {
-        if (this._isDynamicLoadingCellEntity(entity)) {
-            throw new Error("The Camera cannot run without dynamic loading cells.");
-        }
 
-        if (this.compositor.isRenderable(entity)){
-            this.removedEntities.push(entity);
-        }
     }
 
     serviceAdded(name, service) {
         if (name === "spatial-partition-service") {
             this.spatialPartitionService = service;
+            this.cellSize = service.cellSize;
+            this.cellRenderer.cellSize = service.cellSize;
+            this.cellRenderer.compositor = this.compositor;
+            this.cellRenderer.sort = this.sort;
         }
     }
 
     serviceRemoved(name, service) {
         if (name === "spatial-partition-service") {
             this.spatialPartitionService = null;
+            this.cellSize = null;
+            this.cellRenderer = null;
         }
-    }
-
-    update(currentTime) {
-        this.drawImageCount = 0;
-        if (this._isReady()) {
-            this.renderableEntities = {};
-
-            this._updateCells();
-            this._transferToCanvas();
-            this._cleanEntities();
-        }
-
-        this.removedEntities.length = 0;
-
     }
 }

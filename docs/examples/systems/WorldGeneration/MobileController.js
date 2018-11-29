@@ -80,7 +80,7 @@ export default class MobileController {
     this.joyStickStylePosition.bottom = parseInt(this.joystick.style.bottom, 10);
 
 
-    event.preventDefault();
+    //event.preventDefault();
   };
 
   joystickTouchMove(event) {
@@ -103,7 +103,7 @@ export default class MobileController {
       this.joystick.style.bottom = `${this.joyStickStylePosition.bottom - deltaY}px`;
       this.joystick.style.left = `${this.joyStickStylePosition.left + deltaX}px`;
 
-      event.preventDefault();
+      //event.preventDefault();
     }
   };
 
@@ -120,6 +120,6 @@ export default class MobileController {
     this.joystick.style.left = `${this.joyStickStylePosition.left}px`;
     this.joystick.style.bottom = `${this.joyStickStylePosition.bottom}px`;
 
-    event.preventDefault();
+    //event.preventDefault();
   };
 }

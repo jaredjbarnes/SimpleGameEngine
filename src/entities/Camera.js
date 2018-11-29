@@ -2,7 +2,6 @@
 import CameraComponent from "../components/Camera";
 import Transform from "../components/Transform";
 import Rectangle from "../components/Rectangle";
-import RectangleCollider from "../components/RectangleCollider";
 
 export default class Camera extends Entity {
     constructor(name, { width = 256, height = 256 } = {}) {
@@ -13,7 +12,6 @@ export default class Camera extends Entity {
 
         const transform = new Transform();
         const rectangle = new Rectangle();
-        const rectangleCollider = new RectangleCollider();
 
         rectangle.width = width;
         rectangle.height = height;
@@ -22,7 +20,6 @@ export default class Camera extends Entity {
         this.addComponent(camera);
         this.addComponent(transform);
         this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
 
     }
 }

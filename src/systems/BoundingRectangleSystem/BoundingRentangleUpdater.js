@@ -42,6 +42,11 @@ export default class BoundingRectangleUpdater {
             x: 0,
             y: 0
         };
+
+        this.transformedPoint = {
+            x: 0,
+            y: 0
+        };
     }
 
     setEntity(_entity) {

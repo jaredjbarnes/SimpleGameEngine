@@ -69,39 +69,64 @@
         const size = imageComponent.size;
         const width = rectangle.right - rectangle.left + padding.left + padding.right;
         const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
-        const origin = transform.origin;
 
         canvas.width = width;
         canvas.height = height;
 
         this.getImageAsync(url).then((image) => {
+            context.save();
+
             transform.isDirty = true;
             rectangle.isDirty = true;
-            context.globalAlpha = imageComponent.opacity;
-
-            const translate = {
-                x: 0,
-                y: 0
-            };
-
-            const scale = {
-                x: 1,
-                y: 1
-            };
 
             if (imageComponent.flipHorizontally) {
-                scale.x = -1;
-                translate.x = size.width;
+                const canvas = this.canvasFactory.create();
+                const context = canvas.getContext("2d");
+                canvas.width = size.width;
+                canvas.height = size.height;
+
+                context.scale(-1, 1);
+                context.translate(-size.width, 0);
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    size.width,
+                    size.height,
+                    0,
+                    0,
+                    size.width,
+                    size.height
+                );
+
+                image = canvas;
             }
 
             if (imageComponent.flipVertically) {
-                scale.y = -1;
-                translate.y = size.height;
+                const canvas = this.canvasFactory.create();
+                const context = canvas.getContext("2d");
+                canvas.width = size.width;
+                canvas.height = size.height;
+
+                context.scale(1, -1);
+                context.translate(0, -size.height);
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    size.width,
+                    size.height,
+                    0,
+                    0,
+                    size.width,
+                    size.height
+                );
+
+                image = canvas;
             }
 
-            context.scale(scale.x, scale.y);
-
-            context.translate(width / 2 - translate.x, height / 2 - translate.y);
+            context.globalAlpha = imageComponent.opacity;
+            context.translate(width / 2, height / 2);
             context.rotate(angle * Math.PI / 180);
 
             context.drawImage(
@@ -110,11 +135,13 @@
                 position.y,
                 size.width,
                 size.height,
-                -origin.x,
-                -origin.y,
+                -rectangle.width / 2,
+                -rectangle.height / 2,
                 rectangle.width,
                 rectangle.height
             );
+
+            context.restore();
         }).catch((error) => {
             context.globalAlpha = imageComponent.opacity;
             throw error;

@@ -69,7 +69,7 @@ const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
     noise: new Noise(),
-    scale: 8,
+    scale: 25,
     cameraName: "main"
 });
 

@@ -80,7 +80,7 @@ const width = canvas.width;
 const height = canvas.height;
 
 const getColor = (x, y) => {
-    return Math.floor(((noise.perlin(x /200, y / 200) + 1) / 2) * 255);
+    return Math.floor(((noise.perlin(x / 200, y / 200) + 1) / 2) * 255);
 };
 
 for (let y = 0; y < height; y++) {

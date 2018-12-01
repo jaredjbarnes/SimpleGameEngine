@@ -71,6 +71,7 @@ export default class World {
 
     addService(service) {
         this._services[service.name] = service;
+        invokeMethod(service, "activated", [this]);
         this.notifySystems("serviceAdded", [service.name, service]);
     }
 
@@ -87,6 +88,7 @@ export default class World {
 
         if (service != null) {
             delete this._services[name];
+            invokeMethod(service, "deactivated", [this]);
             this.notifySystems("serviceRemoved", [name, service]);
         }
     }
@@ -117,7 +119,6 @@ export default class World {
         const entity = _entity;
         const entities = this._entities;
         const entitiesById = this._entitiesById;
-        const entitiesByType = this._entitiesByType;
         const registeredEntity = entitiesById[entity.id];
 
         if (registeredEntity == null) {

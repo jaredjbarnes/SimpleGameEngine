@@ -26,7 +26,7 @@ export default class EntityIdentifier {
         for (let x = 0; x < ranges.length; x++) {
             const range = ranges[x];
 
-            if (value > range.min && value <= range.max) {
+            if (value >= range.min && value < range.max) {
                 return range.name;
             }
         }

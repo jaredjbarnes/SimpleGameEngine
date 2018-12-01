@@ -6,6 +6,7 @@ import PolygonRasterizer from "./CameraSystem/PolygonRasterizer";
 import LineRasterizer from "./CameraSystem/LineRasterizer";
 import ShapeRasterizer from "./CameraSystem/ShapeRasterizer";
 import TextRasterizer from "./CameraSystem/TextRasterizer";
+import CompositeImageRasterizer from "./CameraSystem/CompositeImageRasterizer";
 import CameraSystem from "./CameraSystem";
 
 export default class DefaultCameraSystem extends CameraSystem {
@@ -15,6 +16,7 @@ export default class DefaultCameraSystem extends CameraSystem {
         const imageFactory = new ImageFactory();
 
         const imageRasterizer = new ImageRasterizer({ canvasFactory, imageFactory, assetRoot });
+        const compositeImageRasterizer = new CompositeImageRasterizer({ canvasFactory, imageFactory, assetRoot });
         const lineRasterizer = new LineRasterizer(canvasFactory);
         const shapeRasterizer = new ShapeRasterizer(canvasFactory);
         const textRasterizer = new TextRasterizer(canvasFactory);
@@ -32,6 +34,7 @@ export default class DefaultCameraSystem extends CameraSystem {
         this.compositor = compositor;
 
         compositor.addRasterizer(imageRasterizer);
+        compositor.addRasterizer(compositeImageRasterizer);
         compositor.addRasterizer(lineRasterizer);
         compositor.addRasterizer(shapeRasterizer);
         compositor.addRasterizer(textRasterizer);

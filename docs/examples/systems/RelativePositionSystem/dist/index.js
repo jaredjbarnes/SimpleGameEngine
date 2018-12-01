@@ -177,7 +177,7 @@ class Transform {
             x: 0,
             y: 0
         };
-        
+
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Transform;
@@ -316,14 +316,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_entities_Camera__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_systems_DefaultCameraSystem__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_ControllerSystem__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_KeyboardSystem__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_MovementSystem__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_Player__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Relative__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_RelativePositionSystem__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_systems_ControllerSystem__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_systems_KeyboardSystem__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_systems_MovementSystem__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_Player__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Relative__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_systems_RelativePositionSystem__ = __webpack_require__(51);
 
 
 
@@ -487,6 +487,7 @@ class World {
 
     addService(service) {
         this._services[service.name] = service;
+        Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(service, "activated", [this]);
         this.notifySystems("serviceAdded", [service.name, service]);
     }
 
@@ -503,6 +504,7 @@ class World {
 
         if (service != null) {
             delete this._services[name];
+            Object(__WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__["a" /* default */])(service, "deactivated", [this]);
             this.notifySystems("serviceRemoved", [name, service]);
         }
     }
@@ -533,7 +535,6 @@ class World {
         const entity = _entity;
         const entities = this._entities;
         const entitiesById = this._entitiesById;
-        const entitiesByType = this._entitiesByType;
         const registeredEntity = entitiesById[entity.id];
 
         if (registeredEntity == null) {
@@ -908,6 +909,11 @@ class BoundingRectangleUpdater {
         };
 
         this.origin = {
+            x: 0,
+            y: 0
+        };
+
+        this.transformedPoint = {
             x: 0,
             y: 0
         };
@@ -1739,7 +1745,8 @@ class SystemsBundlerSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__CameraSystem_CompositeImageRasterizer__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__CameraSystem__ = __webpack_require__(35);
 
 
 
@@ -1750,13 +1757,15 @@ class SystemsBundlerSystem {
 
 
 
-class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a" /* default */] {
+
+class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_9__CameraSystem__["a" /* default */] {
     constructor({ canvas, cameraName, assetRoot, sort }) {
         const compositor = new __WEBPACK_IMPORTED_MODULE_0__CameraSystem_Compositor__["a" /* default */]();
         const canvasFactory = new __WEBPACK_IMPORTED_MODULE_1__CameraSystem_CanvasFactory__["a" /* default */]();
         const imageFactory = new __WEBPACK_IMPORTED_MODULE_2__CameraSystem_ImageFactory__["a" /* default */]();
 
         const imageRasterizer = new __WEBPACK_IMPORTED_MODULE_3__CameraSystem_ImageRasterizer__["a" /* default */]({ canvasFactory, imageFactory, assetRoot });
+        const compositeImageRasterizer = new __WEBPACK_IMPORTED_MODULE_8__CameraSystem_CompositeImageRasterizer__["a" /* default */]({ canvasFactory, imageFactory, assetRoot });
         const lineRasterizer = new __WEBPACK_IMPORTED_MODULE_5__CameraSystem_LineRasterizer__["a" /* default */](canvasFactory);
         const shapeRasterizer = new __WEBPACK_IMPORTED_MODULE_6__CameraSystem_ShapeRasterizer__["a" /* default */](canvasFactory);
         const textRasterizer = new __WEBPACK_IMPORTED_MODULE_7__CameraSystem_TextRasterizer__["a" /* default */](canvasFactory);
@@ -1774,6 +1783,7 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
         this.compositor = compositor;
 
         compositor.addRasterizer(imageRasterizer);
+        compositor.addRasterizer(compositeImageRasterizer);
         compositor.addRasterizer(lineRasterizer);
         compositor.addRasterizer(shapeRasterizer);
         compositor.addRasterizer(textRasterizer);
@@ -2024,39 +2034,64 @@ class ImageFactory {
         const size = imageComponent.size;
         const width = rectangle.right - rectangle.left + padding.left + padding.right;
         const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
-        const origin = transform.origin;
 
         canvas.width = width;
         canvas.height = height;
 
         this.getImageAsync(url).then((image) => {
+            context.save();
+
             transform.isDirty = true;
             rectangle.isDirty = true;
-            context.globalAlpha = imageComponent.opacity;
-
-            const translate = {
-                x: 0,
-                y: 0
-            };
-
-            const scale = {
-                x: 1,
-                y: 1
-            };
 
             if (imageComponent.flipHorizontally) {
-                scale.x = -1;
-                translate.x = size.width;
+                const canvas = this.canvasFactory.create();
+                const context = canvas.getContext("2d");
+                canvas.width = size.width;
+                canvas.height = size.height;
+
+                context.scale(-1, 1);
+                context.translate(-size.width, 0);
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    size.width,
+                    size.height,
+                    0,
+                    0,
+                    size.width,
+                    size.height
+                );
+
+                image = canvas;
             }
 
             if (imageComponent.flipVertically) {
-                scale.y = -1;
-                translate.y = size.height;
+                const canvas = this.canvasFactory.create();
+                const context = canvas.getContext("2d");
+                canvas.width = size.width;
+                canvas.height = size.height;
+
+                context.scale(1, -1);
+                context.translate(0, -size.height);
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    size.width,
+                    size.height,
+                    0,
+                    0,
+                    size.width,
+                    size.height
+                );
+
+                image = canvas;
             }
 
-            context.scale(scale.x, scale.y);
-
-            context.translate(width / 2 - translate.x, height / 2 - translate.y);
+            context.globalAlpha = imageComponent.opacity;
+            context.translate(width / 2, height / 2);
             context.rotate(angle * Math.PI / 180);
 
             context.drawImage(
@@ -2065,11 +2100,13 @@ class ImageFactory {
                 position.y,
                 size.width,
                 size.height,
-                -origin.x,
-                -origin.y,
+                -rectangle.width / 2,
+                -rectangle.height / 2,
                 rectangle.width,
                 rectangle.height
             );
+
+            context.restore();
         }).catch((error) => {
             context.globalAlpha = imageComponent.opacity;
             throw error;
@@ -2482,8 +2519,182 @@ class LineRenderer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CanvasPool__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CellRenderer__ = __webpack_require__(36);
+﻿class CompositeImageRasterizer {
+    constructor({ canvasFactory, imageFactory, assetRoot }) {
+        this.type = "composite-image";
+        this.canvasFactory = canvasFactory;
+        this.assetRoot = assetRoot || "";
+        this.imageFactory = imageFactory;
+        this.loadingImages = {};
+    }
+
+    getImageAsync(url) {
+        if (this.loadingImages[url] != null) {
+            return this.loadingImages[url];
+        }
+
+        return this.loadingImages[url] = new Promise((resolve, reject) => {
+            const image = this.imageFactory.create();
+
+            image.onload = () => {
+                resolve(image);
+            };
+
+            image.onerror = reject;
+            image.src = url;
+        });
+    }
+
+    getImagePadding(image) {
+        const { top, right, bottom, left } = image.padding;
+        return `${top}|${right}|${bottom}|${left}|`;
+    }
+
+    getImageSize(image) {
+        const { width, height } = image.size;
+        return `${width}|${height}`;
+    }
+
+    getImagePosition(image) {
+        const { x, y } = image.position;
+        return `${x}|${y}`;
+    }
+
+    getImageIdentity(image) {
+        return `${image.url}|${this.getImagePadding(image)}|${this.getImagePosition(image)}|${this.getImageSize(image)}|${image.opacity}|${image.flipHorizontally}|${image.flipVertically}`;
+    }
+
+    getIdentity(_entity) {
+        const entity = _entity;
+        const composite = entity.getComponent("composite-image");
+        const transform = entity.getComponent("transform");
+
+        if (composite.id != null) {
+            return `${composite.id}|${transform.rotation}`;
+        } else {
+            const identity = composite.images.map((image) => {
+                return this.getImageIdentity(image);
+            }).join("_");
+
+            return `${identity}|${transform.rotation}`;
+        }
+    }
+
+    rasterize(entity) {
+        const canvas = this.canvasFactory.create();
+        const context = canvas.getContext("2d");
+        const compositeImageComponent = entity.getComponent("composite-image");
+        const rectangle = entity.getComponent("rectangle");
+        const transform = entity.getComponent("transform");
+        const images = compositeImageComponent.images;
+
+        for (let x = 0; x < images.length; x++) {
+            let angle = transform.rotation;
+            const imageComponent = images[x];
+            const url = this.gerUrl(imageComponent.url);
+            const padding = imageComponent.padding;
+            const position = imageComponent.position;
+            const size = imageComponent.size;
+            const width = rectangle.right - rectangle.left + padding.left + padding.right;
+            const height = rectangle.bottom - rectangle.top + padding.top + padding.bottom;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            this.getImageAsync(url).then((_image) => {
+                let image = _image;
+
+                context.save();
+
+                transform.isDirty = true;
+                rectangle.isDirty = true;
+
+                if (imageComponent.flipHorizontally) {
+                    const canvas = this.canvasFactory.create();
+                    const context = canvas.getContext("2d");
+                    canvas.width = size.width;
+                    canvas.height = size.height;
+
+                    context.scale(-1, 1);
+                    context.translate(-size.width, 0);
+                    context.drawImage(
+                        image,
+                        0,
+                        0,
+                        size.width,
+                        size.height,
+                        0,
+                        0,
+                        size.width,
+                        size.height
+                    );
+
+                    image = canvas;
+                }
+
+                if (imageComponent.flipVertically) {
+                    const canvas = this.canvasFactory.create();
+                    const context = canvas.getContext("2d");
+                    canvas.width = size.width;
+                    canvas.height = size.height;
+
+                    context.scale(1, -1);
+                    context.translate(0, -size.height);
+                    context.drawImage(
+                        image,
+                        0,
+                        0,
+                        size.width,
+                        size.height,
+                        0,
+                        0,
+                        size.width,
+                        size.height
+                    );
+
+                    image = canvas;
+                }
+
+                context.globalAlpha = imageComponent.opacity;
+                context.translate(width / 2, height / 2);
+                context.rotate(angle * Math.PI / 180);
+
+                context.drawImage(
+                    image,
+                    position.x,
+                    position.y,
+                    size.width,
+                    size.height,
+                    -rectangle.width/2,
+                    -rectangle.height/2,
+                    rectangle.width,
+                    rectangle.height
+                );
+
+                context.restore();
+            }).catch((error) => {
+                context.globalAlpha = imageComponent.opacity;
+                throw error;
+            })
+        }
+
+        return canvas;
+    }
+
+    gerUrl(url) {
+        return this.assetRoot + url;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CompositeImageRasterizer;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__CanvasPool__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CellRenderer__ = __webpack_require__(37);
 
 
 
@@ -2768,7 +2979,7 @@ class CameraSystem {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2795,7 +3006,7 @@ class CanvasPool {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2914,7 +3125,7 @@ class CellRenderer {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2998,7 +3209,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3064,7 +3275,7 @@ class ControllerSystem {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3142,7 +3353,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3151,9 +3362,9 @@ class MovementSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(6);
 
 
@@ -3216,7 +3427,7 @@ class MovementSystem {
 });
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3229,7 +3440,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3243,7 +3454,7 @@ class MovementSystem {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3258,7 +3469,7 @@ class Movable {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3268,7 +3479,7 @@ class Movable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_RelativePosition__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_RelativePosition__ = __webpack_require__(46);
 
 
 
@@ -3328,7 +3539,7 @@ class Movable {
 });
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3347,7 +3558,7 @@ class RelativePosition {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3357,8 +3568,8 @@ class RelativePosition {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(49);
 
 
 
@@ -3421,7 +3632,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3434,7 +3645,7 @@ class SolidBody {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3448,7 +3659,7 @@ class Opacity {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3499,7 +3710,7 @@ class FollowEntityCameraSystem {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

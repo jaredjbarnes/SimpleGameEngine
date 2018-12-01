@@ -3,6 +3,7 @@
         this.type = "image";
         this.id = null;
         this.url = null;
+        this.urls = [];
         this.position = {
             x: 0,
             y: 0

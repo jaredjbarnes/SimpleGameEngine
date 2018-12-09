@@ -1,9 +1,8 @@
 import Entity from "../../../../../../src/Entity";
 import Transform from "../../../../../../src/components/Transform";
 import Rectangle from "../../../../../../src/components/Rectangle";
-import RectangleCollider from "../../../../../../src/components/RectangleCollider";
+import SpatialPartition from "../../../../../../src/components/SpatialPartition";
 import Image from "../../../../../../src/components/Image";
-import Text from "../../../../../../src/components/Text";
 
 const SIZE = 32;
 
@@ -14,7 +13,7 @@ export default class Ground extends Entity {
 
         const transform = new Transform();
         const rectangle = new Rectangle();
-        const rectangleCollider = new RectangleCollider();
+        const spatialPartition = new SpatialPartition();
         const image = new Image();
 
         image.url = `assets/ground/${name}.png`;
@@ -27,7 +26,7 @@ export default class Ground extends Entity {
 
         this.addComponent(transform);
         this.addComponent(rectangle);
-        this.addComponent(rectangleCollider);
+        this.addComponent(spatialPartition);
         this.addComponent(image);
     }
 }

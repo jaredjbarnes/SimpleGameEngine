@@ -2,6 +2,7 @@ import Entity from "../../../../../src/Entity";
 import Transform from "../../../../../src/components/Transform";
 import RectangleCollider from "../../../../../src/components/RectangleCollider";
 import Rectangle from "../../../../../src/components/Rectangle";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 import Image from "../../../../../src/components/Image";
 import ZIndex from "../../../../../src/components/ZIndex";
 
@@ -14,6 +15,7 @@ export default class Bush extends Entity {
 
         const transform = new Transform();
         const rectangleCollider = new RectangleCollider();
+        const spatialPartition = new SpatialPartition();
         const rectangle = new Rectangle();
         const image = new Image();
         const zIndex = new ZIndex();
@@ -31,6 +33,7 @@ export default class Bush extends Entity {
         this.addComponent(transform);
         this.addComponent(rectangle);
         this.addComponent(rectangleCollider);
+        this.addComponent(spatialPartition);
         this.addComponent(image);
         this.addComponent(zIndex);
     }

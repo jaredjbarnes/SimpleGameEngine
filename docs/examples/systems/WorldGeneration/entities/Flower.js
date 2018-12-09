@@ -3,6 +3,7 @@ import Transform from "../../../../../src/components/Transform";
 import Rectangle from "../../../../../src/components/Rectangle";
 import Image from "../../../../../src/components/Image";
 import ZIndex from "../../../../../src/components/ZIndex";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class Flower extends Entity {
     constructor() {
@@ -11,6 +12,7 @@ export default class Flower extends Entity {
 
         const transform = new Transform();
         const rectangle = new Rectangle();
+        const spatialPartition = new SpatialPartition();
         const image = new Image();
         const zIndex = new ZIndex();
 
@@ -26,6 +28,7 @@ export default class Flower extends Entity {
 
         this.addComponent(transform);
         this.addComponent(rectangle);
+        this.addComponent(spatialPartition);
         this.addComponent(image);
         this.addComponent(zIndex);
     }

@@ -26,11 +26,12 @@ export default class CellRenderer {
         if (this.isReady()) {
             const context = this.context;
 
-            context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
             const entities = this.entities;
             const cellSize = this.cellSize;
             const rectangle = this.rectangle;
+
+            this.canvas.width = this.cellSize;
+            this.canvas.height = this.cellSize;
 
             const cellTop = rectangle.top * cellSize;
             const cellLeft = rectangle.left * cellSize;

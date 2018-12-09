@@ -3,6 +3,7 @@ import Image from "../../../../../src/components/Image";
 import CompositeImage from "../../../../../src/components/CompositeImage";
 import Transform from "../../../../../src/components/Transform";
 import Rectangle from "../../../../../src/components/Rectangle";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 import RectangleCollider from "../../../../../src/components/RectangleCollider";
 
 export default class MultipleImages extends Entity {
@@ -37,10 +38,12 @@ export default class MultipleImages extends Entity {
         transform.rotation = 25;
 
         const rectangleCollider = new RectangleCollider();
+        const spatialPartition = new SpatialPartition();
 
         this.addComponent(compositeImage);
         this.addComponent(rectangle);
         this.addComponent(rectangleCollider);
+        this.addComponent(spatialPartition);
         this.addComponent(transform);
 
 

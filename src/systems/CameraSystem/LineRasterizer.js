@@ -45,6 +45,8 @@ export default class LineRenderer {
             context.closePath();
         }
 
+        line.isDirty = false;
+
         return canvas;
     }
 

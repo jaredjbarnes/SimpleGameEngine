@@ -1,8 +1,7 @@
 import Grid from "./Grid";
-import SpatialPartition from "../../components/SpatialPartition";
 import SpatialPartitionService from "../../services/SpatialPartitionService";
 
-const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "rectangle-collider"];
+const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "spatial-partition"];
 
 export default class SpatialPartitionSystem {
     constructor() {
@@ -13,10 +12,7 @@ export default class SpatialPartitionSystem {
     }
 
     addPlacableEntity(entity) {
-        if (!entity.hasComponent("spatial-partition")) {
-            entity.addComponent(new SpatialPartition());
-            this.spatialPartitionService.entitiesById[entity.id] = entity;
-        }
+        this.spatialPartitionService.entitiesById[entity.id] = entity;
     }
 
     updateGrid() {
@@ -30,7 +26,7 @@ export default class SpatialPartitionSystem {
             const entity = dirtyEntities[i];
 
             const spatialPartition = entity.getComponent("spatial-partition");
-            
+
             if (spatialPartition == null) {
                 continue;
             }
@@ -67,8 +63,8 @@ export default class SpatialPartitionSystem {
         const rectangle = entity.getComponent("rectangle");
         const top = rectangle.top;
         const left = rectangle.left;
-        const right = rectangle.right;
-        const bottom = rectangle.bottom;
+        const right = rectangle.right - 1;
+        const bottom = rectangle.bottom - 1;
         const cellSize = this.spatialPartitionService.cellSize;
 
         const topCell = Math.floor(top / cellSize);

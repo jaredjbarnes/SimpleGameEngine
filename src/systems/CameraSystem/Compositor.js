@@ -1,3 +1,5 @@
+import { compileFunction } from "vm";
+
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
 export default class Compositor {
@@ -64,7 +66,9 @@ export default class Compositor {
 
         for (let type in this.rasterizers) {
             const component = entity.getComponent(type);
-            return component && component.isDirty;
+            if (component && component.isDirty) {
+                return true;
+            };
         }
 
         return false;
@@ -90,6 +94,10 @@ export default class Compositor {
                 if (image == null) {
                     image = rasterizer.rasterize(entity);
                     this.saveImage(imageId, image);
+                } 
+                
+                if (image.isLoaded) {
+                    component.isDirty = false;
                 }
 
                 images.push(image);

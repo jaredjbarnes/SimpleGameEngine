@@ -1,4 +1,6 @@
-﻿export default class ImageRasterizer {
+﻿import { request } from "https";
+
+export default class ImageRasterizer {
     constructor({ canvasFactory, imageFactory, assetRoot }) {
         this.type = "image";
         this.canvasFactory = canvasFactory;
@@ -63,7 +65,7 @@
         const rectangle = entity.getComponent("rectangle");
         const transform = entity.getComponent("transform");
         const angle = transform.rotation;
-        const url = this.gerUrl(imageComponent.url);
+        const url = this.getUrl(imageComponent.url);
         const padding = imageComponent.padding;
         const position = imageComponent.position;
         const size = imageComponent.size;
@@ -72,12 +74,13 @@
 
         canvas.width = width;
         canvas.height = height;
+        canvas.isLoaded = false;
 
         this.getImageAsync(url).then((image) => {
             context.save();
 
-            transform.isDirty = true;
-            rectangle.isDirty = true;
+            canvas.isLoaded = true;
+            imageComponent.isDirty = false;
 
             if (imageComponent.flipHorizontally) {
                 const canvas = this.canvasFactory.create();
@@ -150,7 +153,7 @@
         return canvas;
     }
 
-    gerUrl(url) {
+    getUrl(url) {
         return this.assetRoot + url;
     }
 }

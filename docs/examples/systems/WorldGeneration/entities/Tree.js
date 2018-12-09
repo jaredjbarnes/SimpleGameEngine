@@ -8,6 +8,7 @@ import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
 import ZIndex from "../../../../../src/components/ZIndex";
 import SolidBody from "../../../../../src/components/SolidBody";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class Tree extends Entity {
     constructor() {
@@ -22,6 +23,7 @@ export default class Tree extends Entity {
         const body = new PolygonBody();
         const polygon = new Polygon();
         const polygonCollider = new PolygonCollider();
+        const spatialPartition = new SpatialPartition();
         const solidBody = new SolidBody();
 
         polygon.points.push({
@@ -70,5 +72,6 @@ export default class Tree extends Entity {
         this.addComponent(solidBody);
         this.addComponent(body);
         this.addComponent(zIndex);
+        this.addComponent(spatialPartition);
     }
 }

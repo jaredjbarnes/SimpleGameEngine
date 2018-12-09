@@ -84,6 +84,8 @@ export default class PolygonRasterizer {
 
         });
 
+        polygonBody.isDirty = false;
+
         return canvas;
     }
 }

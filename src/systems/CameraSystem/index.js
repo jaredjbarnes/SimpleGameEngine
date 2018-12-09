@@ -14,6 +14,8 @@ const idSort = (_entityA, _entityB) => {
     }
 };
 
+const emtpyArray = Object.freeze([]);
+
 export default class CameraSystem {
     constructor({
         cameraName,
@@ -66,8 +68,8 @@ export default class CameraSystem {
 
         const top = Math.floor(cameraRectangle.top / cellSize);
         const left = Math.floor(cameraRectangle.left / cellSize);
-        const bottom = Math.ceil((cameraRectangle.bottom / cellSize) + 1);
-        const right = Math.ceil((cameraRectangle.right / cellSize) + 1);
+        const bottom = Math.ceil((cameraRectangle.bottom / cellSize));
+        const right = Math.ceil((cameraRectangle.right / cellSize));
 
         for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
             for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
@@ -77,14 +79,14 @@ export default class CameraSystem {
                 const intersectionBottom = Math.min(y, bottom);
                 const intersectionRight = Math.min(x, right);
 
-                if (!(intersectionTop < intersectionBottom && intersectionLeft < intersectionRight)) {
+                if (intersectionTop > intersectionBottom || intersectionLeft > intersectionRight) {
                     const canvas = this.getCanvas(x, y);
 
                     if (canvas != null) {
                         this.canvasPool.release(canvas);
                     }
 
-                    delete this.cellCanvases[`${x}_${y}`]
+                    delete this.cellCanvases[`${x}_${y}`];
                 }
             }
         }
@@ -95,39 +97,34 @@ export default class CameraSystem {
         this.lastRectangle.right = right;
     }
 
-    drawToNewCellCanvases() {
-        for (let y = this.lastRectangle.top; y <= this.lastRectangle.bottom; y++) {
-            for (let x = this.lastRectangle.left; x <= this.lastRectangle.right; x++) {
-                let canvas = this.getCanvas(x, y);
+    drawCellCanvases() {
+        const cellPositionsToRerender = [];
 
-                if (canvas != null) {
+        for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
+            for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
+                let canvas = this.getCanvas(x, y);
+                const cellPosition = { column: x, row: y };
+
+                if (canvas == null) {
+                    cellPositionsToRerender.push(cellPosition);
                     continue;
                 }
 
-                canvas = this.cellCanvases[`${x}_${y}`] = this.canvasPool.acquire();
+                // Check to see if any rasterizable entity needs to be redrawn.
+                const entities = this.spatialPartitionService.grid.getBucket(cellPosition) || emtpyArray;
 
-                canvas.width = this.cellSize;
-                canvas.height = this.cellSize;
+                for (let z = 0; z < entities.length; z++) {
+                    const entity = entities[z];
 
-                const entities = this.spatialPartitionService.grid.getBucket({
-                    column: x,
-                    row: y
-                });
+                    if (this.compositor.isEntityDirty(entity)) {
+                        cellPositionsToRerender.push(cellPosition);
+                        break;
+                    }
 
-                this.cellRenderer.canvas = canvas;
-                this.cellRenderer.context = canvas.getContext("2d");
-                this.cellRenderer.entities = entities;
-                this.cellRenderer.rectangle.top = y;
-                this.cellRenderer.rectangle.left = x;
-                this.cellRenderer.rectangle.right = x + 1;
-                this.cellRenderer.rectangle.bottom = y + 1;
-
-                this.cellRenderer.render();
+                }
             }
         }
-    }
 
-    refreshDirtyCellCanvases() {
         const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions;
 
         for (let key in dirtyCellPositions) {
@@ -147,22 +144,27 @@ export default class CameraSystem {
             if (intersectionTop < intersectionBottom &&
                 intersectionLeft < intersectionRight) {
 
-                const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
-                let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
-
-                if (canvas == null) {
-                    canvas = this.cellCanvases[`${cellPosition.column}_${cellPosition.row}`] = this.canvasPool.acquire();
-                }
-
-                this.cellRenderer.canvas = canvas;
-                this.cellRenderer.context = canvas.getContext("2d");
-                this.cellRenderer.entities = entities;
-                this.cellRenderer.rectangle.top = cellPosition.row;
-                this.cellRenderer.rectangle.left = cellPosition.column;
-                this.cellRenderer.rectangle.right = cellPosition.column + 1;
-                this.cellRenderer.rectangle.bottom = cellPosition.row + 1;
-                this.cellRenderer.render();
+                cellPositionsToRerender.push(cellPosition)
             }
+        }
+
+        for (let x = 0; x < cellPositionsToRerender.length; x++) {
+            const cellPosition = cellPositionsToRerender[x];
+            const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
+            let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
+
+            if (canvas == null) {
+                canvas = this.cellCanvases[`${cellPosition.column}_${cellPosition.row}`] = this.canvasPool.acquire();
+            }
+
+            this.cellRenderer.canvas = canvas;
+            this.cellRenderer.context = canvas.getContext("2d");
+            this.cellRenderer.entities = entities;
+            this.cellRenderer.rectangle.top = cellPosition.row;
+            this.cellRenderer.rectangle.left = cellPosition.column;
+            this.cellRenderer.rectangle.right = cellPosition.column + 1;
+            this.cellRenderer.rectangle.bottom = cellPosition.row + 1;
+            this.cellRenderer.render();
         }
     }
 
@@ -241,8 +243,7 @@ export default class CameraSystem {
     update() {
         if (this.spatialPartitionService != null) {
             this.releaseCellCanvasesAndSaveLastRectangle();
-            this.drawToNewCellCanvases();
-            this.refreshDirtyCellCanvases();
+            this.drawCellCanvases();
             this.transferToCanvas();
         }
     }

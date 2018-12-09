@@ -11,6 +11,7 @@ import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
 import ZIndex from "../../../../../src/components/ZIndex";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class extends Entity {
     constructor(text) {
@@ -22,6 +23,7 @@ export default class extends Entity {
         const rectangleCollider = new RectangleCollider();
         const rectangle = new Rectangle();
         const playerController = new PlayerController();
+        const spatialPartition = new SpatialPartition();
         const movable = new Movable();
         const shape = new Shape();
         const solidBody = new SolidBody();
@@ -85,5 +87,6 @@ export default class extends Entity {
         this.addComponent(body);
         this.addComponent(polygonCollider);
         this.addComponent(zIndex);
+        this.addComponent(spatialPartition);
     }
 }

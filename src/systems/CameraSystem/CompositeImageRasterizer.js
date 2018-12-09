@@ -66,11 +66,12 @@
         const rectangle = entity.getComponent("rectangle");
         const transform = entity.getComponent("transform");
         const images = compositeImageComponent.images;
+        let loadedImageCount = 0;
 
         for (let x = 0; x < images.length; x++) {
             let angle = transform.rotation;
             const imageComponent = images[x];
-            const url = this.gerUrl(imageComponent.url);
+            const url = this.getUrl(imageComponent.url);
             const padding = imageComponent.padding;
             const position = imageComponent.position;
             const size = imageComponent.size;
@@ -83,10 +84,14 @@
             this.getImageAsync(url).then((_image) => {
                 let image = _image;
 
-                context.save();
+                loadedImageCount++;
 
-                transform.isDirty = true;
-                rectangle.isDirty = true;
+                if (loadedImageCount == images.length) {
+                    canvas.isLoaded = true;
+                    imageComponent.isDirty = false;
+                }
+
+                context.save();
 
                 if (imageComponent.flipHorizontally) {
                     const canvas = this.canvasFactory.create();
@@ -144,8 +149,8 @@
                     position.y,
                     size.width,
                     size.height,
-                    -rectangle.width/2,
-                    -rectangle.height/2,
+                    -rectangle.width / 2,
+                    -rectangle.height / 2,
                     rectangle.width,
                     rectangle.height
                 );
@@ -160,7 +165,7 @@
         return canvas;
     }
 
-    gerUrl(url) {
+    getUrl(url) {
         return this.assetRoot + url;
     }
 }

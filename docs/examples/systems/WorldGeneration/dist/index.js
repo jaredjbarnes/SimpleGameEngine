@@ -222,6 +222,21 @@ class Rectangle {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+﻿class RectangleCollider {
+    constructor() {
+        this.type = "rectangle-collider";
+        this.name = null;
+        this.collisions = {};
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = RectangleCollider;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 ﻿class ZIndex {
     constructor() {
         this.type = "z-index";
@@ -232,7 +247,7 @@ class Rectangle {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -267,7 +282,7 @@ class Rectangle {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -387,21 +402,6 @@ class Vector {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Vector;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-﻿class RectangleCollider {
-    constructor() {
-        this.type = "rectangle-collider";
-        this.name = null;
-        this.collisions = {};
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = RectangleCollider;
 
 
 /***/ }),
@@ -1152,7 +1152,7 @@ class BoundingRectangleSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(7);
 
 
 class BoundingRectangleUpdater {
@@ -1294,7 +1294,7 @@ class BoundingRectangleService {
 
 
 
-const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle"];
+const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "rectangle-collider"];
 
 class SpatialPartitionSystem {
     constructor() {
@@ -1322,6 +1322,11 @@ class SpatialPartitionSystem {
             const entity = dirtyEntities[i];
 
             const spatialPartition = entity.getComponent("spatial-partition");
+            
+            if (spatialPartition == null) {
+                continue;
+            }
+
             const lastCellPositions = spatialPartition.cellPositions;
             const newCellPositions = this.getCellPositions(entity);
 
@@ -1952,7 +1957,7 @@ class PolygonSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(7);
 
 
 class PolygonUpdater {
@@ -2276,7 +2281,7 @@ class PolygonColliderSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vector__ = __webpack_require__(7);
 
 
 class CollisionDetector {
@@ -4085,7 +4090,7 @@ class SolidBodySystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_PlayerController__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_Movable__ = __webpack_require__(52);
@@ -4094,7 +4099,7 @@ class SolidBodySystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_PolygonBody__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_Polygon__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_components_PolygonCollider__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_ZIndex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_components_ZIndex__ = __webpack_require__(5);
 
 
 
@@ -6539,8 +6544,10 @@ class Validator {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Image__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Text__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Text__ = __webpack_require__(9);
+
 
 
 
@@ -6556,11 +6563,8 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */
 
         const transform = new __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__["a" /* default */]();
         const rectangle = new __WEBPACK_IMPORTED_MODULE_2__src_components_Rectangle__["a" /* default */]();
-        const image = new __WEBPACK_IMPORTED_MODULE_3__src_components_Image__["a" /* default */]();
-        const text = new __WEBPACK_IMPORTED_MODULE_4__src_components_Text__["a" /* default */]();
-
-        text.text = name;
-        text.font.size = 8;
+        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__["a" /* default */]();
+        const image = new __WEBPACK_IMPORTED_MODULE_4__src_components_Image__["a" /* default */]();
 
         image.url = `assets/ground/${name}.png`;
         image.id = `assets/ground/${name}.png`;
@@ -6572,8 +6576,8 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */
 
         this.addComponent(transform);
         this.addComponent(rectangle);
+        this.addComponent(rectangleCollider);
         this.addComponent(image);
-        //this.addComponent(text);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Ground;
@@ -6586,10 +6590,10 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_ZIndex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_ZIndex__ = __webpack_require__(5);
 
 
 
@@ -6637,13 +6641,13 @@ class Bush extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */] 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_PolygonBody__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_Polygon__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_PolygonCollider__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_ZIndex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_ZIndex__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(10);
 
 
@@ -6730,8 +6734,8 @@ class Tree extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Image__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_ZIndex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Image__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_ZIndex__ = __webpack_require__(5);
 
 
 

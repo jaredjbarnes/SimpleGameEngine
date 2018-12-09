@@ -1,6 +1,7 @@
 import Entity from "../../../../../../src/Entity";
 import Transform from "../../../../../../src/components/Transform";
 import Rectangle from "../../../../../../src/components/Rectangle";
+import RectangleCollider from "../../../../../../src/components/RectangleCollider";
 import Image from "../../../../../../src/components/Image";
 import Text from "../../../../../../src/components/Text";
 
@@ -13,11 +14,8 @@ export default class Ground extends Entity {
 
         const transform = new Transform();
         const rectangle = new Rectangle();
+        const rectangleCollider = new RectangleCollider();
         const image = new Image();
-        const text = new Text();
-
-        text.text = name;
-        text.font.size = 8;
 
         image.url = `assets/ground/${name}.png`;
         image.id = `assets/ground/${name}.png`;
@@ -29,7 +27,7 @@ export default class Ground extends Entity {
 
         this.addComponent(transform);
         this.addComponent(rectangle);
+        this.addComponent(rectangleCollider);
         this.addComponent(image);
-        //this.addComponent(text);
     }
 }

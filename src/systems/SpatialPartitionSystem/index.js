@@ -2,7 +2,7 @@ import Grid from "./Grid";
 import SpatialPartition from "../../components/SpatialPartition";
 import SpatialPartitionService from "../../services/SpatialPartitionService";
 
-const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle"];
+const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "rectangle-collider"];
 
 export default class SpatialPartitionSystem {
     constructor() {
@@ -30,6 +30,11 @@ export default class SpatialPartitionSystem {
             const entity = dirtyEntities[i];
 
             const spatialPartition = entity.getComponent("spatial-partition");
+            
+            if (spatialPartition == null) {
+                continue;
+            }
+
             const lastCellPositions = spatialPartition.cellPositions;
             const newCellPositions = this.getCellPositions(entity);
 

@@ -1264,7 +1264,7 @@ class BoundingRectangleService {
 
 
 
-const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle"];
+const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "rectangle-collider"];
 
 class SpatialPartitionSystem {
     constructor() {
@@ -1292,6 +1292,11 @@ class SpatialPartitionSystem {
             const entity = dirtyEntities[i];
 
             const spatialPartition = entity.getComponent("spatial-partition");
+            
+            if (spatialPartition == null) {
+                continue;
+            }
+
             const lastCellPositions = spatialPartition.cellPositions;
             const newCellPositions = this.getCellPositions(entity);
 

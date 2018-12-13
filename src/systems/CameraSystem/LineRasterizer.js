@@ -23,7 +23,7 @@ export default class LineRenderer {
         const line = entity.getComponent("line");
         const context = canvas.getContext("2d");
 
-        const angle = transform.rotatioon;
+        const angle = transform.rotation;
         const width = rectangle.right - rectangle.left;
         const height = rectangle.bottom - rectangle.top;
 
@@ -44,8 +44,6 @@ export default class LineRenderer {
             context.stroke();
             context.closePath();
         }
-
-        line.isDirty = false;
 
         return canvas;
     }

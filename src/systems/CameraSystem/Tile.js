@@ -1,9 +1,7 @@
-﻿export default class Image {
+﻿export default class Tile {
     constructor() {
-        this.type = "image";
         this.id = null;
         this.url = null;
-        this.urls = [];
         this.position = {
             x: 0,
             y: 0
@@ -19,9 +17,7 @@
             left: 0
         };
         this.opacity = 1;
-        this.zIndex = 0;
         this.flipHorizontally = false;
         this.flipVertically = false;
-        this.isDirty = true;
     }
 }

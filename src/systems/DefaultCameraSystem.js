@@ -1,22 +1,21 @@
 import Compositor from "./CameraSystem/Compositor";
 import CanvasFactory from "./CameraSystem/CanvasFactory";
 import ImageFactory from "./CameraSystem/ImageFactory";
-import ImageRasterizer from "./CameraSystem/ImageRasterizer";
+import BitmapRasterizer from "./CameraSystem/BitmapRasterizer";
 import PolygonRasterizer from "./CameraSystem/PolygonRasterizer";
 import LineRasterizer from "./CameraSystem/LineRasterizer";
 import ShapeRasterizer from "./CameraSystem/ShapeRasterizer";
 import TextRasterizer from "./CameraSystem/TextRasterizer";
-import CompositeImageRasterizer from "./CameraSystem/CompositeImageRasterizer";
 import CameraSystem from "./CameraSystem";
+import BitmapCache from "./CameraSystem/BitmapCache";
 
 export default class DefaultCameraSystem extends CameraSystem {
-    constructor({ canvas, cameraName, assetRoot, sort }) {
+    constructor({ canvas, cameraName, sort }) {
         const compositor = new Compositor();
         const canvasFactory = new CanvasFactory();
         const imageFactory = new ImageFactory();
-
-        const imageRasterizer = new ImageRasterizer({ canvasFactory, imageFactory, assetRoot });
-        const compositeImageRasterizer = new CompositeImageRasterizer({ canvasFactory, imageFactory, assetRoot });
+        const bitmapCache = new BitmapCache({imageFactory, canvasFactory});
+        const bitmapRasterizer = new BitmapRasterizer({ canvasFactory, bitmapCache, imageFactory });
         const lineRasterizer = new LineRasterizer(canvasFactory);
         const shapeRasterizer = new ShapeRasterizer(canvasFactory);
         const textRasterizer = new TextRasterizer(canvasFactory);
@@ -32,9 +31,9 @@ export default class DefaultCameraSystem extends CameraSystem {
         this.polygonRasterizer = null;
         this.canvasFactory = canvasFactory;
         this.compositor = compositor;
+        this.bitmapCache = bitmapCache;
 
-        compositor.addRasterizer(imageRasterizer);
-        compositor.addRasterizer(compositeImageRasterizer);
+        compositor.addRasterizer(bitmapRasterizer);
         compositor.addRasterizer(lineRasterizer);
         compositor.addRasterizer(shapeRasterizer);
         compositor.addRasterizer(textRasterizer);

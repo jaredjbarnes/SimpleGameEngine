@@ -30,6 +30,8 @@ export default class CameraSystem {
         this.canvasPool = new CanvasPool(canvasFactory);
         this.cellRenderer = new CellRenderer();
         this.cellCanvases = {};
+        this.camera = null;
+        this.cameraComponent = null;
         this.cellSize = null;
         this.cameraRectangle = null;
         this.spatialPartitionService = null;
@@ -104,6 +106,11 @@ export default class CameraSystem {
             for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
                 let canvas = this.getCanvas(x, y);
                 const cellPosition = { column: x, row: y };
+
+                if (this.cameraComponent.isDirty) {
+                    cellPositionsToRerender.push(cellPosition);
+                    continue;
+                }
 
                 if (canvas == null) {
                     cellPositionsToRerender.push(cellPosition);
@@ -245,12 +252,22 @@ export default class CameraSystem {
             this.releaseCellCanvasesAndSaveLastRectangle();
             this.drawCellCanvases();
             this.transferToCanvas();
+            this.cameraComponent.isDirty = false;
         }
+    }
+
+    componentAdded(entity, component){
+        
+    }
+
+    componentRemoved(entity, component){
+    
     }
 
     entityAdded(entity) {
         if (this.isCameraEntity(entity)) {
             this.camera = entity;
+            this.cameraComponent = this.camera.getComponent("camera");
             this.cameraRectangle = this.camera.getComponent("rectangle");
             this.canvas.width = this.cameraRectangle.width;
             this.canvas.height = this.cameraRectangle.height;
@@ -258,7 +275,13 @@ export default class CameraSystem {
     }
 
     entityRemoved(entity) {
-
+        if (this.isCameraEntity(entity)) {
+            this.camera = null;
+            this.cameraComponent = null;
+            this.cameraRectangle = null;
+            this.canvas.width = this.cameraRectangle.width;
+            this.canvas.height = this.cameraRectangle.height;
+        }
     }
 
     serviceAdded(name, service) {

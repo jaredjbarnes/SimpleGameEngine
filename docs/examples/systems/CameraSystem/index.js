@@ -7,7 +7,6 @@ import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
 import MovableSystem from "../../../../src/systems/MovementSystem";
 import Text from "./entities/Text";
 import Mario from "./entities/Mario";
-import MultipleImages from "./entities/MultipleImages";
 import StaticText from "./entities/StaticText";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 
@@ -35,13 +34,13 @@ const world = new World();
 const camera = new Camera(cameraName);
 const player = new Text("P");
 const mario = new Mario();
-const mario2 = new Mario({ position: { x: 32, y: 0 }, flipHorizontally: true, flipVertically: false });
-const mario3 = new Mario({ position: { x: -32, y: 0 }, flipHorizontally: true, flipVertically: true });
-const mario4 = new Mario({ position: { x: -60, y: 0 }, flipHorizontally: false, flipVertically: false });
-const multipleImages = new MultipleImages();
+const mario2 = new Mario({ position: { x: 32, y: 0 }});
+const mario3 = new Mario({ position: { x: -28, y: 0 }});
+const mario4 = new Mario({ position: { x: -60, y: 0 }});
 
 
 mario4.getComponent("transform").rotation = 90;
+mario3.getComponent("transform").rotation = 40;
 
 // Systems
 const controllerSystem = new ControllerSystem();
@@ -75,7 +74,6 @@ world.addEntity(mario);
 world.addEntity(mario2);
 world.addEntity(mario3);
 world.addEntity(mario4);
-world.addEntity(multipleImages);
 
 for (let x = 0; x < 10000; x++) {
     const entity = new StaticText(x, {
@@ -100,4 +98,17 @@ document.getElementById("remove-entities").addEventListener("click", () => {
             world.removeEntity(entity);
         }
     }
+});
+
+defaultCameraSystem.bitmapCache.loadTileAsync({
+    id: "./images/Mario.png",
+    url: "./images/Mario.png",
+    size: {
+        width: 16,
+        height: 26
+    },
+    flipHorizontally: true
+}).then(()=>{
+    camera.getComponent("camera").isDirty = true;
+    defaultCameraSystem.compositor.emptyCache();
 });

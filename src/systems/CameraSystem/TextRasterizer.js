@@ -71,8 +71,6 @@
         context.fillStyle = color;
         context.fillText(textTexture.text, parseInt(x, 10), parseInt(y - (textHeight / 2), 10));
 
-        textTexture.isDirty = false;
-
         return canvas;
     }
 }

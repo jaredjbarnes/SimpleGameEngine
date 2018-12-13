@@ -1,12 +1,9 @@
-import { compileFunction } from "vm";
-
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
 export default class Compositor {
     constructor() {
         this.rasterizers = {};
         this.images = {};
-        this.imageTypes = [];
     }
 
     _validateRasterizer(rasterizer) {
@@ -26,7 +23,6 @@ export default class Compositor {
     addRasterizer(rasterizer) {
         this._validateRasterizer(rasterizer);
         this.rasterizers[rasterizer.type] = rasterizer;
-        this.imageTypes = Object.keys(this.rasterizers);
     }
 
     cleanEntity(_entity) {
@@ -48,12 +44,15 @@ export default class Compositor {
         return this.images[identifier] || null;
     }
 
+    emptyCache(){
+        this.images = {};
+    }
+
     isRenderable(_entity) {
         const entity = _entity;
 
         for (let type in this.rasterizers) {
-            const component = entity.getComponent(type);
-            if (component != null) {
+            if (entity.hasComponent(type)) {
                 return true;
             }
         }
@@ -94,12 +93,9 @@ export default class Compositor {
                 if (image == null) {
                     image = rasterizer.rasterize(entity);
                     this.saveImage(imageId, image);
-                } 
-                
-                if (image.isLoaded) {
-                    component.isDirty = false;
                 }
 
+                component.isDirty = false;
                 images.push(image);
             }
         }

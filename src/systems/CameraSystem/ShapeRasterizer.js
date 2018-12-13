@@ -64,8 +64,6 @@
             context.stroke();
         }
 
-        shape.isDirty = false;
-
         return canvas;
     }
 }

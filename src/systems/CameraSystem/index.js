@@ -166,7 +166,7 @@ export default class CameraSystem {
 
             this.cellRenderer.canvas = canvas;
             this.cellRenderer.context = canvas.getContext("2d");
-            this.cellRenderer.entities = entities;
+            this.cellRenderer.entities = entities || emtpyArray;
             this.cellRenderer.rectangle.top = cellPosition.row;
             this.cellRenderer.rectangle.left = cellPosition.column;
             this.cellRenderer.rectangle.right = cellPosition.column + 1;
@@ -256,12 +256,12 @@ export default class CameraSystem {
         }
     }
 
-    componentAdded(entity, component){
-        
+    componentAdded(entity, component) {
+
     }
 
-    componentRemoved(entity, component){
-    
+    componentRemoved(entity, component) {
+
     }
 
     entityAdded(entity) {

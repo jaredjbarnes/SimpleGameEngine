@@ -37,11 +37,12 @@ export default class BitmapRasterizer {
 
     getIdentity(entity) {
         const bitmap = entity.getComponent("bitmap");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
 
-        if (bitmap.isDirty) {
-            const transform = entity.getComponent("transform");
+        if (bitmap.isDirty || transform.isDirty || rectangle.isDirty) {
             const id = bitmap && bitmap.id || null;
-            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}`;
+            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}|${rectangle.width}x${rectangle.height}`;
         }
 
         return bitmap.identity;

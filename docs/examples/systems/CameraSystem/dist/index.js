@@ -411,7 +411,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__entities_Text__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__entities_Mario__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__entities_StaticText__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Spin__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__systems_SpinningSystem__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_systems_FollowEntityCameraSystem__ = __webpack_require__(54);
+
+
 
 
 
@@ -453,6 +457,10 @@ const mario3 = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default 
 const mario4 = new __WEBPACK_IMPORTED_MODULE_8__entities_Mario__["a" /* default */]({ position: { x: -60, y: 0 }});
 
 
+const spin = new __WEBPACK_IMPORTED_MODULE_10__components_Spin__["a" /* default */]();
+spin.step = 5;
+mario.addComponent(spin);
+
 mario4.getComponent("transform").rotation = 90;
 mario3.getComponent("transform").rotation = 40;
 
@@ -461,8 +469,9 @@ const controllerSystem = new __WEBPACK_IMPORTED_MODULE_4__src_systems_Controller
 const keyboardInputSystem = new __WEBPACK_IMPORTED_MODULE_5__src_systems_KeyboardSystem__["a" /* default */]();
 const movableSystem = new __WEBPACK_IMPORTED_MODULE_6__src_systems_MovementSystem__["a" /* default */]();
 const broadPhaseCollisionSystem = new __WEBPACK_IMPORTED_MODULE_2__src_systems_BroadPhaseCollisionSystem__["a" /* default */]();
+const spinningSystem = new __WEBPACK_IMPORTED_MODULE_11__systems_SpinningSystem__["a" /* default */]();
 
-const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_10__src_systems_FollowEntityCameraSystem__["a" /* default */]({
+const followEntityCameraSystem = new __WEBPACK_IMPORTED_MODULE_12__src_systems_FollowEntityCameraSystem__["a" /* default */]({
     cameraEntityId: camera.id,
     followEntityId: player.id
 });
@@ -474,6 +483,7 @@ const defaultCameraSystem = new __WEBPACK_IMPORTED_MODULE_3__src_systems_Default
 });
 
 // Set up world
+world.addSystem(spinningSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movableSystem);
@@ -1260,16 +1270,29 @@ class SpatialPartitionSystem {
         this.spatialPartitionService.grid = new __WEBPACK_IMPORTED_MODULE_0__Grid__["a" /* default */]();
     }
 
-    addPlacableEntity(entity) {
+    addPlacableEntity(_entity) {
+        const entity = _entity;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = this.getCellPositions(entity);
+        const grid = this.spatialPartitionService.grid;
+
+        spatialPartition.cellPositions = cellPositions;
+
         this.spatialPartitionService.entitiesById[entity.id] = entity;
+        grid.add(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
+
     }
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
-
-        spatialPartitionService.dirtyCellPositions = {};
 
         for (let i = 0; i < dirtyEntities.length; i++) {
             const entity = dirtyEntities[i];
@@ -1350,10 +1373,17 @@ class SpatialPartitionSystem {
     removePlacableEntity(_entity) {
         const entity = _entity;
         const entitiesById = this.spatialPartitionService.entitiesById;
-        const spatialPartitioning = entity.getComponent("spatial-partition");
-        const cellPositions = spatialPartitioning.cellPositions;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = spatialPartition.cellPositions;
+        const grid = this.spatialPartitionService.grid;
 
-        this.spatialPartitionService.grid.remove(cellPositions, entity);
+        grid.remove(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
 
         delete entitiesById[entity.id];
     }
@@ -1432,6 +1462,12 @@ class SpatialPartitionSystem {
     update() {
         if (this.isReady()) {
             this.updateGrid();
+        }
+    }
+
+    afterUpdate() {
+        if (this.isReady()) {
+            this.spatialPartitionService.dirtyCellPositions = {};
         }
     }
 }
@@ -2110,11 +2146,12 @@ class BitmapRasterizer {
 
     getIdentity(entity) {
         const bitmap = entity.getComponent("bitmap");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
 
-        if (bitmap.isDirty) {
-            const transform = entity.getComponent("transform");
+        if (bitmap.isDirty || transform.isDirty || rectangle.isDirty) {
             const id = bitmap && bitmap.id || null;
-            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}`;
+            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}|${rectangle.width}x${rectangle.height}`;
         }
 
         return bitmap.identity;
@@ -2651,7 +2688,7 @@ class CameraSystem {
 
             this.cellRenderer.canvas = canvas;
             this.cellRenderer.context = canvas.getContext("2d");
-            this.cellRenderer.entities = entities;
+            this.cellRenderer.entities = entities || emtpyArray;
             this.cellRenderer.rectangle.top = cellPosition.row;
             this.cellRenderer.rectangle.left = cellPosition.column;
             this.cellRenderer.rectangle.right = cellPosition.column + 1;
@@ -2741,12 +2778,12 @@ class CameraSystem {
         }
     }
 
-    componentAdded(entity, component){
-        
+    componentAdded(entity, component) {
+
     }
 
-    componentRemoved(entity, component){
-    
+    componentRemoved(entity, component) {
+
     }
 
     entityAdded(entity) {
@@ -3710,6 +3747,90 @@ class Opacity {
 
 /***/ }),
 /* 52 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Spin {
+    constructor(){
+        this.type = "spin";
+        this.step = 1;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Spin;
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const DEPENDENCIES = ["spin", "transform"];
+
+class SpinningSystem {
+    constructor() {
+        this.world = null;
+        this.entities = {};
+    }
+
+    isSpinnable(entity) {
+        return entity.hasComponents(DEPENDENCIES);
+    }
+
+    activated(world) {
+        this.world = world;
+
+        this.world.getEntities().forEach((entity) => {
+            this.entityAdded(entity);
+        });
+    }
+
+    deactivated() {
+        this.world = null;
+        this.entities = {};
+    }
+
+    componentAdded(entity) {
+        this.entityAdded(entity);
+    }
+
+    componentRemoved(entity, component) {
+        if (DEPENDENCIES.includes(component.type)) {
+            delete this.entities[entity.id];
+        }
+    }
+
+    entityAdded(entity) {
+        if (this.isSpinnable(entity)) {
+            this.entities[entity.id] = entity;
+        }
+    }
+
+    entityRemoved(entity) {
+        if (this.entities[entity.id]) {
+            delete this.entities[entity.is];
+        }
+    }
+
+    update() {
+        for (let key in this.entities) {
+            const entity = this.entities[key];
+
+            const spin = entity.getComponent("spin");
+            const transform = entity.getComponent("transform");
+
+            transform.rotation += spin.step;
+            if (transform.rotation > 360) {
+                transform.rotation = 1;
+            }
+            transform.isDirty = true;
+        }
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SpinningSystem;
+
+
+/***/ }),
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

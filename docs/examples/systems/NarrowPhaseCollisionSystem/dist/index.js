@@ -1347,16 +1347,29 @@ class SpatialPartitionSystem {
         this.spatialPartitionService.grid = new __WEBPACK_IMPORTED_MODULE_0__Grid__["a" /* default */]();
     }
 
-    addPlacableEntity(entity) {
+    addPlacableEntity(_entity) {
+        const entity = _entity;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = this.getCellPositions(entity);
+        const grid = this.spatialPartitionService.grid;
+
+        spatialPartition.cellPositions = cellPositions;
+
         this.spatialPartitionService.entitiesById[entity.id] = entity;
+        grid.add(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
+
     }
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
-
-        spatialPartitionService.dirtyCellPositions = {};
 
         for (let i = 0; i < dirtyEntities.length; i++) {
             const entity = dirtyEntities[i];
@@ -1437,10 +1450,17 @@ class SpatialPartitionSystem {
     removePlacableEntity(_entity) {
         const entity = _entity;
         const entitiesById = this.spatialPartitionService.entitiesById;
-        const spatialPartitioning = entity.getComponent("spatial-partition");
-        const cellPositions = spatialPartitioning.cellPositions;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = spatialPartition.cellPositions;
+        const grid = this.spatialPartitionService.grid;
 
-        this.spatialPartitionService.grid.remove(cellPositions, entity);
+        grid.remove(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
 
         delete entitiesById[entity.id];
     }
@@ -1519,6 +1539,12 @@ class SpatialPartitionSystem {
     update() {
         if (this.isReady()) {
             this.updateGrid();
+        }
+    }
+
+    afterUpdate() {
+        if (this.isReady()) {
+            this.spatialPartitionService.dirtyCellPositions = {};
         }
     }
 }
@@ -2838,11 +2864,12 @@ class BitmapRasterizer {
 
     getIdentity(entity) {
         const bitmap = entity.getComponent("bitmap");
+        const transform = entity.getComponent("transform");
+        const rectangle = entity.getComponent("rectangle");
 
-        if (bitmap.isDirty) {
-            const transform = entity.getComponent("transform");
+        if (bitmap.isDirty || transform.isDirty || rectangle.isDirty) {
             const id = bitmap && bitmap.id || null;
-            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}`;
+            bitmap.identity = `${id}|${transform.rotation}|${bitmap.opacity}|${rectangle.width}x${rectangle.height}`;
         }
 
         return bitmap.identity;
@@ -3379,7 +3406,7 @@ class CameraSystem {
 
             this.cellRenderer.canvas = canvas;
             this.cellRenderer.context = canvas.getContext("2d");
-            this.cellRenderer.entities = entities;
+            this.cellRenderer.entities = entities || emtpyArray;
             this.cellRenderer.rectangle.top = cellPosition.row;
             this.cellRenderer.rectangle.left = cellPosition.column;
             this.cellRenderer.rectangle.right = cellPosition.column + 1;
@@ -3469,12 +3496,12 @@ class CameraSystem {
         }
     }
 
-    componentAdded(entity, component){
-        
+    componentAdded(entity, component) {
+
     }
 
-    componentRemoved(entity, component){
-    
+    componentRemoved(entity, component) {
+
     }
 
     entityAdded(entity) {

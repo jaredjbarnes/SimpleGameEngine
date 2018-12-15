@@ -8,6 +8,8 @@ import MovableSystem from "../../../../src/systems/MovementSystem";
 import Text from "./entities/Text";
 import Mario from "./entities/Mario";
 import StaticText from "./entities/StaticText";
+import Spin from "./components/Spin";
+import SpinningSystem from "./systems/SpinningSystem";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 
 const getRandomNumber = (min, max) => {
@@ -39,6 +41,10 @@ const mario3 = new Mario({ position: { x: -28, y: 0 }});
 const mario4 = new Mario({ position: { x: -60, y: 0 }});
 
 
+const spin = new Spin();
+spin.step = 5;
+mario.addComponent(spin);
+
 mario4.getComponent("transform").rotation = 90;
 mario3.getComponent("transform").rotation = 40;
 
@@ -47,6 +53,7 @@ const controllerSystem = new ControllerSystem();
 const keyboardInputSystem = new KeyboardSystem();
 const movableSystem = new MovableSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
+const spinningSystem = new SpinningSystem();
 
 const followEntityCameraSystem = new FollowEntityCameraSystem({
     cameraEntityId: camera.id,
@@ -60,6 +67,7 @@ const defaultCameraSystem = new DefaultCameraSystem({
 });
 
 // Set up world
+world.addSystem(spinningSystem);
 world.addSystem(keyboardInputSystem);
 world.addSystem(controllerSystem);
 world.addSystem(movableSystem);

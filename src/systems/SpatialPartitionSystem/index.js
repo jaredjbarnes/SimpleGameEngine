@@ -11,16 +11,29 @@ export default class SpatialPartitionSystem {
         this.spatialPartitionService.grid = new Grid();
     }
 
-    addPlacableEntity(entity) {
+    addPlacableEntity(_entity) {
+        const entity = _entity;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = this.getCellPositions(entity);
+        const grid = this.spatialPartitionService.grid;
+
+        spatialPartition.cellPositions = cellPositions;
+
         this.spatialPartitionService.entitiesById[entity.id] = entity;
+        grid.add(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
+
     }
 
     updateGrid() {
         const spatialPartitionService = this.spatialPartitionService;
         const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         const grid = this.spatialPartitionService.grid;
-
-        spatialPartitionService.dirtyCellPositions = {};
 
         for (let i = 0; i < dirtyEntities.length; i++) {
             const entity = dirtyEntities[i];
@@ -101,10 +114,17 @@ export default class SpatialPartitionSystem {
     removePlacableEntity(_entity) {
         const entity = _entity;
         const entitiesById = this.spatialPartitionService.entitiesById;
-        const spatialPartitioning = entity.getComponent("spatial-partition");
-        const cellPositions = spatialPartitioning.cellPositions;
+        const spatialPartition = entity.getComponent("spatial-partition");
+        const cellPositions = spatialPartition.cellPositions;
+        const grid = this.spatialPartitionService.grid;
 
-        this.spatialPartitionService.grid.remove(cellPositions, entity);
+        grid.remove(cellPositions, entity);
+        
+        for (let x = 0 ; x < cellPositions.length ; x++){
+            const cellPosition = cellPositions[x];
+            const key = grid.getKey(cellPosition.column, cellPosition.row);
+            this.spatialPartitionService.dirtyCellPositions[key] = cellPosition;
+        }
 
         delete entitiesById[entity.id];
     }
@@ -183,6 +203,12 @@ export default class SpatialPartitionSystem {
     update() {
         if (this.isReady()) {
             this.updateGrid();
+        }
+    }
+
+    afterUpdate() {
+        if (this.isReady()) {
+            this.spatialPartitionService.dirtyCellPositions = {};
         }
     }
 }

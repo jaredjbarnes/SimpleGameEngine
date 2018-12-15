@@ -7,9 +7,4 @@ const groundTemplate = {
     }
 };
 
-export default [
-    {
-        id:"",
-        url: "./assets/ground"
-    }
-];
+;

@@ -11,6 +11,7 @@ import ControllerInputService from "../../../../src/services/ControllerInputServ
 import MobileStageCreator from "./MobileStageCreator";
 import PlayerControllerSystem from "./systems/PlayerControllerSystem";
 import WorldGenerationSystem from "./systems/WorldGenerationSystem";
+import ImageSystem from "../../../../src/systems/ImageSystem";
 import Noise from "../../../../src/utilities/Noise";
 
 const cameraName = "main";
@@ -65,6 +66,7 @@ const defaultCameraSystem = new DefaultCameraSystem({
     }
 });
 
+const imageSystem = new ImageSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
 const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
@@ -77,6 +79,7 @@ camera.getComponent("rectangle").height = mobileStageCreator.canvas.height;
 camera.getComponent("rectangle").width = mobileStageCreator.canvas.width;
 
 // Set up world
+world.addSystem(imageSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(playerControllerSystem);
 world.addSystem(movableSystem);

@@ -25,7 +25,7 @@ export default class ImageSystem {
         const image = entity.getComponent("image");
         
         if (image.id == null){
-            image.id = image.url;
+            image.id = JSON.stringify(image);
         }
 
         this.bitmapCache.loadTileAsync(image).then(()=>{

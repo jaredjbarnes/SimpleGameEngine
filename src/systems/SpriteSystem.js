@@ -1,10 +1,13 @@
-const DEPENDENCIES = ["sprite", "image"];
+import Bitmap from "../components/Bitmap";
+
+const DEPENDENCIES = ["sprite"];
 
 export default class SpriteSystem {
-    constructor() {
+    constructor({bitmapCache}) {
         this.world = null;
         this.entities = [];
         this.entitiesById = {};
+        this.bitmapCache = bitmapCache;
     }
 
     cacheEntities() {
@@ -13,11 +16,31 @@ export default class SpriteSystem {
         });
     }
 
+    addEntity(entity){
+        const sprite = entity.getComponent("sprite");
+        const images = sprite.images;
+
+        images.forEach((image)=>{
+            image.id = JSON.stringify(image);
+        });
+
+        this.bitmapCache.loadTilesAsync(images).promise.then(()=>{
+            const bitmap = new Bitmap();
+            bitmap.id = images[0].id;
+
+            entity.addComponent(bitmap);
+        });
+    }
+
     update() {
         for (let x = 0; x < this.entities.length; x++) {
             const entity = this.entities[x];
             const sprite = entity.getComponent("sprite");
-            const imageTexture = entity.getComponent("image");
+            const bitmap = entity.getComponent("bitmap");
+
+            if (bitmap == null){
+                continue;
+            }
 
             const index = Math.floor(sprite.index);
             const newImage = sprite.images[index];
@@ -26,14 +49,8 @@ export default class SpriteSystem {
                 continue;
             }
 
-            for (let key in newImage) {
-                if (key === "type") {
-                    continue;
-                }
-                imageTexture[key] = newImage[key];
-            }
-
-            imageTexture.isDirty = true;
+            bitmap.id = newImage.id;
+            bitmap.isDirty = true;
 
             sprite.index += (sprite.timeScale * 1);
             sprite.index = sprite.index >= sprite.images.length ? 0 : sprite.index;
@@ -45,6 +62,7 @@ export default class SpriteSystem {
             if (this.entitiesById[entity.id] == null) {
                 this.entitiesById[entity.id] = entity;
                 this.entities.push(entity);
+                this.addEntity(entity);
             }
         }
     }
@@ -69,12 +87,13 @@ export default class SpriteSystem {
 
     activated(world) {
         this.world = world;
+        this.entities = [];
         this.cacheEntities();
     }
 
     deactivated() {
         this.world = null;
-        this.entities = new Map();
+        this.entities = [];
     }
 
 }

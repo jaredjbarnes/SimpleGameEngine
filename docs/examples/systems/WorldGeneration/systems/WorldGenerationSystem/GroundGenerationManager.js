@@ -22,12 +22,12 @@ export default class GroundGenerationManager extends EntityGenerationManager {
         entityIdentifier.addRange({
             name: DIRT,
             min: -1,
-            max: -0.45
+            max: -0.1
         });
 
         entityIdentifier.addRange({
             name: GRASS,
-            min: -0.45,
+            min: -0.1,
             max: 1
         });
 

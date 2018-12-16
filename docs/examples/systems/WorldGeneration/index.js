@@ -6,12 +6,14 @@ import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
 import MovableSystem from "../../../../src/systems/MovementSystem";
 import SolidBodySystem from "../../../../src/systems/SolidBodySystem";
 import Text from "./entities/Text";
+import Link from "./entities/Link";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 import ControllerInputService from "../../../../src/services/ControllerInputService";
 import MobileStageCreator from "./MobileStageCreator";
 import PlayerControllerSystem from "./systems/PlayerControllerSystem";
 import WorldGenerationSystem from "./systems/WorldGenerationSystem";
 import ImageSystem from "../../../../src/systems/ImageSystem";
+import SpriteSystem from "../../../../src/systems/SpriteSystem";
 import Noise from "../../../../src/utilities/Noise";
 
 const cameraName = "main";
@@ -30,6 +32,7 @@ const world = new World();
 
 // Entities
 const player = new Text("P");
+const link = new Link();
 
 // Systems
 const movableSystem = new MovableSystem();
@@ -67,6 +70,7 @@ const defaultCameraSystem = new DefaultCameraSystem({
 });
 
 const imageSystem = new ImageSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
+const spriteSystem = new SpriteSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
 const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
@@ -79,6 +83,7 @@ camera.getComponent("rectangle").height = mobileStageCreator.canvas.height;
 camera.getComponent("rectangle").width = mobileStageCreator.canvas.width;
 
 // Set up world
+world.addSystem(spriteSystem);
 world.addSystem(imageSystem);
 world.addSystem(solidBodySystem);
 world.addSystem(playerControllerSystem);
@@ -95,6 +100,7 @@ world.addService(controllerInputService);
 // Add Entities
 world.addEntity(camera);
 world.addEntity(player);
+world.addEntity(link);
 
 world.play();
 

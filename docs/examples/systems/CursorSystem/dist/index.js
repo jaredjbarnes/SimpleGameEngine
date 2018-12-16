@@ -360,6 +360,21 @@ class Vector {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class SpatialPartition {
+    constructor(){
+        this.type = "spatial-partition";
+        this.cellPositions = [];
+        this.lastCellPositions = [];
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SpatialPartition;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 ﻿class Shape {
     constructor() {
         this.type = "shape";
@@ -393,7 +408,7 @@ class Vector {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -461,7 +476,7 @@ class SystemsBundlerSystem {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -535,7 +550,7 @@ const isObject = obj => {
   
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -569,19 +584,6 @@ class Text {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Text;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class SolidBody {
-    constructor() {
-        this.type = "solid-body";
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
 
 
 /***/ }),
@@ -683,7 +685,7 @@ world.addSystem(defaultCameraSystem);
 world.addEntity(camera);
 world.addEntity(player);
 
-for (let x = 0; x < 10000; x++) {
+for (let x = 0; x < 0; x++) {
     const entity = new __WEBPACK_IMPORTED_MODULE_10__entities_StaticText__["a" /* default */](x, {
         x: getRandomNumber(-10000, 10000),
         y: getRandomNumber(-10000, 10000)
@@ -1010,7 +1012,7 @@ var S4 = function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BoundingRectangleSystem__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__SpatialPartitionSystem__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RectangleColliderSystem__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__SystemsBundlerSystem__ = __webpack_require__(8);
 
 
 
@@ -1085,6 +1087,9 @@ class BoundingRectangleSystem {
     // Life cycle methods
     activated(_world) {
         this.world = _world;
+        this.world.getEntities().forEach((entity)=>{
+            this.entityAdded(entity);
+        });
         this.world.addService(this.boundingRectangleService);
     }
 
@@ -1788,8 +1793,7 @@ class RectangleColliderSystem {
 
     //Life Cycle Methods
     activated(_world) {
-        const world = _world;
-        this.world = world
+        this.world = _world;
     }
 
     deactivated(_world) {
@@ -1847,7 +1851,7 @@ class Collision {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__SystemsBundlerSystem__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__PolygonSystem__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__PolygonColliderSystem__ = __webpack_require__(28);
 
@@ -2878,7 +2882,7 @@ class BitmapRasterizer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_overlay__ = __webpack_require__(9);
 
 
 const defaultColors = {
@@ -3748,7 +3752,7 @@ class BitmapCache {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Tile__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_overlay__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_overlay__ = __webpack_require__(9);
 
 
 
@@ -4207,15 +4211,15 @@ class SolidBodySystem {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_State__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SolidBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_SpatialPartition__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardController__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_KeyboardInput__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_Movable__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_Shape__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SolidBody__ = __webpack_require__(53);
 
 
 
@@ -4237,10 +4241,11 @@ class SolidBodySystem {
         const textTexture = new __WEBPACK_IMPORTED_MODULE_2__src_components_Text__["a" /* default */]();
         const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_3__src_components_RectangleCollider__["a" /* default */]();
         const rectangle = new __WEBPACK_IMPORTED_MODULE_4__src_components_Rectangle__["a" /* default */]();
-        const keyboardController = new __WEBPACK_IMPORTED_MODULE_5__src_components_KeyboardController__["a" /* default */]();
-        const keyboardInput = new __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardInput__["a" /* default */]();
-        const movable = new __WEBPACK_IMPORTED_MODULE_7__src_components_Movable__["a" /* default */]();
-        const shape = new __WEBPACK_IMPORTED_MODULE_8__src_components_Shape__["a" /* default */]();
+        const keyboardController = new __WEBPACK_IMPORTED_MODULE_6__src_components_KeyboardController__["a" /* default */]();
+        const keyboardInput = new __WEBPACK_IMPORTED_MODULE_7__src_components_KeyboardInput__["a" /* default */]();
+        const movable = new __WEBPACK_IMPORTED_MODULE_8__src_components_Movable__["a" /* default */]();
+        const shape = new __WEBPACK_IMPORTED_MODULE_9__src_components_Shape__["a" /* default */]();
+        const spatialPartition = new __WEBPACK_IMPORTED_MODULE_5__src_components_SpatialPartition__["a" /* default */]();
         const solidBody = new __WEBPACK_IMPORTED_MODULE_10__src_components_SolidBody__["a" /* default */]();
 
         textTexture.text = text;
@@ -4277,6 +4282,7 @@ class SolidBodySystem {
         this.addComponent(keyboardInput);
         this.addComponent(movable);
         this.addComponent(shape);
+        this.addComponent(spatialPartition);
         this.addComponent(solidBody);
     }
 });
@@ -4328,22 +4334,12 @@ class Movable {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-﻿class State {
+class SolidBody {
     constructor() {
-        this.type = "state";
-        this.initialized = false;
-        
-        this.activeName = null;
-        this.activeConfig = {};
-        
-        this.name = null;
-        this.config = {};
-        
-        this.stateManagerName = null;
-
+        this.type = "solid-body";
     }
 }
-/* unused harmony export default */
+/* harmony export (immutable) */ __webpack_exports__["a"] = SolidBody;
 
 
 /***/ }),
@@ -4353,11 +4349,11 @@ class Movable {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Text__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_RectangleCollider__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_Shape__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__ = __webpack_require__(55);
 
 
@@ -4376,9 +4372,9 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         const transform = new __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__["a" /* default */]();
         const textTexture = new __WEBPACK_IMPORTED_MODULE_2__src_components_Text__["a" /* default */]();
         const rectangle = new __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__["a" /* default */]();
-        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_4__src_components_RectangleCollider__["a" /* default */]();
-        const shape = new __WEBPACK_IMPORTED_MODULE_5__src_components_Shape__["a" /* default */]();
-        const solidBody = new __WEBPACK_IMPORTED_MODULE_6__src_components_SolidBody__["a" /* default */]();
+        const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_5__src_components_RectangleCollider__["a" /* default */]();
+        const spatialPartition = new __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__["a" /* default */]();
+        const shape = new __WEBPACK_IMPORTED_MODULE_6__src_components_Shape__["a" /* default */]();
         const opacity = new __WEBPACK_IMPORTED_MODULE_7__src_components_Opacity__["a" /* default */]();
 
         opacity.value = Math.random();
@@ -4415,6 +4411,7 @@ class StaticText extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* defaul
         this.addComponent(rectangleCollider);
         this.addComponent(shape);
         this.addComponent(opacity);
+        this.addComponent(spatialPartition);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = StaticText;
@@ -4496,8 +4493,10 @@ class FollowEntityCameraSystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Cursor__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Transform__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RectangleCollider__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_CursorService__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Shape__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SpatialPartition__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__services_CursorService__ = __webpack_require__(60);
+
 
 
 
@@ -4566,7 +4565,7 @@ class CursorSystem {
         }
 
         this._createCursorEntity();
-        this.cursorService = new __WEBPACK_IMPORTED_MODULE_7__services_CursorService__["a" /* default */]();
+        this.cursorService = new __WEBPACK_IMPORTED_MODULE_8__services_CursorService__["a" /* default */]();
         this.cursorService = this.cursorEntity;
         this.cursorComponent = this.cursorEntity.getComponent("cursor");
 
@@ -4589,6 +4588,7 @@ class CursorSystem {
         const cursor = new __WEBPACK_IMPORTED_MODULE_3__components_Cursor__["a" /* default */]();
         const rectangleCollider = new __WEBPACK_IMPORTED_MODULE_5__components_RectangleCollider__["a" /* default */]();
         const shape = new __WEBPACK_IMPORTED_MODULE_6__components_Shape__["a" /* default */]();
+        const spatialPartition = new __WEBPACK_IMPORTED_MODULE_7__components_SpatialPartition__["a" /* default */]();
         const zIndex = new __WEBPACK_IMPORTED_MODULE_2__components_ZIndex__["a" /* default */]();
 
         shape.points.push(
@@ -4600,6 +4600,7 @@ class CursorSystem {
         );
 
         shape.fillColor.red = 255;
+        shape.id = "cursor";
 
         rectangle.height = 5;
         rectangle.width = 5;
@@ -4613,6 +4614,8 @@ class CursorSystem {
         this.cursorEntity.addComponent(cursor);
         this.cursorEntity.addComponent(rectangleCollider);
         this.cursorEntity.addComponent(zIndex);
+        this.cursorEntity.addComponent(spatialPartition);
+        this.cursorEntity.addComponent(shape);
 
         this.cursorRectangle = rectangle;
         this.cursorPosition = transform.position;
@@ -4678,8 +4681,6 @@ class CursorSystem {
         if (this.camera == null) {
             return;
         }
-
-        const entity = this.cursorEntity;
 
         let halfCameraWidth = this.cameraRectangle.width / 2;
         let halfCameraHeight = this.cameraRectangle.height / 2;

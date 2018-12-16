@@ -47,6 +47,9 @@ export default class BoundingRectangleSystem {
     // Life cycle methods
     activated(_world) {
         this.world = _world;
+        this.world.getEntities().forEach((entity)=>{
+            this.entityAdded(entity);
+        });
         this.world.addService(this.boundingRectangleService);
     }
 

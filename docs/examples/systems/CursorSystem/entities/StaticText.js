@@ -1,10 +1,10 @@
-import Entity from "./../../../../../src/Entity";
-import Transform from "./../../../../../src/components/Transform";
-import Text from "./../../../../../src/components/Text";
-import Rectangle from "./../../../../../src/components/Rectangle";
-import RectangleCollider from "./../../../../../src/components/RectangleCollider";
-import Shape from "./../../../../../src/components/Shape";
-import SolidBody from "./../../../../../src/components/SolidBody";
+import Entity from "../../../../../src/Entity";
+import Transform from "../../../../../src/components/Transform";
+import Text from "../../../../../src/components/Text";
+import Rectangle from "../../../../../src/components/Rectangle";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import RectangleCollider from "../../../../../src/components/RectangleCollider";
+import Shape from "../../../../../src/components/Shape";
 import Opacity from "../../../../../src/components/Opacity";
 
 export default class StaticText extends Entity {
@@ -16,8 +16,8 @@ export default class StaticText extends Entity {
         const textTexture = new Text();
         const rectangle = new Rectangle();
         const rectangleCollider = new RectangleCollider();
+        const spatialPartition = new SpatialPartition();
         const shape = new Shape();
-        const solidBody = new SolidBody();
         const opacity = new Opacity();
 
         opacity.value = Math.random();
@@ -54,5 +54,6 @@ export default class StaticText extends Entity {
         this.addComponent(rectangleCollider);
         this.addComponent(shape);
         this.addComponent(opacity);
+        this.addComponent(spatialPartition);
     }
 }

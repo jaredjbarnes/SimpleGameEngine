@@ -1,14 +1,14 @@
-import Entity from "./../../../../../src/Entity";
-import Transform from "./../../../../../src/components/Transform";
-import Text from "./../../../../../src/components/Text";
-import RectangleCollider from "./../../../../../src/components/RectangleCollider";
-import Rectangle from "./../../../../../src/components/Rectangle";
-import KeyboardController from "./../../../../../src/components/KeyboardController";
-import KeyboardInput from "./../../../../../src/components/KeyboardInput";
-import Movable from "./../../../../../src/components/Movable";
-import Shape from "./../../../../../src/components/Shape";
-import State from "./../../../../../src/components/State";
-import SolidBody from "./../../../../../src/components/SolidBody";
+import Entity from "../../../../../src/Entity";
+import Transform from "../../../../../src/components/Transform";
+import Text from "../../../../../src/components/Text";
+import RectangleCollider from "../../../../../src/components/RectangleCollider";
+import Rectangle from "../../../../../src/components/Rectangle";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import KeyboardController from "../../../../../src/components/KeyboardController";
+import KeyboardInput from "../../../../../src/components/KeyboardInput";
+import Movable from "../../../../../src/components/Movable";
+import Shape from "../../../../../src/components/Shape";
+import SolidBody from "../../../../../src/components/SolidBody";
 
 export default class extends Entity {
     constructor(text) {
@@ -23,6 +23,7 @@ export default class extends Entity {
         const keyboardInput = new KeyboardInput();
         const movable = new Movable();
         const shape = new Shape();
+        const spatialPartition = new SpatialPartition();
         const solidBody = new SolidBody();
 
         textTexture.text = text;
@@ -59,6 +60,7 @@ export default class extends Entity {
         this.addComponent(keyboardInput);
         this.addComponent(movable);
         this.addComponent(shape);
+        this.addComponent(spatialPartition);
         this.addComponent(solidBody);
     }
 }

@@ -1160,6 +1160,9 @@ class BoundingRectangleSystem {
     // Life cycle methods
     activated(_world) {
         this.world = _world;
+        this.world.getEntities().forEach((entity)=>{
+            this.entityAdded(entity);
+        });
         this.world.addService(this.boundingRectangleService);
     }
 
@@ -1863,8 +1866,7 @@ class RectangleColliderSystem {
 
     //Life Cycle Methods
     activated(_world) {
-        const world = _world;
-        this.world = world
+        this.world = _world;
     }
 
     deactivated(_world) {

@@ -5,6 +5,7 @@ import Cursor from "../components/Cursor";
 import Transform from "../components/Transform";
 import RectangleCollider from "../components/RectangleCollider";
 import Shape from "../components/Shape";
+import SpatialPartition from "../components/SpatialPartition";
 import CursorService from "../services/CursorService";
 
 const CAMERA_DEPENDENCIES = ["camera", "transform"];
@@ -89,6 +90,7 @@ export default class CursorSystem {
         const cursor = new Cursor();
         const rectangleCollider = new RectangleCollider();
         const shape = new Shape();
+        const spatialPartition = new SpatialPartition();
         const zIndex = new ZIndex();
 
         shape.points.push(
@@ -100,6 +102,7 @@ export default class CursorSystem {
         );
 
         shape.fillColor.red = 255;
+        shape.id = "cursor";
 
         rectangle.height = 5;
         rectangle.width = 5;
@@ -113,6 +116,8 @@ export default class CursorSystem {
         this.cursorEntity.addComponent(cursor);
         this.cursorEntity.addComponent(rectangleCollider);
         this.cursorEntity.addComponent(zIndex);
+        this.cursorEntity.addComponent(spatialPartition);
+        this.cursorEntity.addComponent(shape);
 
         this.cursorRectangle = rectangle;
         this.cursorPosition = transform.position;
@@ -178,8 +183,6 @@ export default class CursorSystem {
         if (this.camera == null) {
             return;
         }
-
-        const entity = this.cursorEntity;
 
         let halfCameraWidth = this.cameraRectangle.width / 2;
         let halfCameraHeight = this.cameraRectangle.height / 2;

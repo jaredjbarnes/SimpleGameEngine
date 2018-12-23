@@ -3293,6 +3293,9 @@ class CameraSystem {
         this.cellSize = null;
         this.cameraRectangle = null;
         this.spatialPartitionService = null;
+        this.lastCellPositions = [];
+        this.currentCellPositions = [];
+        this.cellPositionsToRerender = [];
         this.lastRectangle = {
             top: 0,
             left: 0,
@@ -3322,56 +3325,58 @@ class CameraSystem {
         return this.cellCanvases[`${_column}_${_row}`] || null;
     }
 
-    releaseCellCanvasesAndSaveLastRectangle() {
-        const cellSize = this.spatialPartitionService.cellSize;
-        const cameraRectangle = this.cameraRectangle;
+    clean() {
+        for (let x = 0; x < this.lastCellPositions.length; x++) {
+            const currentPosition = this.lastCellPositions[x];
+            const index = this.currentCellPositions.findIndex((position) => {
+                return currentPosition.column === position.column && currentPosition.row === position.row;
+            });
 
-        const top = Math.floor(cameraRectangle.top / cellSize);
-        const left = Math.floor(cameraRectangle.left / cellSize);
-        const bottom = Math.ceil((cameraRectangle.bottom / cellSize));
-        const right = Math.ceil((cameraRectangle.right / cellSize));
+            if (index === -1) {
+                const canvas = this.getCanvas(currentPosition.column, currentPosition.row);
 
-        for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
-            for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
-
-                const intersectionTop = Math.max(y, top);
-                const intersectionLeft = Math.max(x, left);
-                const intersectionBottom = Math.min(y, bottom);
-                const intersectionRight = Math.min(x, right);
-
-                if (intersectionTop > intersectionBottom || intersectionLeft > intersectionRight) {
-                    const canvas = this.getCanvas(x, y);
-
-                    if (canvas != null) {
-                        this.canvasPool.release(canvas);
-                    }
-
-                    delete this.cellCanvases[`${x}_${y}`];
+                if (canvas != null) {
+                    this.canvasPool.release(canvas);
                 }
+
+                delete this.cellCanvases[`${currentPosition.column}_${currentPosition.row}`];
             }
         }
 
-        this.lastRectangle.top = top;
-        this.lastRectangle.left = left;
-        this.lastRectangle.bottom = bottom;
-        this.lastRectangle.right = right;
     }
 
-    drawCellCanvases() {
-        const cellPositionsToRerender = [];
+    // This is to avoid memory chern.
+    transferValuesFromArray1ToArray2(array1, array2) {
+        array2.length = 0;
 
-        for (let y = this.lastRectangle.top; y < this.lastRectangle.bottom; y++) {
-            for (let x = this.lastRectangle.left; x < this.lastRectangle.right; x++) {
+        for (let x = 0; x < array1.length; x++) {
+            array2.push(array1[x]);
+        }
+    }
+
+    findCellsToRerender() {
+        const top = Math.floor(this.cameraRectangle.top / this.cellSize);
+        const left = Math.floor(this.cameraRectangle.left / this.cellSize);
+        const bottom = Math.ceil((this.cameraRectangle.bottom - 1) / this.cellSize);
+        const right = Math.ceil((this.cameraRectangle.right - 1) / this.cellSize);
+
+        this.cellPositionsToRerender.length = 0;
+        this.currentCellPositions.length = 0;
+
+        for (let y = top; y < bottom; y++) {
+            for (let x = left; x < right; x++) {
                 let canvas = this.getCanvas(x, y);
                 const cellPosition = { column: x, row: y };
 
+                this.currentCellPositions.push(cellPosition);
+
                 if (this.cameraComponent.isDirty) {
-                    cellPositionsToRerender.push(cellPosition);
+                    this.cellPositionsToRerender.push(cellPosition);
                     continue;
                 }
 
                 if (canvas == null) {
-                    cellPositionsToRerender.push(cellPosition);
+                    this.cellPositionsToRerender.push(cellPosition);
                     continue;
                 }
 
@@ -3382,7 +3387,7 @@ class CameraSystem {
                     const entity = entities[z];
 
                     if (this.compositor.isEntityDirty(entity)) {
-                        cellPositionsToRerender.push(cellPosition);
+                        this.cellPositionsToRerender.push(cellPosition);
                         break;
                     }
 
@@ -3409,12 +3414,16 @@ class CameraSystem {
             if (intersectionTop < intersectionBottom &&
                 intersectionLeft < intersectionRight) {
 
-                cellPositionsToRerender.push(cellPosition)
+                this.cellPositionsToRerender.push(cellPosition)
             }
         }
 
-        for (let x = 0; x < cellPositionsToRerender.length; x++) {
-            const cellPosition = cellPositionsToRerender[x];
+    }
+
+    drawCellCanvases() {
+
+        for (let x = 0; x < this.cellPositionsToRerender.length; x++) {
+            const cellPosition = this.cellPositionsToRerender[x];
             const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
             let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
 
@@ -3507,9 +3516,11 @@ class CameraSystem {
 
     update() {
         if (this.spatialPartitionService != null) {
-            this.releaseCellCanvasesAndSaveLastRectangle();
+            this.findCellsToRerender();
+            this.clean();
             this.drawCellCanvases();
             this.transferToCanvas();
+            this.transferValuesFromArray1ToArray2(this.currentCellPositions, this.lastCellPositions);
             this.cameraComponent.isDirty = false;
         }
     }
@@ -3756,8 +3767,10 @@ class BitmapCache {
 
     loadTileAsync(tile) {
         return this.loadImageAsync(tile).then((image) => {
-            const canvas = this.tileToCanvasConverter.convert(tile, image);
-            this.set(tile.id, canvas);
+            if (!this.has(tile.id)){
+                const canvas = this.tileToCanvasConverter.convert(tile, image);
+                this.set(tile.id, canvas);
+            }
         });
     }
 
@@ -3791,6 +3804,10 @@ class BitmapCache {
         if (this.bitmaps[id] != null) {
             delete this.bitmaps[id];
         }
+    }
+
+    has(id){
+        return this.bitmaps[id] != null; 
     }
 
     get(id) {

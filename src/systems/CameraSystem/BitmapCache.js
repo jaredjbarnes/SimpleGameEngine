@@ -38,8 +38,10 @@ export default class BitmapCache {
 
     loadTileAsync(tile) {
         return this.loadImageAsync(tile).then((image) => {
-            const canvas = this.tileToCanvasConverter.convert(tile, image);
-            this.set(tile.id, canvas);
+            if (!this.has(tile.id)){
+                const canvas = this.tileToCanvasConverter.convert(tile, image);
+                this.set(tile.id, canvas);
+            }
         });
     }
 
@@ -73,6 +75,10 @@ export default class BitmapCache {
         if (this.bitmaps[id] != null) {
             delete this.bitmaps[id];
         }
+    }
+
+    has(id){
+        return this.bitmaps[id] != null; 
     }
 
     get(id) {

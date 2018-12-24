@@ -3,14 +3,16 @@ import Transform from "../../../../../src/components/Transform";
 import Text from "../../../../../src/components/Text";
 import RectangleCollider from "../../../../../src/components/RectangleCollider";
 import Rectangle from "../../../../../src/components/Rectangle";
-import KeyboardController from "../../../../../src/components/KeyboardController";
-import KeyboardInput from "../../../../../src/components/KeyboardInput";
 import Movable from "../../../../../src/components/Movable";
 import Shape from "../../../../../src/components/Shape";
 import SolidBody from "../../../../../src/components/SolidBody";
 import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
+import KeyboardController from "../../../../../src/components/KeyboardController";
+import KeyboardInput from "../../../../../src/components/KeyboardInput";
+import ZIndex from "../../../../../src/components/ZIndex";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class extends Entity {
     constructor(text) {
@@ -21,14 +23,18 @@ export default class extends Entity {
         const textTexture = new Text();
         const rectangleCollider = new RectangleCollider();
         const rectangle = new Rectangle();
-        const keyboardController = new KeyboardController();
-        const keyboardInput = new KeyboardInput();
+        const spatialPartition = new SpatialPartition();
         const movable = new Movable();
         const shape = new Shape();
         const solidBody = new SolidBody();
         const body = new PolygonBody();
         const polygon = new Polygon();
         const polygonCollider = new PolygonCollider();
+        const zIndex = new ZIndex();
+        const keyboardController = new KeyboardController();
+        const keyboardInput = new KeyboardInput();
+
+        zIndex.value = 2;
 
         polygon.points.push({
             x: 0,
@@ -61,7 +67,7 @@ export default class extends Entity {
         shape.fillColor.blue = 255;
         shape.fillColor.green = 100;
         shape.fillColor.red = 100;
-        shape.fillColor.alpha = 0.25
+        //shape.fillColor.alpha = 0.25
         
         shape.points.push(
             { x: 0, y: 0 },
@@ -83,5 +89,8 @@ export default class extends Entity {
         this.addComponent(solidBody);
         this.addComponent(body);
         this.addComponent(polygonCollider);
+        this.addComponent(zIndex);
+        this.addComponent(spatialPartition);
+        
     }
 }

@@ -62,7 +62,7 @@ export default class MobileStageCreator {
     this.aButton.style.height = "50px";
     this.aButton.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.3)";
 
-    this.body.appendChild(this.aButton);
+    //this.body.appendChild(this.aButton);
   }
 
   createBButton() {
@@ -77,7 +77,7 @@ export default class MobileStageCreator {
     this.bButton.style.height = "50px";
     this.bButton.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.3)";
 
-    this.body.appendChild(this.bButton);
+    //this.body.appendChild(this.bButton);
   }
 
   createCanvas() {

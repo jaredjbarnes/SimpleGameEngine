@@ -5,6 +5,7 @@ import RectangleCollider from "../../../../../src/components/RectangleCollider";
 import Rectangle from "../../../../../src/components/Rectangle";
 import Shape from "../../../../../src/components/Shape";
 import RelativePosition from "../../../../../src/components/RelativePosition";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class extends Entity {
     constructor(relativeToEntityId) {
@@ -17,6 +18,7 @@ export default class extends Entity {
         const rectangle = new Rectangle();
         const shape = new Shape();
         const relativePosition = new RelativePosition();
+        const spatialPartition = new SpatialPartition();
 
         relativePosition.relativeToEntityId = relativeToEntityId;
         relativePosition.position.x = 100;
@@ -53,5 +55,6 @@ export default class extends Entity {
         this.addComponent(rectangleCollider);
         this.addComponent(shape);
         this.addComponent(relativePosition);
+        this.addComponent(spatialPartition);
     }
 }

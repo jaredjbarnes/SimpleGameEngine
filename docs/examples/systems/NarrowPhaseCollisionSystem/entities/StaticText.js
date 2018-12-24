@@ -9,6 +9,7 @@ import Opacity from "../../../../../src/components/Opacity";
 import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {
@@ -19,6 +20,7 @@ export default class StaticText extends Entity {
         const textTexture = new Text();
         const rectangle = new Rectangle();
         const rectangleCollider = new RectangleCollider();
+        const spatialPartition = new SpatialPartition();
         const shape = new Shape();
         const solidBody = new SolidBody();
         const opacity = new Opacity();
@@ -79,5 +81,6 @@ export default class StaticText extends Entity {
         this.addComponent(solidBody);
         this.addComponent(body);
         this.addComponent(polygonCollider);
+        this.addComponent(spatialPartition);
     }
 }

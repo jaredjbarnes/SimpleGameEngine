@@ -10,6 +10,8 @@ import SolidBody from "../../../../../src/components/SolidBody";
 import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
+import ZIndex from "../../../../../src/components/ZIndex";
+import SpatialPartition from "../../../../../src/components/SpatialPartition";
 
 export default class extends Entity {
     constructor(text) {
@@ -21,12 +23,16 @@ export default class extends Entity {
         const rectangleCollider = new RectangleCollider();
         const rectangle = new Rectangle();
         const playerController = new PlayerController();
+        const spatialPartition = new SpatialPartition();
         const movable = new Movable();
         const shape = new Shape();
         const solidBody = new SolidBody();
         const body = new PolygonBody();
         const polygon = new Polygon();
         const polygonCollider = new PolygonCollider();
+        const zIndex = new ZIndex();
+
+        zIndex.value = 2;
 
         polygon.points.push({
             x: 0,
@@ -59,7 +65,7 @@ export default class extends Entity {
         shape.fillColor.blue = 255;
         shape.fillColor.green = 100;
         shape.fillColor.red = 100;
-        shape.fillColor.alpha = 0.25
+        //shape.fillColor.alpha = 0.25
         
         shape.points.push(
             { x: 0, y: 0 },
@@ -80,5 +86,7 @@ export default class extends Entity {
         this.addComponent(solidBody);
         this.addComponent(body);
         this.addComponent(polygonCollider);
+        this.addComponent(zIndex);
+        this.addComponent(spatialPartition);
     }
 }

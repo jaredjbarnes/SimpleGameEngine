@@ -5855,6 +5855,9 @@ class PlayerControllerSystem {
 
     activated(world) {
         this.world = world;
+        this.world.getEntities().forEach((entity)=>{
+            this.entityAdded(entity);
+        });
     }
 
     deactivated() {

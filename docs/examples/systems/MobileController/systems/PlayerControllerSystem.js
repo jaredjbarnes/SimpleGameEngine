@@ -1,7 +1,7 @@
 const DEPENDENCIES = ["player-controller", "movable"];
 
 export default class PlayerControllerSystem {
-    constructor(step = 5) {
+    constructor(step = 10) {
         this.world = null;
         this.inputControllerService = null;
         this.players = {};
@@ -10,6 +10,9 @@ export default class PlayerControllerSystem {
 
     activated(world) {
         this.world = world;
+        this.world.getEntities().forEach((entity)=>{
+            this.entityAdded(entity);
+        });
     }
 
     deactivated() {

@@ -5,6 +5,5 @@ export default class Sprite {
         this.index = 0;
         this.timeScale = 1;
         this.images = [];
-        this.isDirty = false;
     }
 }

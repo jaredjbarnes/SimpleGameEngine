@@ -16,18 +16,18 @@ export default class StateManagerSystem {
         const nextState = this.states[this.state.name];
 
         if (this.state.activeName !== this.state.name) {
-            invokeMethod(currentState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(currentState, "setup", [this.entity, this.state.activeProps, this.world]);
             invokeMethod(currentState, "deactivated");
 
             this.state.activeName = this.state.name;
-            this.state.activeConfig = this.state.config;
+            this.state.activeProps = this.state.props;
 
-            invokeMethod(nextState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(nextState, "setup", [this.entity, this.state.activeProps, this.world]);
             invokeMethod(nextState, "activated");
             invokeMethod(nextState, "update");
 
         } else {
-            invokeMethod(currentState, "setup", [this.entity, this.state.activeConfig, this.world]);
+            invokeMethod(currentState, "setup", [this.entity, this.state.activeProps, this.world]);
             invokeMethod(currentState, "update");
         }
 
@@ -38,7 +38,7 @@ export default class StateManagerSystem {
 
         for (let id in entities) {
             this.entity = entities[id];
-            this.state = entity.getComponent("state");
+            this.state = this.entity.getComponent("state");
             this.maintainState();
         }
     };

@@ -4,10 +4,10 @@
         this.initialized = false;
         
         this.activeName = null;
-        this.activeConfig = {};
+        this.activeProps = {};
         
         this.name = null;
-        this.config = {};
+        this.props = {};
         
         this.stateManagerName = null;
 

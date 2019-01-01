@@ -10,6 +10,7 @@ export default class State {
         this.entity = entity;
         this.config = config;
         this.world = world;
+        this.state = entity.getComponent("state");
     }
 
     activated(){

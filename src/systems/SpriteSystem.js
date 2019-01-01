@@ -3,7 +3,7 @@ import Bitmap from "../components/Bitmap";
 const DEPENDENCIES = ["sprite"];
 
 export default class SpriteSystem {
-    constructor({bitmapCache}) {
+    constructor({ bitmapCache }) {
         this.world = null;
         this.entities = [];
         this.entitiesById = {};
@@ -16,15 +16,21 @@ export default class SpriteSystem {
         });
     }
 
-    addEntity(entity){
+    addEntity(entity) {
         const sprite = entity.getComponent("sprite");
         const images = sprite.images;
 
-        images.forEach((image)=>{
-            image.id = JSON.stringify(image);
+        images.forEach((image) => {
+            if (image.id == null) {
+                image.id = JSON.stringify(image);
+            }
         });
 
-        this.bitmapCache.loadTilesAsync(images).promise.then(()=>{
+        if (images.length === 0){
+            return;
+        }
+
+        this.bitmapCache.loadTilesAsync(images).promise.then(() => {
             const bitmap = new Bitmap();
             bitmap.id = images[0].id;
 
@@ -38,7 +44,7 @@ export default class SpriteSystem {
             const sprite = entity.getComponent("sprite");
             const bitmap = entity.getComponent("bitmap");
 
-            if (bitmap == null){
+            if (bitmap == null) {
                 continue;
             }
 

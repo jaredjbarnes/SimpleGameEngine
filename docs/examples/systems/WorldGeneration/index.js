@@ -4,9 +4,10 @@ import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisi
 import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem";
 import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
 import MovableSystem from "../../../../src/systems/MovementSystem";
+import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
 import SolidBodySystem from "../../../../src/systems/SolidBodySystem";
-import Text from "./entities/Text";
 import Link from "./entities/Link";
+import Player from "./entities/Player";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 import ControllerInputService from "../../../../src/services/ControllerInputService";
 import MobileStageCreator from "./MobileStageCreator";
@@ -15,6 +16,8 @@ import WorldGenerationSystem from "./systems/WorldGenerationSystem";
 import ImageSystem from "../../../../src/systems/ImageSystem";
 import SpriteSystem from "../../../../src/systems/SpriteSystem";
 import Noise from "../../../../src/utilities/Noise";
+import SpriteSetSystem from "../../../../src/systems/SpriteSetSystem";
+import PlayerStateManagerSystem from "./systems/PlayerStateManagerSystem";
 
 const cameraName = "main";
 const camera = new Camera(cameraName);
@@ -31,7 +34,7 @@ const canvas = mobileStageCreator.canvas;
 const world = new World();
 
 // Entities
-const player = new Text("P");
+const player = new Player();
 const link = new Link();
 
 // Systems
@@ -39,6 +42,8 @@ const movableSystem = new MovableSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const narrowPhaseCollisionSystem = new NarrowPhaseCollisionSystem();
 const solidBodySystem = new SolidBodySystem();
+const playerStateManagerSystem = new PlayerStateManagerSystem();
+const keyboardSystem = new KeyboardSystem();
 
 const followEntityCameraSystem = new FollowEntityCameraSystem({
     cameraEntityId: camera.id,
@@ -71,6 +76,8 @@ const defaultCameraSystem = new DefaultCameraSystem({
 
 const imageSystem = new ImageSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
 const spriteSystem = new SpriteSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
+const spriteSetSystem = new SpriteSetSystem({ bitmapCache: defaultCameraSystem.bitmapCache });
+
 const playerControllerSystem = new PlayerControllerSystem();
 
 const worldGenerationSystem = new WorldGenerationSystem({
@@ -83,10 +90,12 @@ camera.getComponent("rectangle").height = mobileStageCreator.canvas.height;
 camera.getComponent("rectangle").width = mobileStageCreator.canvas.width;
 
 // Set up world
+world.addSystem(playerStateManagerSystem);
+world.addSystem(keyboardSystem);
+world.addSystem(spriteSetSystem);
 world.addSystem(spriteSystem);
 world.addSystem(imageSystem);
 world.addSystem(solidBodySystem);
-world.addSystem(playerControllerSystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(worldGenerationSystem);

@@ -149,7 +149,7 @@ class AbstractState extends __WEBPACK_IMPORTED_MODULE_0__src_systems_StateManage
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_createGuid__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utilities_invokeMethod__ = __webpack_require__(5);
 ﻿
 
 
@@ -290,6 +290,18 @@ class Rectangle {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
+    args = Array.isArray(args)? args: [];
+   if (obj != null && typeof obj[methodName] === "function"){
+       return obj[methodName].apply(obj, args);
+   }
+});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 class SpatialPartition {
     constructor(){
         this.type = "spatial-partition";
@@ -299,18 +311,6 @@ class SpatialPartition {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SpatialPartition;
 
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ((obj, methodName, args) => {
-    args = Array.isArray(args)? args: [];
-   if (obj != null && typeof obj[methodName] === "function"){
-       return obj[methodName].apply(obj, args);
-   }
-});
 
 /***/ }),
 /* 7 */
@@ -487,7 +487,7 @@ class Bitmap {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
 
 
 class SystemsBundlerSystem {
@@ -790,7 +790,7 @@ window.world = world;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
 ﻿
 
 class World {
@@ -2712,6 +2712,9 @@ class DefaultCameraSystem extends __WEBPACK_IMPORTED_MODULE_8__CameraSystem__["a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
+
+
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
 class Compositor {
@@ -2805,7 +2808,7 @@ class Compositor {
                 let image = this.getImage(imageId);
 
                 if (image == null) {
-                    image = rasterizer.rasterize(entity);
+                    image = rasterizer.rasterize(entity, images);
                     this.saveImage(imageId, image);
                 }
 
@@ -4232,7 +4235,7 @@ class SolidBodySystem {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Image__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_Sprite__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_ZIndex__ = __webpack_require__(7);
@@ -4299,7 +4302,7 @@ class Link extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Sprite__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_State__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_SpriteSet__ = __webpack_require__(54);
@@ -6520,7 +6523,7 @@ class GroundGenerationManager extends __WEBPACK_IMPORTED_MODULE_0__EntityGenerat
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_utilities_invokeMethod__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_utilities_invokeMethod__ = __webpack_require__(5);
 
 
 class EntityGenerationManager {
@@ -6855,7 +6858,7 @@ class Validator {
         const properties = namespace.split(".");
         const property = properties[0];
 
-        if (obj[property] != null) {
+        if (typeof obj[property] !== "undefined") {
             if (properties.length > 1) {
                 return this.getObject(obj[property], properties.slice(1));
             } else {
@@ -7008,7 +7011,7 @@ class Validator {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_Entity__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Rectangle__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_SpatialPartition__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_Image__ = __webpack_require__(0);
 
 
@@ -7054,7 +7057,7 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_components_Transform__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_RectangleCollider__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Rectangle__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_SpatialPartition__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_Image__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_components_ZIndex__ = __webpack_require__(7);
 
@@ -7115,7 +7118,7 @@ class Bush extends __WEBPACK_IMPORTED_MODULE_0__src_Entity__["a" /* default */] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_components_PolygonCollider__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_components_ZIndex__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_components_SolidBody__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_components_SpatialPartition__ = __webpack_require__(6);
 
 
 
@@ -7270,7 +7273,7 @@ class SolidBody {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_components_Rectangle__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_components_Image__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_components_ZIndex__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_SpatialPartition__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_components_SpatialPartition__ = __webpack_require__(6);
 
 
 
@@ -7749,7 +7752,7 @@ class PlayerStateManager extends __WEBPACK_IMPORTED_MODULE_0__src_systems_StateM
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_invokeMethod__ = __webpack_require__(5);
 
 
 class StateManagerSystem {

@@ -82,7 +82,7 @@ export default class Validator {
         const properties = namespace.split(".");
         const property = properties[0];
 
-        if (obj[property] != null) {
+        if (typeof obj[property] !== "undefined") {
             if (properties.length > 1) {
                 return this.getObject(obj[property], properties.slice(1));
             } else {

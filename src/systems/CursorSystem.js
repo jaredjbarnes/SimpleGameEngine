@@ -39,9 +39,9 @@ export default class CursorSystem {
             y: 1
         };
         this.showCursor = showCursor;
-        this.isLeftMouseDown = false;
-        this.isRightMouseDown = false;
-        this.isMiddleMouseDown = false;
+        this.isLeftButtonDown = false;
+        this.isRightButtonDown = false;
+        this.isMiddleButtonDown = false;
 
         this._mousedown = (event) => {
             const button = event.button;
@@ -191,9 +191,9 @@ export default class CursorSystem {
         this.cursorPosition.y = Math.floor(this.browserCursorPosition.y + this.cameraPosition.y - halfCameraHeight);
         this.cursorTransform.isDirty = true;
 
-        this.cursorComponent.isLeftMouseDown = this.isLeftMouseDown;
-        this.cursorComponent.isRightMouseDown = this.isRightMouseDown;
-        this.cursorComponent.isMiddleMouseDown = this.isMiddleMouseDown;
+        this.cursorComponent.isLeftButtonDown = this.isLeftButtonDown;
+        this.cursorComponent.isRightButtonDown = this.isRightButtonDown;
+        this.cursorComponent.isMiddleButtonDown = this.isMiddleButtonDown;
 
     }
 

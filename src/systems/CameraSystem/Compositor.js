@@ -1,3 +1,5 @@
+import invokeMethod from "../../utilities/invokeMethod";
+
 const sortByZIndex = (a, b) => (a.zIndex || Infinity) - (b.zIndex || Infinity);
 
 export default class Compositor {
@@ -91,7 +93,7 @@ export default class Compositor {
                 let image = this.getImage(imageId);
 
                 if (image == null) {
-                    image = rasterizer.rasterize(entity);
+                    image = rasterizer.rasterize(entity, images);
                     this.saveImage(imageId, image);
                 }
 

@@ -4635,7 +4635,6 @@ class CursorSystem {
         this.cursorEntity.addComponent(rectangleCollider);
         this.cursorEntity.addComponent(zIndex);
         this.cursorEntity.addComponent(spatialPartition);
-        this.cursorEntity.addComponent(shape);
 
         this.cursorRectangle = rectangle;
         this.cursorPosition = transform.position;

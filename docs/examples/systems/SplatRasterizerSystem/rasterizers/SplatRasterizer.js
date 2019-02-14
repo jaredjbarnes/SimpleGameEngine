@@ -11,6 +11,19 @@ export default class SplatRasterizer {
         return `${entity.id}|${entity.getComponent("splat-surface").hits.length}`;
     }
 
+    createLine() {
+        const canvas = this.canvasFactory.create();
+        const context = canvas.getContext();
+
+        canvas.width = 5;
+        canvas.height = 20;
+
+        context.fillStyle = "#000000";
+        context.fillRect(0, 0, 5, 20);
+
+        this.lineCanvas = canvas;
+    }
+
     rasterize(entity, images) {
         const splatSurface = entity.getComponent("splat-surface");
         const rectangle = entity.getComponent("rectangle");
@@ -46,11 +59,6 @@ export default class SplatRasterizer {
 
                 let x = hit.x + (this.noise.perlin((hit.x + z) / 5, (hit.y + z) / 5) * hit.size * 3);
                 let y = hit.y + (this.noise.perlin((hit.x + z) / 25, (hit.y + z) / 25) * hit.size * 3);
-
-                if (z % 2 === 0) {
-                    x = -x;
-                    y = -y;
-                }
 
                 splatterContext.arc(x, y, hit.size / 2, 0, 2 * Math.PI);
                 splatterContext.fillStyle = `rgba(${hit.color.red}, ${hit.color.green}, ${hit.color.blue}, ${hit.color.alpha}`;

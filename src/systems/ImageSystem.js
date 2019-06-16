@@ -1,4 +1,4 @@
-import Bitmap from "../components/Bitmap";
+import Bitmap from "../components/Bitmap.js";
 
 export default class ImageSystem {
     constructor({ bitmapCache }) {
@@ -31,6 +31,7 @@ export default class ImageSystem {
         this.bitmapCache.loadTileAsync(image).then(()=>{
             const bitmap = new Bitmap();
             bitmap.id = image.id;
+            bitmap.isDirty = true;
 
             entity.addComponent(bitmap);
         })

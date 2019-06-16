@@ -1,9 +1,9 @@
-import Entity from "../../../../../src/Entity";
-import Bitmap from "../../../../../src/components/Bitmap";
-import Transform from "../../../../../src/components/Transform";
-import Rectangle from "../../../../../src/components/Rectangle";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import Entity from "../../../../../src/Entity.js";
+import Bitmap from "../../../../../src/components/Bitmap.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
 
 export default class Mario extends Entity {
     constructor({ position } = { position: { x: 0, y: 0 } }) {

@@ -1,4 +1,4 @@
-import Hit from "../Hit";
+import Hit from "../Hit.js";
 
 export default class SplatterSystem {
     constructor() {

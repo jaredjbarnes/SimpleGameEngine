@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["solid-body", "polygon-collider", "transform"];
+const DEPENDENCIES = ["solid-body", "polygon-collider", "movable"];
 
 export default class SolidBodySystem {
     constructor() {
@@ -49,12 +49,12 @@ export default class SolidBodySystem {
 
     updateEntity(entity) {
         let activeCollisions = entity.getComponent("polygon-collider").collisions;
-        let transform = entity.getComponent("transform");
+        let movable = entity.getComponent("movable");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];
-            transform.position.x += Math.round(-collision.penetration.x);
-            transform.position.y += Math.round(-collision.penetration.y);
+            movable.x += Math.round(-collision.penetration.x);
+            movable.y += Math.round(-collision.penetration.y);
         }
     }
 

@@ -1,5 +1,3 @@
-// INCOMPLETE
-
 const DEPENDENCIES = ["transform", "fixed-position"];
 
 export default class FixedPositionSystem {

@@ -1,12 +1,12 @@
-import Entity from "../Entity";
-import Rectangle from "../components/Rectangle";
-import ZIndex from "../components/ZIndex";
-import Cursor from "../components/Cursor";
-import Transform from "../components/Transform";
-import RectangleCollider from "../components/RectangleCollider";
-import Shape from "../components/Shape";
-import SpatialPartition from "../components/SpatialPartition";
-import CursorService from "../services/CursorService";
+import Entity from "../Entity.js";
+import Rectangle from "../components/Rectangle.js";
+import ZIndex from "../components/ZIndex.js";
+import Cursor from "../components/Cursor.js";
+import Transform from "../components/Transform.js";
+import RectangleCollider from "../components/RectangleCollider.js";
+import Shape from "../components/Shape.js";
+import SpatialPartition from "../components/SpatialPartition.js";
+import CursorService from "../services/CursorService.js";
 
 const CAMERA_DEPENDENCIES = ["camera", "transform"];
 

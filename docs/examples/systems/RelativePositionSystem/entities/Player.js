@@ -1,18 +1,18 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import Text from "../../../../../src/components/Text";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Rectangle from "../../../../../src/components/Rectangle";
-import Movable from "../../../../../src/components/Movable";
-import Shape from "../../../../../src/components/Shape";
-import SolidBody from "../../../../../src/components/SolidBody";
-import PolygonBody from "../../../../../src/components/PolygonBody";
-import Polygon from "../../../../../src/components/Polygon";
-import PolygonCollider from "../../../../../src/components/PolygonCollider";
-import KeyboardController from "../../../../../src/components/KeyboardController";
-import KeyboardInput from "../../../../../src/components/KeyboardInput";
-import ZIndex from "../../../../../src/components/ZIndex";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import Entity from "../../../../../src/Entity.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Text from "../../../../../src/components/Text.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import Movable from "../../../../../src/components/Movable.js";
+import Shape from "../../../../../src/components/Shape.js";
+import SolidBody from "../../../../../src/components/SolidBody.js";
+import PolygonBody from "../../../../../src/components/PolygonBody.js";
+import Polygon from "../../../../../src/components/Polygon.js";
+import PolygonCollider from "../../../../../src/components/PolygonCollider.js";
+import KeyboardController from "../../../../../src/components/KeyboardController.js";
+import KeyboardInput from "../../../../../src/components/KeyboardInput.js";
+import ZIndex from "../../../../../src/components/ZIndex.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
 
 export default class extends Entity {
     constructor(text) {

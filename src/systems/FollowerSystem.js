@@ -1,4 +1,4 @@
-import Vector from "./../Vector";
+import Vector from "./../Vector.js";
 
 const DEPENDENCIES = ["follower", "transform", "movable"];
 

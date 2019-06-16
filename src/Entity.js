@@ -1,5 +1,5 @@
-﻿import createGuid from "./utilities/createGuid";
-import invokeMethod from "./utilities/invokeMethod";
+﻿import createGuid from "./utilities/createGuid.js";
+import invokeMethod from "./utilities/invokeMethod.js";
 
 export default class Entity {
     constructor() {

@@ -1,16 +1,16 @@
-import World from "../../../../src/World";
-import Camera from "../../../../src/entities/Camera";
-import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
-import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
-import ControllerSystem from "../../../../src/systems/ControllerSystem";
-import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
-import MovableSystem from "../../../../src/systems/MovementSystem";
-import Text from "./entities/Text";
-import Mario from "./entities/Mario";
-import StaticText from "./entities/StaticText";
-import Spin from "./components/Spin";
-import SpinningSystem from "./systems/SpinningSystem";
-import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
+import World from "../../../../src/World.js";
+import Camera from "../../../../src/entities/Camera.js";
+import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
+import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem.js";
+import ControllerSystem from "../../../../src/systems/ControllerSystem.js";
+import KeyboardSystem from "../../../../src/systems/KeyboardSystem.js";
+import MovableSystem from "../../../../src/systems/MovementSystem.js";
+import Text from "./entities/Text.js";
+import Mario from "./entities/Mario.js";
+import StaticText from "./entities/StaticText.js";
+import Spin from "./components/Spin.js";
+import SpinningSystem from "./systems/SpinningSystem.js";
+import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem.js";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;

@@ -1,10 +1,10 @@
-import Entity from "../../../../../src/Entity";
-import SplatSurface from "../components/SplatSurface";
-import Rectangle from "../../../../../src/components/Rectangle";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
-import Transform from "../../../../../src/components/Transform";
-import Shape from "../../../../../src/components/Shape";
+import Entity from "../../../../../src/Entity.js";
+import SplatSurface from "../components/SplatSurface.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Shape from "../../../../../src/components/Shape.js";
 
 export default class PaintableEntity extends Entity {
     constructor() {

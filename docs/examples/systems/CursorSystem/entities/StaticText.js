@@ -1,11 +1,11 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import Text from "../../../../../src/components/Text";
-import Rectangle from "../../../../../src/components/Rectangle";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Shape from "../../../../../src/components/Shape";
-import Opacity from "../../../../../src/components/Opacity";
+import Entity from "../../../../../src/Entity.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Text from "../../../../../src/components/Text.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import Shape from "../../../../../src/components/Shape.js";
+import Opacity from "../../../../../src/components/Opacity.js";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {

@@ -1,6 +1,6 @@
-import SystemBundlerSystem from "./SystemsBundlerSystem";
-import PolygonSystem from "./PolygonSystem";
-import PolygonColliderSystem from "./PolygonColliderSystem";
+import SystemBundlerSystem from "./SystemsBundlerSystem.js";
+import PolygonSystem from "./polygon/PolygonSystem.js";
+import PolygonColliderSystem from "./polygonCollider/PolygonColliderSystem.js";
 
 export default class NarrowPhaseCollisionSystem extends SystemBundlerSystem {
     constructor(){

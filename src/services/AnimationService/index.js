@@ -1,4 +1,4 @@
-import easings from "./easings";
+import easings from "./easings.js";
 
 export default class AnimationManager {
     constructor() {

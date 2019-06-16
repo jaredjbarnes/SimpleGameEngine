@@ -1,15 +1,15 @@
-import World from "../../../../src/World";
-import Camera from "../../../../src/entities/Camera";
-import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
-import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
-import ControllerSystem from "../../../../src/systems/ControllerSystem";
-import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
-import MovableSystem from "../../../../src/systems/MovementSystem";
-import Player from "./entities/Player";
-import Relative from "./entities/Relative";
-import StaticText from "./entities/StaticText";
-import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
-import RelativePositionSystem from "../../../../src/systems/RelativePositionSystem";
+import World from "../../../../src/World.js";
+import Camera from "../../../../src/entities/Camera.js";
+import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
+import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem.js";
+import ControllerSystem from "../../../../src/systems/ControllerSystem.js";
+import KeyboardSystem from "../../../../src/systems/KeyboardSystem.js";
+import MovableSystem from "../../../../src/systems/MovementSystem.js";
+import Player from "./entities/Player.js";
+import Relative from "./entities/Relative.js";
+import StaticText from "./entities/StaticText.js";
+import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem.js";
+import RelativePositionSystem from "../../../../src/systems/RelativePositionSystem.js";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;

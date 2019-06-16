@@ -1,4 +1,4 @@
-import Noise from "../../../../../src/utilities/Noise";
+import Noise from "../../../../../src/utilities/Noise.js";
 
 export default class SplatRasterizer {
     constructor({ canvasFactory }) {

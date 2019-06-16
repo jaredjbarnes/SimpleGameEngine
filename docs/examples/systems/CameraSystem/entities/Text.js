@@ -1,14 +1,14 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import Text from "../../../../../src/components/Text";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Rectangle from "../../../../../src/components/Rectangle";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
-import KeyboardController from "../../../../../src/components/KeyboardController";
-import KeyboardInput from "../../../../../src/components/KeyboardInput";
-import Movable from "../../../../../src/components/Movable";
-import Shape from "../../../../../src/components/Shape";
-import SolidBody from "../../../../../src/components/SolidBody";
+import Entity from "../../../../../src/Entity.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Text from "../../../../../src/components/Text.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
+import KeyboardController from "../../../../../src/components/KeyboardController.js";
+import KeyboardInput from "../../../../../src/components/KeyboardInput.js";
+import Movable from "../../../../../src/components/Movable.js";
+import Shape from "../../../../../src/components/Shape.js";
+import SolidBody from "../../../../../src/components/SolidBody.js";
 
 export default class extends Entity {
     constructor(text) {

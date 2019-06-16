@@ -1,4 +1,4 @@
-import Bitmap from "../components/Bitmap";
+import Bitmap from "../components/Bitmap.js";
 
 const DEPENDENCIES = ["sprite"];
 

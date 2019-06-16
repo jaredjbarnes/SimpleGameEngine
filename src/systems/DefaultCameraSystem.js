@@ -1,13 +1,13 @@
-import Compositor from "./CameraSystem/Compositor";
-import CanvasFactory from "./CameraSystem/CanvasFactory";
-import ImageFactory from "./CameraSystem/ImageFactory";
-import BitmapRasterizer from "./CameraSystem/BitmapRasterizer";
-import PolygonRasterizer from "./CameraSystem/PolygonRasterizer";
-import LineRasterizer from "./CameraSystem/LineRasterizer";
-import ShapeRasterizer from "./CameraSystem/ShapeRasterizer";
-import TextRasterizer from "./CameraSystem/TextRasterizer";
-import CameraSystem from "./CameraSystem";
-import BitmapCache from "./CameraSystem/BitmapCache";
+import Compositor from "./camera/Compositor.js";
+import CanvasFactory from "./camera/CanvasFactory.js";
+import ImageFactory from "./camera/ImageFactory.js";
+import BitmapRasterizer from "./camera/BitmapRasterizer.js";
+import PolygonRasterizer from "./camera/PolygonRasterizer.js";
+import LineRasterizer from "./camera/LineRasterizer.js";
+import ShapeRasterizer from "./camera/ShapeRasterizer.js";
+import TextRasterizer from "./camera/TextRasterizer.js";
+import CameraSystem from "./camera/CameraSystem.js";
+import BitmapCache from "./camera/BitmapCache.js";
 
 export default class DefaultCameraSystem extends CameraSystem {
     constructor({ canvas, cameraName, sort }) {

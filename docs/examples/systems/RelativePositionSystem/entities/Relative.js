@@ -1,11 +1,11 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import Text from "../../../../../src/components/Text";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Rectangle from "../../../../../src/components/Rectangle";
-import Shape from "../../../../../src/components/Shape";
-import RelativePosition from "../../../../../src/components/RelativePosition";
-import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import Entity from "../../../../../src/Entity.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Text from "../../../../../src/components/Text.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import Shape from "../../../../../src/components/Shape.js";
+import RelativePosition from "../../../../../src/components/RelativePosition.js";
+import SpatialPartition from "../../../../../src/components/SpatialPartition.js";
 
 export default class extends Entity {
     constructor(relativeToEntityId) {

@@ -1,14 +1,14 @@
-import Entity from "../../../../../src/Entity";
-import Transform from "../../../../../src/components/Transform";
-import Text from "../../../../../src/components/Text";
-import Rectangle from "../../../../../src/components/Rectangle";
-import RectangleCollider from "../../../../../src/components/RectangleCollider";
-import Shape from "../../../../../src/components/Shape";
-import SolidBody from "../../../../../src/components/SolidBody";
-import Opacity from "../../../../../src/components/Opacity";
-import PolygonBody from "../../../../../src/components/PolygonBody";
-import Polygon from "../../../../../src/components/Polygon";
-import PolygonCollider from "../../../../../src/components/PolygonCollider";
+import Entity from "../../../../../src/Entity.js";
+import Transform from "../../../../../src/components/Transform.js";
+import Text from "../../../../../src/components/Text.js";
+import Rectangle from "../../../../../src/components/Rectangle.js";
+import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
+import Shape from "../../../../../src/components/Shape.js";
+import SolidBody from "../../../../../src/components/SolidBody.js";
+import Opacity from "../../../../../src/components/Opacity.js";
+import PolygonBody from "../../../../../src/components/PolygonBody.js";
+import Polygon from "../../../../../src/components/Polygon.js";
+import PolygonCollider from "../../../../../src/components/PolygonCollider.js";
 
 export default class StaticText extends Entity {
     constructor(text, { x, y }, { red = 0, green = 0, blue = 0, alpha = 1 }) {

@@ -1,4 +1,4 @@
-import invokeMethod from "../utilities/invokeMethod";
+import invokeMethod from "../utilities/invokeMethod.js";
 
 export default class SystemsBundlerSystem {
     constructor() {

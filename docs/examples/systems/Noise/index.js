@@ -1,5 +1,5 @@
 
-import Noise from "../../../../src/utilities/Noise";
+import Noise from "../../../../src/utilities/Noise.js";
 
 const noise = new Noise(1234567000000000321);
 const canvas = document.getElementById("viewport");

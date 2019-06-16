@@ -1,7 +1,7 @@
-import BoundingRectangleSystem from "./BoundingRectangleSystem";
-import SpatialPartitionSystem from "./SpatialPartitionSystem";
-import RectangleColliderSystem from "./RectangleColliderSystem";
-import SystemsBundlerSystem from "./SystemsBundlerSystem";
+import BoundingRectangleSystem from "./boundingRectangle/BoundingRectangleSystem.js";
+import SpatialPartitionSystem from "./spatialPartition/SpatialPartitionSystem.js";
+import RectangleColliderSystem from "./rectangleCollider/RectangleColliderSystem.js";
+import SystemsBundlerSystem from "./SystemsBundlerSystem.js";
 
 export default class BroadPhaseCollisionSystem extends SystemsBundlerSystem {
     constructor() {

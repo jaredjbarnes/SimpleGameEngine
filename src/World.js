@@ -163,9 +163,11 @@ export default class World {
     }
 
     update() {
-        this.notifySystems("beforeUpdate", [this.getTime()]);
-        this.notifySystems("update", [this.getTime()]);
-        this.notifySystems("afterUpdate", [this.getTime()]);
+        const time = this.getTime();
+        
+        this.notifySystems("beforeUpdate", [time]);
+        this.notifySystems("update", [time]);
+        this.notifySystems("afterUpdate", [time]);
     }
 
     play() {

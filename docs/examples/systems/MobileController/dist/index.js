@@ -875,9 +875,11 @@ class World {
     }
 
     update() {
-        this.notifySystems("beforeUpdate", [this.getTime()]);
-        this.notifySystems("update", [this.getTime()]);
-        this.notifySystems("afterUpdate", [this.getTime()]);
+        const time = this.getTime();
+        
+        this.notifySystems("beforeUpdate", [time]);
+        this.notifySystems("update", [time]);
+        this.notifySystems("afterUpdate", [time]);
     }
 
     play() {
@@ -2419,8 +2421,11 @@ class CollisionDetector {
     }
 
     updateCollisions(entityA, entityB, currentTime) {
-        if (!entityA.hasComponent("polygon-collider") ||
-            !entityB.hasComponent("polygon-collider")) {
+        if (
+            !entityA.hasComponent("polygon-collider") ||
+            !entityB.hasComponent("polygon-collider") ||
+            entityA == entityB
+        ) {
             return;
         }
 
@@ -3800,18 +3805,15 @@ class TileToCanvasConverter {
     }
 
     initialize(tile, image) {
+        this.image = image;
         this.canvas = this.canvasFactory.create();
         this.context = this.canvas.getContext("2d");
         this.tile = tile;
-        this.image = image;
         this.padding = this.tile.padding;
         this.position = this.tile.position;
         this.size = this.tile.size;
         this.width = this.size.width + this.padding.left + this.padding.right;
         this.height = this.size.height + this.padding.top + this.padding.bottom;
-    }
-
-    setCanvasSize() {
         this.canvas.height = this.height;
         this.canvas.width = this.width;
     }
@@ -3826,7 +3828,7 @@ class TileToCanvasConverter {
             context.scale(-1, 1);
             context.translate(-this.size.width, 0);
             context.drawImage(
-                this.image,
+                this.canvas,
                 0,
                 0,
                 this.size.width,
@@ -3837,7 +3839,7 @@ class TileToCanvasConverter {
                 this.size.height
             );
 
-            this.image = canvas;
+            this.canvas = canvas;
         }
     }
 
@@ -3851,7 +3853,7 @@ class TileToCanvasConverter {
             context.scale(1, -1);
             context.translate(0, -this.size.height);
             context.drawImage(
-                this.image,
+                this.canvas,
                 0,
                 0,
                 this.size.width,
@@ -3862,7 +3864,7 @@ class TileToCanvasConverter {
                 this.size.height
             );
 
-            this.image = canvas;
+            this.canvas = canvas;
         }
     }
 
@@ -3884,13 +3886,12 @@ class TileToCanvasConverter {
     }
 
     convert(tile, image) {
-        const readyTile = Object(__WEBPACK_IMPORTED_MODULE_1__utilities_overlay__["a" /* default */])(defaultTile, tile);
+        const validatedTile = Object(__WEBPACK_IMPORTED_MODULE_1__utilities_overlay__["a" /* default */])(defaultTile, tile);
 
-        this.initialize(readyTile, image);
-        this.setCanvasSize();
+        this.initialize(validatedTile, image);
+        this.draw();
         this.flipHorizontallyIfNeeded();
         this.flipVerticallyIfNeeded();
-        this.draw();
 
         return this.canvas;
     }
@@ -4012,7 +4013,7 @@ class MovementSystem {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const DEPENDENCIES = ["solid-body", "polygon-collider", "movable"];
+const DEPENDENCIES = ["solid-body", "polygon-collider", "transform"];
 
 class SolidBodySystem {
     constructor() {
@@ -4063,14 +4064,12 @@ class SolidBodySystem {
 
     updateEntity(entity) {
         let activeCollisions = entity.getComponent("polygon-collider").collisions;
-        let movable = entity.getComponent("movable");
+        let transform = entity.getComponent("transform");
 
         for (let key in activeCollisions) {
             let collision = activeCollisions[key];
-            movable.x += Math.round(-collision.penetration.x);
-            movable.y += Math.round(-collision.penetration.y);
-
-            this.world.log("SolidBodySystem move:", collision);
+            transform.position.x += Math.round(-collision.penetration.x);
+            transform.position.y += Math.round(-collision.penetration.y);
         }
     }
 

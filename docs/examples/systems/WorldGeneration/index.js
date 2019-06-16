@@ -7,7 +7,6 @@ import MovableSystem from "../../../../src/systems/MovementSystem";
 import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
 import SolidBodySystem from "../../../../src/systems/SolidBodySystem";
 import Link from "./entities/Link";
-import Player from "./entities/Player";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem";
 import ControllerInputService from "../../../../src/services/ControllerInputService";
 import MobileStageCreator from "./MobileStageCreator";
@@ -34,7 +33,6 @@ const canvas = mobileStageCreator.canvas;
 const world = new World();
 
 // Entities
-const player = new Player();
 const link = new Link();
 
 // Systems
@@ -47,7 +45,7 @@ const keyboardSystem = new KeyboardSystem();
 
 const followEntityCameraSystem = new FollowEntityCameraSystem({
     cameraEntityId: camera.id,
-    followEntityId: player.id
+    followEntityId: link.id
 });
 
 const defaultCameraSystem = new DefaultCameraSystem({
@@ -57,15 +55,22 @@ const defaultCameraSystem = new DefaultCameraSystem({
     sort: (entityA, entityB) => {
         const rectangleA = entityA.getComponent("rectangle");
         const rectangleB = entityB.getComponent("rectangle");
+        const centerPointA = entityA.getComponent("center-point");
+        const centerPointB = entityB.getComponent("center-point");
 
-        if (rectangleA.bottom < rectangleB.bottom) {
+        const bottomA = centerPointA == null ? rectangleA.bottom : centerPointA.y + rectangleA.top;
+        const bottomB = centerPointB == null ? rectangleB.bottom : centerPointB.y + rectangleB.top;
+        const rightA = centerPointA == null ? rectangleA.right : centerPointA.x + rectangleA.left;
+        const rightB = centerPointB == null ? rectangleB.right : centerPointB.x + rectangleB.left;
+
+        if (bottomA < bottomB) {
             return -1;
-        } else if (rectangleA.bottom > rectangleB.bottom) {
+        } else if (bottomA > bottomB) {
             return 1;
         } else {
-            if (rectangleA.right < rectangleB.right) {
+            if (rightA < rightB) {
                 return -1
-            } else if (rectangleA.right > rectangleB.right) {
+            } else if (rightA > rightB) {
                 return 1;
             } else {
                 return 0;
@@ -95,12 +100,12 @@ world.addSystem(keyboardSystem);
 world.addSystem(spriteSetSystem);
 world.addSystem(spriteSystem);
 world.addSystem(imageSystem);
-world.addSystem(solidBodySystem);
 world.addSystem(movableSystem);
 world.addSystem(followEntityCameraSystem);
 world.addSystem(worldGenerationSystem);
 world.addSystem(broadPhaseCollisionSystem);
 world.addSystem(narrowPhaseCollisionSystem);
+world.addSystem(solidBodySystem);
 world.addSystem(defaultCameraSystem);
 
 // Add Services
@@ -108,7 +113,6 @@ world.addService(controllerInputService);
 
 // Add Entities
 world.addEntity(camera);
-world.addEntity(player);
 world.addEntity(link);
 
 world.play();

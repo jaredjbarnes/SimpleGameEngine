@@ -6,9 +6,10 @@ import Image from "../../../../../src/components/Image";
 import PolygonBody from "../../../../../src/components/PolygonBody";
 import Polygon from "../../../../../src/components/Polygon";
 import PolygonCollider from "../../../../../src/components/PolygonCollider";
-import ZIndex from "../../../../../src/components/ZIndex";
 import SolidBody from "../../../../../src/components/SolidBody";
 import SpatialPartition from "../../../../../src/components/SpatialPartition";
+import ZIndex from "../../../../../src/components/ZIndex";
+import CenterPoint from "../components/CenterPoint";
 
 export default class Tree extends Entity {
     constructor() {
@@ -25,6 +26,7 @@ export default class Tree extends Entity {
         const polygonCollider = new PolygonCollider();
         const spatialPartition = new SpatialPartition();
         const solidBody = new SolidBody();
+        const centerPoint = new CenterPoint();
 
         polygon.points.push({
             x: 20,
@@ -64,6 +66,9 @@ export default class Tree extends Entity {
         rectangle.width = 64;
         rectangle.height = 80;
 
+        centerPoint.x = 64;
+        centerPoint.y = 75;
+
         this.addComponent(transform);
         this.addComponent(rectangle);
         this.addComponent(rectangleCollider);
@@ -73,5 +78,6 @@ export default class Tree extends Entity {
         this.addComponent(body);
         this.addComponent(zIndex);
         this.addComponent(spatialPartition);
+        this.addComponent(centerPoint);
     }
 }

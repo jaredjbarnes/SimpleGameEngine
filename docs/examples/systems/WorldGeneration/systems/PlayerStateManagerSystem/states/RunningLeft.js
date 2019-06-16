@@ -1,12 +1,12 @@
 import AbstractState from "./AbstractState";
 
 export default class RunningLeft extends AbstractState {
-    constructor(){
+    constructor() {
         super();
 
         this.name = "running-left";
     }
-    
+
     activated() {
         const entity = this.entity;
         const spriteSet = entity.getComponent("sprite-set");
@@ -16,7 +16,7 @@ export default class RunningLeft extends AbstractState {
         sprite.images = images;
     }
 
-    update(){
+    update() {
         super.update();
 
         const entity = this.entity;
@@ -24,6 +24,7 @@ export default class RunningLeft extends AbstractState {
 
         transform.position.x -= 2;
         transform.isDirty = true;
+
     }
 
 }

@@ -1,7 +1,7 @@
 const DEPENDENCIES = ["player-controller", "movable"];
 
 export default class PlayerControllerSystem {
-    constructor(step = 10) {
+    constructor(step = 1) {
         this.world = null;
         this.inputControllerService = null;
         this.players = {};

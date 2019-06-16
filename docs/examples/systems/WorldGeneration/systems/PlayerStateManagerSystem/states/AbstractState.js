@@ -21,6 +21,10 @@ export default class AbstractState extends State {
         } else if (keyboardInput.pressedKeys[RIGHT]) {
             state.name = "running-right";
         } else {
+            if (state.name.indexOf("idle") >= 0) {
+                return;
+            }
+
             if (state.name === "running-up") {
                 state.name = "idle-up";
             } else if (state.name === "running-down") {
@@ -29,11 +33,15 @@ export default class AbstractState extends State {
                 state.name = "idle-right";
             } else if (state.name === "running-left") {
                 state.name = "idle-left";
+            } else {
+                state.name = "idle-down";
             }
         }
+
+
     }
 
-    update(){
+    update() {
         this.updateStateFromKeyboardInput();
     }
 }

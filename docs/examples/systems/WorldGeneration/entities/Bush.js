@@ -5,6 +5,7 @@ import Rectangle from "../../../../../src/components/Rectangle";
 import SpatialPartition from "../../../../../src/components/SpatialPartition";
 import Image from "../../../../../src/components/Image";
 import ZIndex from "../../../../../src/components/ZIndex";
+import CenterPoint from "../components/CenterPoint"
 
 const SIZE = 16;
 
@@ -19,6 +20,7 @@ export default class Bush extends Entity {
         const rectangle = new Rectangle();
         const image = new Image();
         const zIndex = new ZIndex();
+        const centerPoint = new CenterPoint();
 
         zIndex.value = 2;
 
@@ -29,6 +31,9 @@ export default class Bush extends Entity {
 
         rectangle.width = SIZE;
         rectangle.height = SIZE;
+
+        centerPoint.x = 16;
+        centerPoint.y = 16;
 
         this.addComponent(transform);
         this.addComponent(rectangle);

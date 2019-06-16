@@ -115,8 +115,11 @@ export default class CollisionDetector {
     }
 
     updateCollisions(entityA, entityB, currentTime) {
-        if (!entityA.hasComponent("polygon-collider") ||
-            !entityB.hasComponent("polygon-collider")) {
+        if (
+            !entityA.hasComponent("polygon-collider") ||
+            !entityB.hasComponent("polygon-collider") ||
+            entityA == entityB
+        ) {
             return;
         }
 

@@ -52,6 +52,7 @@ export default class SpriteSystem {
             const newImage = sprite.images[index];
 
             if (newImage == null) {
+                sprite.index = 0;
                 continue;
             }
 

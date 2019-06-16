@@ -3,6 +3,7 @@ import invokeMethod from "../../utilities/invokeMethod.js";
 export default class StateManagerSystem {
     constructor() {
         this.world = null;
+        this.name = "state-manager";
         this.isReady = true;
         this.name = null;
         this.entities = {};

@@ -2,6 +2,7 @@ import invokeMethod from "../utilities/invokeMethod.js";
 
 export default class SystemsBundlerSystem {
     constructor() {
+        this.name = "systems-bundler";
         this.systems = [];
     }
 

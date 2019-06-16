@@ -12,6 +12,7 @@ class MovableEntity {
 export default class MovementSystem {
     constructor() {
         this.world = null;
+        this.name = "movement";
         this.entities = new Map();
     }
 

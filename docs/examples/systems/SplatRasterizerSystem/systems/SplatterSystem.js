@@ -2,6 +2,7 @@ import Hit from "../Hit.js";
 
 export default class SplatterSystem {
     constructor() {
+        this.name = "splatter-system";
         this.cursorEntity = null;
         this.cursorComponent = null;
         this.cursorRectangleCollider = null;

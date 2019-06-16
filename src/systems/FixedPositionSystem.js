@@ -6,6 +6,7 @@ export default class FixedPositionSystem {
         this.entities = [];
         this.cameraName = null;
         this.camera = null;
+        this.name = "fixed-position";
     }
 
     hasComposition(entity) {

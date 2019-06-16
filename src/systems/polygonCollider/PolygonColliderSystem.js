@@ -5,6 +5,7 @@ export default class PolygonColliderSystem {
         this.collisionDetector = null;
         this.boundingRectangleService = null;
         this.world = null;
+        this.name = "polygon-collider";
         this.currentTime = 0;
         this.dirtyPolygons = [];
     }

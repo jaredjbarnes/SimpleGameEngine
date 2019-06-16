@@ -28,6 +28,7 @@ export default class DefaultCameraSystem extends CameraSystem {
             sort
         });
 
+        this.name = "default-camera";
         this.polygonRasterizer = null;
         this.canvasFactory = canvasFactory;
         this.compositor = compositor;

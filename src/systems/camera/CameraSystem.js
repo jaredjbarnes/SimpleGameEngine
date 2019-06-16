@@ -25,6 +25,7 @@ export default class CameraSystem {
         sort = idSort
     }) {
         this.canvas = canvas;
+        this.name = "camera-system";
         this.cameraName = cameraName;
         this.compositor = compositor;
         this.canvasPool = new CanvasPool(canvasFactory);

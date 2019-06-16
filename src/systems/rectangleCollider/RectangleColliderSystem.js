@@ -5,6 +5,7 @@ export default class RectangleColliderSystem {
     constructor(cellSize = 200) {
         this.cellSize = cellSize;
         this.world = null;
+        this.name = "rectangle-collider";
         this.currentTimestamp = 0;
         this.name = "Rectangle Collider System";
         this.intersection = {

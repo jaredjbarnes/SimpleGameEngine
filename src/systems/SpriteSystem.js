@@ -5,6 +5,7 @@ const DEPENDENCIES = ["sprite"];
 export default class SpriteSystem {
     constructor({ bitmapCache }) {
         this.world = null;
+        this.name = "sprite";
         this.entities = [];
         this.entitiesById = {};
         this.bitmapCache = bitmapCache;

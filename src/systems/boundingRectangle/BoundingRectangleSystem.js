@@ -6,6 +6,7 @@ const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
 export default class BoundingRectangleSystem {
     constructor() {
         this.world = null;
+        this.name = "bounding-rectangle-system";
         this.rectangleUpdater = new RectangleUpdater();
         this.boundingRectangleService = new BoundingRectangleService();
     }

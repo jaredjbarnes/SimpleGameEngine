@@ -6,6 +6,7 @@ export default class ButtonSystem extends StateManagerSystem {
     constructor() {
         super();
         this.world = null;
+        this.name = "button"
         this.buttons = [];
     }
 

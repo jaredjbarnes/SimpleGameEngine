@@ -4,6 +4,7 @@ export default class LogicSystem {
     constructor() {
         this.world = null;
         this.entities = [];
+        this.name = "logic";
     }
 
     _addEntity(entity) {

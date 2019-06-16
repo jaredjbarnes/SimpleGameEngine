@@ -6,6 +6,7 @@ const PLACABLE_ENTITY_DEPENDENCIES = ["transform", "rectangle", "spatial-partiti
 export default class SpatialPartitionSystem {
     constructor() {
         this.world = null;
+        this.name = "spatial-partition";
         this.boundingRectangleData = null;
         this.spatialPartitionService = new SpatialPartitionService();
         this.spatialPartitionService.grid = new Grid();

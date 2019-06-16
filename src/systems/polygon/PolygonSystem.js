@@ -6,6 +6,7 @@ const POLYGON_BODY_DEPENDENCIES = ["transform", "rectangle", "polygon-body"];
 export default class PolygonSystem {
     constructor() {
         this.world = null;
+        this.name = "polygon";
         this.polygonUpdater = new PolygonUpdater();
         this.boundingRectangleService = null;
     }

@@ -2,6 +2,7 @@ const DEPENDENCIES = ["transform", "relative-position"];
 
 export default class RelativePositionSystem {
     constructor() {
+        this.name = "relative";
         this.world = null;
         this.entities = {};
     }

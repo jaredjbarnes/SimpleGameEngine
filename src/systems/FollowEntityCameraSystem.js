@@ -1,6 +1,7 @@
 ﻿export default class FollowEntityCameraSystem {
     constructor({ cameraEntityId, followEntityId } = {}) {
         this._world = null;
+        this.name = "follow-entity-camera";
         this.followEntityId = followEntityId;
         this.cameraEntityId = cameraEntityId;
     }

@@ -19,6 +19,7 @@ const mapping = {
 export default class CursorSystem {
     constructor({ canvas, cameraName, document, showCursor = false }) {
         this.world = null;
+        this.name = "cursor";
         this.canvas = canvas;
         this.camera = null;
         this.cameraName = cameraName;

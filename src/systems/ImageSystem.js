@@ -3,6 +3,7 @@ import Bitmap from "../components/Bitmap.js";
 export default class ImageSystem {
     constructor({ bitmapCache }) {
         this.world = null;
+        this.name = "image";
         this.bitmapCache = bitmapCache;
     }
 

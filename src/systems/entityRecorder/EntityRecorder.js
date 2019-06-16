@@ -5,6 +5,7 @@ const RECORD = "record";
 export default class EntityRecorderSystem {
     constructor() {
         this.world = null;
+        this.name = "entity-recorder"
         this.entities = [];
         this.recorder = new Recorder();
     }

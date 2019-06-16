@@ -5,6 +5,7 @@ const HISTORY_PLAYER = "history-player";
 export default class HistoryPlayerSystem {
     constructor() {
         this.world = null;
+        this.name = "entity-history-player-system";
         this.entities = [];
         this.historyPlayer = new HistoryPlayer();
     }

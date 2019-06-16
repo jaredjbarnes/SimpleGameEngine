@@ -1,4 +1,5 @@
 ﻿import invokeMethod from "./utilities/invokeMethod.js";
+import WorldDebugger from "./WorldDebugger.js";
 
 export default class World {
     constructor(logger) {
@@ -23,11 +24,34 @@ export default class World {
         this._isRunning = false;
         this._logger = typeof logger !== "function" ? () => { } : logger;
         this.isLogEnabled = false;
+        this.debugger = new WorldDebugger();
+
     }
 
     _loop() {
         this.update();
         this._animationFrame = requestAnimationFrame(this._loop);
+    }
+
+    _shouldRunSystem(system) {
+        if (!this.debugger.isEnabled){
+            return true;
+        }
+
+        if (this.debugger.state === WorldDebugger.states.PLAYING){
+            return true;
+        }
+
+        if (this.debugger.state === WorldDebugger.states.STEPOVER){
+            this.debugger.state === WorldDebugger.states.PAUSED;
+            return true;
+        }
+
+        if (this.debugger.enableSystems.indexOf(system) > -1){
+            return;
+        }
+
+        return false;
     }
 
     log(...args) {
@@ -54,13 +78,20 @@ export default class World {
         const systems = this._systems;
         for (let x = 0; x < systems.length; x++) {
             const system = systems[x];
-            invokeMethod(system, methodName, args);
+
+            if (this._shouldRunSystem(system)) {
+                invokeMethod(system, methodName, args);
+            }
         }
     }
 
     addSystem(system) {
-        var systems = this._systems;
-        var index = systems.indexOf(system);
+        const systems = this._systems;
+        const index = systems.indexOf(system);
+
+        if (system.name == null){
+            throw new Error("Systems must have a name.");
+        }
 
         if (index === -1) {
             systems.push(system);
@@ -164,7 +195,7 @@ export default class World {
 
     update() {
         const time = this.getTime();
-        
+
         this.notifySystems("beforeUpdate", [time]);
         this.notifySystems("update", [time]);
         this.notifySystems("afterUpdate", [time]);

@@ -1,6 +1,7 @@
 ﻿export default class KeyboardSystem {
     constructor(doc) {
         this._world = null;
+        this.name = "keyboard";
         var pressedKeys = this.pressedKeys = {};
         doc = doc || document;
 

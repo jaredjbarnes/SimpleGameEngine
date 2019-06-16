@@ -3,6 +3,7 @@ const DEPENDENCIES = ["spin", "transform"];
 export default class SpinningSystem {
     constructor() {
         this.world = null;
+        this.name = "spinning";
         this.entities = {};
     }
 

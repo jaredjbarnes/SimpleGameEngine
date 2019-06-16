@@ -4,6 +4,7 @@ export default class ControllerSystem {
     constructor() {
         this.entities = new Map();
         this._world = null;
+        this.name = "controller"
     }
 
     activated(world) {

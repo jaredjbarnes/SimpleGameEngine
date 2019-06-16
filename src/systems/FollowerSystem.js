@@ -5,6 +5,7 @@ const DEPENDENCIES = ["follower", "transform", "movable"];
 export default class FollowerSystem {
     constructor() {
         this.world = null;
+        this.name = "follower";
         this.entities = [];
     }
 

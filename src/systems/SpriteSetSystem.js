@@ -1,7 +1,8 @@
 export default class SpriteSetSystem {
     constructor({ bitmapCache }) {
         this.world = null;
-        this.bitmapCache = bitmapCache;
+        this.bitmapCache = bitmapCache;;
+        this.name = "sprite-set"
     }
 
     activated(world) {

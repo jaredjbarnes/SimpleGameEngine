@@ -3,6 +3,7 @@ const DEPENDENCIES = ["spatial-partition"];
 export default class SpatialPartitionDataSystem {
     constructor() {
         this.world = null;
+        this.name = "spatial-partition-data";
         this.entities = {};
     }
 

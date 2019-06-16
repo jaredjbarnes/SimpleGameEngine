@@ -4,6 +4,7 @@ export default class SolidBodySystem {
     constructor() {
         this.entities = {};
         this.world = null;
+        this.name = "solid-body";
     }
 
     update() {

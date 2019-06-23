@@ -1,4 +1,4 @@
-import { html, render } from 'https://unpkg.com/lit-html?module';
+import { html, render } from '../lit-html/lit-html.js';
 import invokeMethodIfExists from "../utilities/invokeMethod.js";
 
 export default class BaseElement extends HTMLElement {
@@ -7,7 +7,7 @@ export default class BaseElement extends HTMLElement {
         this.pendingRender = false;
         this.afterUpdatePromisesResolvers = [];
         this.attachShadow({ mode: "open" });
-        this.update();
+        this.scheduleUpdate();
     }
 
     notifyPromises() {
@@ -39,7 +39,7 @@ export default class BaseElement extends HTMLElement {
     }
 
     attributeChangedCallback() {
-        this.update();
+        this.scheduleUpdate();
     }
 
     renderShadowDom() {

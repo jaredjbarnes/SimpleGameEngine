@@ -1,4 +1,4 @@
-import { html } from 'https://unpkg.com/lit-html?module';
+import { html } from '../lit-html/lit-html.js';
 import BaseElement from "./BaseElement";
 
 export default class WorldInspector extends BaseElement {

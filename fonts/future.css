@@ -1,0 +1,11 @@
+@font-face {
+    font-family: future-earth;
+    font-size: 12px;
+    src: url(FutureEarth.ttf);
+  }
+
+  html {
+      font-family: future-earth;
+      color: #0AB1FF;
+      background-color: #000;
+  }

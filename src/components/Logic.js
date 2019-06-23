@@ -1,3 +1,51 @@
+const action = {
+    "type": "object",
+    "properties": {
+        "entityId": {
+            "type": "string"
+        },
+        "options": {
+            "type": "object"
+        }
+    }
+}
+
+const condition = {
+    "type": "object",
+    "properties": {
+        "entityId": {
+            "type": "string"
+        },
+        "stateNames": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
+}
+
+const schema = {
+    "$id": "logic",
+    "title": "Logic",
+    "description": "Logic",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "isDisabled": {
+            "type": "boolean"
+        },
+        "conditions": {
+            "type": "array",
+            "items": {
+                "type": action
+            }
+        }
+    }
+};
+
 class Action {
     constructor() {
         this.entityId = null;
@@ -20,6 +68,10 @@ class Logic {
         this.isDisabled = false;
         this.conditions = [];
         this.actions = [];
+    }
+
+    getSchema(){
+        return schema;
     }
 }
 

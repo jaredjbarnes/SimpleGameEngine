@@ -4,9 +4,7 @@ import overlay from "../../utilities/overlay.js";
 const defaultTile = new Tile();
 
 export default class TileToCanvasConverter {
-    constructor(canvasFactory) {
-        this.canvasFactory = canvasFactory;
-
+    constructor() {
         this.canvas = null;
         this.context = null;
         this.tile = null;
@@ -21,7 +19,7 @@ export default class TileToCanvasConverter {
 
     initialize(tile, image) {
         this.image = image;
-        this.canvas = this.canvasFactory.create();
+        this.canvas = document.createElement("canvas");
         this.context = this.canvas.getContext("2d");
         this.tile = tile;
         this.padding = this.tile.padding;
@@ -35,7 +33,7 @@ export default class TileToCanvasConverter {
 
     flipHorizontallyIfNeeded() {
         if (this.tile.flipHorizontally) {
-            const canvas = this.canvasFactory.create();
+            const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
             canvas.width = this.size.width;
             canvas.height = this.size.height;
@@ -60,7 +58,7 @@ export default class TileToCanvasConverter {
 
     flipVerticallyIfNeeded() {
         if (this.tile.flipVertically) {
-            const canvas = this.canvasFactory.create();
+            const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
             canvas.width = this.size.width;
             canvas.height = this.size.height;

@@ -2,9 +2,10 @@
     All values should be 0 through 1.
 */
 
-export default class ControllerInputService {
+export default class ControllerInputData {
     constructor(){
-        this.name = "controller-input-service";
+        this.type = "controller-input-data";
+        this.isSerializable = false;
         this.x = 0;
         this.y = 0;
         this.a = 0;

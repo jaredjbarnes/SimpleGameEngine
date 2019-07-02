@@ -2,7 +2,7 @@ import World from "../../../../src/World";
 import Camera from "../../../../src/entities/Camera";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem";
 import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem";
-import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem";
+import DefaultCameraSystem from "../../../../src/systems/camera/DefaultCameraSystem";
 import ControllerSystem from "../../../../src/systems/ControllerSystem";
 import KeyboardSystem from "../../../../src/systems/KeyboardSystem";
 import MovableSystem from "../../../../src/systems/MovementSystem";

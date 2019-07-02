@@ -17,12 +17,12 @@ const mapping = {
 };
 
 export default class CursorSystem {
-    constructor({ canvas, cameraName, document, showCursor = false }) {
+    constructor() {
         this.world = null;
         this.name = "cursor";
-        this.canvas = canvas;
+        this.canvas = null;
         this.camera = null;
-        this.cameraName = cameraName;
+        this.cameraName = null;
         this.cameraPosition = null;
         this.cameraRectangle = null;
         this.cursorRectangle = null;
@@ -33,13 +33,12 @@ export default class CursorSystem {
             y: 0
         };
         this.cursorEntity = null;
-        this.document = document;
         this.canvasRect = this.canvas.getBoundingClientRect();
         this.scale = {
             x: 1,
             y: 1
         };
-        this.showCursor = showCursor;
+        this.showCursor = false;
         this.isLeftButtonDown = false;
         this.isRightButtonDown = false;
         this.isMiddleButtonDown = false;
@@ -139,8 +138,8 @@ export default class CursorSystem {
         this.world.addEntity(this.cursorEntity);
         this.world.addService(this.cursorService);
         this.canvas.addEventListener("mousemove", this._mousemove, false);
-        this.document.addEventListener("mousedown", this._mousedown, false);
-        this.document.addEventListener("mouseup", this._mouseup, false);
+        document.addEventListener("mousedown", this._mousedown, false);
+        document.addEventListener("mouseup", this._mouseup, false);
     }
 
     componentAdded(entity, component) {
@@ -157,8 +156,8 @@ export default class CursorSystem {
 
     deactivated() {
         this.canvas.removeEventListener("mousemove", this._mousemove);
-        this.document.removeEventListener("mousedown", this._mousedown);
-        this.document.removeEventListener("mouseup", this._mouseup);
+        document.removeEventListener("mousedown", this._mousedown);
+        document.removeEventListener("mouseup", this._mouseup);
         this.world.removeEntity(this.cursorEntity);
         this.world.removeService(this.cursorService);
         this.world = null;

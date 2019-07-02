@@ -1,14 +1,13 @@
 export default class CanvasPool {
-    constructor(canvasFactory) {
+    constructor() {
         this.available = [];
-        this.canvasFactory = canvasFactory;
     }
 
     acquire() {
         if (this.available.length > 0) {
             return this.available.pop();
         } else {
-            return this.canvasFactory.create();
+            return document.createElement("canvas");
         }
     }
 

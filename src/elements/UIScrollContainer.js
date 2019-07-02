@@ -26,10 +26,10 @@ const style = html`
     .slot {
         position:absolute;
         box-sizing: border-box;
-        top: 15px;
-        left: 15px;
-        right:15px;
-        bottom:15px;
+        top: 8px;
+        left: 8px;
+        right:8px;
+        bottom:8px;
         overflow: auto;
     }
 

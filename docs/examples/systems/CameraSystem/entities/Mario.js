@@ -1,5 +1,5 @@
 import Entity from "../../../../../src/Entity.js";
-import Bitmap from "../../../../../src/components/Bitmap.js";
+import Image from "../../../../../src/components/Image.js";
 import Transform from "../../../../../src/components/Transform.js";
 import Rectangle from "../../../../../src/components/Rectangle.js";
 import RectangleCollider from "../../../../../src/components/RectangleCollider.js";
@@ -10,8 +10,12 @@ export default class Mario extends Entity {
         super();
         this.type = "Mario";
 
-        const bitmap = new Bitmap();
-        bitmap.id = "./images/Mario.png";
+        const image = new Image();
+        image.id = "./images/Mario.png";
+        image.url = "./images/Mario.png";
+        image.size.width = 16;
+        image.size.height = 26;
+        image.flipHorizontally = true;
 
         const rectangle = new Rectangle();
         rectangle.width = 16;
@@ -25,7 +29,7 @@ export default class Mario extends Entity {
         const rectangleCollider = new RectangleCollider();
         const spatialPartition = new SpatialPartition();
 
-        this.addComponent(bitmap);
+        this.addComponent(image);
         this.addComponent(rectangle);
         this.addComponent(rectangleCollider);
         this.addComponent(transform);

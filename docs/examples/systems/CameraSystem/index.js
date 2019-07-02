@@ -1,7 +1,7 @@
 import World from "../../../../src/World.js";
-import Camera from "../../../../src/entities/Camera.js";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
-import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem.js";
+import CameraSystem from "../../../../src/systems/camera/CameraSystem.js";
+import ImageSystem from "../../../../src/systems/ImageSystem.js";
 import ControllerSystem from "../../../../src/systems/ControllerSystem.js";
 import KeyboardSystem from "../../../../src/systems/KeyboardSystem.js";
 import MovableSystem from "../../../../src/systems/MovementSystem.js";
@@ -11,6 +11,7 @@ import StaticText from "./entities/StaticText.js";
 import Spin from "./components/Spin.js";
 import SpinningSystem from "./systems/SpinningSystem.js";
 import FollowEntityCameraSystem from "../../../../src/systems/FollowEntityCameraSystem.js";
+import WorldMode from "../../../../src/WorldMode.js";
 
 const getRandomNumber = (min, max) => {
     const range = max - min;
@@ -28,18 +29,12 @@ const getRandomRgba = () => {
     };
 }
 
-const cameraName = "main";
-const canvas = document.getElementById("viewport");
-const world = new World();
-
 // Entities
-const camera = new Camera(cameraName);
 const player = new Text("P");
 const mario = new Mario();
 const mario2 = new Mario({ position: { x: 32, y: 0 }});
 const mario3 = new Mario({ position: { x: -28, y: 0 }});
 const mario4 = new Mario({ position: { x: -60, y: 0 }});
-
 
 const spin = new Spin();
 spin.step = 5;
@@ -54,29 +49,17 @@ const keyboardInputSystem = new KeyboardSystem();
 const movableSystem = new MovableSystem();
 const broadPhaseCollisionSystem = new BroadPhaseCollisionSystem();
 const spinningSystem = new SpinningSystem();
+const cameraSystem = new CameraSystem();
+const imageSystem = new ImageSystem();
 
 const followEntityCameraSystem = new FollowEntityCameraSystem({
-    cameraEntityId: camera.id,
+    cameraEntityId: cameraSystem.camera.id,
     followEntityId: player.id
 });
 
-const defaultCameraSystem = new DefaultCameraSystem({
-    canvas,
-    cameraName,
-    cellSize: 300
-});
-
-// Set up world
-world.addSystem(spinningSystem);
-world.addSystem(keyboardInputSystem);
-world.addSystem(controllerSystem);
-world.addSystem(movableSystem);
-world.addSystem(followEntityCameraSystem);
-world.addSystem(broadPhaseCollisionSystem);
-world.addSystem(defaultCameraSystem);
+const world = new World();
 
 // Add Entities
-world.addEntity(camera);
 world.addEntity(player);
 world.addEntity(mario);
 world.addEntity(mario2);
@@ -92,7 +75,20 @@ for (let x = 0; x < 10000; x++) {
     world.addEntity(entity);
 }
 
-world.play();
+const gameMode = new WorldMode();
+gameMode.name = "game";
+gameMode.addSystem(spinningSystem);
+gameMode.addSystem(keyboardInputSystem);
+gameMode.addSystem(controllerSystem);
+gameMode.addSystem(movableSystem);
+gameMode.addSystem(followEntityCameraSystem);
+gameMode.addSystem(broadPhaseCollisionSystem);
+gameMode.addSystem(imageSystem);
+gameMode.addSystem(cameraSystem);
+
+world.addMode(gameMode);
+world.setMode(gameMode.name);
+world.start();
 
 window.world = world;
 
@@ -108,15 +104,4 @@ document.getElementById("remove-entities").addEventListener("click", () => {
     }
 });
 
-defaultCameraSystem.bitmapCache.loadTileAsync({
-    id: "./images/Mario.png",
-    url: "./images/Mario.png",
-    size: {
-        width: 16,
-        height: 26
-    },
-    flipHorizontally: true
-}).then(()=>{
-    camera.getComponent("camera").isDirty = true;
-    defaultCameraSystem.compositor.emptyCache();
-});
+document.body.appendChild(cameraSystem.canvas);

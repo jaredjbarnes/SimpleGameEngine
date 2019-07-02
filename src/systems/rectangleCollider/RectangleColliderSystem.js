@@ -15,7 +15,7 @@ export default class RectangleColliderSystem {
             left: 0
         };
         this.availableCollisions = [];
-        this.spatialPartitionService = null;
+        this.spatialPartitionData = null;
     }
 
     removeCollisionsFromEntity(_entity) {
@@ -80,7 +80,7 @@ export default class RectangleColliderSystem {
     }
 
     isReady() {
-        return this.spatialPartitionService != null;
+        return this.spatialPartitionData != null;
     }
 
     releaseCollision(_collision) {
@@ -91,8 +91,8 @@ export default class RectangleColliderSystem {
     }
 
     updateCollisions() {
-        const cellPositions = this.spatialPartitionService.dirtyCellPositions;
-        const grid = this.spatialPartitionService.grid;
+        const cellPositions = this.spatialPartitionData.dirtyCellPositions;
+        const grid = this.spatialPartitionData.grid;
 
         for (let key in cellPositions) {
             const entities = grid.getBucket(cellPositions[key]) || emptyArray;
@@ -171,18 +171,18 @@ export default class RectangleColliderSystem {
     deactivated(_world) {
         this.world = null;
         this.currentTimestamp = 0;
-        this.spatialPartitionService = null;
+        this.spatialPartitionData = null;
     }
 
-    serviceAdded(name, service) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = service;
+    entityAdded(entity) {
+        if (entity.type === "spatial-partition-service") {
+            this.spatialPartitionData = entity.getComponent("spatial-partition-data");
         }
     }
 
-    serviceRemoved(name) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = null;
+    entityRemoved(entity) {
+        if (entity.type === "spatial-partition-service") {
+            this.spatialPartitionData = null;
         }
     }
 

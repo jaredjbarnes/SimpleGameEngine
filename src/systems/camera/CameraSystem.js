@@ -1,41 +1,51 @@
 import CanvasPool from "./CanvasPool.js";
 import CellRenderer from "./CellRenderer.js";
+import Compositor from "./Compositor.js";
+import Camera from "./Camera.js";
+import BitmapRasterizer from "./BitmapRasterizer.js";
+import LineRasterizer from "./LineRasterizer.js";
+import ShapeRasterizer from "./ShapeRasterizer.js";
+import TextRasterizer from "./TextRasterizer.js";
 
-const idSort = (_entityA, _entityB) => {
-    const entityA = _entityA;
-    const entityB = _entityB;
+const sort = (entityA, entityB) => {
+    const rectangleA = entityA.getComponent("rectangle");
+    const rectangleB = entityB.getComponent("rectangle");
 
-    if (entityA.id < entityB.id) {
-        return -1
-    } else if (entityA.id > entityB.id) {
+    if (rectangleA.bottom < rectangleB.bottom) {
+        return -1;
+    } else if (rectangleA.bottom > rectangleB.bottom) {
         return 1;
     } else {
-        return 0;
+        if (rectangleA.right < rectangleB.right) {
+            return -1
+        } else if (rectangleA.right > rectangleB.right) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
-};
+}
 
 const emtpyArray = Object.freeze([]);
 
 export default class CameraSystem {
-    constructor({
-        cameraName,
-        canvas,
-        canvasFactory,
-        compositor,
-        sort = idSort
-    }) {
-        this.canvas = canvas;
+    constructor() {
+        this.canvas = document.createElement("canvas");
         this.name = "camera-system";
-        this.cameraName = cameraName;
-        this.compositor = compositor;
-        this.canvasPool = new CanvasPool(canvasFactory);
+        this.compositor = new Compositor();
+        this.canvasPool = new CanvasPool();
         this.cellRenderer = new CellRenderer();
         this.cellCanvases = {};
-        this.camera = null;
-        this.cameraComponent = null;
         this.cellSize = null;
-        this.cameraRectangle = null;
-        this.spatialPartitionService = null;
+
+        this.camera = new Camera();
+        this.camera.type = "camera";
+        this.cameraComponent = this.camera.getComponent("camera");
+        this.cameraRectangle = this.camera.getComponent("rectangle");
+        this.canvas.width = this.cameraRectangle.width;
+        this.canvas.height = this.cameraRectangle.height;
+
+        this.spatialPartitionData = null;
         this.lastCellPositions = [];
         this.currentCellPositions = [];
         this.cellPositionsToRerender = [];
@@ -62,6 +72,11 @@ export default class CameraSystem {
                 return sort(entityA, entityB);
             }
         }
+
+        this.compositor.addRasterizer(new BitmapRasterizer());
+        this.compositor.addRasterizer(new LineRasterizer());
+        this.compositor.addRasterizer(new ShapeRasterizer());
+        this.compositor.addRasterizer(new TextRasterizer());
     }
 
     getCanvas(_column, _row) {
@@ -124,7 +139,7 @@ export default class CameraSystem {
                 }
 
                 // Check to see if any rasterizable entity needs to be redrawn.
-                const entities = this.spatialPartitionService.grid.getBucket(cellPosition) || emtpyArray;
+                const entities = this.spatialPartitionData.grid.getBucket(cellPosition) || emtpyArray;
 
                 for (let z = 0; z < entities.length; z++) {
                     const entity = entities[z];
@@ -138,7 +153,7 @@ export default class CameraSystem {
             }
         }
 
-        const dirtyCellPositions = this.spatialPartitionService.dirtyCellPositions;
+        const dirtyCellPositions = this.spatialPartitionData.dirtyCellPositions;
 
         for (let key in dirtyCellPositions) {
             const cellPosition = dirtyCellPositions[key];
@@ -167,7 +182,7 @@ export default class CameraSystem {
 
         for (let x = 0; x < this.cellPositionsToRerender.length; x++) {
             const cellPosition = this.cellPositionsToRerender[x];
-            const entities = this.spatialPartitionService.grid.getBucket(cellPosition);
+            const entities = this.spatialPartitionData.grid.getBucket(cellPosition);
             let canvas = this.getCanvas(cellPosition.column, cellPosition.row);
 
             if (canvas == null) {
@@ -183,11 +198,6 @@ export default class CameraSystem {
             this.cellRenderer.rectangle.bottom = cellPosition.row + 1;
             this.cellRenderer.render();
         }
-    }
-
-    isCameraEntity(entity) {
-        return entity.hasComponents(["camera", "transform", "rectangle"]) &&
-            entity.getComponent("camera").name === this.cameraName;
     }
 
     transferToCanvas() {
@@ -251,14 +261,16 @@ export default class CameraSystem {
     activated(world) {
         this.world = world;
 
-        const services = this.world.getServices();
-        for (let name in services) {
-            this.serviceAdded(name, services[name]);
+        const entities = this.world.getEntities();
+        for (let x = 0; x < entities.length; x++) {
+            this.entityAdded(entities[x]);
         }
+
+        this.world.addEntity(this.camera);
     }
 
     update() {
-        if (this.spatialPartitionService != null) {
+        if (this.spatialPartitionData != null) {
             this.findCellsToRerender();
             this.clean();
             this.drawCellCanvases();
@@ -268,49 +280,22 @@ export default class CameraSystem {
         }
     }
 
-    componentAdded(entity, component) {
-
-    }
-
-    componentRemoved(entity, component) {
-
-    }
-
     entityAdded(entity) {
-        if (this.isCameraEntity(entity)) {
-            this.camera = entity;
-            this.cameraComponent = this.camera.getComponent("camera");
-            this.cameraRectangle = this.camera.getComponent("rectangle");
-            this.canvas.width = this.cameraRectangle.width;
-            this.canvas.height = this.cameraRectangle.height;
-        }
-    }
-
-    entityRemoved(entity) {
-        if (this.isCameraEntity(entity)) {
-            this.camera = null;
-            this.cameraComponent = null;
-            this.cameraRectangle = null;
-            this.canvas.width = this.cameraRectangle.width;
-            this.canvas.height = this.cameraRectangle.height;
-        }
-    }
-
-    serviceAdded(name, service) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = service;
-            this.cellSize = service.cellSize;
-            this.cellRenderer.cellSize = service.cellSize;
+        if (entity.type === "spatial-partition-service") {
+            this.spatialPartitionData = entity.getComponent("spatial-partition-data");
+            this.cellSize = this.spatialPartitionData.cellSize;
+            this.cellRenderer.cellSize = this.spatialPartitionData.cellSize;
             this.cellRenderer.compositor = this.compositor;
             this.cellRenderer.sort = this.sort;
         }
     }
 
-    serviceRemoved(name, service) {
-        if (name === "spatial-partition-service") {
-            this.spatialPartitionService = null;
+    entityRemoved(entity) {
+        if (entity.type === "spatial-partition-service") {
+            this.spatialPartitionData = null;
             this.cellSize = null;
             this.cellRenderer = null;
         }
     }
+
 }

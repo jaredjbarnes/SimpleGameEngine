@@ -51,7 +51,7 @@ class PropertyValidator {
         return this.isString() || this.isNull();
     }
 
-    isFunction(){
+    isNullableFunction(){
         return this.isFunction() || this.isNull();
     }
 

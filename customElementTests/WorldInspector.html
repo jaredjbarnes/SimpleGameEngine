@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <link href="../fonts/future.css" type="text/css" rel="stylesheet" />
+    <style>
+        body,
+        html {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        test-navigation {
+            width: 100%;
+            height: 100%;
+        }
+
+        *:not(:defined) {
+            visibility: hidden;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script type="module" async>
+        import BaseElement from "../src/elements/BaseElement.js";
+        import { html } from "../src/lit-html/lit-html.js";
+        import "../src/elements/WorldInspector/WorldInspector.js";
+        import World from "../src/World.js";
+        import Entity from "../src/Entity.js";
+
+        const world = new World();
+
+        for (let x = 0; x < 1000; x++) {
+            const entity = new Entity();
+            entity.type = `entity-${x}`;
+            world.addEntity(entity);
+        }
+
+        const testUIStyle = html`
+            <style>
+                :host {
+                    display: block;
+                }
+
+                world-inspector {
+                    width: 100%;
+                    height:100%;
+                }
+            </style>
+        `;
+
+        class TestUI extends BaseElement {
+            render() {
+                return html`
+                    ${testUIStyle}
+                    <world-inspector .world=${world}></world-inspector>
+                `;
+            }
+        }
+
+        customElements.define("test-ui", TestUI);
+
+        window.world = world;
+        window.Entity = Entity;
+    </script>
+
+    <test-ui></test-ui>
+</body>
+
+</html>

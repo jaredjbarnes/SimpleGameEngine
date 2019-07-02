@@ -26,6 +26,7 @@ export default class BaseElement extends HTMLElement {
 
                 this.pendingRender = false;
                 this.renderShadowDom();
+                this.renderContentDom();
                 this.notifyPromises();
 
                 invokeMethodIfExists(this, "afterUpdate", []);
@@ -44,6 +45,12 @@ export default class BaseElement extends HTMLElement {
 
     renderShadowDom() {
         render(this.render(), this.shadowRoot);
+    }
+
+    renderContentDom() {
+        if (typeof this.renderContent === "function") {
+            render(this.renderContent(), this);
+        }
     }
 
     render() {

@@ -1,8 +1,7 @@
 ﻿export default class TextRasterizer {
-    constructor(canvasFactory) {
+    constructor() {
         this.type = "text";
         this.fontCache = {};
-        this.canvasFactory = canvasFactory;
     }
 
     convertToRgba(color) {
@@ -22,7 +21,7 @@
     }
 
     rasterize(entity) {
-        const canvas = this.canvasFactory.create();
+        const canvas = document.createElement("canvas");
 
         const transform = entity.getComponent("transform");
         const rectangle = entity.getComponent("rectangle");

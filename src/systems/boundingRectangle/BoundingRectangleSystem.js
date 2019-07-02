@@ -1,5 +1,6 @@
 import RectangleUpdater from "./BoundingRentangleUpdater.js";
-import BoundingRectangleService from "../../services/BoundingRectangleService.js";
+import BoundingRectangleData from "../../components/BoundingRectangleData.js";
+import Entity from "../../Entity.js";
 
 const RECTANGLE_ENTITIES_DEPENDENCIES = ["transform", "rectangle"];
 
@@ -8,16 +9,18 @@ export default class BoundingRectangleSystem {
         this.world = null;
         this.name = "bounding-rectangle-system";
         this.rectangleUpdater = new RectangleUpdater();
-        this.boundingRectangleService = new BoundingRectangleService();
+        this.boundingRectangleData = new BoundingRectangleData();
+        this.boundingRectangleEntity = new Entity();
+        this.boundingRectangleEntity.type = "bounding-rectangle-service"
+        this.boundingRectangleEntity.addComponent(this.boundingRectangleData);
     }
 
     addRectangleEntity(_entity) {
         const entity = _entity;
-        if (this.boundingRectangleService.entitiesById[entity.id] == null) {
-            this.boundingRectangleService.entitiesById[entity.id] = entity;
-            this.boundingRectangleService.entities.push(entity);
+        if (this.boundingRectangleData.entitiesById[entity.id] == null) {
+            this.boundingRectangleData.entitiesById[entity.id] = entity;
+            this.boundingRectangleData.entities.push(entity);
         }
-
     }
 
     isRectangleEntity(_entity) {
@@ -32,17 +35,17 @@ export default class BoundingRectangleSystem {
 
     removeRectangleEntity(_entity) {
         const entity = _entity;
-        if (this.boundingRectangleService.entitiesById[entity.id]) {
-            delete this.boundingRectangleService.entitiesById[entity.id];
-            const index = this.boundingRectangleService.entities.indexOf(entity);
-            this.boundingRectangleService.entities.splice(index, 1);
+        if (this.boundingRectangleData.entitiesById[entity.id]) {
+            delete this.boundingRectangleData.entitiesById[entity.id];
+            const index = this.boundingRectangleData.entities.indexOf(entity);
+            this.boundingRectangleData.entities.splice(index, 1);
         }
     }
 
     wasRectangleEntity(_entity, _component) {
         const entity = _entity;
         const component = _component;
-        return this.boundingRectangleService.entitiesById[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
+        return this.boundingRectangleData.entitiesById[entity.id] && RECTANGLE_ENTITIES_DEPENDENCIES.indexOf(component.type) > -1;
     }
 
     // Life cycle methods
@@ -51,11 +54,11 @@ export default class BoundingRectangleSystem {
         this.world.getEntities().forEach((entity)=>{
             this.entityAdded(entity);
         });
-        this.world.addService(this.boundingRectangleService);
+        this.world.addEntity(this.boundingRectangleEntity);
     }
 
     afterUpdate() {
-        const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        const dirtyEntities = this.boundingRectangleData.dirtyEntities;
         for (let x = 0; x < dirtyEntities.length; x++) {
             const entity = dirtyEntities[x];
             entity.getComponent("transform").isDirty = false;
@@ -91,15 +94,15 @@ export default class BoundingRectangleSystem {
     }
 
     deactivated() {
-        this.world.removeService(this.boundingRectangleService);
+        this.world.removeEntity(this.boundingRectangleEntity);
         this.world = null;
-        this.boundingRectangleService.entitiesById = {};
-        this.boundingRectangleService.dirtyEntities.length = 0;
+        this.boundingRectangleData.entitiesById = {};
+        this.boundingRectangleData.dirtyEntities.length = 0;
     }
 
     update() {
-        const dirtyEntities = this.boundingRectangleService.dirtyEntities;
-        const entities = this.boundingRectangleService.entities;
+        const dirtyEntities = this.boundingRectangleData.dirtyEntities;
+        const entities = this.boundingRectangleData.entities;
 
         dirtyEntities.length = 0;
 

@@ -46,12 +46,12 @@ export default class SystemsBundlerSystem {
         this.notifySystems("entityRemoved", args);
     }
 
-    serviceAdded(...args){
-        this.notifySystems("serviceAdded", args);
+    started(...args) {
+        this.notifySystems("started", args);
     }
 
-    serviceRemoved(...args){
-        this.notifySystems("serviceRemoved", args);
+    stopped(...args) {
+        this.notifySystems("stopped", args);
     }
 
     update(...args){

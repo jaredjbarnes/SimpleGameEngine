@@ -1,18 +1,13 @@
-import overlay from "../../utilities/overlay.js";
-
-const defaultColors = {
-    rotatedPoints: "rgba(255, 0, 0, 1)",
-    normals: "rgba(80, 80, 220, 1)",
-    center: "rgba(80, 255, 80, 1)",
-    size: "rgba(255, 0, 0, 1)",
-    penetration: "rgba(80, 255, 80, 1)"
-};
-
 export default class PolygonRasterizer {
-    constructor({ canvasFactory, colors }) {
+    constructor() {
         this.type = "polygon-body";
-        this.canvasFactory = canvasFactory;
-        this.colors = overlay(defaultColors, colors);
+        this.colors = {
+            rotatedPoints: "rgba(255, 0, 0, 1)",
+            normals: "rgba(80, 80, 220, 1)",
+            center: "rgba(80, 255, 80, 1)",
+            size: "rgba(255, 0, 0, 1)",
+            penetration: "rgba(80, 255, 80, 1)"
+        };
     }
 
     getIdentity(entity) {
@@ -20,7 +15,7 @@ export default class PolygonRasterizer {
     }
 
     rasterize(entity) {
-        const canvas = this.canvasFactory.create();
+        const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
 
         const polygonBody = entity.getComponent("polygon-body");

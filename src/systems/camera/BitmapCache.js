@@ -1,11 +1,14 @@
 import TileToCanvasConverter from "./TileToCanvasConverter.js";
 
 export default class BitmapCache {
-    constructor({ imageFactory, canvasFactory }) {
-        this.imageFactory = imageFactory;
-        this.tileToCanvasConverter = new TileToCanvasConverter(canvasFactory);
+    constructor() {
+        this.tileToCanvasConverter = new TileToCanvasConverter();
         this.bitmaps = {};
         this.imagePromises = {};
+    }
+
+    static get(){
+        return bitmapCache;
     }
 
     loadImageAsync(tile) {
@@ -14,7 +17,7 @@ export default class BitmapCache {
         }
 
         return this.imagePromises[tile.url] = new Promise((resolve, reject) => {
-            const image = this.imageFactory.create();
+            const image = new Image();
 
             image.onload = () => {
                 resolve(image);
@@ -85,3 +88,5 @@ export default class BitmapCache {
         return this.bitmaps[id] || null;
     }
 }
+
+const bitmapCache = new BitmapCache();

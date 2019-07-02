@@ -1,6 +1,7 @@
-export default class SpatialPartitionService {
+export default class SpatialPartitionData {
     constructor(cellSize = 128) {
-        this.name = "spatial-partition-service";
+        this.type = "spatial-partition-data";
+        this.isSerializable = false;
         this.entitiesById = {};
         this.dirtyCellPositions = {};
         this.grid = {};

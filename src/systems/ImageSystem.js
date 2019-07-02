@@ -1,10 +1,11 @@
 import Bitmap from "../components/Bitmap.js";
+import BitmapCache from "./camera/BitmapCache.js";
 
 export default class ImageSystem {
-    constructor({ bitmapCache }) {
+    constructor() {
         this.world = null;
         this.name = "image";
-        this.bitmapCache = bitmapCache;
+        this.bitmapCache = BitmapCache.get(); // :(
     }
 
     activated(world) {

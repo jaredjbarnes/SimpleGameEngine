@@ -8,7 +8,7 @@ export default class PolygonSystem {
         this.world = null;
         this.name = "polygon";
         this.polygonUpdater = new PolygonUpdater();
-        this.boundingRectangleService = null;
+        this.boundingRectangleData = null;
     }
 
     isPolygonEntity(_entity) {
@@ -20,37 +20,32 @@ export default class PolygonSystem {
         const entity = _entity;
         return entity.hasComponents(POLYGON_BODY_DEPENDENCIES);
     }
-    
+
     // Life cycle methods.
     activated(world) {
-       this.world = world;
-        
-        const services = this.world.getServices();
-        for (let name in services){
-            this.serviceAdded(name, services[name]);
-        }
+        this.world = world;
     }
 
     deactivated() {
         this.world = null;
-        this.boundingRectangleService = null;
+        this.boundingRectangleData = null;
     }
 
-    serviceAdded(name, service){
-        if (name === "bounding-rectangle-service"){
-            this.boundingRectangleService = service;
+    entityAdded(entity) {
+        if (entity.type === "bounding-rectangle-service"){
+            this.boundingRectangleData = entity.getComponent("bounding-rectangle-data");
         }
     }
 
-    serviceRemoved(name, service){
-        if (name === "bounding-rectangle-service"){
-            this.boundingRectangleService = null;
+    entityRemoved(name) {
+        if (entity.type === "bounding-rectangle-service") {
+            this.boundingRectangleData = null;
         }
     }
 
     update() {
-        if (this.boundingRectangleService != null) {
-            const dirtyEntities = this.boundingRectangleService.dirtyEntities;
+        if (this.boundingRectangleData != null) {
+            const dirtyEntities = this.boundingRectangleData.dirtyEntities;
 
             for (let x = 0; x < dirtyEntities.length; x++) {
                 const entity = dirtyEntities[x];

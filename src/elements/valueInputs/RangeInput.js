@@ -63,6 +63,7 @@ const style = html`
             background-color: rgba(10, 177, 255, 0.95);
             transform: translate(-50%, 0);
             cursor: grab;
+            user-select: none;
         }
 
         .range {
@@ -80,7 +81,7 @@ const style = html`
             top:0;
             left:0;
             height: 100%;
-            background-color: rgba(10, 177, 255, 0.35);
+            background-color: rgba(10, 177, 255, 0.50);
         }
     </style>
 `;
@@ -112,6 +113,14 @@ export default class RangeInput extends BaseElement {
 
     }
 
+    static get observedAttributes() {
+        return ["value"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        this.value = newValue;
+    }
+
     isValidRange() {
         if (typeof this._max !== "number") {
             return false;
@@ -141,9 +150,7 @@ export default class RangeInput extends BaseElement {
             value = 1;
         }
 
-        this._value = (value * (this._max - this._min)) + this._min;
-        this._percentage = value;
-        this.scheduleUpdate();
+        this.value = (value * (this._max - this._min)) + this._min;
     }
 
     get value() {
@@ -168,6 +175,11 @@ export default class RangeInput extends BaseElement {
         }
 
         this._percentage = (this._value - this._min) / (this._max - this._min);
+
+        if (this.getAttribute("value") != this._value.toString()) {
+            this.setAttribute("value", this._value.toString());
+        }
+
         this.scheduleUpdate();
 
     }

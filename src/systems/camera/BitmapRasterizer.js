@@ -1,17 +1,15 @@
+import BitmapCache from "./BitmapCache.js";
+
 export default class BitmapRasterizer {
-    constructor({
-        bitmapCache,
-        canvasFactory
-    }) {
+    constructor() {
         this.type = "bitmap";
-        this.bitmapCache = bitmapCache;
-        this.canvasFactory = canvasFactory;
+        this.bitmapCache = BitmapCache.get(); // :(
         this.missingBitmapCanvas = null;
         this.createMissingBitmapCanvas();
     }
 
     createMissingBitmapCanvas() {
-        const canvas = this.missingBitmapCanvas = this.canvasFactory.create();
+        const canvas = this.missingBitmapCanvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         canvas.width = 128;
         canvas.height = 128;
@@ -49,7 +47,7 @@ export default class BitmapRasterizer {
     }
 
     rasterize(entity) {
-        const canvas = this.canvasFactory.create();
+        const canvas = document.createElement("canvas");
 
         const transform = entity.getComponent("transform");
         const bitmap = entity.getComponent("bitmap");

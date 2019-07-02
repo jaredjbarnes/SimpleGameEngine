@@ -1,7 +1,6 @@
 ﻿export default class ShapeRasterizer {
-    constructor(canvasFactory) {
+    constructor() {
         this.type = "shape";
-        this.canvasFactory = canvasFactory;
     }
 
     convertToRgba(color) {
@@ -21,7 +20,7 @@
     }
 
     rasterize(entity) {
-        const canvas = this.canvasFactory.create();
+        const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
 
         const transform = entity.getComponent("transform");

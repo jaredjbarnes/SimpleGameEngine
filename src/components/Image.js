@@ -5,10 +5,12 @@ const schema = {
     "type": "object",
     "properties": {
         "id": {
-            "type": "string"
+            "type": "string",
+            "isReadOnly": true
         },
         "url": {
-            "type": "string"
+            "type": "string",
+            "isReadOnly": true
         },
         "position": {
             "type": "object",
@@ -19,7 +21,8 @@ const schema = {
                 "y": {
                     "type": "number"
                 }
-            }
+            },
+            "isReadOnly": true
         },
         "size": {
             "type": "object",
@@ -30,7 +33,8 @@ const schema = {
                 "height": {
                     "type": "number"
                 }
-            }
+            },
+            "isReadOnly": true
         },
         "padding": {
             "type": "object",
@@ -47,18 +51,22 @@ const schema = {
                 "left": {
                     "type": "number"
                 }
-            }
+            },
+            "isReadOnly": true
         },
         "opacity": {
             "type": "number",
             "minimum": 0,
-            "maximum": 1
+            "maximum": 1,
+            "isReadOnly": true
         },
         "flipHorizontally": {
-            "type": "boolean"
+            "type": "boolean",
+            "isReadOnly": true
         },
         "flipVertically": {
-            "type": "boolean"
+            "type": "boolean",
+            "isReadOnly": true
         }
     }
 };

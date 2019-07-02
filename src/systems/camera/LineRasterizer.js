@@ -1,7 +1,6 @@
 export default class LineRenderer {
-    constructor(canvasFactory) {
+    constructor() {
         this.type = "line";
-        this.canvasFactory = canvasFactory;
     }
 
     convertToRgba(color) {
@@ -16,7 +15,7 @@ export default class LineRenderer {
     }
 
     rasterize(entity) {
-        const canvas = this.canvasFactory.create();
+        const canvas = document.createElement("canvas");
 
         const transform = entity.getComponent("transform");
         const rectangle = entity.getComponent("rectangle");

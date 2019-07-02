@@ -15,34 +15,43 @@ const style = html`
             user-select:none;
         }
 
-        input[type='text'] {
+        input[type='number'] {
             border: 2px solid rgba(10, 177, 255, 1);   
             background-color: rgba(10, 177, 255, 0.15);
             color: rgba(10, 177, 255, 1);
             width: 100%;
             height: 30px;
             font-size: 16px;
+            -moz-appearance: textfield;
         }    
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            margin: 0; /* Removes leftover margin */
+        }
     </style>
 `;
 
-export default class StringInput extends BaseElement {
+export default class NumberInput extends BaseElement {
     constructor() {
         super();
 
         this.label = null;
-        this.schema = null;
         this.onChange = this.onChange.bind(this);
     }
 
     get value() {
-        return this.getAttribute("value");
+        return new Number(this.getAttribute("value")).valueOf();
     }
 
     set value(value) {
-        this.setAttribute("value", value);
-        this.shadowRoot.querySelector("input").value = value;
-        this.scheduleUpdate();
+        value = new Number(value).valueOf();
+
+        if (!Number.isNaN(value)){
+            this.setAttribute("value", value);
+            this.shadowRoot.querySelector("input").value = value;
+        }
     }
 
     onChange(event){
@@ -53,11 +62,11 @@ export default class StringInput extends BaseElement {
         return html`
             ${style}
             <div class="label" >${this.getAttribute("label")}</div>
-            <div class="input" value=${this.value} >
-                <input type="text" @change=${this.onChange} />
+            <div class="input" >
+                <input type="number" @change=${this.onChange} />
             </div>
         `;
     }
 }
 
-customElements.define('string-input', StringInput);
+customElements.define('number-input', NumberInput);

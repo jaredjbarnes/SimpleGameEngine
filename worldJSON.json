@@ -1,0 +1,34 @@
+{
+    "systems": [
+        {
+            "name": "rectangle-system",
+            "properties": {
+                "numberProperty": 1,
+                "booleanProperty": false
+            }
+        }
+    ],
+    "entities": [
+        {
+            "id": "",
+            "type": null,
+            "components": [
+                {
+                    "type": "transform",
+                    "properties": {
+                        "isDirty": true,
+                        "rotation": 0,
+                        "position": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "origin": {
+                            "x": 0,
+                            "y": 0
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

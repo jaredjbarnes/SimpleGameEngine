@@ -9,7 +9,7 @@ const schema = {
             "description": ""
         },
         "opacity": {
-            "type": "number",
+            "type": "range",
             "minimum": 0,
             "maximum": 1
         },

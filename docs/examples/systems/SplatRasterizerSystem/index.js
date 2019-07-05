@@ -1,12 +1,12 @@
 import World from "../../../../src/World.js";
-import DefaultCameraSystem from "../../../../src/systems/DefaultCameraSystem.js";
+import DefaultCameraSystem from "../../../../src/systems/camera/DefaultCameraSystem.js/index.js";
 import SplatterSystem from "./systems/SplatterSystem.js";
 import SplatRasterizer from "./rasterizers/SplatRasterizer.js";
 import PaintableEntity from "./entities/PaintableEntity.js";
 import PaintableTextEntity from "./entities/PaintableTextEntity.js";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
 import CursorSystem from "../../../../src/systems/CursorSystem.js";
-import Camera from "../../../../src/entities/Camera.js";
+import Camera from "../../../../src/systems/camera/Camera.js/index.js";
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");

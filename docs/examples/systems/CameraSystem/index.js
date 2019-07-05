@@ -66,6 +66,10 @@ world.addEntity(mario2);
 world.addEntity(mario3);
 world.addEntity(mario4);
 
+const playerSpin = new Spin();
+playerSpin.step = 5;
+player.addComponent(playerSpin);
+
 for (let x = 0; x < 10000; x++) {
     const entity = new StaticText(x, {
         x: getRandomNumber(-10000, 10000),
@@ -105,3 +109,4 @@ document.getElementById("remove-entities").addEventListener("click", () => {
 });
 
 document.body.appendChild(cameraSystem.canvas);
+cameraSystem.canvas.style.height = "100%";

@@ -4,4 +4,6 @@
 * Each mode will declare which systems are used in that mode.
 * Game mode will be what becomes the game.
 
-* Have a registry of components and systems within the developer tools for gaming. We can then serialize the world config with the urls instead of aliases. This should make building systems and components easy and flexible.
+* Make a serialize and deserialize method on both systems and components.
+* Make components and systems have a getSchema method to know how to configure.
+* Make a world loader that works with the current release tag on the repo.

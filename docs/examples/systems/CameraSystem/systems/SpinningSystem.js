@@ -54,7 +54,7 @@ export default class SpinningSystem {
             const transform = entity.getComponent("transform");
 
             transform.rotation += spin.step;
-            if (transform.rotation > 360) {
+            if (transform.rotation >= 360) {
                 transform.rotation = 1;
             }
             transform.isDirty = true;

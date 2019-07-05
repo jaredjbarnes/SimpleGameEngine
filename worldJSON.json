@@ -1,11 +1,16 @@
 {
-    "systems": [
+    "modes": [
         {
-            "name": "rectangle-system",
-            "properties": {
-                "numberProperty": 1,
-                "booleanProperty": false
-            }
+            "name": "transformMode",
+            "systems": [
+                {
+                    "name": "rectangle-system",
+                    "properties": {
+                        "numberProperty": 1,
+                        "booleanProperty": false
+                    }
+                }
+            ]
         }
     ],
     "entities": [

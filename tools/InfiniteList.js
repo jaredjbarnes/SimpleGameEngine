@@ -1,5 +1,5 @@
-import { html } from "../lit-html/lit-html.js";
-import { styleMap } from "../lit-html/directives/style-map.js";
+import { html } from "../src/lit-html/lit-html.js";
+import { styleMap } from "../src/lit-html/directives/style-map.js";
 import BaseElement from "./BaseElement.js";
 
 const style = html`
@@ -41,7 +41,6 @@ export default class InfiniteList extends BaseElement {
             this[prop] = value;
         }
     }
-
 
     get elementHeight() {
         return this._elementHeight;

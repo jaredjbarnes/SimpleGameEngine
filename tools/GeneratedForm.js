@@ -1,6 +1,7 @@
 import BaseElement from "./BaseElement.js";
 import "./RangeInput.js";
 import "./BooleanInput.js";
+import "./UIProperty.js";
 import { html } from "../src/lit-html/lit-html.js"
 
 const style = html`
@@ -46,15 +47,37 @@ const style = html`
             text-transform: uppercase;
         }
 
+        .description {
+            padding: 10px;
+            font-weight: normal;
+        }
+
+        .info {
+            color: #6f85a4;
+            font-weight: bold;
+        }
+
         input {
             padding: 4px 0;
             background-color: #f1f1f1;
-            border: 1px solid #ccc;
             height: 50px;
             width: 100%;
             font-size: 14px;
             padding-left:6px;
             box-sizing: border-box;
+            border:0;
+        }
+        
+        textarea {
+            padding: 4px 0;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            height: 300px;
+            width: 100%;
+            font-size: 14px;
+            padding-left:6px;
+            box-sizing: border-box;
+            resize: none;
         }
 
         range-input {
@@ -81,51 +104,78 @@ export default class GeneratedForm extends BaseElement {
 
     boolean(label, property) {
         return html`
-                <div class="property-label"></div>
+            <ui-property>
                 <div class="boolean-property-value">
-                ${label}
-                <boolean-input></boolean-input>
+                    ${label}
+                    <boolean-input></boolean-input>
                 </div>
+            </ui-property>
         `;
     }
 
     integer(label, property) {
         return html`
-            <div class="property-label">${label}</div>
-            <input type="number" step="1" />
+            <ui-property label=${label}>
+                <input type="number" step="1" />
+            </ui-property>
         `;
     }
 
     number(label, property) {
         return html`
-            <div class="property-label">${label}</div>
-            <input type="number"/>
+            <ui-property label=${label}>
+                <input type="number"/>
+            </ui-property>
         `;
     }
 
     string(label, property) {
         return html`
-            <div class="property-label">${label}</div>
-            <input type="string" />
+            <ui-property label=${label}>
+                <input type="string"/>
+            </ui-property>
         `;
     }
 
     range(label, property) {
         return html`
-            <div class="property-label">${label}</div>
-            <div class="property-value" style="height:75px;">
-                <range-input min=${property.minimum} max=${property.maximum}></range-input>
-            </div>
+            <ui-property label=${label}>
+                <div style="height:55px;width:100%;padding: 6px;">
+                    <range-input min=${property.minimum} max=${property.maximum}></range-input>
+                </div>
+            </ui-property>
         `;
+    }
+
+    textarea(label, property){
+        return html`
+            <ui-property label=${label}>
+                <textarea></textarea>
+            </ui-property>
+        `;
+    }
+
+    renderDescription(schema){
+        if (typeof schema.description === "string"){
+            return html`
+                <div class="description"><span class="info">&#9432;</span> ${schema.description}</div>
+            `;
+        }
+
+        return null;
     }
 
     renderObjectProperty(schema) {
         const properties = schema.properties || {};
 
-        return Object.keys(properties).map((key) => {
+        const parts = Object.keys(properties).map((key) => {
             const value = properties[key];
             return this[value.type](key, value);
         });
+
+        parts.unshift(this.renderDescription(schema));
+
+        return parts;
     }
 
     render() {

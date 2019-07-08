@@ -129,101 +129,6 @@ const style = html`
             overflow: hidden;
             background-color:#dbddde;
         }
-        
-        .push-in {
-            animation-duration: 400ms;
-            animation-name: push-in;
-            animation-iteration-count: 1;
-            animation-direction: normal;
-        }
-
-        .push-out {
-            animation-duration: 400ms;
-            animation-name: push-out;
-            animation-iteration-count: 1;
-            animation-direction: normal;
-        }
-
-        .pop-in {
-            animation-duration: 400ms;
-            animation-name: pop-in;
-            animation-iteration-count: 1;
-            animation-direction: normal;
-        }
-
-        .pop-out {
-            animation-duration: 400ms;
-            animation-name: pop-out;
-            animation-iteration-count: 1;
-            animation-direction: normal;
-        }
-
-        @keyframes push-in {
-            from {
-                transform: translateX(100%);
-            }
-
-            to {
-                transform: translateX(0)
-            }
-        }
-
-        @keyframes push-out {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%)
-            }
-        }
-
-        @keyframes pop-in {
-            from {
-                transform: translateX(-50%);
-            }
-
-            to {
-                transform: translateX(0)
-            }
-        }
-
-        @keyframes pop-out {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(100%)
-            }
-        }
-
-        .window-button {
-            display: inline-block;
-            border-radius: 15px 4px 4px 15px;
-            box-sizing: border-box;
-            border: 1px inset #839cb2;
-            background: linear-gradient(0deg, #4e6ca2  0%, #466c9b 50%, #6481a9 50%, #8ea3c0 100%);
-            width: 70px;
-            height: 30px;
-            margin-left: 6px;
-            line-height: 28px;
-            color: #fff;
-            text-align: center;
-            font-size: 12px;
-            user-select: none;
-            cursor: default;
-        }
-
-
-        .window-button:hover {
-            background: linear-gradient(0deg, #6487c5  0%, #466c9b 50%, #6481a9 50%, #8ea3c0 100%);
-        }
-
-        .window-button:active {
-            border: 2px inset #839cb2;
-            background: linear-gradient(0deg, #4e6ca2  0%, #466c9b 50%, #6481a9 50%, #8ea3c0 100%);
-        }
 
     </style>
 `;
@@ -240,14 +145,8 @@ export default class UIWindow extends BaseElement {
         this.onResizeStart = this.onResizeStart.bind(this);
         this.onResizeMove = this.onResizeMove.bind(this);
         this.onResizeEnd = this.onResizeEnd.bind(this);
-        this.onAnimationEnd = this.onAnimationEnd.bind(this);
-        this.onBackClick = this.onBackClick.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onClose = this.onClose.bind(this);
-        this.onPush = this.onPush.bind(this);
-        this.isPushing = false;
-        this.isPopping = false;
-        this.panes = [];
 
         this.style.zIndex = currentZIndex++;
 
@@ -292,14 +191,6 @@ export default class UIWindow extends BaseElement {
             return true;
         } else {
             return false;
-        }
-    }
-
-    onPush(event) {
-        if (event.detail.content != null) {
-            this.panes.push(event.detail);
-            this.isPushing = true;
-            this.scheduleUpdate();
         }
     }
 
@@ -386,83 +277,6 @@ export default class UIWindow extends BaseElement {
         event.stopPropagation();
     }
 
-    onAnimationEnd() {
-        if (this.isPopping) {
-            this.panes.pop();
-        }
-
-        this.isPushing = false;
-        this.isPopping = false;
-
-        this.scheduleUpdate();
-    }
-
-    renderPanes() {
-        const classesTop = classMap({
-            "body-wrapper": true,
-            "pop-out": this.isPopping,
-            "push-in": this.isPushing
-        });
-
-        const classesBottom = classMap({
-            "body-wrapper": true,
-            "push-out": this.isPushing,
-            "pop-in": this.isPopping
-        });
-
-        const panes = this.panes.slice();
-        panes.unshift({
-            content: html`<slot></slot>`,
-            title: this.getAttribute("title")
-        });
-
-        const result = panes.map((pane, index) => {
-            if (index === panes.length - 2) {
-                return html`
-                        <div class=${classesBottom}>
-                            ${pane.content}
-                        </div>
-                    `;
-            } else if (index === panes.length - 1) {
-                return html`
-                        <div class=${classesTop} @animationend=${this.onAnimationEnd}>
-                            ${pane.content}
-                        </div>
-                    `;
-            } else {
-                return html`
-                        <div class="body-wrapper">
-                            ${pane.content}
-                        </div>
-                    `;
-            }
-        });
-
-        return result;
-
-    }
-
-    renderBackButton() {
-        if (this.panes.length > 0) {
-            if (this.isPushing || this.isPopping) {
-                return html`
-                    <div class="window-button">Back</div>
-                `;
-            } else {
-                return html`
-                    <div class="window-button" @click=${this.onBackClick}>Back</div>
-                `;
-            }
-        }
-
-        return null;
-    }
-
-    onBackClick() {
-        this.isPopping = true;
-        this.scheduleUpdate();
-    }
-
     swallowEvent(event) {
         event.stopPropagation();
         event.preventDefault();
@@ -471,24 +285,20 @@ export default class UIWindow extends BaseElement {
     render() {
         let title = this.getAttribute("title") || "";
 
-        if (this.panes.length > 0) {
-            title = this.panes[this.panes.length - 1].title;
-        }
-
         return html`
             ${style}
             <div class="container" @mousedown=${this.onFocus}>
                 <div class="handle" @mousedown=${this.onDragStart}>
-                    <div class="handle-left">
-                        ${this.renderBackButton()}
-                    </div>
+                    <div class="handle-left"> </div>
                     <div class="handle-title">${title}</div>
                     <div class="handle-right">
                         ${this.isClosable() ? html`<div class="close-button" @mousedown=${this.swallowEvent} @click=${this.onClose}></div>` : html``}
                     </div>
                 </div>
                 <div class="body" @push=${this.onPush}>
-                    ${this.renderPanes()}
+                    <div class="body-wrapper">
+                        <slot></slot>
+                    </div>
                 </div>
                 <div class="footer">
                     ${this.isResizeable() ? html`<div class="resize" @mousedown=${this.onResizeStart}></div>` : html``}

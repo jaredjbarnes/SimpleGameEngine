@@ -4,25 +4,26 @@ export default class DynamicLoader {
         this.mapping = mapping;
     }
 
-    loadSingletonAsync(systemAlias) {
-        const loadedSystem = this.singletons[systemAlias];
+    getSingletonAsync(moduleAlias) {
+        const loadedModule = this.singletons[moduleAlias];
 
-        if (loadedSystem != null) {
-            return Promise.resolve(loadedSystem);
+        if (loadedModule != null) {
+            return Promise.resolve(loadedModule);
         } else {
-            return this.loadAsync(systemAlias);
+            return this.singletons[moduleAlias] = this.loadAsync(moduleAlias);
         }
     }
 
-    loadAsync(systemAlias) {
-        const alias = this.mapping[systemAlias];
+    getModuleNames() {
+        return Object.keys(this.mapping);
+    }
 
-        if (alias != null) {
-            return import(alias).then((module) => {
-                const system = new module.default();
-                this.singletons[systemAlias] = system;
+    createAsync(moduleAlias) {
+        const path = this.mapping[moduleAlias];
 
-                return system;
+        if (path != null) {
+            return import(path).then((module) => {
+                return new module.default();
             });
         } else {
             return Promise.reject(new Error("Unknown Alias."));

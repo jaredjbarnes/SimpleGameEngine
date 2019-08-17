@@ -15,6 +15,7 @@ const schema = {
     "title": "Follower",
     "description": "Follower",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "leaderEntityId": {
             "type": "string"

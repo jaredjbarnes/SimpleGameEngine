@@ -3,6 +3,7 @@ const schema = {
     "title": "Bitmap",
     "description": "Bitmap",
     "type": "object",
+    "isSerializable": false,
     "properties": {
         "identity": {
             "type": "string",

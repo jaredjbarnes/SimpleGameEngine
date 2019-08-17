@@ -3,6 +3,7 @@ const schema = {
     "title": "Image",
     "description": "Image",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "id": {
             "type": "string",

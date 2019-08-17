@@ -47,6 +47,12 @@ export default class WorldMode {
         if (index === -1) {
             systems.push(system);
             invokeMethod(system, "systemAdded", [system]);
+
+            this._world.notify({
+                type: "systemRemoved",
+                mode: this.name,
+                system
+            });
         }
     }
 
@@ -55,9 +61,16 @@ export default class WorldMode {
         const index = systems.indexOf(system);
 
         if (index > -1) {
+
             systems.splice(index, 1);
             invokeMethod(system, "deactivated", [this._world]);
             invokeMethod(system, "systemRemoved", [system]);
+
+            this._world.notify({
+                type: "systemRemoved",
+                mode: this.name,
+                system
+            });
         }
     }
 

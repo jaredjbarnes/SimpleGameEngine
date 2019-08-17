@@ -3,6 +3,7 @@
     "title": "Camera",
     "description": "Camera",
     "type": "object",
+    "isSerializable": false,
     "properties": {
         "name": {
             "type": "string"

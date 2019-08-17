@@ -21,6 +21,7 @@ const schema = {
     "title": "Line",
     "description": "Line",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "thickness": {
             "type": "number"

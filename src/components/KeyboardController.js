@@ -3,6 +3,7 @@
     "title": "Keyboard Controller",
     "description": "Keyboard Controller",
     "type": "object",
+    "isSerializable": false,
     "properties": {}
 };
 

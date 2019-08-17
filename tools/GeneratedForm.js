@@ -140,7 +140,7 @@ export default class GeneratedForm extends BaseElement {
     range(label, property) {
         return html`
             <ui-property label=${label}>
-                <div style="height:55px;width:100%;padding: 6px;">
+                <div style="height:70px;width:100%;padding: 6px;box-sizing:border-box;">
                     <range-input min=${property.minimum} max=${property.maximum}></range-input>
                 </div>
             </ui-property>

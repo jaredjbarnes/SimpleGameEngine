@@ -3,6 +3,7 @@ const schema = {
     "title": "Cursor",
     "description": "Cursor",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "isLeftButtonDown": {
             "type": "boolean"

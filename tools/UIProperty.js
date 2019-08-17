@@ -8,19 +8,21 @@ const style = html`
     }
 
     .label {
+        font-size: 12px;
+        font-weight: bold;
+        font-family: arial;
+        color: #666;
         padding-top: 20px;
         padding-bottom: 4px;
         padding-left: 6px;
         text-transform: uppercase;
         background-color: #dbddde;
+        font-family: arial;
     }
    
     .value {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         min-height: 50px;
-
+        font-family: arial;
         width: 100%;
         background-color: #f1f1f1;
         border: 1px solid #ccc;

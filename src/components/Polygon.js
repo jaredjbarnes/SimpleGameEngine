@@ -26,6 +26,7 @@ const schema = {
     "title": "Opacity",
     "description": "Opacity",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "points": arrayOfPositions,
         "rotatedPoints": readOnlyArrayOfPositions,

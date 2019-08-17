@@ -3,6 +3,7 @@
     "title": "Keyboard Input",
     "description": "Keyboard Input",
     "type": "object",
+    "isSerializable": false,
     "properties": {
         "pressedKeys": {
             "type": "object"

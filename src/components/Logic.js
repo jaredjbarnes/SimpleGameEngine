@@ -30,6 +30,7 @@ const schema = {
     "title": "Logic",
     "description": "Logic",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "name": {
             "type": "string"

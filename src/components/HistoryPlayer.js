@@ -3,6 +3,7 @@ const schema = {
     "title": "History Player",
     "description": "History Player",
     "type": "object",
+    "isSerializable": false,
     "properties": {
         "history": {
             "type": "array",
@@ -21,6 +22,7 @@ export default class HistoryPlayer {
         this.type = "history-player";
         this.history = [];
         this.offset = 0;
+        this.isSerializable = false;
     }
 
     getSchema() {

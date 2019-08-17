@@ -1,7 +1,7 @@
 ﻿import EntityDelegate from "./EntityDelegate.js";
-import WorldModeValidator from "./WorldModeValidator.js";
+import Observable from "./Observable.js";
 
-export default class World {
+export default class World extends Observable {
     constructor() {
 
         this._entityDelegate = new EntityDelegate(this);
@@ -26,36 +26,36 @@ export default class World {
         return WorldModeValidator.validate(mode);
     }
 
-    getMode(name){
-        return this._modes.find((mode)=>{
+    getMode(name) {
+        return this._modes.find((mode) => {
             return mode.name === name;
         });
     }
 
-    setMode(name){
+    setMode(name) {
         const mode = this.getMode(name);
         const currentMode = this._mode;
 
-        if (mode != null){
-            if (currentMode != null){
+        if (mode != null) {
+            if (currentMode != null) {
                 currentMode.stop();
             }
 
             this._mode = mode;
 
-            if (currentMode != null && currentMode.isRunning){
+            if (currentMode != null && currentMode.isRunning) {
                 mode.start();
             }
 
         }
     }
 
-    removeMode(mode){
+    removeMode(mode) {
         const index = this._modes.indexOf(mode);
-        
-        if (index > -1){
 
-            if (mode === this._mode){
+        if (index > -1) {
+
+            if (mode === this._mode) {
                 this._mode = null;
             }
 
@@ -64,7 +64,7 @@ export default class World {
         }
     }
 
-    getModes(){
+    getModes() {
         return this._modes.slice();
     }
 
@@ -74,25 +74,31 @@ export default class World {
     }
 
     update() {
-        if (this._mode == null){
+        if (this._mode == null) {
             return;
         }
 
         const time = this._mode.getTime();
+        const args = [time];
 
-        this.notifyModeSystems("beforeUpdate", [time]);
-        this.notifyModeSystems("update", [time]);
-        this.notifyModeSystems("afterUpdate", [time]);
+        this.notifyModeSystems("beforeUpdate", args);
+        this.notifyModeSystems("update", args);
+        this.notifyModeSystems("afterUpdate", args);
+
+        this.notify({
+            type: "updated",
+            time: time
+        });
     }
 
     notifyModeSystems(methodName, args) {
-        if (this._mode != null){
+        if (this._mode != null) {
             this._mode.notifySystems(methodName, args);
         }
     }
 
-    notifySystems(methodName, args){
-        this._modes.forEach((mode)=>{
+    notifySystems(methodName, args) {
+        this._modes.forEach((mode) => {
             mode.notifySystems(methodName, args);
         })
     }
@@ -106,6 +112,11 @@ export default class World {
 
             entity.setDelegate(this._entityDelegate);
             this.notifySystems("entityAdded", [entity]);
+
+            this.notify({
+                type: "entityAdded",
+                entity
+            });
         }
 
     }
@@ -120,18 +131,27 @@ export default class World {
 
             entity.setDelegate(null);
             this.notifySystems("entityRemoved", [entity]);
+
+            this.notify({
+                type: "entityRemoved",
+                entity
+            });
         }
     }
 
     start() {
-        if (this._mode == null){
+        if (this._mode == null) {
             throw new Error("The world needs to have a mode before running.");
         }
-        
-        if (!this._mode.isRunning){
+
+        if (!this._mode.isRunning) {
             this._mode.start();
-            this.notifySystems("started");
             this._loop();
+            this.notifySystems("started");
+
+            this.notify({
+                type: "started"
+            });
         }
     }
 
@@ -141,6 +161,10 @@ export default class World {
 
             cancelAnimationFrame(this._animationFrame);
             this.notifySystems("stopped");
+
+            this.notify({
+                type: "stopped"
+            });
         }
     }
 

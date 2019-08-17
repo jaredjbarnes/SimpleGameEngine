@@ -3,6 +3,7 @@ const schema = {
     "title": "Fixed",
     "description": "Fixed",
     "type": "object",
+    "isSerializable": true,
     "properties": {
         "position": {
             "type": "object",

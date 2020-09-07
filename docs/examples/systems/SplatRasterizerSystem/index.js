@@ -6,7 +6,7 @@ import PaintableEntity from "./entities/PaintableEntity.js";
 import PaintableTextEntity from "./entities/PaintableTextEntity.js";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
 import CursorSystem from "../../../../src/systems/CursorSystem.js";
-import Camera from "../../../../src/systems/camera/Camera.js/index.js";
+import Camera from "../../../../src/systems/camera/Camera.js";
 
 const cameraName = "main";
 const canvas = document.getElementById("viewport");

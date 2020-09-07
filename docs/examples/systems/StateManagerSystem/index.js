@@ -1,5 +1,5 @@
 import World from "../../../../src/World.js";
-import Camera from "../../../../src/systems/camera/Camera.js/index.js";
+import Camera from "../../../../src/systems/camera/Camera.js";
 import BroadPhaseCollisionSystem from "../../../../src/systems/BroadPhaseCollisionSystem.js";
 import NarrowPhaseCollisionSystem from "../../../../src/systems/NarrowPhaseCollisionSystem.js";
 import DefaultCameraSystem from "../../../../src/systems/camera/DefaultCameraSystem.js/index.js";

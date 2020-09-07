@@ -1,7 +1,3 @@
-/*
-    All values should be 0 through 1.
-*/
-
 export default class ControllerInputData {
     constructor(){
         this.type = "controller-input-data";

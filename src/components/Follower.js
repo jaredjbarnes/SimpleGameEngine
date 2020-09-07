@@ -1,34 +1,3 @@
-const position = {
-    "type": "object",
-    "properties": {
-        "x": {
-            "type": "number"
-        },
-        "y": {
-            "type": "number"
-        }
-    }
-};
-
-const schema = {
-    "$id": "follower",
-    "title": "Follower",
-    "description": "Follower",
-    "type": "object",
-    "isSerializable": true,
-    "properties": {
-        "leaderEntityId": {
-            "type": "string"
-        },
-        "maxSpeed": {
-            "type": "integer"
-        },
-        "distance": position,
-        "lastDirection": position
-    }
-};
-
-
 export default class Follower {
     constructor() {
         this.type = "follower";
@@ -42,9 +11,5 @@ export default class Follower {
             x: 1,
             y: 1
         };
-    }
-
-    getSchema(){
-        return schema;
     }
 }

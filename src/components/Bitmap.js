@@ -1,28 +1,3 @@
-const schema = {
-    "$id": "bitmap",
-    "title": "Bitmap",
-    "description": "Bitmap",
-    "type": "object",
-    "isSerializable": false,
-    "properties": {
-        "identity": {
-            "type": "string",
-            "description": ""
-        },
-        "opacity": {
-            "type": "range",
-            "minimum": 0,
-            "maximum": 1
-        },
-        "isDirty": {
-            "type": "boolean"
-        },
-        "zIndex": {
-            "type": "integer"
-        }
-    }
-};
-
 export default class Bitmap {
     constructor() {
         this.type = "bitmap";
@@ -31,9 +6,5 @@ export default class Bitmap {
         this.opacity = 1;
         this.isDirty = true;
         this.zIndex = 0;
-    }
-
-    getSchema (){
-        return schema;
     }
 }

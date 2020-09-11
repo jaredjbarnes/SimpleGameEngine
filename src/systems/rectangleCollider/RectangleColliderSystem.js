@@ -59,13 +59,13 @@ export default class RectangleColliderSystem {
         return new Collision(id);
     }
 
-    getIntersection(_rectangleA, _rectangleB) {
-        const rectangleA = _rectangleA;
-        const rectangleB = _rectangleB;
-        const top = Math.max(rectangleA.top, rectangleB.top);
-        const bottom = Math.min(rectangleA.bottom, rectangleB.bottom);
-        const left = Math.max(rectangleA.left, rectangleB.left);
-        const right = Math.min(rectangleA.right, rectangleB.right);
+    getIntersection(_transformA, _transformB) {
+        const transformA = _transformA;
+        const transformB = _transformB;
+        const top = Math.max(transformA.top, transformB.top);
+        const bottom = Math.min(transformA.bottom, transformB.bottom);
+        const left = Math.max(transformA.left, transformB.left);
+        const right = Math.min(transformA.right, transformB.right);
 
         if (top < bottom && left < right) {
             this.intersection.top = top;
@@ -105,10 +105,10 @@ export default class RectangleColliderSystem {
 
             for (let y = 0; y < entities.length; y++) {
                 const entity = entities[y];
-                const rectangle = entity.getComponent("rectangle");
+                const transform = entity.getComponent("transform");
                 const collider = entity.getComponent("rectangle-collider");
 
-                if (collider == null || rectangle == null) {
+                if (collider == null || transform == null) {
                     continue;
                 }
 
@@ -117,10 +117,10 @@ export default class RectangleColliderSystem {
 
                 for (let x = index + 1; x < entities.length; x++) {
                     const otherEntity = entities[x];
-                    const otherRectangle = otherEntity.getComponent("rectangle");
+                    const otherTransform = otherEntity.getComponent("transform");
                     const otherCollider = otherEntity.getComponent("rectangle-collider");
 
-                    if (otherCollider == null || otherRectangle == null) {
+                    if (otherCollider == null || otherTransform == null) {
                         continue;
                     }
 
@@ -131,7 +131,7 @@ export default class RectangleColliderSystem {
                         continue;
                     }
 
-                    const intersection = this.getIntersection(rectangle, otherRectangle);
+                    const intersection = this.getIntersection(transform, otherTransform);
 
                     if (intersection != null) {
 

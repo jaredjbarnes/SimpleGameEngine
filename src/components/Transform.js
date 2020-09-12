@@ -2,6 +2,8 @@ export default class Transform {
   constructor() {
     this.type = "transform";
     this.isDirty = true;
+
+    // Radians
     this.rotation = 0;
 
     this.position = {

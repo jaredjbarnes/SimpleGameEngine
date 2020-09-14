@@ -22,4 +22,12 @@ export default class Camera extends Entity {
         this.addComponent(rectangle);
 
     }
+
+    setSize(width, height){
+        const rectangle = this.getComponent("rectangle");
+
+        rectangle.width = width;
+        rectangle.height = height;
+        rectangle.isDirty = true;
+    }
 }

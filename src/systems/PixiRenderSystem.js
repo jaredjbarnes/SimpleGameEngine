@@ -1,33 +1,20 @@
 export default class PixiRenderSystem {
-    constructor(pixiApp){
-        this.pixiApp = pixiApp;
-    }
+  constructor(pixiApp) {
+    this.name = "pixi-render-system";
+    this.pixiApp = pixiApp;
+  }
 
-    update(time){
+  update(time) {}
 
-    }
+  activated(world) {}
 
-    activated(world){
+  deactivated(world) {}
 
-    }
+  entityAdded(entity) {}
 
-    deactivated(world){
+  entityRemoved(entity) {}
 
-    }
+  componentAdded(entity, component) {}
 
-    entityAdded(entity){
-
-    }
-
-    entityRemoved(entity){
-
-    }
-
-    componentAdded(entity, component){
-
-    }
-
-    componentRemove(entity, component){
-
-    }
+  componentRemove(entity, component) {}
 }
